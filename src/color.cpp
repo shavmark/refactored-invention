@@ -63,7 +63,7 @@ namespace Software2552 {
 			}
 		}
 		// find a match
-		for (auto it = getList().begin(); it != getList().end(); ++it) {
+		for (forward_list<shared_ptr<ColorSet>>::const_iterator it = getList().begin(); it != getList().end(); ++it) {
 			if ((*it)->getGroup() == group) {
 				if (getCurrentColor() == nullptr || getCurrentColor()->getUsage() >= (*it)->getUsage()) {
 					// first time in or a color as less usage than current color

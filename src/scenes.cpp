@@ -66,70 +66,70 @@ namespace Software2552 {
 
 		// store in the order they will be displayed, every objec must be found here
 
-		for (Json::ArrayIndex i = 0; i < data["scenes"].size(); ++i) {
-			Json::Value datastring = data["scenes"][i];
-			if (datastring == "backgrounds") {
-				CreateReadAndaddBackgroundItems(data[datastring.asString()]);
+		//for (Json::ArrayIndex i = 0; i < data["scenes"].size(); ++i) {
+		string datastring = "test";
+			if (!data["backgrounds"].empty()) {
+				CreateReadAndaddBackgroundItems(data);
 			}
 			else if (datastring == "audio") {
-				CreateReadAndaddAnimatable<Audio>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Audio>(data[datastring]);
 			}
 			else if (datastring == "videoSphere") {
-				CreateReadAndaddAnimatable<VideoSphere>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<VideoSphere>(data[datastring]);
 			}
 			else if (datastring == "picture") {
-				CreateReadAndaddAnimatable<Picture>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Picture>(data[datastring]);
 			}
 			else if (datastring == "video") {
-				CreateReadAndaddAnimatable<Video>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Video>(data[datastring]);
 			}
 			else if (datastring == "ball") {
-				CreateReadAndaddAnimatable<Ball>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Ball>(data[datastring]);
 			}
 			else if (datastring == "text") {
-				CreateReadAndaddAnimatable<Text>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Text>(data[datastring]);
 			}
 			else if (datastring == "paragraph") {
-				CreateReadAndaddAnimatable<Paragraph>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Paragraph>(data[datastring]);
 			}
 			else if (datastring == "sphere") {
-				CreateReadAndaddAnimatable<Sphere>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Sphere>(data[datastring]);
 			}
 			else if (datastring == "planet") {
-				CreateReadAndaddAnimatable<Planet>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Planet>(data[datastring]);
 			}
 			else if (datastring == "solarSystem") {
-				CreateReadAndaddAnimatable<SolarSystem>(data[datastring.asString()]); //bugbug remove last parameter when working
+				CreateReadAndaddAnimatable<SolarSystem>(data[datastring]);
 			}
 			else if (datastring == "video") {
-				CreateReadAndaddAnimatable<Video>(data[datastring.asString()], "carride.mp4"); //bugbug remove last parameter when working
+				CreateReadAndaddAnimatable<Video>(data[datastring], "carride.mp4"); //bugbug remove last parameter when working
 			}
 			else if (datastring == "picture") {
-				CreateReadAndaddAnimatable<Picture>(data[datastring.asString()], "t1_0010.jpg");
+				CreateReadAndaddAnimatable<Picture>(data[datastring], "t1_0010.jpg");
 			}
 			else if (datastring == "cube") {
-				CreateReadAndaddAnimatable<Cube>(data[datastring.asString()]);
+				CreateReadAndaddAnimatable<Cube>(data[datastring]);
 			}
 			else if (datastring == "grabber") {
-				CreateReadAndaddAnimatable<CameraGrabber>(data[datastring.asString()], "Logitech HD Pro Webcam C920");
+				CreateReadAndaddAnimatable<CameraGrabber>(data[datastring], "Logitech HD Pro Webcam C920");
 			}
 			else if (datastring == "camera") {
-				CreateReadAndaddCamera(data[datastring.asString()]);
+				CreateReadAndaddCamera(data[datastring]);
 				//bugbug need to ready the fixed/moving from data CreateReadAndaddCamera(data["cam2"], true);
 			}
 			else if (datastring == "pointLight") {
-				CreateReadAndaddLight<PointLight>(data[datastring.asString()]);
+				CreateReadAndaddLight<PointLight>(data[datastring]);
 			}
 			else if (datastring == "directionalLight") {
-				CreateReadAndaddLight<DirectionalLight>(data[datastring.asString()]);
+				CreateReadAndaddLight<DirectionalLight>(data[datastring]);
 			}
 			else if (datastring == "spotLight") {
-				CreateReadAndaddLight<SpotLight>(data[datastring.asString()]);
+				CreateReadAndaddLight<SpotLight>(data[datastring]);
 			}
 			else if (datastring == "light") {
-				CreateReadAndaddLight<Light>(data[datastring.asString()]);
+				CreateReadAndaddLight<Light>(data[datastring]);
 			}
-		}
+		//}
 
 		return myCreate(data); 
 	};

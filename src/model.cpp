@@ -786,7 +786,7 @@ namespace Software2552 {
 				}
 			}
 			// remove unattached stages, user forgot them in the input file
-			std::vector<shared_ptr<Channel>>::iterator iter = list.begin();
+			std::vector<shared_ptr<Channel>>::const_iterator iter = list.begin();
 			while (iter != list.end())	{
 				if ((*iter)->getStage() == nullptr) {
 					iter = list.erase(iter);
@@ -878,7 +878,7 @@ namespace Software2552 {
 	int CameraGrabber::Role::find() {
 		//bugbug does Kintect show up?
 		vector<ofVideoDevice> devices = player.listDevices();
-		for (vector<ofVideoDevice>::iterator it = devices.begin(); it != devices.end(); ++it) {
+		for (vector<ofVideoDevice>::const_iterator it = devices.begin(); it != devices.end(); ++it) {
 			if (it->deviceName == getLocationPath()) {
 				return it->id;
 			}
