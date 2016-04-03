@@ -64,14 +64,12 @@ namespace Software2552 {
 
 	bool Stage::create(const Json::Value &data) { 
 
-		colors = std::make_shared<Colors>(ColorSet::ColorGroup::Extreme);// setup colors bugbug get from json
-
 		// store in the order they will be displayed, every objec must be found here
 
 		for (Json::ArrayIndex i = 0; i < data["scenes"].size(); ++i) {
 			Json::Value datastring = data["scenes"][i];
 			if (datastring == "backgrounds") {
-				CreateReadAndaddBackgroundItems(data);
+				CreateReadAndaddBackgroundItems(data[datastring.asString()]);
 			}
 			else if (datastring == "audio") {
 				CreateReadAndaddAnimatable<Audio>(data[datastring.asString()]);
@@ -98,10 +96,10 @@ namespace Software2552 {
 				CreateReadAndaddAnimatable<Sphere>(data[datastring.asString()]);
 			}
 			else if (datastring == "planet") {
-				CreateReadAndaddAnimatable<Planet>(data[datastring.asString()], "t1_0010.jpg"); //bugbug remove last parameter when working
+				CreateReadAndaddAnimatable<Planet>(data[datastring.asString()]);
 			}
 			else if (datastring == "solarSystem") {
-				CreateReadAndaddAnimatable<SolarSystem>(data[datastring.asString()], "t1_0010.jpg"); //bugbug remove last parameter when working
+				CreateReadAndaddAnimatable<SolarSystem>(data[datastring.asString()]); //bugbug remove last parameter when working
 			}
 			else if (datastring == "video") {
 				CreateReadAndaddAnimatable<Video>(data[datastring.asString()], "carride.mp4"); //bugbug remove last parameter when working
@@ -342,23 +340,33 @@ namespace Software2552 {
 			a->getDefaultRole()->drawIt(ActorRole::draw3dFixedCamera);
 		}
 	}
-	template<typename T> shared_ptr<T> Stage::CreateReadAndaddAnimatable(const Json::Value &data, const string&location) {
+	template<typename T> shared_ptr<T> Stage::CreateReadAndaddAnimatable(const Json::Value &data, const string&location, Settings*pSettings) {
 		shared_ptr<T> p = std::make_shared<T>(location);
 		if (p == nullptr) {
 			return nullptr;
 		}
-		p->setSettings(settings);
+		if (pSettings) {
+			p->setSettings(pSettings);
+		}
+		else {
+			p->setSettings(settings);
+		}
 		p->readFromScript(data, this);
 		return p;
 	}
 	// return new location
 
-	template<typename T> shared_ptr<T> Stage::CreateReadAndaddAnimatable(const Json::Value &data) {
+	template<typename T> shared_ptr<T> Stage::CreateReadAndaddAnimatable(const Json::Value &data, Settings*pSettings) {
 		shared_ptr<T> p = std::make_shared<T>();
 		if (p == nullptr) {
 			return nullptr;
 		}
-		p->setSettings(settings);
+		if (pSettings) {
+			p->setSettings(*pSettings);
+		}
+		else {
+			p->setSettings(settings);
+		}
 		p->readFromScript(data, this);
 		return p;
 	}

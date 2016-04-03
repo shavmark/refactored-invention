@@ -26,7 +26,7 @@ namespace Software2552 {
 		// something like fore/back/text/other[n], not sure, or maybe we
 		// just use multiple ColorSets, find out more as we continue on
 		ColorSet(const ColorGroup groupIn, int fore, int back, int text, int other, int lightest, int darkest);
-		ColorGroup setGroup(const string&name);
+		static ColorGroup convertStringToGroup(const string&name);
 		ColorGroup getGroup() const {return group;}
 		int getHex(int index) const  {return colors[index];	}
 		bool operator== (const ColorSet& rhs) {	return getGroup() == rhs.getGroup();}
@@ -44,14 +44,9 @@ namespace Software2552 {
 	// global color data
 	class ColorList {
 	public:
-		class ColorList(ColorSet::ColorGroup group) {
-			// there must always be at least one color
-			privateData = std::make_shared<colordata>();
-			getNextColors(group);
-			setup();
-		}
+		ColorList(ColorSet::ColorGroup group= ColorSet::Modern);
+
 		//color naming modeled after http://www.creativecolorschemes.com/products/ccs1/rgbColorGuide.shtml
-		// names of customer colors, when paired they are a color set
 
 		void update();
 		void setup();
@@ -66,14 +61,13 @@ namespace Software2552 {
 		// do not break colors up or things will not match
 		// get next color based on type and usage count
 		// example: type==cool gets the next cool type, type=Random gets any next color
-		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group = ColorSet::ColorGroup::Default);
-		static shared_ptr<ColorSet> getCurrentColor();
+		shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group);
+		shared_ptr<ColorSet> getCurrentColor();
 
 	protected:
 		template<typename T> void removeExpiredItems(forward_list<shared_ptr<T>>&v) {
 			v.remove_if(objectLifeTimeManager::OKToRemove);
 		}
-
 
 		void add(const ColorSet::ColorGroup group, int fore, int back, int text, int other, int lightest, int darkest);
 
@@ -87,45 +81,28 @@ namespace Software2552 {
 	// color helpers
 	class Colors : public ColorList {
 	public:
-		Colors(ColorSet::ColorGroup group) : ColorList(group){		}
+		Colors(ColorSet::ColorGroup group = ColorSet::Modern) : ColorList(group){		}
 		// hue helpers, example getHue(getBackground()) bugbug maybe cache some data if needed
-		static float getSaturation(int index) {
-			return ofColor().fromHex(getCurrentColor()->getHex(index)).getSaturation();
-		}
-		static float getBrightness(int index) {
-			return ofColor().fromHex(getCurrentColor()->getHex(index)).getBrightness();
-		}
-		static float getHue(int index) {
-			return ofColor().fromHex(getCurrentColor()->getHex(index)).getHue();
-		}
-		static ofColor getOfColor(int index) {
-			return ofColor().fromHex(getCurrentColor()->getHex(index));
-		}
-		static ofFloatColor getFloatColor(int index) {
-			return ofFloatColor().fromHex(getCurrentColor()->getHex(index));
-		}
 		// more like painting
-		static float getHueAngle(int index)	{
-			return ofColor().fromHex(getCurrentColor()->getHex(index)).getHueAngle();
-		}
-		static int getForeground() {
+		int getForeground() {
 			return getCurrentColor()->getHex(ColorSet::ColorType::Fore);
 		}
-		static  int getBackground() {
+		int getBackground() {
 			return getCurrentColor()->getHex(ColorSet::ColorType::Back);
 		}
-		static  int getFontColor() {
+		int getFontColor() {
 			return getCurrentColor()->getHex(ColorSet::ColorType::Text);
 		}
-		static int getLightest() {
+		int getLightest() {
 			return getCurrentColor()->getHex(ColorSet::ColorType::Lightest);
 		}
-		static int getDarkest() {
+		int getDarkest() {
 			return getCurrentColor()->getHex(ColorSet::ColorType::Darkest);
 		}
-		static int getOther() {
+		int getOther() {
 			return getCurrentColor()->getHex(ColorSet::ColorType::Other);
 		}
+		bool readFromScript(const Json::Value &data);
 
 	};
 

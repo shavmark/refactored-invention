@@ -22,7 +22,12 @@ namespace Software2552 {
 		}
 		va_end(args);
 	}
-
+	bool Colors::readFromScript(const Json::Value &data) {
+		string colorGroupName;
+		READSTRING(colorGroupName, data);
+		getNextColors(ColorSet::convertStringToGroup(colorGroupName));
+		return true;
+	}
 	void ColorList::update() {
 		// clean up deleted items every so often
 		for (auto& d : getList()) {
@@ -77,7 +82,7 @@ namespace Software2552 {
 		getList().push_front(s);
 	}
 
-	ColorSet::ColorGroup ColorSet::setGroup(const string&name) {
+	ColorSet::ColorGroup ColorSet::convertStringToGroup(const string&name) {
 		if (name == "Modern") {
 			return Modern;
 		}
@@ -107,6 +112,14 @@ namespace Software2552 {
 		}
 	}
 
+	ColorList::ColorList(ColorSet::ColorGroup group) {
+		// assumes static data so color info is shared across app
+		if (privateData == nullptr) {
+			privateData = std::make_shared<colordata>();
+			setup();
+		}
+		getNextColors(group);
+	}
 
 	//http://www.creativecolorschemes.com/resources/free-color-schemes/art-deco-color-scheme.shtml
 	void ColorList::setup() {
@@ -132,7 +145,7 @@ namespace Software2552 {
 
 			//A C B D A C see the color doc to fill these in. use the 4 colors then pick the lightest and darkest 
 			add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
-			/*
+			/* bugbug load all these once color is working etc
 			add(ColorSet::Modern, E, D, ofColor::black.getHex(), ofColor::white.getHex());
 
 			add(ColorSet::Modern, N, M, ofColor::white, ofColor::white);

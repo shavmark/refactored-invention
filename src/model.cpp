@@ -228,16 +228,33 @@ namespace Software2552 {
 			setSettings(*rhs);
 		}
 	}
-	AnimiatedColor::AnimiatedColor(ColorChoice&colorIn) :ofxAnimatableOfColor() {
-		color = colorIn;
+	// always return a valid pointer
+	shared_ptr<Colors> AnimiatedColor::getColorManager() { 
+		if (colorManager == nullptr) {
+			colorManager = std::make_shared<Colors>();
+		}
+		return colorManager; 
+	}
+	AnimiatedColor::AnimiatedColor(shared_ptr<Colors>colorIn) :ofxAnimatableOfColor() {
+		colorManager = colorIn;
 	}
 	void AnimiatedColor::draw() {
-		applyCurrentColor();
+		if (usingAnimation) {
+			applyCurrentColor();
+		}
+		else {
+			ofSetColor(getColorManager()->getForeground());//background set by background manager
+		}
 	}
+	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
 	bool AnimiatedColor::readFromScript(const Json::Value &data) {
-		// set defaults or read from data
-		setColor(ofColor(Colors::getLightest()));
-		animateTo(ofColor(Colors::getDarkest()));
+		if (!data.empty()) {
+			READBOOL(usingAnimation, data);
+		}
+
+		// set defaults or read from data bugbug add more data reads as needed
+		setColor(ofColor(getColorManager()->getLightest()));
+		animateTo(ofColor(getColorManager()->getDarkest()));
 		setDuration(0.5f);
 		setRepeatType(LOOP_BACK_AND_FORTH);
 		setCurve(LINEAR);
@@ -338,8 +355,13 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	ColorChoice& Settings::getColor() {
-		return colors;
+	// settings stores the color manager
+	shared_ptr<Colors> Settings::getColor() {
+		if (colors) {
+			return colors;
+		}
+		// use global default
+		colors = std::make_shared<Colors>();
 	}
 
 	// always return true as these are optional items
@@ -350,7 +372,10 @@ namespace Software2552 {
 			READSTRING(title, data);
 			READSTRING(notes, data);
 			font.readFromScript(data["font"]);
-			getColor().readFromScript(data);
+			colors = std::make_shared<Colors>();
+			if (colors) {
+				colors->readFromScript(data);
+			}
 		}
 
 		return true;
@@ -375,12 +400,6 @@ namespace Software2552 {
 		return false;
 	}
 
-	bool ColorChoice::readFromScript(const Json::Value &data) {
-		string colorgroup;
-		READSTRING(colorgroup, data);
-		//bugbug not sure what to do here group = ColorSet::setGroup(colorgroup);
-		return true;
-	}
 	bool Point3D::readFromScript(const Json::Value &data) {
 		READFLOAT(x, data);
 		READFLOAT(y, data);
@@ -440,7 +459,8 @@ namespace Software2552 {
 		}
 
 		getPlayer().setFont(getFontPointer());
-		getPlayer().setColor(Colors::getFontColor());
+		
+		getPlayer().setColor(getRole<Role>()->getColorAnimation()->getColorManager()->getFontColor());
 
 		return true;
 	}
@@ -454,7 +474,11 @@ namespace Software2552 {
 	bool Video::myReadFromScript(const Json::Value &data) {
 		setType(ActorRole::draw2d);
 		setAnimation(true);
-
+		float speed = 0;
+		READFLOAT(speed, data);
+		if (speed != 0) {
+			getPlayer().setSpeed(speed);
+		}
 		float volume=1;//default
 		READFLOAT(volume, data);
 		getPlayer().setVolume(volume);
@@ -570,7 +594,7 @@ namespace Software2552 {
 
 	void Text::Role::drawText(const string &s, int x, int y) {
 		ofPushStyle();
-		ofSetColor(Colors::getFontColor());
+		ofSetColor(getColorAnimation()->getColorManager()->getFontColor());
 		Font font;
 		font.get().drawString(s, x, y);
 		ofPopStyle();
@@ -608,80 +632,75 @@ namespace Software2552 {
 		return true;
 	}
 	bool BackgroundItem::myReadFromScript(const Json::Value &data) {
-		getRole<Role>()->setForegroundColor(Colors::getForeground());
-		getRole<Role>()->setBackgroundColor(Colors::getBackground());
-		getRole<Role>()->setType(ColorFixed);
-		getRole<Role>()->setGradientMode(OF_GRADIENT_LINEAR);
+
+		string type;
+		readStringFromJson(type, data["colortype"]);
+		if (type == "fixed") {
+			getRole<Role>()->setType(ColorFixed);
+		}
+		else {
+			getRole<Role>()->setType(ColorChanging);
+		}
+		type = "";
+		getRole<Role>()->gradient = true;
+		readStringFromJson(type, data["gradient"]);
+		if (type == "linear") {
+			getRole<Role>()->setGradientMode(OF_GRADIENT_LINEAR); //OF_GRADIENT_BAR  OF_GRADIENT_CIRCULAR
+		}
+		else if (type == "bar") {
+			getRole<Role>()->setGradientMode(OF_GRADIENT_BAR); //OF_GRADIENT_BAR  OF_GRADIENT_CIRCULAR
+		}
+		else if (type == "circular") {
+			getRole<Role>()->setGradientMode(OF_GRADIENT_CIRCULAR); //OF_GRADIENT_BAR  OF_GRADIENT_CIRCULAR
+		}
+		else {
+			getRole<Role>()->gradient = false;
+		}
+		
 		getRole<Role>()->getAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
+
 		string image;
+		readStringFromJson(image, data["image"]);
 		READSTRING(image, data); // can be read in other areas and set in this object
 		if (image.size() > 0) {
-			getRole<Role>()->setPlayer(new Picture(image));
-			getRole<Role>()->setType(BackgroundImage);
-		}
-		string video;//bugbug cannot be both, muliple items are handled higher up
-		READSTRING(video, data); // can be read in other areas and set in this object
-		if (video.size() > 0) {
-			getRole<Role>()->setPlayer(new Video(image));
-			float speed=0;
-			READFLOAT(speed, data);
-			if (speed != 0) {
-				getRole<Role>()->getPlayer<Video>()->getPlayer().setSpeed(speed);
+			if (getStage()) {
+				shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data, image, this);
+				if (p) {
+					p->getRole<Picture::Role>()->fullsize = true;
+				}
 			}
-			getRole<Role>()->setType(BackgroundVideo);
 		}
-		if (image.size() > 0 && video.size() > 0) {
-			logErrorString("both image and video found in input, video used");
+		string video;
+		readStringFromJson(video, data["video"]);
+		if (video.size() > 0) {
+			if (getStage()) {
+				shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data, video, this);
+				if (p) {
+					p->getRole<Video::Role>()->fullsize = true;
+				}
+			}
 		}
 		return true;
 	}
 	void BackgroundItem::Role::myDraw() {
-		switch (type) {
-		case BackgroundImage:
-			if (getPlayer<Picture>()) {
-				getPlayer<Picture>()->getPlayer().draw(0, 0);
-			}
-			break;
-		case BackgroundVideo:
-			if (getPlayer<Video>()) {
-				getPlayer<Video>()->getPlayer().draw(0, 0, ofGetWidth(), ofGetHeight());
-			}
-			break;
-		case ColorFixed:
-		case ColorChanging:
-			ofSetBackgroundColor(currentBackgroundColor);
-			break;
-		case GradientFixed:
-		case GradientChanging:
-			ofBackgroundGradient(ofColor::fromHex(Colors::getForeground()),
-				currentBackgroundColor, mode);
-			break;
-		case none:
-			//ofSetBackgroundColor(ofColor::white);
-			break;
+		if (type == none) {
+			return;
+		}
+		if (gradient) {
+			ofBackgroundGradient(getColorAnimation()->getColorManager()->getForeground(),
+				getColorAnimation()->getColorManager()->getBackground(), mode);
+		}
+		else {
+			ofSetBackgroundColor(getColorAnimation()->getColorManager()->getBackground());
 		}
 	}
 
 	// colors and background change over time but not at the same time
 	void BackgroundItem::Role::myUpdate() {
-		if (type == BackgroundImage && player) {
-			getPlayer<Picture>()->getPlayer().resize(ofGetWidth(), ofGetHeight());
-			getPlayer<Picture>()->getPlayer().update();
-			return;
-		}
-		if (type == BackgroundVideo && player) {
-			getPlayer<Video>()->getPlayer().update();
-			return;
-		}
-		if (type == ColorChanging || type == GradientChanging) {
-			setForegroundColor(Colors::getForeground());
-			setBackgroundColor(Colors::getBackground());
-		}
-		if (type == GradientChanging) {
-			//bugbug can add other back grounds like a video loop, sound
-			// picture, any graphic etc
-			//bugbug test out refreshAnimation
-			if (getAnimationHelper()->refreshAnimation()) {
+		if (type == ColorChanging && getAnimationHelper()->refreshAnimation()) {
+			getColorAnimation()->getColorManager()->getNextColors(getColorAnimation()->getColorManager()->getCurrentColor()->getGroup());
+			if (gradient) {
+				//bugbug test out refreshAnimation
 				switch ((int)ofRandom(0, 3)) {
 				case 0:
 					mode = OF_GRADIENT_LINEAR;
@@ -786,7 +805,10 @@ namespace Software2552 {
 
 	// add this one http://clab.concordia.ca/?page_id=944
 	void Video::Role::myDraw() {
-		if (w == 0 || h == 0) {
+		if (fullsize) {
+			player.draw(0, 0, ofGetWidth(), ofGetHeight());
+		}
+		else if (w == 0 || h == 0) {
 			player.draw(getAnimationHelper()->getCurrentPosition().x, getAnimationHelper()->getCurrentPosition().y);
 		}
 		else {
@@ -804,6 +826,13 @@ namespace Software2552 {
 		player.play();
 
 	}
+	void Picture::Role::myUpdate() {
+		if (fullsize) {
+			player.resize(ofGetWidth(), ofGetHeight());
+		}
+		player.update();
+	}
+
 	void Picture::Role::mySetup() { 
 		if (!isLoaded) {
 			if (!ofLoadImage(player, getLocationPath())) {

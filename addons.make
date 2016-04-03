@@ -1,0 +1,12 @@
+ofxAssimpModelLoader
+ofxGui
+ofxNetwork
+ofxOsc
+ofxThreadedImageLoader
+ofxVectorGraphics
+ofxAnimatable
+ofxBox2d
+ofxEasing
+ofxJson
+ofxParagraph
+ofxsmartfont

@@ -37,14 +37,7 @@ namespace Software2552 {
 	public:
 		bool readFromScript(const Json::Value &data);
 	};
-
-	class ColorChoice  {
-	public:
-		bool readFromScript(const Json::Value &data);
-		ColorSet::ColorGroup getGroup() { return group; }
-	private:
-		ColorSet::ColorGroup group = ColorSet::ColorGroup::Default;
-	};
+	
 	//http://pocoproject.org/slides/070-DateAndTime.pdf
 	class DateAndTime : public Poco::DateTime {
 	public:
@@ -87,16 +80,16 @@ namespace Software2552 {
 
 		ofTrueTypeFont& getFont() { return font.get(); }
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
-		ColorChoice& getColor();
-		void setColor(const ColorChoice& c) { colors = c; }
 		bool operator==(const Settings& rhs) { return rhs.name == name; }
 		string &getName() { return name; }
 		virtual void setSettings(const Settings& rhs);
 		virtual void setSettings(Settings* rhs);
 		
 	protected:
+		shared_ptr<Colors> getColor();// drawing using animatedcolor
 		Font   font;
-		ColorChoice  colors;
+		//		colors = std::make_shared<Colors>(ColorSet::ColorGroup::Extreme);// setup colors bugbug get from json
+		shared_ptr<Colors>  colors=nullptr;
 		string notes;// unstructured string of info, can be shown to the user
 		string title; // title object
 		string name; // any object can have a name, note, date, reference, duration
@@ -191,14 +184,17 @@ namespace Software2552 {
 
 	class AnimiatedColor : public ofxAnimatableOfColor {
 	public:
-		AnimiatedColor() :ofxAnimatableOfColor() {}
-		AnimiatedColor(ColorChoice&color);
+		AnimiatedColor() :ofxAnimatableOfColor() { }
+		AnimiatedColor(shared_ptr<Colors> colors);
 		// animates colors
 		void draw();
 		bool paused() { return paused_; }
 		bool readFromScript(const Json::Value &data);
+		shared_ptr<Colors> getColorManager();
+		void SetColorManager(shared_ptr<Colors>p) { colorManager=p; }
+		bool usingAnimation = false; // force  to set this to make sure its understood
 	private:
-		ColorChoice color;
+		shared_ptr<Colors> colorManager=nullptr; // color manager (required)
 	};
 
 	// wrap drawing object with references and settings data
@@ -419,6 +415,7 @@ namespace Software2552 {
 			void myDraw();
 			void mySetup();
 			float getTimeBeforeStart(float t);
+			bool fullsize = false; // keep full size of screen, like for a background
 			ofVideoPlayer player;
 		};
 		Video(const string&s) :Actor(new Role(s)) {  }
@@ -499,7 +496,6 @@ namespace Software2552 {
 		class Role : public ActorRole {
 		public:
 			Role() : ActorRole() { }
-			void myDraw();
 		};
 		SolarSystem() :Actor(new Role()) {  }
 		void addPlanets(const Json::Value &data, ofPoint& min, Settings& settings);
@@ -515,10 +511,11 @@ namespace Software2552 {
 			Role() : ActorRole() {  }
 			Role(const string& path) : ActorRole(path) { }
 
-			void myUpdate() { player.update(); }
+			void myUpdate();
 			void mySetup();
 			void myDraw();
 			bool isLoaded = false;
+			bool fullsize = false; // keep full size of screen, like for a background
 			ofImage player;
 		};
 
@@ -531,25 +528,18 @@ namespace Software2552 {
 	
 	class BackgroundItem : public Actor {
 	public:
-		enum TypeOfBackground { BackgroundImage, BackgroundVideo, ColorFixed, ColorChanging, GradientFixed, GradientChanging, none };
+		enum TypeOfBackground { ColorFixed, ColorChanging,  none };
 		class Role : public ActorRole {
 		public:
-			Role() { mode = OF_GRADIENT_LINEAR; }
-			~Role() { if (player != nullptr) delete player; }
+			Role() {}
 			void myDraw();
 			void myUpdate();// make image a vector then rotate via animation
-			void setForegroundColor(const ofColor&c) { currentForegroundColor = c; }
-			void setBackgroundColor(const ofColor&c) { currentBackgroundColor = c; }
 			void setType(TypeOfBackground typeIn = ColorFixed) { type = typeIn; }
 			void setGradientMode(const ofGradientMode& modeIn) { mode = modeIn; }
-			template<typename T> T* getPlayer() { return (T*)player; }
-			void setPlayer(Actor*p) { player = p; }
+			bool gradient = false;
 		private:
-			Actor* player = nullptr; // only need set if an animated item is used
-			ofGradientMode mode;
+			ofGradientMode mode = OF_GRADIENT_LINEAR;
 			TypeOfBackground type = ColorFixed;
-			ofColor currentBackgroundColor;
-			ofColor currentForegroundColor;
 		};
 		BackgroundItem() :Actor(new Role()) {  }
 

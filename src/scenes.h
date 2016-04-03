@@ -39,8 +39,8 @@ namespace Software2552 {
 
 		void addAnimatable(shared_ptr<Actor>p) { animatables.push_front(p); }
 		// things to draw
-		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, const string&location);
-		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data);
+		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, const string&location, Settings*pSettings = nullptr);
+		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, Settings*pSettings=nullptr);
 		virtual void CreateReadAndaddBackgroundItems(const Json::Value &data);
 		shared_ptr<Camera> CreateReadAndaddCamera(const Json::Value &data, bool rotate = false);
 		template<typename T>shared_ptr<T> CreateReadAndaddLight(const Json::Value &data);

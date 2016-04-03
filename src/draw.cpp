@@ -334,15 +334,15 @@ namespace Software2552 {
 		ofVec3f left(50.0, 150.0, 0.0);
 		ofVec3f right(150.0, 150.0, 0.0);
 		addVertex(top);
-		addColor(Colors::getFloatColor(Colors::getDarkest()));
+//		addColor(Colors::getFloatColor(Colors::getDarkest()));
 
 		addVertex(left);
-		addColor(Colors::getFloatColor(Colors::getLightest()));
+//		addColor(Colors::getFloatColor(Colors::getLightest()));
 
 		addVertex(right);
 		//bugbug this is where we add in more colors, lets see how many before we make 
 		// changes, but somthing like Color1, Color2 etc
-		addColor(Colors::getFloatColor(Colors::getDarkest()));
+	//	addColor(Colors::getFloatColor(Colors::getDarkest()));
 
 		addIndex(0);
 		addIndex(1);
