@@ -166,21 +166,6 @@ namespace Software2552 {
 		ofFbo fbo;
 	};
 
-	template<typename T> void createTimeLineItems(const Settings& settings, forward_list<shared_ptr<Actor>>& vec, const Json::Value &data, const string& key, Stage*stage) {
-		for (Json::ArrayIndex j = 0; j < data[key].size(); ++j) {
-			shared_ptr<T> v = std::make_shared<T>();
-			if (v == nullptr) {
-				return;// out of memory!! ouch.
-			}
-			v->setSettings(settings); // inherit settings
-			if (v->readFromScript(data[key][j], stage)) {
-				// only save if data was read in 
-				vec.push_front(v);
-			}
-		}
-	}
-
-
 
 	class AnimiatedColor : public ofxAnimatableOfColor {
 	public:
@@ -457,19 +442,18 @@ namespace Software2552 {
 		class Role : public ActorRole {
 		public:
 			friend VideoSphere;
-			Role() : ActorRole() {	video = std::make_shared<TextureVideo>();	}
+			Role() : ActorRole() {	}
 			Role(const string& path) : ActorRole(path) { video = std::make_shared<TextureVideo>(path); }
 			void myDraw();
 			Sphere sphere;
+			shared_ptr<TextureVideo> video = nullptr;
 		private:
 			bool set = false;
-			shared_ptr<TextureVideo> video;//bugbug make this a base pointer to share this object with any 3d shape
 		};
 		VideoSphere(const string&s) :Actor(new Role(s)) {		}
 		VideoSphere() :Actor(new Role()) {  }
 		void setSettings(const Settings& rhs);
 		Sphere& getSphere() { return getRole<Role>()->sphere; }
-		shared_ptr<TextureVideo> getTexture() { return getRole<Role>()->video; }
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
@@ -526,7 +510,7 @@ namespace Software2552 {
 		bool myReadFromScript(const Json::Value &data);
 	};
 	
-	class BackgroundItem : public Actor {
+	class Background : public Actor {
 	public:
 		enum TypeOfBackground { ColorFixed, ColorChanging,  none };
 		class Role : public ActorRole {
@@ -541,7 +525,7 @@ namespace Software2552 {
 			ofGradientMode mode = OF_GRADIENT_LINEAR;
 			TypeOfBackground type = ColorFixed;
 		};
-		BackgroundItem() :Actor(new Role()) {  }
+		Background() :Actor(new Role()) {  }
 
 	private:
 		bool myReadFromScript(const Json::Value &data);

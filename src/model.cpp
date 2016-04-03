@@ -372,9 +372,13 @@ namespace Software2552 {
 			READSTRING(title, data);
 			READSTRING(notes, data);
 			font.readFromScript(data["font"]);
-			colors = std::make_shared<Colors>();
-			if (colors) {
-				colors->readFromScript(data);
+			string colorGroupName;
+			READSTRING(colorGroupName, data);
+			if (colorGroupName.size() > 0) {
+				colors = std::make_shared<Colors>();
+				if (colors) {
+					colors->getNextColors(ColorSet::convertStringToGroup(colorGroupName));
+				}
 			}
 		}
 
@@ -631,7 +635,7 @@ namespace Software2552 {
 
 		return true;
 	}
-	bool BackgroundItem::myReadFromScript(const Json::Value &data) {
+	bool Background::myReadFromScript(const Json::Value &data) {
 
 		string type;
 		readStringFromJson(type, data["colortype"]);
@@ -682,7 +686,7 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	void BackgroundItem::Role::myDraw() {
+	void Background::Role::myDraw() {
 		if (type == none) {
 			return;
 		}
@@ -696,7 +700,7 @@ namespace Software2552 {
 	}
 
 	// colors and background change over time but not at the same time
-	void BackgroundItem::Role::myUpdate() {
+	void Background::Role::myUpdate() {
 		if (type == ColorChanging && getAnimationHelper()->refreshAnimation()) {
 			getColorAnimation()->getColorManager()->getNextColors(getColorAnimation()->getColorManager()->getCurrentColor()->getGroup());
 			if (gradient) {
@@ -1001,13 +1005,10 @@ namespace Software2552 {
 		setType(ActorRole::draw3dFixedCamera);
 		if (getStage()) {
 			getStage()->fixed3d();
+			getRole<Role>()->video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data, this);
 		}
 		getSphere().getRole<Sphere::Role>()->setWireframe(false);
 		getSphere().getPlayer().set(250, 180);// set default
-		if (getTexture() != nullptr) {
-			getTexture()->readFromScript(data, getStage());
-			getStage()->addAnimatable(getTexture());
-		}
 		return true;
 	}
 	void TextureFromImage::create(const string& name, float w, float h) {
@@ -1021,45 +1022,38 @@ namespace Software2552 {
 	}
 	void VideoSphere::setSettings(const Settings& rhs) { 
 		Settings::setSettings(rhs);
-		if (getTexture()) {
-			getTexture()->setSettings(rhs);
+		if (getRole<Role>()->video) {
+			getRole<Role>()->video->setSettings(rhs);
 		}
 	}
 
 	bool SolarSystem::myReadFromScript(const Json::Value &data) {
-		shared_ptr<VideoSphere> center = std::make_shared<VideoSphere>();
-		if (center) {
-			center->setSettings(*this);
-			center->readFromScript(data["videoSphere"], getStage());
-			if (getStage()) {
-				getStage()->addAnimatable(center);
+		if (getStage()) {
+			shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data, this);
+ 			if (p) {
+				ofPoint min(p->getSphere().getPlayer().getRadius() * 2, 0, 200);
+				addPlanets(data["Planets"], min, *this);
+				return true;
 			}
-			ofPoint min(center->getSphere().getPlayer().getRadius() * 2, 0, 200);
-			addPlanets(data["Planets"], min, *this);
 		}
 		//bugbug if there are no camareas a this point add in two defaults, one fixed and the other moving
 		// do the same for VideoSphere, post a trace if this is done
-		return true;
+		return false;
 	}
 	void SolarSystem::addPlanets(const Json::Value &data, ofPoint& min, Settings& settings) {
-		ofPoint point;
-		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-			shared_ptr<Planet> p = std::make_shared<Planet>();
-			if (p) {
-				p->setSettings(settings);// pass on settings
-				point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
-				point.y = ofRandom(min.y, 500);
-				point.z = ofRandom(min.z, 500);
-				p->getSphere().getPlayer().setPosition(point);
-				p->readFromScript(data[j], getStage());
-				if (getStage()) {
-					getStage()->addAnimatable(p);
+		if (getStage()) {
+			ofPoint point;
+			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+				shared_ptr<Planet> p = getStage()->CreateReadAndaddAnimatable<Planet>(data, this);
+				if (p) {
+					point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
+					point.y = ofRandom(min.y, 500);
+					point.z = ofRandom(min.z, 500);
+					p->getSphere().getPlayer().setPosition(point); // data stored as pointer so this updates the list
 				}
 			}
 		}
-
 	}
-
 
 	bool Planet::myReadFromScript(const Json::Value &data) {
 		if (getStage()) {

@@ -25,16 +25,18 @@ namespace Software2552 {
 	bool Colors::readFromScript(const Json::Value &data) {
 		string colorGroupName;
 		READSTRING(colorGroupName, data);
-		getNextColors(ColorSet::convertStringToGroup(colorGroupName));
+		if (colorGroupName.size() > 0) {
+			getNextColors(ColorSet::convertStringToGroup(colorGroupName));
+		}
 		return true;
 	}
 	void ColorList::update() {
 		// clean up deleted items every so often
-		for (auto& d : getList()) {
+		for (auto& d : privateData->colorlist) {
 			d->refreshAnimation();
 		}
 		// remove expired colors
-		removeExpiredItems(getList());
+		removeExpiredItems(privateData->colorlist);
 
 		//bugbug call this at the right time
 		if (getCurrentColor() && ofRandom(0,100) > 80) {
@@ -63,7 +65,7 @@ namespace Software2552 {
 			}
 		}
 		// find a match
-		for (forward_list<shared_ptr<ColorSet>>::const_iterator it = getList().begin(); it != getList().end(); ++it) {
+		for (auto& it = privateData->colorlist.begin(); it != privateData->colorlist.end(); ++it) {
 			if ((*it)->getGroup() == group) {
 				if (getCurrentColor() == nullptr || getCurrentColor()->getUsage() >= (*it)->getUsage()) {
 					// first time in or a color as less usage than current color
@@ -79,7 +81,7 @@ namespace Software2552 {
 		shared_ptr<ColorSet> s = std::make_shared<ColorSet>(group,
 			fore,	back,	text,	other,	lightest,	darkest);
 
-		getList().push_front(s);
+		privateData->colorlist.push_front(s);
 	}
 
 	ColorSet::ColorGroup ColorSet::convertStringToGroup(const string&name) {
@@ -112,20 +114,19 @@ namespace Software2552 {
 		}
 	}
 
-	ColorList::ColorList(ColorSet::ColorGroup group) {
+	ColorList::ColorList() {
 		// assumes static data so color info is shared across app
 		if (privateData == nullptr) {
 			privateData = std::make_shared<colordata>();
 			setup();
 		}
-		getNextColors(group);
 	}
 
 	//http://www.creativecolorschemes.com/resources/free-color-schemes/art-deco-color-scheme.shtml
 	void ColorList::setup() {
 
 		// only needs to be setup one time since its static data
-		if (getList().empty()) {
+		if (privateData->colorlist.empty()) {
 			std::unordered_map<char, int> modern =
 			{ {'A', 0x003F53}, {'B', 0x3994B3}, {'C', 0x64B1D1 }, {'D', 0x00626D }, {'E', 0x079CBA }, {'F', 0x60CDD9 },
 			 {'G', 0x003E6B }, {'H', 0x0073A0 }, {'I', 0xBAECE9 }, {'J', 0xD0FC0E }, {'K', 0xFDB075 }, {'L', 0xFFD76E },

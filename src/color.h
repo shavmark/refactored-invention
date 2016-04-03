@@ -44,7 +44,7 @@ namespace Software2552 {
 	// global color data
 	class ColorList {
 	public:
-		ColorList(ColorSet::ColorGroup group= ColorSet::Modern);
+		ColorList();
 
 		//color naming modeled after http://www.creativecolorschemes.com/products/ccs1/rgbColorGuide.shtml
 
@@ -73,15 +73,13 @@ namespace Software2552 {
 
 	private:
 		static shared_ptr<colordata> privateData;// never call directly to assure allocation
-		static void setCurrentColor(shared_ptr<ColorSet>c) { privateData->currentColor = c; }
-		static forward_list<shared_ptr<ColorSet>>  getList() { return privateData->colorlist; }
+		void setCurrentColor(shared_ptr<ColorSet>c) { privateData->currentColor = c; }
 	};
 
 
 	// color helpers
 	class Colors : public ColorList {
 	public:
-		Colors(ColorSet::ColorGroup group = ColorSet::Modern) : ColorList(group){		}
 		// hue helpers, example getHue(getBackground()) bugbug maybe cache some data if needed
 		// more like painting
 		int getForeground() {

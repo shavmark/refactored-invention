@@ -23,7 +23,7 @@ namespace Software2552 {
 	shared_ptr<Stage> getScene(const string&name);
 
 	// contains  elements of a stage
-	class Stage {
+	class Stage : public Settings {
 	public:
 		void setup();
 		void update();
@@ -34,17 +34,30 @@ namespace Software2552 {
 		void resume();
 		float findMaxWait();
 		void drawlights();
-		Settings settings;
 		string &getKeyName() { return keyname; }
 
-		void addAnimatable(shared_ptr<Actor>p) { animatables.push_front(p); }
 		// things to draw
+
+		template<typename T> shared_ptr<T> Stage::CreateReadAndaddAnimatable(const Json::Value &data, Settings*pSettings=nullptr) {
+			shared_ptr<T> p = std::make_shared<T>();
+			if (p != nullptr) { // try to run in low memory as much as possible for small devices
+				if (pSettings) {
+					p->setSettings(*pSettings);
+				}
+				else {
+					p->setSettings(*this);
+				}
+				if (p->readFromScript(data, this)) {
+					appendToAnimatable(p);
+				}
+			}
+			return p;
+		}
 		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, const string&location, Settings*pSettings = nullptr);
-		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, Settings*pSettings=nullptr);
-		virtual void CreateReadAndaddBackgroundItems(const Json::Value &data);
+		virtual shared_ptr<Background> CreateReadAndaddBackgroundItems(const Json::Value &data);
 		shared_ptr<Camera> CreateReadAndaddCamera(const Json::Value &data, bool rotate = false);
 		template<typename T>shared_ptr<T> CreateReadAndaddLight(const Json::Value &data);
-		forward_list<shared_ptr<Actor>>& getAnimatables() { return animatables; }
+		list<shared_ptr<Actor>>& getAnimatables() { return animatables; }
 
 		void fixed3d(bool b = true) { drawIn3dFixed = b; }
 		void moving3d(bool b = true) { drawIn3dMoving = b; }
@@ -82,10 +95,12 @@ namespace Software2552 {
 		string keyname;
 
 	private:
+		void appendToAnimatable(shared_ptr<Actor>p) { animatables.push_back(p); }
+
 		static bool OKToRemove(shared_ptr<Actor> me) {
 			return me->getDefaultRole()->OKToRemoveNormalPointer(me->getDefaultRole());
 		}
-		void removeExpiredItems(forward_list<shared_ptr<Actor>>&v) {
+		void removeExpiredItems(list<shared_ptr<Actor>>&v) {
 			v.remove_if(OKToRemove);
 		}
 		void removeExpiredItems(forward_list<shared_ptr<Camera>>&v) {
@@ -95,10 +110,9 @@ namespace Software2552 {
 			v.remove_if(objectLifeTimeManager::OKToRemove);
 		}
 		//bugbug maybe just animatables is needed, a a typeof or such can be used
-		forward_list<shared_ptr<Actor>> animatables;
+		list<shared_ptr<Actor>> animatables;
 		forward_list<shared_ptr<Camera>> cameras;
 		forward_list<shared_ptr<Light>> lights;
-		shared_ptr<Colors> colors = nullptr;
 		shared_ptr<Material> material = nullptr;//bugbug need to learn this but I expect it pairs with Light, just make a vector<pair<>>
 
 		Director director;

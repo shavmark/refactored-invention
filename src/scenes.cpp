@@ -58,23 +58,32 @@ namespace Software2552 {
 		return nullptr;
 	}
 	// set background object at location 0 every time
-	void Stage::CreateReadAndaddBackgroundItems(const Json::Value &data) {
-		createTimeLineItems<BackgroundItem>(settings, getAnimatables(), data, "backgrounds", this);
+	shared_ptr<Background> Stage::CreateReadAndaddBackgroundItems(const Json::Value &data) {
+		shared_ptr<Background> b = std::make_shared<Background>();
+		if (b != nullptr) {
+			b->setSettings(this); // inherit settings
+			if (b->readFromScript(data, this)) {
+				// only save if data was read in 
+				animatables.push_front(b);
+			}
+		}
+		return b;
 	}
 
 	bool Stage::create(const Json::Value &data) { 
 
-		// store in the order they will be displayed, every objec must be found here
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
 
-		//for (Json::ArrayIndex i = 0; i < data["scenes"].size(); ++i) {
-		string datastring = "test";
-			if (!data["backgrounds"].empty()) {
-				CreateReadAndaddBackgroundItems(data);
-			}
-			else if (datastring == "audio") {
-				CreateReadAndaddAnimatable<Audio>(data[datastring]);
-			}
-			else if (datastring == "videoSphere") {
+		// order drawn will be random, neeed a z order maybe
+		// data must Cap first char of key words
+#define SETANIMATION(name)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<name>(data[STRINGIFY(name)])
+
+		for (Json::ArrayIndex i = 0; i < data["drawingObjects"].size(); ++i) {
+			string datastring = data["drawingObjects"][i].asString();
+			SETANIMATION(Audio);
+			if (datastring == "videoSphere") {
 				CreateReadAndaddAnimatable<VideoSphere>(data[datastring]);
 			}
 			else if (datastring == "picture") {
@@ -113,11 +122,21 @@ namespace Software2552 {
 			else if (datastring == "grabber") {
 				CreateReadAndaddAnimatable<CameraGrabber>(data[datastring], "Logitech HD Pro Webcam C920");
 			}
-			else if (datastring == "camera") {
-				CreateReadAndaddCamera(data[datastring]);
-				//bugbug need to ready the fixed/moving from data CreateReadAndaddCamera(data["cam2"], true);
+		}
+		for (Json::ArrayIndex i = 0; i < data["cameraObjects"].size(); ++i) {
+			string datastring = data["cameraObjects"][i].asString();
+			//bugbug maybe create things like CameraLeft, Middle, front etc
+			if (datastring == "cameraMoving") {
+				CreateReadAndaddCamera(data[datastring], true);
 			}
-			else if (datastring == "pointLight") {
+			else if (datastring == "cameraFixed") {
+				CreateReadAndaddCamera(data[datastring]);
+			}
+		}
+			for (Json::ArrayIndex i = 0; i < data["lightingObjects"].size(); ++i) {
+			string datastring = data["lightingObjects"][i].asString();
+
+			if (datastring == "pointLight") {
 				CreateReadAndaddLight<PointLight>(data[datastring]);
 			}
 			else if (datastring == "directionalLight") {
@@ -129,7 +148,7 @@ namespace Software2552 {
 			else if (datastring == "light") {
 				CreateReadAndaddLight<Light>(data[datastring]);
 			}
-		//}
+		}
 
 		return myCreate(data); 
 	};
@@ -190,9 +209,6 @@ namespace Software2552 {
 	void Stage::update() {
 		for (auto& a : animatables) {
 			a->getDefaultRole()->updateForDrawing();
-		}
-		if (colors != nullptr) {
-			colors->update();
 		}
 		myUpdate();// dervived class update
 
@@ -305,16 +321,6 @@ namespace Software2552 {
 		//ofEnableAlphaBlending();
 	}
 	bool GenericScene::myCreate(const Json::Value &data) {
-		READSTRING(keyname, data);
-		settings.readFromScript(data);
-		// read needed common types
-		// set the bool drawIn3dFixed = false; 	bool drawIn3dMoving = false;		bool drawIn2d = true; as needed
-		createTimeLineItems<Video>(settings, getAnimatables(), data, "videos", this);
-		createTimeLineItems<Audio>(settings, getAnimatables(), data, "audios", this);
-		createTimeLineItems<Paragraph>(settings, getAnimatables(), data, "paragraphs", this);
-		createTimeLineItems<Picture>(settings, getAnimatables(), data, "images", this);
-		createTimeLineItems<Text>(settings, getAnimatables(), data, "texts", this);
-		createTimeLineItems<Sphere>(settings, getAnimatables(), data, "spheres", this);
 		return true;
 	}
 	//great animation example
@@ -349,27 +355,16 @@ namespace Software2552 {
 			p->setSettings(pSettings);
 		}
 		else {
-			p->setSettings(settings);
+			p->setSettings(this);
 		}
-		p->readFromScript(data, this);
+		if (p->readFromScript(data, this)) {
+			appendToAnimatable(p);
+		}
+
 		return p;
 	}
 	// return new location
 
-	template<typename T> shared_ptr<T> Stage::CreateReadAndaddAnimatable(const Json::Value &data, Settings*pSettings) {
-		shared_ptr<T> p = std::make_shared<T>();
-		if (p == nullptr) {
-			return nullptr;
-		}
-		if (pSettings) {
-			p->setSettings(*pSettings);
-		}
-		else {
-			p->setSettings(settings);
-		}
-		p->readFromScript(data, this);
-		return p;
-	}
 	shared_ptr<Camera> Stage::CreateReadAndaddCamera(const Json::Value &data, bool rotate) {
 		shared_ptr<Camera> p = std::make_shared<Camera>();
 		if (p == nullptr) {
