@@ -75,6 +75,12 @@ namespace Software2552 {
 		if (!data["background"].empty()) {
 			CreateReadAndaddBackgroundItems(data["background"]);
 		}
+#define SETANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
+		SETANIMATION(ball, Ball);
+		SETANIMATION(video, Video);
+		//if (!data["video"].empty()) {
+			//CreateReadAndaddAnimatable<Video>(data["video"]);
+	//	}
 		return true;
 		
 		// data must Cap first char of key words

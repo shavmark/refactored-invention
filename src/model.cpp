@@ -662,6 +662,7 @@ namespace Software2552 {
 		if (type == none) {
 			return;
 		}
+		// set by default since this is set first other usage of fore color will override
 		ofColor c = ofColor::fromHex(getColorAnimation()->getColorSet()->getHex(ColorSet::ColorType::Fore), getColorAnimation()->getAlpha());
 		ofSetColor(c);
 	}

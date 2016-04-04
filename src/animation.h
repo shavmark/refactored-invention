@@ -48,7 +48,7 @@ namespace Software2552 {
 		bool isAnimationEnabled() { return animationEnabled; }
 		void setAnimationEnabled(bool b= true) { animationEnabled=b; }
 	private:
-		bool animationEnabled = true;
+		bool animationEnabled = false;
 	};
 	// basic drawing info, bugbug maybe color set goes here too, not sure yet
 	class AnimiatedColor;
