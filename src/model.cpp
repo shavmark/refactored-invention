@@ -252,7 +252,7 @@ namespace Software2552 {
 		Settings::readFromScript(data["settings"]);
 
 		shared_ptr<Colors> c = getColor();
-		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>(c);
+		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>((c) ? c->getCurrentColor():nullptr);
 		ac->readFromScript(data["coloranimation"]);
 		player->setColorAnimation(ac);
 
@@ -431,7 +431,7 @@ namespace Software2552 {
 
 		getPlayer().setFont(getFontPointer());
 		
-		getPlayer().setColor(getRole<Role>()->getColorAnimation()->getColorManager()->getFontColor());
+		getPlayer().setColor(getRole<Role>()->getColorAnimation()->getColor()->getFontColor());
 
 		return true;
 	}
@@ -460,8 +460,6 @@ namespace Software2552 {
 		ofPoint p;
 		p.x = ofGetWidth() / 2;
 		animateTo(p);
-		return true;
-
 		return true;
 	}
 	bool Audio::myReadFromScript(const Json::Value &data) {
@@ -565,7 +563,7 @@ namespace Software2552 {
 
 	void Text::Role::drawText(const string &s, int x, int y) {
 		ofPushStyle();
-		ofSetColor(getColorAnimation()->getColorManager()->getFontColor());
+		ofSetColor(getColorAnimation()->getColor()->getFontColor());
 		Font font;
 		font.get().drawString(s, x, y);
 		ofPopStyle();
@@ -650,18 +648,18 @@ namespace Software2552 {
 			return;
 		}
 		if (gradient) {
-			ofBackgroundGradient(getColorAnimation()->getColorManager()->getForeground(),
-				getColorAnimation()->getColorManager()->getBackground(), mode);
+			ofBackgroundGradient(getColorAnimation()->getColor()->getForeground(),
+				getColorAnimation()->getColor()->getBackground(), mode);
 		}
 		else {
-			ofSetBackgroundColor(getColorAnimation()->getColorManager()->getBackground());
+			ofSetBackgroundColor(getColorAnimation()->getColor()->getBackground());
 		}
 	}
 
 	// colors and background change over time but not at the same time
 	void Background::Role::myUpdate() {
 		if (type == ColorChanging && getAnimationHelper()->refreshAnimation()) {
-			getColorAnimation()->getColorManager()->getNextColors(getColorAnimation()->getColorManager()->getCurrentColor()->getGroup());
+			ColorList::getNextColors(getColorAnimation()->getColor()->getGroup());
 			if (gradient) {
 				//bugbug test out refreshAnimation
 				switch ((int)ofRandom(0, 3)) {

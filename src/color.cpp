@@ -231,22 +231,22 @@ namespace Software2552 {
 	}
 
 	// always return a valid pointer
-	shared_ptr<Colors> AnimiatedColor::getColorManager() {
-		if (colorManager == nullptr) {
-			colorManager = ColorList::getDefaultColor(); // use the default if needed
-			logTrace("using default color");
+	shared_ptr<ColorSet> AnimiatedColor::getColor() {
+		if (color == nullptr) {
+			color = ColorList::getDefaultColor(); // use the default if needed
+			logTrace("using default colorset");
 		}
-		return colorManager;
+		return color;
 	}
-	AnimiatedColor::AnimiatedColor(shared_ptr<Colors>colorIn) :ofxAnimatableOfColor() {
-		colorManager = colorIn;
+	AnimiatedColor::AnimiatedColor(shared_ptr<ColorSet>colorIn) :ofxAnimatableOfColor() {
+		color = colorIn;
 	}
 	void AnimiatedColor::draw() {
 		if (usingAnimation) {
 			applyCurrentColor();
 		}
 		else {
-			ofSetColor(getColorManager()->getForeground());//background set by background manager
+			ofSetColor(getColor()->getHex(ColorSet::ColorType::Fore));//background set by background manager
 		}
 	}
 	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
@@ -256,8 +256,8 @@ namespace Software2552 {
 		}
 
 		// set defaults or read from data bugbug add more data reads as needed
-		setColor(ofColor(getColorManager()->getLightest()));
-		animateTo(ofColor(getColorManager()->getDarkest()));
+		setColor(ofColor(getColor()->getHex(ColorSet::ColorType::Lightest)));
+		animateTo(ofColor(getColor()->getHex(ColorSet::ColorType::Darkest)));
 		setDuration(0.5f);
 		setRepeatType(LOOP_BACK_AND_FORTH);
 		setCurve(LINEAR);

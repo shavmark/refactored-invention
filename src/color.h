@@ -26,6 +26,25 @@ namespace Software2552 {
 		// something like fore/back/text/other[n], not sure, or maybe we
 		// just use multiple ColorSets, find out more as we continue on
 		ColorSet(const ColorGroup groupIn, int fore, int back, int text, int other, int lightest, int darkest);
+		int getForeground() {
+			return getHex(ColorSet::ColorType::Fore);
+		}
+		int getBackground() {
+			return getHex(ColorSet::ColorType::Back);
+		}
+		int getFontColor() {
+			return getHex(ColorSet::ColorType::Text);
+		}
+		int getLightest() {
+			return getHex(ColorSet::ColorType::Lightest);
+		}
+		int getDarkest() {
+			return getHex(ColorSet::ColorType::Darkest);
+		}
+		int getOther() {
+			return getHex(ColorSet::ColorType::Other);
+		}
+
 		static ColorGroup convertStringToGroup(const string&name);
 		ColorGroup getGroup() const {return group;}
 		int getHex(int index) const  {return colors[index];	}
@@ -53,17 +72,17 @@ namespace Software2552 {
 		void setup();
 		class colordata {
 		public:
-			forward_list<shared_ptr<ColorSet>> colorlist;
-			shared_ptr<ColorSet> currentColor = nullptr;
-			shared_ptr<ColorSet> defaultColorSet = nullptr;
+			forward_list<shared_ptr<ColorSet>> colorlist; // global list of colors
+			shared_ptr<ColorSet> currentColor = nullptr;  // color set in use
+			shared_ptr<ColorSet> defaultColorSet = nullptr;// a handy default color set
 		};
 
 		// call getNext at start up and when ever colors should change
 		// do not break colors up or things will not match
 		// get next color based on type and usage count
 		// example: type==cool gets the next cool type, type=Random gets any next color
-		shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group);
-		shared_ptr<ColorSet> getCurrentColor();
+		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group);
+		static shared_ptr<ColorSet> getCurrentColor();
 
 	protected:
 		template<typename T> void removeExpiredItems(forward_list<shared_ptr<T>>&v) {
@@ -74,7 +93,7 @@ namespace Software2552 {
 
 	private:
 		static shared_ptr<colordata> privateData;// never call directly to assure allocation
-		void setCurrentColor(shared_ptr<ColorSet>c) { privateData->currentColor = c; }
+		static void setCurrentColor(shared_ptr<ColorSet>c) { privateData->currentColor = c; }
 	};
 
 
@@ -84,24 +103,6 @@ namespace Software2552 {
 
 		// hue helpers, example getHue(getBackground()) bugbug maybe cache some data if needed
 		// more like painting
-		int getForeground() {
-			return getCurrentColor()->getHex(ColorSet::ColorType::Fore);
-		}
-		int getBackground() {
-			return getCurrentColor()->getHex(ColorSet::ColorType::Back);
-		}
-		int getFontColor() {
-			return getCurrentColor()->getHex(ColorSet::ColorType::Text);
-		}
-		int getLightest() {
-			return getCurrentColor()->getHex(ColorSet::ColorType::Lightest);
-		}
-		int getDarkest() {
-			return getCurrentColor()->getHex(ColorSet::ColorType::Darkest);
-		}
-		int getOther() {
-			return getCurrentColor()->getHex(ColorSet::ColorType::Other);
-		}
 		bool readFromScript(const Json::Value &data);
 
 	};
@@ -109,16 +110,16 @@ namespace Software2552 {
 	class AnimiatedColor : public ofxAnimatableOfColor {
 	public:
 		AnimiatedColor() :ofxAnimatableOfColor() { }
-		AnimiatedColor(shared_ptr<Colors> colors);
+		AnimiatedColor(shared_ptr<ColorSet> color);
 		// animates colors
 		void draw();
 		bool paused() { return paused_; }
 		bool readFromScript(const Json::Value &data);
-		shared_ptr<Colors> getColorManager();
-		void SetColorManager(shared_ptr<Colors>p) { colorManager = p; }
+		shared_ptr<ColorSet> getColor();
+		void SetColorManager(shared_ptr<ColorSet>p) { color = p; }
 		bool usingAnimation = false; // force  to set this to make sure its understood
 	private:
-		shared_ptr<Colors> colorManager = nullptr; // color manager (required)
+		shared_ptr<ColorSet> color = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
 	};
 
 	
