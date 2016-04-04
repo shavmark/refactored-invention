@@ -67,22 +67,22 @@ namespace Software2552 {
 
 		//color naming modeled after http://www.creativecolorschemes.com/products/ccs1/rgbColorGuide.shtml
 
-		static shared_ptr<ColorSet> getDefaultColor() { return (privateData) ? privateData->defaultColorSet : nullptr; }
 		void update();
 		void setup();
 		class colordata {
 		public:
 			forward_list<shared_ptr<ColorSet>> colorlist; // global list of colors
 			shared_ptr<ColorSet> currentColor = nullptr;  // color set in use
-			shared_ptr<ColorSet> defaultColorSet = nullptr;// a handy default color set
 		};
 
 		// call getNext at start up and when ever colors should change
 		// do not break colors up or things will not match
 		// get next color based on type and usage count
 		// example: type==cool gets the next cool type, type=Random gets any next color
-		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group);
+		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group, bool global);
 		static shared_ptr<ColorSet> getCurrentColor();
+
+		bool readFromScript(const Json::Value &data);
 
 	protected:
 		template<typename T> void removeExpiredItems(forward_list<shared_ptr<T>>&v) {
@@ -96,29 +96,25 @@ namespace Software2552 {
 		static void setCurrentColor(shared_ptr<ColorSet>c) { privateData->currentColor = c; }
 	};
 
-
-	// color helpers
-	class Colors : public ColorList {
-	public:
-
-		// hue helpers, example getHue(getBackground()) bugbug maybe cache some data if needed
-		// more like painting
-		bool readFromScript(const Json::Value &data);
-
-	};
-
 	class AnimiatedColor : public ofxAnimatableOfColor {
 	public:
 		AnimiatedColor() :ofxAnimatableOfColor() { }
 		AnimiatedColor(shared_ptr<ColorSet> color);
 		// animates colors
 		void draw();
+		void update();
 		bool paused() { return paused_; }
 		bool readFromScript(const Json::Value &data);
-		shared_ptr<ColorSet> getColor();
-		void SetColorManager(shared_ptr<ColorSet>p) { color = p; }
-		bool usingAnimation = false; // force  to set this to make sure its understood
+		shared_ptr<ColorSet> getColorSet();
+		float getAlpha() { return alpha; }//bugbug flush this out, read it in, set it etc
+		void setAlpha(float a) { alpha = a; }
+		void getNextColors();
+		void setColorSet(shared_ptr<ColorSet>p) { color = p; }
+		bool useAnimation() { return usingAnimation; }
+
 	private:
+		bool usingAnimation = false; // force  to set this to make sure its understood
+		float alpha = 255;
 		shared_ptr<ColorSet> color = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
 	};
 

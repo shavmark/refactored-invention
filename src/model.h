@@ -87,10 +87,10 @@ namespace Software2552 {
 		
 	protected:
 		
-		shared_ptr<Colors> getColor();// drawing using animatedcolor
+		shared_ptr<ColorSet> getColor();// drawing using animatedcolor
 		Font   font;
 		//		colors = std::make_shared<Colors>(ColorSet::ColorGroup::Extreme);// setup colors bugbug get from json
-		shared_ptr<Colors>  colors=nullptr;
+		shared_ptr<ColorSet>  colors=nullptr;
 		string notes;// unstructured string of info, can be shown to the user
 		string title; // title object
 		string name; // any object can have a name, note, date, reference, duration
@@ -479,7 +479,6 @@ namespace Software2552 {
 		class Role : public ActorRole {
 		public:
 			Role() : ActorRole() {  }
-			Role(const string& path) : ActorRole(path) { }
 
 			void myUpdate();
 			void mySetup();
@@ -490,7 +489,6 @@ namespace Software2552 {
 		};
 
 		Picture() :Actor(new Role()) {  }
-		Picture(const string&s) :Actor(new Role(s)) {  }
 		ofImage& getPlayer() { return getRole<Role>()->player; }
 	private:
 		bool myReadFromScript(const Json::Value &data);
@@ -499,16 +497,21 @@ namespace Software2552 {
 	class Background : public Actor {
 	public:
 		enum TypeOfBackground { ColorFixed, ColorChanging,  none };
+		enum TypeOfGradient {
+			linear = ofGradientMode::OF_GRADIENT_LINEAR,
+			circular = ofGradientMode::OF_GRADIENT_CIRCULAR,
+			bar = ofGradientMode::OF_GRADIENT_BAR,
+			flat, noGradient	};
 		class Role : public ActorRole {
 		public:
 			Role() {}
 			void myDraw();
 			void myUpdate();// make image a vector then rotate via animation
 			void setType(TypeOfBackground typeIn = ColorFixed) { type = typeIn; }
-			void setGradientMode(const ofGradientMode& modeIn) { mode = modeIn; }
-			bool gradient = false;
+			void setGradientMode(const TypeOfGradient& modeIn) { mode = modeIn; }
+			ofGradientMode ofMode;
 		private:
-			ofGradientMode mode = OF_GRADIENT_LINEAR;
+			TypeOfGradient mode = TypeOfGradient::noGradient;
 			TypeOfBackground type = ColorFixed;
 		};
 		Background() :Actor(new Role()) {  }

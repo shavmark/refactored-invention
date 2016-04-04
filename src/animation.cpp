@@ -70,7 +70,13 @@ namespace Software2552 {
 		}
 		return false;
 	}
-
+	
+	void PointAnimation::update() {
+		if (isAnimationEnabled()) {
+			float dt = 1.0f / 60.0f;
+			ofxAnimatableOfPoint::update(dt);
+		}
+	}
 	shared_ptr<PointAnimation> ActorRole::getAnimationHelper() {
 		// allocate on demand, then objects not in need of animation will be smaller
 		if (ani == nullptr) {
@@ -79,18 +85,18 @@ namespace Software2552 {
 		return ani;
 	}
 	void ActorRole::updateForDrawing() {
-		float dt = 1.0f / 60.0f;//bugbug does this time to frame count? I think so
+		
 		if (getColorAnimation() != nullptr) {
-			getColorAnimation()->update(dt);
+			getColorAnimation()->update();
 		}
-		if (getAnimationHelper()->isAnimationEnabled()) {
-			getAnimationHelper()->update(dt);
+		if (getAnimationHelper()) {
+			getAnimationHelper()->update();
 		}
 		myUpdate(); // call derived classes
 	};
 	void ActorRole::applyColor() {
 		if (getColorAnimation()) {
-			getColorAnimation()->applyCurrentColor();
+			getColorAnimation()->draw();
 		}
 	}
 	string &ActorRole::getLocationPath() { 

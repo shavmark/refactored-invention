@@ -251,9 +251,8 @@ namespace Software2552 {
 		// any actor can have settings set, or defaults used
 		Settings::readFromScript(data["settings"]);
 
-		shared_ptr<Colors> c = getColor();
-		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>((c) ? c->getCurrentColor():nullptr);
-		ac->readFromScript(data["coloranimation"]);
+		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>(getColor());
+		ac->readFromScript(data["colorAnimation"]);
 		player->setColorAnimation(ac);
 
 		// any actor can have a reference
@@ -326,7 +325,7 @@ namespace Software2552 {
 		return true;
 	}
 	// settings stores the color manager
-	shared_ptr<Colors> Settings::getColor() {
+	shared_ptr<ColorSet> Settings::getColor() {
 		return colors; // may be null
 	}
 
@@ -341,10 +340,8 @@ namespace Software2552 {
 			string colorGroupName;
 			READSTRING(colorGroupName, data);
 			if (colorGroupName.size() > 0) {
-				colors = std::make_shared<Colors>();
-				if (colors) {
-					colors->getNextColors(ColorSet::convertStringToGroup(colorGroupName));
-				}
+				// make this the current color
+				colors = ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroupName), false);
 			}
 			
 		}
@@ -431,7 +428,7 @@ namespace Software2552 {
 
 		getPlayer().setFont(getFontPointer());
 		
-		getPlayer().setColor(getRole<Role>()->getColorAnimation()->getColor()->getFontColor());
+		getPlayer().setColor(getRole<Role>()->getColorAnimation()->getColorSet()->getFontColor());
 
 		return true;
 	}
@@ -457,6 +454,7 @@ namespace Software2552 {
 		getDefaultRole()->getAnimationHelper()->setCurve(OBJECT_DROP);
 		getDefaultRole()->getAnimationHelper()->setRepeatType(LOOP_BACK_AND_FORTH);
 		getDefaultRole()->getAnimationHelper()->setDuration(0.55);
+		getDefaultRole()->setupForDrawing();
 		ofPoint p;
 		p.x = ofGetWidth() / 2;
 		animateTo(p);
@@ -563,7 +561,7 @@ namespace Software2552 {
 
 	void Text::Role::drawText(const string &s, int x, int y) {
 		ofPushStyle();
-		ofSetColor(getColorAnimation()->getColor()->getFontColor());
+		ofSetColor(getColorAnimation()->getColorSet()->getFontColor());
 		Font font;
 		font.get().drawString(s, x, y);
 		ofPopStyle();
@@ -611,19 +609,24 @@ namespace Software2552 {
 			getRole<Role>()->setType(ColorChanging);
 		}
 		type = "";
-		getRole<Role>()->gradient = true;
 		readStringFromJson(type, data["gradient"]);
 		if (type == "linear") {
-			getRole<Role>()->setGradientMode(OF_GRADIENT_LINEAR); //OF_GRADIENT_BAR  OF_GRADIENT_CIRCULAR
+			getRole<Role>()->ofMode = OF_GRADIENT_LINEAR;
+			getRole<Role>()->setGradientMode(linear);
 		}
 		else if (type == "bar") {
-			getRole<Role>()->setGradientMode(OF_GRADIENT_BAR); //OF_GRADIENT_BAR  OF_GRADIENT_CIRCULAR
+			getRole<Role>()->ofMode = OF_GRADIENT_BAR;
+			getRole<Role>()->setGradientMode(bar);
 		}
 		else if (type == "circular") {
-			getRole<Role>()->setGradientMode(OF_GRADIENT_CIRCULAR); //OF_GRADIENT_BAR  OF_GRADIENT_CIRCULAR
+			getRole<Role>()->ofMode = OF_GRADIENT_CIRCULAR;
+			getRole<Role>()->setGradientMode(circular);
+		}
+		else if (type == "flat") {
+			getRole<Role>()->setGradientMode(flat);
 		}
 		else {
-			getRole<Role>()->gradient = false;
+			getRole<Role>()->setGradientMode(noGradient);
 		}
 		
 		getRole<Role>()->getAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
@@ -644,33 +647,35 @@ namespace Software2552 {
 		return true;
 	}
 	void Background::Role::myDraw() {
+		if (mode == flat) {
+			// just a plane background
+			ofBackgroundHex(getColorAnimation()->getColorSet()->getBackground(), getColorAnimation()->getAlpha());
+		}
+		else if (mode != noGradient) {
+			ofBackgroundGradient(getColorAnimation()->getColorSet()->getForeground(),getColorAnimation()->getColorSet()->getBackground(), ofMode);
+		}
 		if (type == none) {
 			return;
 		}
-		if (gradient) {
-			ofBackgroundGradient(getColorAnimation()->getColor()->getForeground(),
-				getColorAnimation()->getColor()->getBackground(), mode);
-		}
-		else {
-			ofSetBackgroundColor(getColorAnimation()->getColor()->getBackground());
-		}
+		ofColor c = ofColor::fromHex(getColorAnimation()->getColorSet()->getHex(ColorSet::ColorType::Fore), getColorAnimation()->getAlpha());
+		ofSetColor(c);
 	}
 
 	// colors and background change over time but not at the same time
 	void Background::Role::myUpdate() {
 		if (type == ColorChanging && getAnimationHelper()->refreshAnimation()) {
-			ColorList::getNextColors(getColorAnimation()->getColor()->getGroup());
-			if (gradient) {
+			getColorAnimation()->getNextColors();
+			if (mode != noGradient) {
 				//bugbug test out refreshAnimation
 				switch ((int)ofRandom(0, 3)) {
 				case 0:
-					mode = OF_GRADIENT_LINEAR;
+					ofMode = OF_GRADIENT_LINEAR;
 					break;
 				case 1:
-					mode = OF_GRADIENT_CIRCULAR;
+					ofMode = OF_GRADIENT_CIRCULAR;
 					break;
 				case 2:
-					mode = OF_GRADIENT_BAR;
+					ofMode = OF_GRADIENT_BAR;
 					break;
 				}
 			}
@@ -886,6 +891,7 @@ namespace Software2552 {
 		getDefaultRole()->getAnimationHelper()->setCurve(OBJECT_DROP);
 		getDefaultRole()->getAnimationHelper()->setRepeatType(LOOP_BACK_AND_FORTH);
 		getDefaultRole()->getAnimationHelper()->setDuration(0.55);
+		getDefaultRole()->setupForDrawing();
 		ofPoint p;
 		p.x = ofGetWidth() / 2;
 		animateTo(p);

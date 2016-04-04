@@ -31,7 +31,7 @@ namespace Software2552 {
 	void Timeline::setup() {
 		//ofSeedRandom(); // turn of to debug if needed
 		ofSetFrameRate(frameRate);
-
+		ColorList list;// install color list, its static global data
 		return;
 
 		mesh.setup();

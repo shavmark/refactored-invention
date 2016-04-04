@@ -71,7 +71,7 @@ namespace Software2552 {
 	}
 
 	bool Stage::readFromScript(const Json::Value &data) {
-		Settings::readFromScript(data);
+		Settings::readFromScript(data["settings"]);
 		if (!data["background"].empty()) {
 			CreateReadAndaddBackgroundItems(data["background"]);
 		}

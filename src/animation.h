@@ -42,6 +42,7 @@ namespace Software2552 {
 	};
 	class PointAnimation : public ofxAnimatableOfPoint, public objectLifeTimeManager {
 	public:
+		void update();
 		void startAnimationAfterDelay(float delay) { ofxAnimatableOfPoint::startAnimationAfterDelay(delay); }
 		bool paused() {	return paused_;	}
 		bool isAnimationEnabled() { return animationEnabled; }

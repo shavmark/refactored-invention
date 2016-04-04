@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 namespace Software2552 {
-	shared_ptr<Colors::colordata> Colors::privateData=nullptr; // declare static data
+	shared_ptr<ColorList::colordata> ColorList::privateData=nullptr; // declare static data
 
 	ColorSet::ColorSet(const ColorGroup groupIn, int fore, int back, int text, int other, int lightest, int darkest) : objectLifeTimeManager() {
 		group = groupIn;
@@ -22,11 +22,11 @@ namespace Software2552 {
 		}
 		va_end(args);
 	}
-	bool Colors::readFromScript(const Json::Value &data) {
+	bool ColorList::readFromScript(const Json::Value &data) {
 		string colorGroupName;
 		READSTRING(colorGroupName, data);
 		if (colorGroupName.size() > 0) {
-			getNextColors(ColorSet::convertStringToGroup(colorGroupName));
+			getNextColors(ColorSet::convertStringToGroup(colorGroupName), false);
 		}
 		return true;
 	}
@@ -40,7 +40,7 @@ namespace Software2552 {
 
 		//bugbug call this at the right time
 		if (getCurrentColor() && ofRandom(0,100) > 80) {
-			getNextColors(getCurrentColor()->getGroup());
+			getNextColors(getCurrentColor()->getGroup(), true); // updates global list
 		}
 	}
 	// return current color, track its usage count
@@ -54,14 +54,16 @@ namespace Software2552 {
 		}
 		return nullptr;
 	}
-
-	// get next color based on type and usage count
+	// get next color based on type and usage count, this will set the color globally
 	// example: type==cool gets the next cool type, type=Random gets any next color
-	shared_ptr<ColorSet> ColorList::getNextColors(ColorSet::ColorGroup group) {
+	shared_ptr<ColorSet> ColorList::getNextColors(ColorSet::ColorGroup group, bool global) {
+		shared_ptr<ColorSet> ret = nullptr;
 		if (getCurrentColor() != nullptr) {
 			if (getCurrentColor()->getGroup() != group) {
 				// new group, delete current group
-				setCurrentColor(nullptr);
+				if (global) {
+					setCurrentColor(nullptr);
+				}
 			}
 		}
 		// find a match
@@ -69,12 +71,15 @@ namespace Software2552 {
 			if ((*it)->getGroup() == group) {
 				if (getCurrentColor() == nullptr || getCurrentColor()->getUsage() >= (*it)->getUsage()) {
 					// first time in or a color as less usage than current color
-					setCurrentColor(*it);
+					if (global) {
+						setCurrentColor(*it);
+					}
+					ret = *it;
 					break;
 				}
 			}
 		}
-		return getCurrentColor(); // maybe the current color is the best one after all
+		return ret;
 	}
 	shared_ptr<ColorSet> ColorList::add(const ColorSet::ColorGroup group, int fore, int back, int text, int other, int lightest, int darkest) {
 		// colors stored as hex
@@ -125,7 +130,7 @@ namespace Software2552 {
 
 	//http://www.creativecolorschemes.com/resources/free-color-schemes/art-deco-color-scheme.shtml
 	void ColorList::setup() {
-
+		//bugbug phase II read from json
 		// only needs to be setup one time since its static data
 		if (privateData->colorlist.empty()) {
 			std::unordered_map<char, int> modern =
@@ -146,7 +151,7 @@ namespace Software2552 {
 			{ 'I',  0xDBCA69 },{ 'J',  0x404F24 },{ 'K',  0x668D3C },{ 'L',  0xBDD09F },{ 'M',  0x4E6172 },{ 'N',  0x83929F },{ 'O',  0xA3ADB8} };
 
 			//A C B D A C see the color doc to fill these in. use the 4 colors then pick the lightest and darkest 
-			privateData->defaultColorSet = add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
+			add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
 			
 			/* bugbug load all these once color is working etc
 			add(ColorSet::Modern, E, D, ofColor::black.getHex(), ofColor::white.getHex());
@@ -205,6 +210,7 @@ namespace Software2552 {
 			add(ColorSet::RedBlue, ofColor::red, ofColor::lightCoral, ofColor::blue, ofColor::indianRed);
 			add(ColorSet::Default, ofColor::red, ofColor::blue, ofColor::white, ofColor::green);
 			*/
+			getNextColors(ColorSet::Modern, true);// make sure there is a current color
 		}
 
 #if 0
@@ -231,9 +237,9 @@ namespace Software2552 {
 	}
 
 	// always return a valid pointer
-	shared_ptr<ColorSet> AnimiatedColor::getColor() {
+	shared_ptr<ColorSet> AnimiatedColor::getColorSet() {
 		if (color == nullptr) {
-			color = ColorList::getDefaultColor(); // use the default if needed
+			color = ColorList::getCurrentColor(); // use the global color
 			logTrace("using default colorset");
 		}
 		return color;
@@ -241,23 +247,39 @@ namespace Software2552 {
 	AnimiatedColor::AnimiatedColor(shared_ptr<ColorSet>colorIn) :ofxAnimatableOfColor() {
 		color = colorIn;
 	}
+	void AnimiatedColor::getNextColors() {
+		setColorSet(ColorList::getNextColors(getColorSet()->getGroup(), false));
+	}
+	void AnimiatedColor::update() {
+		float dt = 1.0f / 60.0f;//bugbug does this time to frame count? I think so
+		ofxAnimatableOfColor::update(dt);
+		if (getColorSet()) {//bugbug can we advance color if desired here? 
+		}
+	}
 	void AnimiatedColor::draw() {
-		if (usingAnimation) {
+		if (useAnimation()) {
 			applyCurrentColor();
 		}
 		else {
-			ofSetColor(getColor()->getHex(ColorSet::ColorType::Fore));//background set by background manager
+			ofColor c = ofColor::fromHex(getColorSet()->getHex(ColorSet::ColorType::Fore), getAlpha());
+			ofSetColor(c);//background set by background manager
 		}
 	}
 	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
 	bool AnimiatedColor::readFromScript(const Json::Value &data) {
 		if (!data.empty()) {
 			READBOOL(usingAnimation, data);
+			READFLOAT(alpha, data);
+			string colorGroupName;
+			READSTRING(colorGroupName, data);
+			if (colorGroupName.size()> 0) {
+				setColorSet(ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroupName), false));
+			}
 		}
 
 		// set defaults or read from data bugbug add more data reads as needed
-		setColor(ofColor(getColor()->getHex(ColorSet::ColorType::Lightest)));
-		animateTo(ofColor(getColor()->getHex(ColorSet::ColorType::Darkest)));
+		setColor(ofColor(getColorSet()->getLightest()));
+		animateTo(ofColor(getColorSet()->getDarkest()));
 		setDuration(0.5f);
 		setRepeatType(LOOP_BACK_AND_FORTH);
 		setCurve(LINEAR);
