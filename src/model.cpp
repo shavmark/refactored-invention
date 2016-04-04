@@ -231,13 +231,13 @@ namespace Software2552 {
 	}
 	bool Ball::myReadFromScript(const Json::Value &data) {
 		// can read any of these items from json here
-		setAnimationPositionY(getRole<Role>()->floorLine - 100);
+		setAnimationPositionY(role()->floorLine - 100);
 		getDefaultRole()->getAnimationHelper()->setCurve(EASE_IN);
 		getDefaultRole()->getAnimationHelper()->setRepeatType(LOOP_BACK_AND_FORTH);
 		getDefaultRole()->getAnimationHelper()->setDuration(0.55);
-		readJsonValue(getRole<Role>()->radius, data["radius"]);
+		readJsonValue(role()->radius, data["radius"]);
 		ofPoint p;
-		p.y = getRole<Role>()->floorLine;
+		p.y = role()->floorLine;
 		animateTo(p);
 		return true;
 	}
@@ -393,7 +393,7 @@ namespace Software2552 {
 	}
 	
 	bool Text::myReadFromScript(const Json::Value &data) {
-		readStringFromJson(getRole<Role>()->getText(), data["text"]["str"]);
+		readStringFromJson(role()->getText(), data["text"]["str"]);
 		return true;
 	}
 
@@ -428,7 +428,7 @@ namespace Software2552 {
 
 		getPlayer().setFont(getFontPointer());
 		
-		getPlayer().setColor(getRole<Role>()->getColorAnimation()->getColorSet()->getFontColor());
+		getPlayer().setColor(role()->getColorAnimation()->getColorSet()->getFontColor());
 
 		return true;
 	}
@@ -582,7 +582,7 @@ namespace Software2552 {
 	bool Cube::myReadFromScript(const Json::Value &data) {
 		float size = 100;//default
 		READFLOAT(size, data);
-		getRole<Cube::Role>()->setWireframe(true);
+		role()->setWireframe(true);
 		getPlayer()->set(size);
 		getPlayer()->roll(20.0f);// just as an example
 		return true;
@@ -603,48 +603,53 @@ namespace Software2552 {
 		string type;
 		readStringFromJson(type, data["colortype"]);
 		if (type == "fixed") {
-			getRole<Role>()->setType(ColorFixed);
+			role()->setType(ColorFixed);
 		}
 		else {
-			getRole<Role>()->setType(ColorChanging);
+			role()->setType(ColorChanging);
 		}
 		type = "";
 		readStringFromJson(type, data["gradient"]);
 		if (type == "linear") {
-			getRole<Role>()->ofMode = OF_GRADIENT_LINEAR;
-			getRole<Role>()->setGradientMode(linear);
+			role()->ofMode = OF_GRADIENT_LINEAR;
+			role()->setGradientMode(linear);
 		}
 		else if (type == "bar") {
-			getRole<Role>()->ofMode = OF_GRADIENT_BAR;
-			getRole<Role>()->setGradientMode(bar);
+			role()->ofMode = OF_GRADIENT_BAR;
+			role()->setGradientMode(bar);
 		}
 		else if (type == "circular") {
-			getRole<Role>()->ofMode = OF_GRADIENT_CIRCULAR;
-			getRole<Role>()->setGradientMode(circular);
+			role()->ofMode = OF_GRADIENT_CIRCULAR;
+			role()->setGradientMode(circular);
 		}
 		else if (type == "flat") {
-			getRole<Role>()->setGradientMode(flat);
+			role()->setGradientMode(flat);
 		}
 		else {
-			getRole<Role>()->setGradientMode(noGradient);
+			role()->setGradientMode(noGradient);
 		}
 		
-		getRole<Role>()->getAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
+		role()->getAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
 
 		if (getStage() && !data["image"].empty()) {
 			shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data["image"]);
 			if (p) {
-				p->getRole<Picture::Role>()->fullsize = true;
+				p->role()->setFullSize();
 			}
 		}
 		
 		if (getStage() && !data["video"].empty()) {
 			shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data["video"]);
 			if (p) {
-				p->getRole<Video::Role>()->fullsize = true;
+				p->role()->setFullSize();
 			}
 		}
 		return true;
+	}
+	void Visual::setFullSize() {
+		fullsize = true;
+		getAnimationHelper()->setPosition(ofPoint());
+		getAnimationHelper()->setAnimationEnabled(false);
 	}
 	void Background::Role::myDraw() {
 		if (mode == flat) {
@@ -772,10 +777,7 @@ namespace Software2552 {
 
 	// add this one http://clab.concordia.ca/?page_id=944
 	void Video::Role::myDraw() {
-		if (fullsize) {
-			player.draw(0, 0, ofGetWidth(), ofGetHeight());
-		}
-		else if (w == 0 || h == 0) {
+		if (w == 0 || h == 0) {
 			player.draw(getAnimationHelper()->getCurrentPosition().x, getAnimationHelper()->getCurrentPosition().y);
 		}
 		else {
@@ -787,15 +789,23 @@ namespace Software2552 {
 			if (!player.load(getLocationPath())) {
 				logErrorString("setup video Player");
 			}
-			player.setPixelFormat(OF_PIXELS_NATIVE);
-
+			//player.setPixelFormat(OF_PIXELS_NATIVE);
 		}
 		player.play();
 
 	}
+	void Video::Role::myUpdate() {
+		if (fullsize) {
+			w = ofGetWidth();
+			h = ofGetHeight();
+		}
+		player.update();
+	}
+
 	void Picture::Role::myUpdate() {
 		if (fullsize) {
-			player.resize(ofGetWidth(), ofGetHeight());
+			w = ofGetWidth();
+			h = ofGetHeight();
 		}
 		player.update();
 	}
@@ -961,18 +971,18 @@ namespace Software2552 {
 			sphere.getPlayer().rotate(180, 0, 1, 0.0);
 			set = true;
 		}
-		video->getRole<TextureVideo::Role>()->mybind();
-		sphere.getRole<Sphere::Role>()->myDraw();
-		video->getRole<TextureVideo::Role>()->myunbind();
+		video->role()->mybind();
+		sphere.role()->myDraw();
+		video->role()->myunbind();
 	}
 	bool VideoSphere::myReadFromScript(const Json::Value &data) {
 
 		setType(ActorRole::draw3dFixedCamera);
 		if (getStage()) {
 			getStage()->fixed3d();
-			getRole<Role>()->video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
+			role()->video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
 		}
-		getSphere().getRole<Sphere::Role>()->setWireframe(false);
+		getSphere().role()->setWireframe(false);
 		getSphere().getPlayer().set(250, 180);// set default
 		return true;
 	}
@@ -987,8 +997,8 @@ namespace Software2552 {
 	}
 	void VideoSphere::setSettings(const Settings& rhs) { 
 		Settings::setSettings(rhs);
-		if (getRole<Role>()->video) {
-			getRole<Role>()->video->setSettings(rhs);
+		if (role()->video) {
+			role()->video->setSettings(rhs);
 		}
 	}
 
@@ -1025,20 +1035,20 @@ namespace Software2552 {
 			getStage()->moving3d();
 		}
 		setType(ActorRole::draw3dMovingCamera);
-		getSphere().getRole<Sphere::Role>()->setWireframe(false);
+		getSphere().role()->setWireframe(false);
 		float r = ofRandom(5, 100);
 		getSphere().getPlayer().set(r, 40);
 		//bugbug could get sphere location here
 
-		getRole<Role>()->getTexturePtr()->create(getDefaultRole()->getLocationPath(), r * 2, r * 2);
+		role()->getTexturePtr()->create(getDefaultRole()->getLocationPath(), r * 2, r * 2);
 
-		getSphere().getPlayer().mapTexCoordsFromTexture(getRole<Role>()->getTexturePtr()->getTexture());
+		getSphere().getPlayer().mapTexCoordsFromTexture(role()->getTexturePtr()->getTexture());
 		return true;
 	}
 	void Planet::Role::myDraw() {
 		getTexturePtr()->bind();
 		sphere.getPlayer().rotate(30, 0, 2.0, 0.0);
-		sphere.getRole<Role>()->myDraw();
+		sphere.role()->myDraw();
 		getTexturePtr()->unbind();
 	}
 }

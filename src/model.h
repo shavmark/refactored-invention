@@ -186,6 +186,8 @@ namespace Software2552 {
 
 		// data read during scene creation bugbug move all data reads to scene creation?
 		Ball() :Actor(new Role()) {  }
+		Role* role() { return getRole<Role>(); }
+
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
@@ -283,13 +285,14 @@ namespace Software2552 {
 	public:
 		class Role : public DrawingPrimitive3d {
 		public:
-			Role() :DrawingPrimitive3d() {}
 			void basicdraw() { player.draw(); }
 			void basicdrawWire() { player.drawWireframe(); }
 			ofBoxPrimitive player;
 		};
 		Cube() : ActorWithPrimativeBaseClass(new Role()) {		}
 		ofBoxPrimitive* getPlayer() { return &getRole<Role>()->player; }
+		Role* role() { return getRole<Role>(); }
+
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
@@ -297,7 +300,6 @@ namespace Software2552 {
 	public:
 		class Role : public DrawingPrimitive3d {
 		public:
-			Role() :DrawingPrimitive3d() {}
 			void basicdraw() { player.draw(); }
 			void basicdrawWire() { player.drawWireframe(); }
 			ofPlanePrimitive player;
@@ -319,6 +321,7 @@ namespace Software2552 {
 		};
 		Sphere() : ActorWithPrimativeBaseClass(new Role()) {		}
 		ofSpherePrimitive& getPlayer() { return getRole<Role>()->player; }
+		Role* role() { return getRole<Role>(); }
 
 	private:
 		bool myReadFromScript(const Json::Value &data);
@@ -337,6 +340,8 @@ namespace Software2552 {
 		Text() : Actor(new Role) {  }
 		void drawText(const string &s, int x, int y) { getRole<Role>()->drawText(s, x, y); };
 		void setText(const string&t) { getRole<Role>()->setText(t); }
+		Role* role() { return getRole<Role>(); }
+
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
@@ -354,6 +359,7 @@ namespace Software2552 {
 
 		Paragraph() :Actor(new Role()) {  }
 		ofxParagraph& getPlayer() { return getRole<Role>()->player; }
+		Role* role() { return getRole<Role>(); }
 
 	private:
 		bool myReadFromScript(const Json::Value &data);
@@ -376,21 +382,27 @@ namespace Software2552 {
 		bool myReadFromScript(const Json::Value &data);
 	};
 
+	class Visual : public ActorRole {
+	public:
+		void setFullSize();
+	protected:
+		bool isLoaded = false;
+		bool fullsize = false; // keep full size of screen, like for a background
+	};
 
 	class Video : public Actor {
 	public:
 		// put advanced drawing in these objects
-		class Role :public ActorRole {
+		class Role :public Visual {
 		public:
-			Role() : ActorRole() {  }
-			void myUpdate() { player.update(); }
+			void myUpdate();
 			void myDraw();
 			void mySetup();
 			float getTimeBeforeStart(float t);
-			bool fullsize = false; // keep full size of screen, like for a background
 			ofVideoPlayer player;
 		};
 		Video() :Actor(new Role()) {  }
+		Role* role() { return getRole<Role>(); }
 		ofVideoPlayer& getPlayer() { return getRole<Role>()->player; }
 	private:
 		bool myReadFromScript(const Json::Value &data);
@@ -418,6 +430,7 @@ namespace Software2552 {
 		TextureVideo() :Actor(new Role()) {  }
 		ofVideoPlayer& getPlayer() { return getRole<Role>()->player; }
 		ofTexture& getTexture() { return getRole<Role>()->getTexture(); }
+		Role* role() { return getRole<Role>(); }
 
 	private:
 		bool myReadFromScript(const Json::Value &data);
@@ -440,6 +453,8 @@ namespace Software2552 {
 		VideoSphere() :Actor(new Role()) {  }
 		void setSettings(const Settings& rhs);
 		Sphere& getSphere() { return getRole<Role>()->sphere; }
+		Role* role() { return getRole<Role>(); }
+
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
@@ -457,6 +472,8 @@ namespace Software2552 {
 		};
 		Planet() :Actor(new Role()) {  }
 		Sphere& getSphere() { return getRole<Role>()->sphere; }
+		Role* role() { return getRole<Role>(); }
+
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
@@ -465,7 +482,6 @@ namespace Software2552 {
 	public:
 		class Role : public ActorRole {
 		public:
-			Role() : ActorRole() { }
 		};
 		SolarSystem() :Actor(new Role()) {  }
 		void addPlanets(const Json::Value &data, ofPoint& min, Settings& settings);
@@ -474,21 +490,19 @@ namespace Software2552 {
 		bool myReadFromScript(const Json::Value &data);
 	};
 
+
 	class Picture : public Actor {
 	public:
-		class Role : public ActorRole {
+		class Role : public Visual {
 		public:
-			Role() : ActorRole() {  }
-
 			void myUpdate();
 			void mySetup();
 			void myDraw();
-			bool isLoaded = false;
-			bool fullsize = false; // keep full size of screen, like for a background
 			ofImage player;
 		};
 
 		Picture() :Actor(new Role()) {  }
+		Role* role() { return getRole<Role>(); }
 		ofImage& getPlayer() { return getRole<Role>()->player; }
 	private:
 		bool myReadFromScript(const Json::Value &data);
@@ -497,14 +511,10 @@ namespace Software2552 {
 	class Background : public Actor {
 	public:
 		enum TypeOfBackground { ColorFixed, ColorChanging,  none };
-		enum TypeOfGradient {
-			linear = ofGradientMode::OF_GRADIENT_LINEAR,
-			circular = ofGradientMode::OF_GRADIENT_CIRCULAR,
-			bar = ofGradientMode::OF_GRADIENT_BAR,
-			flat, noGradient	};
+		enum TypeOfGradient {	linear = ofGradientMode::OF_GRADIENT_LINEAR,	circular = ofGradientMode::OF_GRADIENT_CIRCULAR,
+			bar = ofGradientMode::OF_GRADIENT_BAR,	flat, noGradient	};
 		class Role : public ActorRole {
 		public:
-			Role() {}
 			void myDraw();
 			void myUpdate();// make image a vector then rotate via animation
 			void setType(TypeOfBackground typeIn = ColorFixed) { type = typeIn; }
@@ -515,6 +525,7 @@ namespace Software2552 {
 			TypeOfBackground type = ColorFixed;
 		};
 		Background() :Actor(new Role()) {  }
+		Role* role() { return getRole<Role>(); }
 
 	private:
 		bool myReadFromScript(const Json::Value &data);

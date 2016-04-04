@@ -152,7 +152,8 @@ namespace Software2552 {
 
 			//A C B D A C see the color doc to fill these in. use the 4 colors then pick the lightest and darkest 
 			add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
-			
+			add(ColorSet::White,0, 0xffffff, 0, 0xffffff, 0xffffff, 0);
+
 			/* bugbug load all these once color is working etc
 			add(ColorSet::Modern, E, D, ofColor::black.getHex(), ofColor::white.getHex());
 
