@@ -86,6 +86,7 @@ namespace Software2552 {
 		virtual void setSettings(Settings* rhs);
 		
 	protected:
+		
 		shared_ptr<Colors> getColor();// drawing using animatedcolor
 		Font   font;
 		//		colors = std::make_shared<Colors>(ColorSet::ColorGroup::Extreme);// setup colors bugbug get from json
@@ -93,7 +94,6 @@ namespace Software2552 {
 		string notes;// unstructured string of info, can be shown to the user
 		string title; // title object
 		string name; // any object can have a name, note, date, reference, duration
-	protected:
 
 	private:
 	};
@@ -131,7 +131,7 @@ namespace Software2552 {
 		template<typename T> T* getRole() { return (T*)getDefaultRole(); }
 		ActorRole* getDefaultRole() { return player; }
 		template<typename T> T& getPlayer() { return *getRole<Role>()->player; } // assume player always allocated
-		bool readFromScript(const Json::Value &data, Stage*);
+		bool readActorFromScript(const Json::Value &data, Stage*);
 
 		shared_ptr<vector<shared_ptr<Reference>>>  getReferences() { return references; }
 
@@ -148,9 +148,11 @@ namespace Software2552 {
 		void setStage(Stage*s) { stage = s; }
 		Stage* getStage() { return stage; }
 	private: 
+		virtual bool myReadFromScript(const Json::Value &data) { return true; };
+
 		class Stage* stage=nullptr;// where object is to live
 		bool isValid() { return getDefaultRole() && getDefaultRole()->getAnimationHelper(); }
-		virtual bool myReadFromScript(const Json::Value &data) { return true; };// for derived classes
+		
 		ActorRole* player=nullptr; // need a down cast to get specific items
 		shared_ptr<vector<shared_ptr<Reference>>> references=nullptr; // research reference to show where actor came from
 	};
@@ -167,20 +169,6 @@ namespace Software2552 {
 	};
 
 
-	class AnimiatedColor : public ofxAnimatableOfColor {
-	public:
-		AnimiatedColor() :ofxAnimatableOfColor() { }
-		AnimiatedColor(shared_ptr<Colors> colors);
-		// animates colors
-		void draw();
-		bool paused() { return paused_; }
-		bool readFromScript(const Json::Value &data);
-		shared_ptr<Colors> getColorManager();
-		void SetColorManager(shared_ptr<Colors>p) { colorManager=p; }
-		bool usingAnimation = false; // force  to set this to make sure its understood
-	private:
-		shared_ptr<Colors> colorManager=nullptr; // color manager (required)
-	};
 
 	// wrap drawing object with references and settings data
 	class Ball : public Actor {
@@ -268,7 +256,7 @@ namespace Software2552 {
 			int find();
 			int id = 0;
 		};
-		CameraGrabber(const string&name) :Actor(new Role()) { getRole<Role>()->setLocationPath(name); }
+		CameraGrabber() :Actor(new Role()) {}
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
@@ -395,7 +383,6 @@ namespace Software2552 {
 		class Role :public ActorRole {
 		public:
 			Role() : ActorRole() {  }
-			Role(const string& path) : ActorRole(path) { }
 			void myUpdate() { player.update(); }
 			void myDraw();
 			void mySetup();
@@ -403,7 +390,6 @@ namespace Software2552 {
 			bool fullsize = false; // keep full size of screen, like for a background
 			ofVideoPlayer player;
 		};
-		Video(const string&s) :Actor(new Role(s)) {  }
 		Video() :Actor(new Role()) {  }
 		ofVideoPlayer& getPlayer() { return getRole<Role>()->player; }
 	private:

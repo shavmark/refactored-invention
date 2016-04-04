@@ -28,7 +28,6 @@ namespace Software2552 {
 		void setup();
 		void update();
 		void draw();
-		virtual bool create(const Json::Value &data);
 		void clear(bool force=false);
 		void pause();
 		void resume();
@@ -38,22 +37,24 @@ namespace Software2552 {
 
 		// things to draw
 
-		template<typename T> shared_ptr<T> Stage::CreateReadAndaddAnimatable(const Json::Value &data, Settings*pSettings=nullptr) {
+		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, Stage*stage=nullptr) {
 			shared_ptr<T> p = std::make_shared<T>();
 			if (p != nullptr) { // try to run in low memory as much as possible for small devices
-				if (pSettings) {
-					p->setSettings(*pSettings);
+				if (stage) {
+					p->setSettings(*stage);
+					if (p->readActorFromScript(data, stage)) {
+						appendToAnimatable(p);
+					}
 				}
 				else {
 					p->setSettings(*this);
-				}
-				if (p->readFromScript(data, this)) {
-					appendToAnimatable(p);
+					if (p->readActorFromScript(data, this)) {
+						appendToAnimatable(p);
+					}
 				}
 			}
 			return p;
 		}
-		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, const string&location, Settings*pSettings = nullptr);
 		virtual shared_ptr<Background> CreateReadAndaddBackgroundItems(const Json::Value &data);
 		shared_ptr<Camera> CreateReadAndaddCamera(const Json::Value &data, bool rotate = false);
 		template<typename T>shared_ptr<T> CreateReadAndaddLight(const Json::Value &data);
@@ -62,7 +63,7 @@ namespace Software2552 {
 		void fixed3d(bool b = true) { drawIn3dFixed = b; }
 		void moving3d(bool b = true) { drawIn3dMoving = b; }
 		void fixed2d(bool b = true) { drawIn2d = b; }
-
+		bool readFromScript(const Json::Value &data);
 	protected:
 
 		bool drawIn3dFixed = false; 
@@ -90,11 +91,11 @@ namespace Software2552 {
 		virtual void myPause() {}
 		virtual void myResume() {}
 		virtual void myClear(bool force) {}
-		virtual bool myCreate(const Json::Value &data) { return true; }
 		virtual void installLightAndMaterialThenDraw(shared_ptr<Camera>, bool drawfixed); // derive to change where cameras are
 		string keyname;
 
 	private:
+
 		void appendToAnimatable(shared_ptr<Actor>p) { animatables.push_back(p); }
 
 		static bool OKToRemove(shared_ptr<Actor> me) {

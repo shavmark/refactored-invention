@@ -76,12 +76,13 @@ namespace Software2552 {
 		}
 		return getCurrentColor(); // maybe the current color is the best one after all
 	}
-	void ColorList::add(const ColorSet::ColorGroup group, int fore, int back, int text, int other, int lightest, int darkest) { 
+	shared_ptr<ColorSet> ColorList::add(const ColorSet::ColorGroup group, int fore, int back, int text, int other, int lightest, int darkest) {
 		// colors stored as hex
 		shared_ptr<ColorSet> s = std::make_shared<ColorSet>(group,
 			fore,	back,	text,	other,	lightest,	darkest);
 
 		privateData->colorlist.push_front(s);
+		return s;
 	}
 
 	ColorSet::ColorGroup ColorSet::convertStringToGroup(const string&name) {
@@ -145,7 +146,8 @@ namespace Software2552 {
 			{ 'I',  0xDBCA69 },{ 'J',  0x404F24 },{ 'K',  0x668D3C },{ 'L',  0xBDD09F },{ 'M',  0x4E6172 },{ 'N',  0x83929F },{ 'O',  0xA3ADB8} };
 
 			//A C B D A C see the color doc to fill these in. use the 4 colors then pick the lightest and darkest 
-			add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
+			privateData->defaultColorSet = add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
+			
 			/* bugbug load all these once color is working etc
 			add(ColorSet::Modern, E, D, ofColor::black.getHex(), ofColor::white.getHex());
 
@@ -228,5 +230,38 @@ namespace Software2552 {
 #endif // 0
 	}
 
+	// always return a valid pointer
+	shared_ptr<Colors> AnimiatedColor::getColorManager() {
+		if (colorManager == nullptr) {
+			colorManager = ColorList::getDefaultColor(); // use the default if needed
+			logTrace("using default color");
+		}
+		return colorManager;
+	}
+	AnimiatedColor::AnimiatedColor(shared_ptr<Colors>colorIn) :ofxAnimatableOfColor() {
+		colorManager = colorIn;
+	}
+	void AnimiatedColor::draw() {
+		if (usingAnimation) {
+			applyCurrentColor();
+		}
+		else {
+			ofSetColor(getColorManager()->getForeground());//background set by background manager
+		}
+	}
+	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
+	bool AnimiatedColor::readFromScript(const Json::Value &data) {
+		if (!data.empty()) {
+			READBOOL(usingAnimation, data);
+		}
+
+		// set defaults or read from data bugbug add more data reads as needed
+		setColor(ofColor(getColorManager()->getLightest()));
+		animateTo(ofColor(getColorManager()->getDarkest()));
+		setDuration(0.5f);
+		setRepeatType(LOOP_BACK_AND_FORTH);
+		setCurve(LINEAR);
+		return true;
+	}
 
 }

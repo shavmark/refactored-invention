@@ -48,13 +48,14 @@ namespace Software2552 {
 
 		//color naming modeled after http://www.creativecolorschemes.com/products/ccs1/rgbColorGuide.shtml
 
+		static shared_ptr<ColorSet> getDefaultColor() { return (privateData) ? privateData->defaultColorSet : nullptr; }
 		void update();
 		void setup();
-
 		class colordata {
 		public:
 			forward_list<shared_ptr<ColorSet>> colorlist;
 			shared_ptr<ColorSet> currentColor = nullptr;
+			shared_ptr<ColorSet> defaultColorSet = nullptr;
 		};
 
 		// call getNext at start up and when ever colors should change
@@ -69,7 +70,7 @@ namespace Software2552 {
 			v.remove_if(objectLifeTimeManager::OKToRemove);
 		}
 
-		void add(const ColorSet::ColorGroup group, int fore, int back, int text, int other, int lightest, int darkest);
+		shared_ptr<ColorSet> add(const ColorSet::ColorGroup group, int fore, int back, int text, int other, int lightest, int darkest);
 
 	private:
 		static shared_ptr<colordata> privateData;// never call directly to assure allocation
@@ -80,6 +81,7 @@ namespace Software2552 {
 	// color helpers
 	class Colors : public ColorList {
 	public:
+
 		// hue helpers, example getHue(getBackground()) bugbug maybe cache some data if needed
 		// more like painting
 		int getForeground() {
@@ -104,43 +106,20 @@ namespace Software2552 {
 
 	};
 
-
-	template <class T> class ColorBase {
+	class AnimiatedColor : public ofxAnimatableOfColor {
 	public:
-		ColorBase() {}
-		ColorBase(const T& colorIn) {
-			color = colorIn;
-		}
-		bool readFromScript(const Json::Value &data) {
-			readJsonValue(color.r, data["r"]);
-			readJsonValue(color.g, data["g"]);
-			readJsonValue(color.g, data["b"]);
-			return true;
-		}
-		operator T() {
-			return color;
-		}
-		T& get() { return color; }
-	protected:
-		T color;
+		AnimiatedColor() :ofxAnimatableOfColor() { }
+		AnimiatedColor(shared_ptr<Colors> colors);
+		// animates colors
+		void draw();
+		bool paused() { return paused_; }
+		bool readFromScript(const Json::Value &data);
+		shared_ptr<Colors> getColorManager();
+		void SetColorManager(shared_ptr<Colors>p) { colorManager = p; }
+		bool usingAnimation = false; // force  to set this to make sure its understood
+	private:
+		shared_ptr<Colors> colorManager = nullptr; // color manager (required)
 	};
 
-	// color support of explict color is needed
-	class Color : public ColorBase<ofColor> {
-	public:
-		Color() :ColorBase() {
-		}
-		Color(const ofColor& color) :ColorBase(color) {
-		}
-	};
-	class floatColor : public ColorBase<ofFloatColor> {
-	public:
-		floatColor() :ColorBase() {
-		}
-		floatColor(const ofFloatColor& color) :ColorBase(color) {
-		}
-
-	};
-
-
+	
 }

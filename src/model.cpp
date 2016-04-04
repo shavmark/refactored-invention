@@ -23,6 +23,7 @@ namespace Software2552 {
 		if (i < list.size() && i > 0) {
 			return list[i];
 		}
+		return nullptr;
 	}
 
 	// first channel of type 
@@ -71,7 +72,7 @@ namespace Software2552 {
 			return font->ttf;
 		}
 		ofTrueTypeFont font2;
-		return font2; // default
+		return font2; // default bugbug temp return type
 	}
 
 	shared_ptr<ofxSmartFont> Font::getPointer() {
@@ -228,38 +229,6 @@ namespace Software2552 {
 			setSettings(*rhs);
 		}
 	}
-	// always return a valid pointer
-	shared_ptr<Colors> AnimiatedColor::getColorManager() { 
-		if (colorManager == nullptr) {
-			colorManager = std::make_shared<Colors>();
-		}
-		return colorManager; 
-	}
-	AnimiatedColor::AnimiatedColor(shared_ptr<Colors>colorIn) :ofxAnimatableOfColor() {
-		colorManager = colorIn;
-	}
-	void AnimiatedColor::draw() {
-		if (usingAnimation) {
-			applyCurrentColor();
-		}
-		else {
-			ofSetColor(getColorManager()->getForeground());//background set by background manager
-		}
-	}
-	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
-	bool AnimiatedColor::readFromScript(const Json::Value &data) {
-		if (!data.empty()) {
-			READBOOL(usingAnimation, data);
-		}
-
-		// set defaults or read from data bugbug add more data reads as needed
-		setColor(ofColor(getColorManager()->getLightest()));
-		animateTo(ofColor(getColorManager()->getDarkest()));
-		setDuration(0.5f);
-		setRepeatType(LOOP_BACK_AND_FORTH);
-		setCurve(LINEAR);
-		return true;
-	}
 	bool Ball::myReadFromScript(const Json::Value &data) {
 		// can read any of these items from json here
 		setAnimationPositionY(getRole<Role>()->floorLine - 100);
@@ -272,7 +241,7 @@ namespace Software2552 {
 		animateTo(p);
 		return true;
 	}
-	 bool Actor::readFromScript(const Json::Value &data, Stage*stage) {
+	 bool Actor::readActorFromScript(const Json::Value &data, Stage*stage) {
 		 if (player == nullptr) {
 			 logErrorString("missing player");
 			 return false;
@@ -282,7 +251,8 @@ namespace Software2552 {
 		// any actor can have settings set, or defaults used
 		Settings::readFromScript(data["settings"]);
 
-		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>(getColor());
+		shared_ptr<Colors> c = getColor();
+		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>(c);
 		ac->readFromScript(data["coloranimation"]);
 		player->setColorAnimation(ac);
 
@@ -357,11 +327,7 @@ namespace Software2552 {
 	}
 	// settings stores the color manager
 	shared_ptr<Colors> Settings::getColor() {
-		if (colors) {
-			return colors;
-		}
-		// use global default
-		colors = std::make_shared<Colors>();
+		return colors; // may be null
 	}
 
 	// always return true as these are optional items
@@ -380,6 +346,7 @@ namespace Software2552 {
 					colors->getNextColors(ColorSet::convertStringToGroup(colorGroupName));
 				}
 			}
+			
 		}
 
 		return true;
@@ -474,7 +441,7 @@ namespace Software2552 {
 		font = rhs.font;
 		colors = rhs.colors;
 	}
-
+	//, "carride.mp4"
 	bool Video::myReadFromScript(const Json::Value &data) {
 		setType(ActorRole::draw2d);
 		setAnimation(true);
@@ -663,25 +630,17 @@ namespace Software2552 {
 		
 		getRole<Role>()->getAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
 
-		string image;
-		readStringFromJson(image, data["image"]);
-		READSTRING(image, data); // can be read in other areas and set in this object
-		if (image.size() > 0) {
-			if (getStage()) {
-				shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data, image, this);
-				if (p) {
-					p->getRole<Picture::Role>()->fullsize = true;
-				}
+		if (getStage() && !data["image"].empty()) {
+			shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data["image"]);
+			if (p) {
+				p->getRole<Picture::Role>()->fullsize = true;
 			}
 		}
-		string video;
-		readStringFromJson(video, data["video"]);
-		if (video.size() > 0) {
-			if (getStage()) {
-				shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data, video, this);
-				if (p) {
-					p->getRole<Video::Role>()->fullsize = true;
-				}
+		
+		if (getStage() && !data["video"].empty()) {
+			shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data["video"]);
+			if (p) {
+				p->getRole<Video::Role>()->fullsize = true;
 			}
 		}
 		return true;
@@ -781,7 +740,7 @@ namespace Software2552 {
 						int i = 1; // just for debugging
 					}
 					// save with right playitem
-					if (p->create(json["scenes"][i])) {
+					if (p->readFromScript(json["scenes"][i])) {
 						// find stage and set it
 						if (!setStage(p)) {
 							logTrace("scene not in playlist (ignored) " + p->getKeyName());
@@ -805,6 +764,7 @@ namespace Software2552 {
 			logErrorString(e.what());
 			return false;
 		}
+		return true;
 	}
 
 	// add this one http://clab.concordia.ca/?page_id=944
@@ -909,6 +869,7 @@ namespace Software2552 {
 		}
 	}
 	bool CameraGrabber::myReadFromScript(const Json::Value &data) {
+		//"Logitech HD Pro Webcam C920"
 		setAnimation(true);
 		//bugbug fill this in
 		setAnimationPositionY(100);
@@ -1005,7 +966,7 @@ namespace Software2552 {
 		setType(ActorRole::draw3dFixedCamera);
 		if (getStage()) {
 			getStage()->fixed3d();
-			getRole<Role>()->video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data, this);
+			getRole<Role>()->video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
 		}
 		getSphere().getRole<Sphere::Role>()->setWireframe(false);
 		getSphere().getPlayer().set(250, 180);// set default
@@ -1029,7 +990,7 @@ namespace Software2552 {
 
 	bool SolarSystem::myReadFromScript(const Json::Value &data) {
 		if (getStage()) {
-			shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data, this);
+			shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data);
  			if (p) {
 				ofPoint min(p->getSphere().getPlayer().getRadius() * 2, 0, 200);
 				addPlanets(data["Planets"], min, *this);
@@ -1044,7 +1005,7 @@ namespace Software2552 {
 		if (getStage()) {
 			ofPoint point;
 			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-				shared_ptr<Planet> p = getStage()->CreateReadAndaddAnimatable<Planet>(data, this);
+				shared_ptr<Planet> p = getStage()->CreateReadAndaddAnimatable<Planet>(data);
 				if (p) {
 					point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
 					point.y = ofRandom(min.y, 500);
