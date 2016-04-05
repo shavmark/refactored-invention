@@ -1,7 +1,6 @@
 #pragma once
-#include "2552software.h"
+
 #include "model.h"
-#include "ofxBox2d.h"
 #include "draw.h"
 #include <forward_list>
 
@@ -125,13 +124,6 @@ namespace Software2552 {
 	// over time this just does whats in the data
 	class GenericScene :public Stage {
 	public:
-
-	private:
-	};
-
-	class TestBallScene :public Stage {
-	public:
-		bool myCreate(const Json::Value &data);
 	private:
 	};
 

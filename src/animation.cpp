@@ -84,6 +84,26 @@ namespace Software2552 {
 		}
 		return ani;
 	}
+	bool ActorRole::readFromScript(const Json::Value &data) {
+
+		READSTRING(locationPath, data);
+		READINT(drawOrder, data);
+		string s = getLocationPath();//just for debug
+		// optional sizes, locations, durations for animation etc
+		readJsonValue(w, data["width"]);
+		readJsonValue(h, data["height"]);
+		float duration = 0;
+		READFLOAT(duration, data);
+		getAnimationHelper()->setObjectLifetime(duration);
+		float wait = 0;
+		READFLOAT(wait, data);
+		getAnimationHelper()->setWait(wait);
+		Point3D point;
+		point.readFromScript(data["startingPoint"]);
+		getAnimationHelper()->setPosition(point);
+
+		return true;
+	}
 	void ActorRole::updateForDrawing() {
 		
 		if (getColorAnimation() != nullptr) {

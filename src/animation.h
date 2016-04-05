@@ -57,7 +57,7 @@ namespace Software2552 {
 		enum drawtype { drawBackground, draw2d, draw3dFixedCamera, draw3dMovingCamera };
 		ActorRole() {  }
 		ActorRole(const string&path) { 	setLocationPath(path); 		}
-
+		bool readFromScript(const Json::Value &data);
 		// avoid name clashes and wrap the most used items, else access the contained object for more
 		shared_ptr<PointAnimation> getAnimationHelper();
 		virtual float getTimeBeforeStart(float t) { return getAnimationHelper()->getWait(); }
@@ -72,6 +72,8 @@ namespace Software2552 {
 
 		int w = 0;
 		int h = 0;
+		
+		int drawOrder = 0; // sorted by value so any value is ok
 
 		string &getLocationPath();
 		void setLocationPath(const string&s) { locationPath = s; }

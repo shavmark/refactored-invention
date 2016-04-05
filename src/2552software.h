@@ -67,16 +67,18 @@ namespace Software2552 {
 		static std::string wstrtostr(const std::wstring &wstr);
 
 		// get the right line number bugbug add DEBUG ONLY
-#if _DEBUG
 #define logError(p1, p2) Trace::logError2(p1, p2, __FILE__, __LINE__)
 #define logErrorString(p1) Trace::logError2(p1, __FILE__, __LINE__)
+#if _DEBUG
 #define logVerbose(p1) Trace::logVerbose2(p1, __FILE__, __LINE__)
+#else
+#define logVerbose(p1) 
+#endif
 #define logTrace(p1) Trace::logTrace2(p1, __FILE__, __LINE__)
 #define checkPointer(p1, p2) Trace::checkPointer2(p1, p2, __FILE__, __LINE__)
 #define checkPointer(p1, p2) Trace::checkPointer2(p1, p2, __FILE__, __LINE__)
 #define hresultFails(p1, p2) Trace::CheckHresult2(p1, p2, __FILE__, __LINE__)
 #define basicTrace(p) Trace::logTraceBasic(p, #p)
-#endif
 		// simple text log, even w/o debug
 #define echo(p) Trace::logTraceBasic(p)
 #define echoError(p) Trace::logErrorString(p)

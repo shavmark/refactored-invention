@@ -1,7 +1,12 @@
 #include "kinect2552.h"
 
 //file:///C:/Users/mark/Downloads/KinectHIG.2.0.pdf
-// box2d
+
+//C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\x64
+//bugbug fix path for release and debug, and remove any "mark" dependencies
+#pragma comment(lib, "C:\\Program Files\\Microsoft SDKs\\Kinect\\v2.0_1409\\Lib\\x64\\Kinect20.lib")
+#pragma comment(lib, "C:\\Program Files\\Microsoft SDKs\\Kinect\\v2.0_1409\\Lib\\x64\\Kinect20.face.lib")
+#pragma comment(lib, "C:\\Program Files\\Microsoft SDKs\\Kinect\\v2.0_1409\\Lib\\x64\\Kinect20.fusion.lib")
 
 namespace Software2552 {
 

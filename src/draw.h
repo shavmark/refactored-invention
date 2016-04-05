@@ -1,6 +1,5 @@
 #pragma once
 #include "2552software.h"
-#include "ofxBox2d.h"
 #include "color.h"
 #include "animation.h"
 #include "ofSoundPlayer.h"

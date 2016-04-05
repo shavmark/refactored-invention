@@ -11,9 +11,6 @@ namespace Software2552 {
 	// convert name to object
 	shared_ptr<Stage> getScene(const string&name)
 	{
-		if (name == "TestBall") {
-			return std::make_shared<TestBallScene>();
-		}
 		if (name == "Space") {
 			return std::make_shared<SpaceScene>();
 		}
@@ -72,17 +69,22 @@ namespace Software2552 {
 		}
 		return b;
 	}
+	bool compareOrder(shared_ptr<Actor>first, shared_ptr<Actor>second)	{
+		return (first->getDefaultRole()->drawOrder > second->getDefaultRole()->drawOrder);
+	}
 
 	bool Stage::readFromScript(const Json::Value &data) {
 		Settings::readFromScript(data["settings"]);
-		if (!data["background"].empty()) {
-			CreateReadAndaddBackgroundItems(data["background"]);
-		}
+		//if (!data["background"].empty()) {
+			//CreateReadAndaddBackgroundItems(data["background"]);
+		//}
 #define SETANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
-		SETANIMATION(sphere, Sphere);
+		//SETANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
 		SETANIMATION(picture, Picture);
 		SETANIMATION(ball, Ball);
 		SETANIMATION(video, Video);
+		getAnimatables().sort(compareOrder);
+		//bug sort by drawOrder (0, 10000+)
 		return true;
 		
 		// data must Cap first char of key words
@@ -313,17 +315,6 @@ namespace Software2552 {
 		//bugbug option is to add vs replace:ofEnableBlendMode(OF_BLENDMODE_ADD);//bugbug can make these attributes somewhere
 		//ofEnableAlphaBlending();
 	}
-	//great animation example
-	bool TestBallScene::myCreate(const Json::Value &data) {
-		try {
-//			return CreateReadAndaddAnimatable<Ball>(data) != nullptr;
-		}
-		catch (std::exception e) {
-			logErrorString(e.what());
-			return false;
-		}
-		return true;
-	}
 	// juse need to draw the SpaceScene, base class does the rest
 	void Stage::draw3dMoving() {
 		myDraw3dMoving();
@@ -337,27 +328,6 @@ namespace Software2552 {
 			a->getDefaultRole()->drawIt(ActorRole::draw3dFixedCamera);
 		}
 	}
-	/*
-	template<typename T> shared_ptr<T> Stage::CreateReadAndaddAnimatable(const Json::Value &data, const string&location, Settings*pSettings) {
-		shared_ptr<T> p = std::make_shared<T>(location);
-		if (p == nullptr) {
-			return nullptr;
-		}
-		if (pSettings) {
-			p->setSettings(pSettings);
-		}
-		else {
-			p->setSettings(this);
-		}
-		if (p->readFromScript(data, this)) {
-			appendToAnimatable(p);
-		}
-
-		return p;
-	}
-	*/
-	// return new location
-
 	shared_ptr<Camera> Stage::CreateReadAndaddCamera(const Json::Value &data, bool rotate) {
 		shared_ptr<Camera> p = std::make_shared<Camera>();
 		if (p == nullptr) {

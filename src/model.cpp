@@ -1,3 +1,4 @@
+#include "2552software.h"
 #include "model.h"
 #include "animation.h"
 #include "scenes.h"
@@ -250,32 +251,19 @@ namespace Software2552 {
 		 }
 		 setStage(stage);
 
-		// any actor can have settings set, or defaults used
+		// common and shared settings
 		Settings::readFromScript(data["settings"]);
-
-		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>(getColor());
-		ac->readFromScript(data["colorAnimation"]);
-		player->setColorAnimation(ac);
 
 		// any actor can have a reference
 		references = parse<Reference>(data["references"]);
 
-		// all actors can have a location
-		readStringFromJson(player->getLocationPath(), data["locationPath"]);
-		string s = player->getLocationPath();
+		// unqiue or shared color, pointer allows for global updates
+		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>(getColor());
+		ac->readFromScript(data["colorAnimation"]);
+		player->setColorAnimation(ac);
 
-		// optional sizes, locations, durations for animation etc
-		readJsonValue(player->w, data["width"]);
-		readJsonValue(player->h, data["height"]);
-		float t = 0;
-		readJsonValue(t, data["duration"]);
-		player->getAnimationHelper()->setObjectLifetime(t);
-		float w = 0;
-		readJsonValue(w, data["wait"]);
-		player->getAnimationHelper()->setWait(w);
-		Point3D point;
-		point.readFromScript(data["startingPoint"]);
-		player->getAnimationHelper()->setPosition(point);
+		// all actors can have a location, draw order etc
+		player->readFromScript(data);
 
 		// read derived class data
 		myReadFromScript(data);
@@ -597,7 +585,7 @@ namespace Software2552 {
 		float resolution = 100;//default
 		READFLOAT(resolution, data);
 		getPlayer().setResolution(resolution);
-
+		role()->setType(ActorRole::draw3dFixedCamera);// can be moving too, let json decide
 		return true;
 	}
 	bool Background::myReadFromScript(const Json::Value &data) {
@@ -723,6 +711,8 @@ namespace Software2552 {
 	}
 	bool ChannelList::read(const string&path) {
 		ofxJSON json;
+		
+		logTrace("parse " + path);
 
 		if (!json.open(path)) {
 			logErrorString("Failed to parse JSON " + path);

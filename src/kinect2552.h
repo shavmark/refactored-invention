@@ -1,7 +1,8 @@
 #pragma once
 #define Foundation_UnWindows_INCLUDED
 #include "ofMain.h"
-#include "Kinect.Face.h"
+//bugbug fix path in debug and release mode
+#include <C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\inc\Kinect.Face.h>
 #include "2552software.h"
 #include "draw.h"
 //https://github.com/Vangos, http://www.cs.princeton.edu/~edwardz/tutorials/kinect2/kinect0_sdl.html, https://github.com/UnaNancyOwen
