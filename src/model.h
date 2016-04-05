@@ -265,70 +265,69 @@ namespace Software2552 {
 	class ActorWithPrimativeBaseClass;
 	class DrawingPrimitive3d : public ActorRole {
 	public:
-		~DrawingPrimitive3d() { }
-		DrawingPrimitive3d() : ActorRole() { setType(draw3dFixedCamera); }
+		DrawingPrimitive3d(of3dPrimitive *p, drawtype type = draw3dFixedCamera);
+		~DrawingPrimitive3d();
+
 		void setWireframe(bool b = true) { wireFrame = b; }
 		bool useWireframe() { return wireFrame; }
-		void myDraw() { 
-			basedraw(); }
-		;
+		void setFill(bool b = true) { fill = b; }
+		bool useFill() { return fill; }
+
+		void myDraw();
+		of3dPrimitive* getPlayer() { return player; }
+		bool myReadFromScript(const Json::Value &data);
 	private:
-		void basedraw();
-		virtual void basicdraw() = 0;
-		virtual void basicdrawWire() = 0;
+		virtual bool DerivedMyReadFromScript(const Json::Value &data) { return true; }
+		of3dPrimitive *player = nullptr; // allow derived pointers and polymorphism
 		bool wireFrame = true;
+		bool fill = false;
 	};
 	class ActorWithPrimativeBaseClass : public Actor {
 	public:
 		ActorWithPrimativeBaseClass(DrawingPrimitive3d *p = nullptr) :Actor(p){}
 		DrawingPrimitive3d *getPrimative() { return (DrawingPrimitive3d*)getDefaultRole();  }
 	};
+	// do not use templates as its hard to make base class pointers to them
 	class Cube : public ActorWithPrimativeBaseClass {
 	public:
 		class Role : public DrawingPrimitive3d {
 		public:
-			void basicdraw() { player.draw(); }
-			void basicdrawWire() { player.drawWireframe(); }
-			ofBoxPrimitive player;
+			Role() : DrawingPrimitive3d(new ofBoxPrimitive) {}
 		};
 		Cube() : ActorWithPrimativeBaseClass(new Role()) {		}
-		ofBoxPrimitive* getPlayer() { return &getRole<Role>()->player; }
+		ofBoxPrimitive* getPlayer() { return (ofBoxPrimitive*)(getRole<Role>()->getPlayer()); }
 		Role* role() { return getRole<Role>(); }
 
 	private:
-		bool myReadFromScript(const Json::Value &data);
+		bool DerivedMyReadFromScript(const Json::Value &data);
 	};
 	class Plane : public ActorWithPrimativeBaseClass {
 	public:
 		class Role : public DrawingPrimitive3d {
 		public:
-			void basicdraw() { player.draw(); }
-			void basicdrawWire() { player.drawWireframe(); }
-			ofPlanePrimitive player;
+			Role() : DrawingPrimitive3d(new ofPlanePrimitive) {}
 		};
 		Plane() : ActorWithPrimativeBaseClass(new Role()) {		}
-		ofPlanePrimitive* getPlayer() { return &getRole<Role>()->player; }
+		ofPlanePrimitive* getPlayer() { return (ofPlanePrimitive*)(getRole<Role>()->getPlayer()); }
+		Role* role() { return getRole<Role>(); }
 
 	private:
-		bool myReadFromScript(const Json::Value &data);
+		bool DerivedMyReadFromScript(const Json::Value &data);
 	};
 	class Sphere : public ActorWithPrimativeBaseClass {
 	public:
 		class Role : public DrawingPrimitive3d {
 		public:
-			Role() :DrawingPrimitive3d() {}
-			void basicdraw() { player.draw(); }
-			void basicdrawWire() { player.drawWireframe(); }
-			ofSpherePrimitive player;
+			Role() : DrawingPrimitive3d(new ofSpherePrimitive) {}
 		};
 		Sphere() : ActorWithPrimativeBaseClass(new Role()) {		}
-		ofSpherePrimitive& getPlayer() { return getRole<Role>()->player; }
+		ofSpherePrimitive* getPlayer() { return (ofSpherePrimitive*)(getRole<Role>()->getPlayer()); }
 		Role* role() { return getRole<Role>(); }
 
 	private:
-		bool myReadFromScript(const Json::Value &data);
+		bool DerivedMyReadFromScript(const Json::Value &data);
 	};
-
+	//bugbug add other shapes
 	class Text : public Actor {
 	public:
 		class Role : public ActorRole {

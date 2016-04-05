@@ -557,19 +557,51 @@ namespace Software2552 {
 		ofPopStyle();
 	}
 
-	bool Plane::myReadFromScript(const Json::Value &data) {
+	bool Plane::DerivedMyReadFromScript(const Json::Value &data) {
 		return true;
 	}
-	void DrawingPrimitive3d::basedraw() {
-		if (useWireframe()) {
-			basicdrawWire();
-		}
-		else {
-			basicdraw();
+	DrawingPrimitive3d::~DrawingPrimitive3d() { 
+		if (player) {
+			delete player;
+			player = nullptr;
 		}
 	}
-	
-	bool Cube::myReadFromScript(const Json::Value &data) {
+
+	DrawingPrimitive3d::DrawingPrimitive3d(of3dPrimitive *p, drawtype type) : ActorRole() {
+		player = p; 
+		setType(type); 
+		if (player) {
+			player->enableColors();
+		}
+	}
+	bool DrawingPrimitive3d::myReadFromScript(const Json::Value &data) {
+		///ofPolyRenderMode renderType = OF_MESH_WIREFRAME; //bugbug enable phase II
+		wireFrame = true;
+		READBOOL(wireFrame, data);
+		fill = false;
+		READBOOL(fill, data);
+		return DerivedMyReadFromScript(data);
+	}
+
+	// assumes push/pop handled by caller
+	void DrawingPrimitive3d::myDraw() {
+		if (player) {
+			if (useFill()) {
+				ofFill();
+			}
+			else {
+				ofNoFill();
+			}
+			if (useWireframe()){
+				player->drawWireframe();
+			}
+			else {
+				player->draw();
+			}
+		}
+	}
+
+	bool Cube::DerivedMyReadFromScript(const Json::Value &data) {
 		float size = 100;//default
 		READFLOAT(size, data);
 		role()->setWireframe(true);
@@ -577,15 +609,19 @@ namespace Software2552 {
 		getPlayer()->roll(20.0f);// just as an example
 		return true;
 	}
-	bool Sphere::myReadFromScript(const Json::Value &data) {
+	bool Sphere::DerivedMyReadFromScript(const Json::Value &data) {
 		float radius = 100;//default
 		READFLOAT(radius, data);
-		getPlayer().setRadius(radius);
+		getPlayer()->setRadius(radius);
 
 		float resolution = 100;//default
 		READFLOAT(resolution, data);
-		getPlayer().setResolution(resolution);
-		role()->setType(ActorRole::draw3dFixedCamera);// can be moving too, let json decide
+		getPlayer()->setResolution(resolution);
+
+		// can be moving too, let json decide, need camera too
+		role()->setType(ActorRole::draw3dFixedCamera);
+		getStage()->fixed3d();
+
 		return true;
 	}
 	bool Background::myReadFromScript(const Json::Value &data) {
@@ -961,8 +997,8 @@ namespace Software2552 {
 	void VideoSphere::Role::myDraw() {
 		//bugbug just need to do this one time, maybe set a flag
 		if (video->getTexture().isAllocated() && !set) {
-			sphere.getPlayer().mapTexCoordsFromTexture(video->getTexture());
-			sphere.getPlayer().rotate(180, 0, 1, 0.0);
+			sphere.getPlayer()->mapTexCoordsFromTexture(video->getTexture());
+			sphere.getPlayer()->rotate(180, 0, 1, 0.0);
 			set = true;
 		}
 		video->role()->mybind();
@@ -977,7 +1013,7 @@ namespace Software2552 {
 			role()->video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
 		}
 		getSphere().role()->setWireframe(false);
-		getSphere().getPlayer().set(250, 180);// set default
+		getSphere().getPlayer()->set(250, 180);// set default
 		return true;
 	}
 	void TextureFromImage::create(const string& name, float w, float h) {
@@ -1000,7 +1036,7 @@ namespace Software2552 {
 		if (getStage()) {
 			shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data);
  			if (p) {
-				ofPoint min(p->getSphere().getPlayer().getRadius() * 2, 0, 200);
+				ofPoint min(p->getSphere().getPlayer()->getRadius() * 2, 0, 200);
 				addPlanets(data["Planets"], min, *this);
 				return true;
 			}
@@ -1018,7 +1054,7 @@ namespace Software2552 {
 					point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
 					point.y = ofRandom(min.y, 500);
 					point.z = ofRandom(min.z, 500);
-					p->getSphere().getPlayer().setPosition(point); // data stored as pointer so this updates the list
+					p->getSphere().getPlayer()->setPosition(point); // data stored as pointer so this updates the list
 				}
 			}
 		}
@@ -1031,17 +1067,17 @@ namespace Software2552 {
 		setType(ActorRole::draw3dMovingCamera);
 		getSphere().role()->setWireframe(false);
 		float r = ofRandom(5, 100);
-		getSphere().getPlayer().set(r, 40);
+		getSphere().getPlayer()->set(r, 40);
 		//bugbug could get sphere location here
 
 		role()->getTexturePtr()->create(getDefaultRole()->getLocationPath(), r * 2, r * 2);
 
-		getSphere().getPlayer().mapTexCoordsFromTexture(role()->getTexturePtr()->getTexture());
+		getSphere().getPlayer()->mapTexCoordsFromTexture(role()->getTexturePtr()->getTexture());
 		return true;
 	}
 	void Planet::Role::myDraw() {
 		getTexturePtr()->bind();
-		sphere.getPlayer().rotate(30, 0, 2.0, 0.0);
+		sphere.getPlayer()->rotate(30, 0, 2.0, 0.0);
 		sphere.role()->myDraw();
 		getTexturePtr()->unbind();
 	}

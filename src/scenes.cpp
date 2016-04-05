@@ -25,7 +25,7 @@ namespace Software2552 {
 	}
 
 	// return a possibly modifed version such as camera moved
-	shared_ptr<Camera> Director::pickem(forward_list<shared_ptr<Camera>>&cameras, bool orbiting) {
+	shared_ptr<Camera> Director::pickem(vector<shared_ptr<Camera>>&cameras, bool orbiting) {
 		for (auto it = cameras.begin(); it != cameras.end(); ++it) {
 			if (orbiting) {
 				if ((*it)->isOrbiting()) {
@@ -69,22 +69,31 @@ namespace Software2552 {
 		}
 		return b;
 	}
+	///bigger the number the more forward
 	bool compareOrder(shared_ptr<Actor>first, shared_ptr<Actor>second)	{
-		return (first->getDefaultRole()->drawOrder > second->getDefaultRole()->drawOrder);
+		return (first->getDefaultRole()->drawOrder < second->getDefaultRole()->drawOrder);
 	}
 
 	bool Stage::readFromScript(const Json::Value &data) {
 		Settings::readFromScript(data["settings"]);
+#define SETANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
+		SETANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
+		//SETANIMATION(picture, Picture);
+		//SETANIMATION(ball, Ball);
+		//SETANIMATION(video, Video);
+		getAnimatables().sort(compareOrder);
+		// set a default camera if none exist
+		if (getCameras().size() == 0) {
+			CreateReadAndaddCamera(data["cameraFixed"]);
+		}
+		// set a default light if none exist
+		if (getLights().size() == 0) {
+			CreateReadAndaddLight<Light>(data["light"]);
+		}
+		// read back ground after sort as its objects are inserted in the front of the draw list
 		//if (!data["background"].empty()) {
 			//CreateReadAndaddBackgroundItems(data["background"]);
 		//}
-#define SETANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
-		//SETANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
-		SETANIMATION(picture, Picture);
-		SETANIMATION(ball, Ball);
-		SETANIMATION(video, Video);
-		getAnimatables().sort(compareOrder);
-		//bug sort by drawOrder (0, 10000+)
 		return true;
 		
 		// data must Cap first char of key words
@@ -149,6 +158,7 @@ namespace Software2552 {
 	};
 
 	void Stage::draw() {
+		//bugbug enable basic items in json like ofDrawGrid and other items from ofBaseRenderer
 
 		if (drawIn2d) {
 			ofPushStyle();
@@ -185,8 +195,8 @@ namespace Software2552 {
 		}
 		else {
 			removeExpiredItems(animatables);
-			removeExpiredItems(cameras);
-			removeExpiredItems(lights);
+			removeExpiredItems<Camera>(cameras);
+			removeExpiredItems<Light>(lights);
 		}
 		myClear(force);
 	}

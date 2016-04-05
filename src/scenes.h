@@ -13,7 +13,7 @@ namespace Software2552 {
 	class Director {
 	public:
 		// return a possibly changed and live value from the cameras vector
-		shared_ptr<Camera> pickem(forward_list<shared_ptr<Camera>>&cameras, bool rotating);
+		shared_ptr<Camera> pickem(vector<shared_ptr<Camera>>&cameras, bool rotating);
 		// owns scenes, read, run, delete when duration is over
 		//objectLifeTimeManager
 	};
@@ -69,11 +69,11 @@ namespace Software2552 {
 		bool drawIn3dMoving = false; 
 		bool drawIn2d = true; 
 
-		void add(shared_ptr<Camera> camera) { cameras.push_front(camera); };
-		void add(shared_ptr<Light> light) { lights.push_front(light); };
+		void add(shared_ptr<Camera> camera) { cameras.push_back(camera); };
+		void add(shared_ptr<Light> light) { lights.push_back(light); };
 
-		forward_list<shared_ptr<Camera>>& getCameras() { return cameras; }
-		forward_list<shared_ptr<Light>>& getLights() { return lights; }
+		vector<shared_ptr<Camera>>& getCameras() { return cameras; }
+		vector<shared_ptr<Light>>& getLights() { return lights; }
 
 		void draw2d();
 		void draw3dFixed();
@@ -103,16 +103,13 @@ namespace Software2552 {
 		void removeExpiredItems(list<shared_ptr<Actor>>&v) {
 			v.remove_if(OKToRemove);
 		}
-		void removeExpiredItems(forward_list<shared_ptr<Camera>>&v) {
-			v.remove_if(objectLifeTimeManager::OKToRemove);
-		}
-		void removeExpiredItems(forward_list<shared_ptr<Light>>&v) {
-			v.remove_if(objectLifeTimeManager::OKToRemove);
+		template<typename T> void removeExpiredItems(vector<shared_ptr<T>>&v) {
+			v.erase(std::remove_if(v.begin(), v.end(), objectLifeTimeManager::OKToRemove), v.end());
 		}
 		//bugbug maybe just animatables is needed, a a typeof or such can be used
-		list<shared_ptr<Actor>> animatables;
-		forward_list<shared_ptr<Camera>> cameras;
-		forward_list<shared_ptr<Light>> lights;
+		list<shared_ptr<Actor>> animatables; // use list as it could be large with lots of adds/deletes over time
+		vector<shared_ptr<Camera>> cameras;  // expect list to be smaller and more fixed, also want index acess "camera 2"
+		vector<shared_ptr<Light>> lights;    // expect list to be smaller and more fixed
 		shared_ptr<Material> material = nullptr;//bugbug need to learn this but I expect it pairs with Light, just make a vector<pair<>>
 
 		Director director;
