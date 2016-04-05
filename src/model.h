@@ -142,7 +142,7 @@ namespace Software2552 {
 		void setAnimationPositionX(float x) { if (isValid())getDefaultRole()->getAnimationHelper()->setPositionX(x); }
 		void setAnimationPositionY(float y) { if (isValid())getDefaultRole()->getAnimationHelper()->setPositionX(y); }
 		void setAnimationPositionZ(float z) { if (isValid())getDefaultRole()->getAnimationHelper()->setPositionX(z); }
-
+		shared_ptr<PointAnimation> getAnimation() {		return getDefaultRole()->getAnimationHelper();	}
 		void setupActor() { if (getDefaultRole()) getDefaultRole()->setupForDrawing(); }
 		void updateActor() { if (getDefaultRole()) getDefaultRole()->updateForDrawing(); }
 		void setStage(Stage*s) { stage = s; }
@@ -269,7 +269,9 @@ namespace Software2552 {
 		DrawingPrimitive3d() : ActorRole() { setType(draw3dFixedCamera); }
 		void setWireframe(bool b = true) { wireFrame = b; }
 		bool useWireframe() { return wireFrame; }
-		void myDraw() { basedraw(); };
+		void myDraw() { 
+			basedraw(); }
+		;
 	private:
 		void basedraw();
 		virtual void basicdraw() = 0;

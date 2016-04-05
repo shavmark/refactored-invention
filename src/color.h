@@ -111,7 +111,7 @@ namespace Software2552 {
 		void getNextColors();
 		void setColorSet(shared_ptr<ColorSet>p) { color = p; }
 		bool useAnimation() { return usingAnimation; }
-
+		void setAnimation(bool b = true) { usingAnimation = true; }
 	private:
 		bool usingAnimation = false; // force  to set this to make sure its understood
 		float alpha = 255;

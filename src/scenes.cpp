@@ -20,6 +20,9 @@ namespace Software2552 {
 		if (name == "Test") {
 			return std::make_shared<TestScene>();
 		}
+		if (name == "Generic") {
+			return std::make_shared<GenericScene>();
+		}
 		logTrace("name not known (ignored) using default scene " + name);
 		return std::make_shared<GenericScene>();
 	}
@@ -76,11 +79,10 @@ namespace Software2552 {
 			CreateReadAndaddBackgroundItems(data["background"]);
 		}
 #define SETANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
+		SETANIMATION(sphere, Sphere);
+		SETANIMATION(picture, Picture);
 		SETANIMATION(ball, Ball);
 		SETANIMATION(video, Video);
-		//if (!data["video"].empty()) {
-			//CreateReadAndaddAnimatable<Video>(data["video"]);
-	//	}
 		return true;
 		
 		// data must Cap first char of key words
@@ -91,15 +93,6 @@ namespace Software2552 {
 			SETANIMATION(Audio);
 			if (datastring == "videoSphere") {
 				CreateReadAndaddAnimatable<VideoSphere>(data[datastring]);
-			}
-			else if (datastring == "picture") {
-				CreateReadAndaddAnimatable<Picture>(data[datastring]);
-			}
-			else if (datastring == "video") {
-				CreateReadAndaddAnimatable<Video>(data[datastring]);
-			}
-			else if (datastring == "ball") {
-				CreateReadAndaddAnimatable<Ball>(data[datastring]);
 			}
 			else if (datastring == "text") {
 				CreateReadAndaddAnimatable<Text>(data[datastring]);
@@ -115,12 +108,6 @@ namespace Software2552 {
 			}
 			else if (datastring == "solarSystem") {
 				CreateReadAndaddAnimatable<SolarSystem>(data[datastring]);
-			}
-			else if (datastring == "video") {
-				CreateReadAndaddAnimatable<Video>(data[datastring]); //bugbug remove last parameter when working
-			}
-			else if (datastring == "picture") {
-				CreateReadAndaddAnimatable<Picture>(data[datastring]);
 			}
 			else if (datastring == "cube") {
 				CreateReadAndaddAnimatable<Cube>(data[datastring]);
@@ -325,9 +312,6 @@ namespace Software2552 {
 		//ofBackground(ofColor::black);
 		//bugbug option is to add vs replace:ofEnableBlendMode(OF_BLENDMODE_ADD);//bugbug can make these attributes somewhere
 		//ofEnableAlphaBlending();
-	}
-	bool GenericScene::myCreate(const Json::Value &data) {
-		return true;
 	}
 	//great animation example
 	bool TestBallScene::myCreate(const Json::Value &data) {

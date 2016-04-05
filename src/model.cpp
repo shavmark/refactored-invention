@@ -232,9 +232,11 @@ namespace Software2552 {
 	bool Ball::myReadFromScript(const Json::Value &data) {
 		// can read any of these items from json here
 		setAnimationPositionY(role()->floorLine - 100);
-		getDefaultRole()->getAnimationHelper()->setCurve(EASE_IN);
-		getDefaultRole()->getAnimationHelper()->setRepeatType(LOOP_BACK_AND_FORTH);
-		getDefaultRole()->getAnimationHelper()->setDuration(0.55);
+		setAnimation(true);
+		role()->getColorAnimation()->setAnimation();
+		getAnimation()->setCurve(EASE_IN);
+		getAnimation()->setRepeatType(LOOP_BACK_AND_FORTH);
+		getAnimation()->setDuration(0.55);
 		readJsonValue(role()->radius, data["radius"]);
 		ofPoint p;
 		p.y = role()->floorLine;
@@ -642,6 +644,7 @@ namespace Software2552 {
 			shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data["video"]);
 			if (p) {
 				p->role()->setFullSize();
+				p->getPlayer().setSpeed(0.25f);
 			}
 		}
 		return true;
