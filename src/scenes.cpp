@@ -202,13 +202,6 @@ namespace Software2552 {
 	}
 
 	void Stage::setup() {
-
-		material = std::make_shared<Material>();
-		if (material != nullptr) {
-			material->setShininess(90);
-			material->setSpecularColor(ofColor::hotPink);//bugbug this needs to be set based on color
-		}
-
 		mySetup();
 	}
 	void Stage::update() {
@@ -228,9 +221,6 @@ namespace Software2552 {
 				light->getPlayer().setPosition(light->loc);
 				light->getPlayer().enable();
 				light->getPlayer().draw();
-			}
-			if (material) {
-				material->begin();
 			}
 			if (cam->isOrbiting()) {
 				if (drawIn3dMoving && !drawFixed) {
@@ -269,9 +259,6 @@ namespace Software2552 {
 	void Stage::post3dDraw() {
 		// clean up
 		ofDisableDepthTest();
-		if (material) {
-			material->end();
-		}
 		for (auto& light : lights) {
 			light->getPlayer().disable();
 		}

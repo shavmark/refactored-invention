@@ -37,7 +37,15 @@ namespace Software2552 {
 	public:
 		bool readFromScript(const Json::Value &data);
 	};
-	
+	class ColorHelper {
+	public:
+		bool readFromScript(const Json::Value &data);
+		shared_ptr<AnimiatedColor> getAnimatedColorPtr() { return colorAnimation; }
+		void setAnimatedColorPtr(shared_ptr<AnimiatedColor>p) { colorAnimation = p; }
+	private:
+		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
+	};
+
 	//http://pocoproject.org/slides/070-DateAndTime.pdf
 	class DateAndTime : public Poco::DateTime {
 	public:
@@ -82,15 +90,12 @@ namespace Software2552 {
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
 		bool operator==(const Settings& rhs) { return rhs.name == name; }
 		string &getName() { return name; }
-		virtual void setSettings(const Settings& rhs);
+		virtual void setSettings(Settings& rhs);
 		virtual void setSettings(Settings* rhs);
-		
+		shared_ptr<AnimiatedColor> getColorAnimationPtr() { return colorHelper.getAnimatedColorPtr(); }
 	protected:
-		
-		shared_ptr<ColorSet> getColor();// drawing using animatedcolor
 		Font   font;
-		//		colors = std::make_shared<Colors>(ColorSet::ColorGroup::Extreme);// setup colors bugbug get from json
-		shared_ptr<ColorSet>  colors=nullptr;
+		ColorHelper colorHelper;
 		string notes;// unstructured string of info, can be shown to the user
 		string title; // title object
 		string name; // any object can have a name, note, date, reference, duration
@@ -219,8 +224,10 @@ namespace Software2552 {
 		void setZ(float z) { loc.z = z; }
 		void setLoc(float x, float y = 0, float z = 0) { loc.x = x; loc.y = y; loc.z = z; }
 		ofPoint loc; // light is set on object within camera scope
+		void setColorAnimation(shared_ptr<AnimiatedColor>p) { colorAnimation = p; }
 	private:
 		ofLight player;
+		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
 		virtual bool myReadFromScript(const Json::Value &data);
 	};
 	class PointLight : public Light {
@@ -262,6 +269,13 @@ namespace Software2552 {
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
+	class Material : public ofMaterial {
+	public:
+		void begin();
+		bool readFromScript(const Json::Value &data);
+		ColorHelper colorHelper;
+	};
+
 	class ActorWithPrimativeBaseClass;
 	class DrawingPrimitive3d : public ActorRole {
 	public:
@@ -272,61 +286,61 @@ namespace Software2552 {
 		bool useWireframe() { return wireFrame; }
 		void setFill(bool b = true) { fill = b; }
 		bool useFill() { return fill; }
-
 		void myDraw();
 		of3dPrimitive* getPlayer() { return player; }
-		bool myReadFromScript(const Json::Value &data);
+		Material  material;
 	private:
-		virtual bool DerivedMyReadFromScript(const Json::Value &data) { return true; }
 		of3dPrimitive *player = nullptr; // allow derived pointers and polymorphism
 		bool wireFrame = true;
 		bool fill = false;
+		void basicDraw();
 	};
 	class ActorWithPrimativeBaseClass : public Actor {
 	public:
-		ActorWithPrimativeBaseClass(DrawingPrimitive3d *p = nullptr) :Actor(p){}
-		DrawingPrimitive3d *getPrimative() { return (DrawingPrimitive3d*)getDefaultRole();  }
+		ActorWithPrimativeBaseClass(DrawingPrimitive3d *p) :Actor(p){}
+		bool myReadFromScript(const Json::Value &data);
+		DrawingPrimitive3d* role() { return getRole<DrawingPrimitive3d>(); }
+
+	private:
+		virtual bool derivedMyReadFromScript(const Json::Value &data) { return true; }
 	};
 	// do not use templates as its hard to make base class pointers to them
 	class Cube : public ActorWithPrimativeBaseClass {
 	public:
-		class Role : public DrawingPrimitive3d {
-		public:
-			Role() : DrawingPrimitive3d(new ofBoxPrimitive) {}
-		};
-		Cube() : ActorWithPrimativeBaseClass(new Role()) {		}
-		ofBoxPrimitive* getPlayer() { return (ofBoxPrimitive*)(getRole<Role>()->getPlayer()); }
-		Role* role() { return getRole<Role>(); }
-
+		Cube() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofBoxPrimitive)) {		}
+		ofBoxPrimitive* getPlayer() { return (ofBoxPrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
 	private:
-		bool DerivedMyReadFromScript(const Json::Value &data);
+		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Plane : public ActorWithPrimativeBaseClass {
 	public:
-		class Role : public DrawingPrimitive3d {
-		public:
-			Role() : DrawingPrimitive3d(new ofPlanePrimitive) {}
-		};
-		Plane() : ActorWithPrimativeBaseClass(new Role()) {		}
-		ofPlanePrimitive* getPlayer() { return (ofPlanePrimitive*)(getRole<Role>()->getPlayer()); }
-		Role* role() { return getRole<Role>(); }
-
+		Plane() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofPlanePrimitive)) {		}
+		ofPlanePrimitive* getPlayer() { return (ofPlanePrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
 	private:
-		bool DerivedMyReadFromScript(const Json::Value &data);
+		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Sphere : public ActorWithPrimativeBaseClass {
 	public:
-		class Role : public DrawingPrimitive3d {
-		public:
-			Role() : DrawingPrimitive3d(new ofSpherePrimitive) {}
-		};
-		Sphere() : ActorWithPrimativeBaseClass(new Role()) {		}
-		ofSpherePrimitive* getPlayer() { return (ofSpherePrimitive*)(getRole<Role>()->getPlayer()); }
-		Role* role() { return getRole<Role>(); }
-
+		Sphere() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofSpherePrimitive)) {		}
+		ofSpherePrimitive* getPlayer() { return (ofSpherePrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
 	private:
-		bool DerivedMyReadFromScript(const Json::Value &data);
+		bool derivedMyReadFromScript(const Json::Value &data);
 	};
+	class Cylinder : public ActorWithPrimativeBaseClass {
+	public:
+		Cylinder() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofCylinderPrimitive)) {		}
+		ofCylinderPrimitive* getPlayer() { return (ofCylinderPrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
+	private:
+		bool derivedMyReadFromScript(const Json::Value &data);
+	};
+	class Cone : public ActorWithPrimativeBaseClass {
+	public:
+		Cone() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofConePrimitive)) {		}
+		ofConePrimitive* getPlayer() { return (ofConePrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
+	private:
+		bool derivedMyReadFromScript(const Json::Value &data);
+	};
+
 	//bugbug add other shapes
 	class Text : public Actor {
 	public:
@@ -452,7 +466,7 @@ namespace Software2552 {
 		};
 		VideoSphere(const string&s) :Actor(new Role(s)) {		}
 		VideoSphere() :Actor(new Role()) {  }
-		void setSettings(const Settings& rhs);
+		void setSettings(Settings& rhs);
 		Sphere& getSphere() { return getRole<Role>()->sphere; }
 		Role* role() { return getRole<Role>(); }
 
@@ -481,10 +495,7 @@ namespace Software2552 {
 
 	class SolarSystem : public Actor {
 	public:
-		class Role : public ActorRole {
-		public:
-		};
-		SolarSystem() :Actor(new Role()) {  }
+		SolarSystem() :Actor(new ActorRole()) {  }
 		void addPlanets(const Json::Value &data, ofPoint& min, Settings& settings);
 
 	private:

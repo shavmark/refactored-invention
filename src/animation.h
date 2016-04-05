@@ -54,7 +54,7 @@ namespace Software2552 {
 	class AnimiatedColor;
 	class ActorRole  {
 	public:
-		enum drawtype { drawBackground, draw2d, draw3dFixedCamera, draw3dMovingCamera };
+		enum drawtype {  draw2d, draw3dFixedCamera, draw3dMovingCamera };
 		ActorRole() {  }
 		ActorRole(const string&path) { 	setLocationPath(path); 		}
 		bool readFromScript(const Json::Value &data);

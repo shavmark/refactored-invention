@@ -31,48 +31,54 @@ namespace Software2552 {
 		return true;
 	}
 	void ColorList::update() {
-		// clean up deleted items every so often
-		for (auto& d : privateData->colorlist) {
-			d->refreshAnimation();
-		}
-		// remove expired colors
-		removeExpiredItems(privateData->colorlist);
+		if (privateData) {
+			// clean up deleted items every so often
+			for (auto& d : privateData->colorlist) {
+				d->refreshAnimation();
+			}
+			// remove expired colors
+			removeExpiredItems(privateData->colorlist);
 
-		//bugbug call this at the right time
-		if (getCurrentColor() && ofRandom(0,100) > 80) {
-			getNextColors(getCurrentColor()->getGroup(), true); // updates global list
+			//bugbug call this at the right time
+			if (getCurrentColor() && ofRandom(0, 100) > 80) {
+				getNextColors(getCurrentColor()->getColorSet()->getGroup(), true); // updates global list
+			}
 		}
 	}
 	// return current color, track its usage count
-	shared_ptr<ColorSet> ColorList::getCurrentColor() {
-		if (privateData == nullptr) {
-			return nullptr;
-		}
-		if (privateData->currentColor) {
-			++(*privateData->currentColor); // mark usage
-			return privateData->currentColor;
+	shared_ptr<AnimiatedColor> ColorList::getCurrentColor() {
+		if (privateData) {
+			if (privateData->currentColor && privateData->currentColor->colorSet) {
+				++(*privateData->currentColor->colorSet); // mark usage if data has been set
+				return privateData->currentColor;
+			}
 		}
 		return nullptr;
+	}
+	void ColorList::setCurrentColorSet(shared_ptr<ColorSet>c) {
+		if (privateData) {
+			privateData->currentColor->setColorSet(c);
+		}
 	}
 	// get next color based on type and usage count, this will set the color globally
 	// example: type==cool gets the next cool type, type=Random gets any next color
 	shared_ptr<ColorSet> ColorList::getNextColors(ColorSet::ColorGroup group, bool global) {
 		shared_ptr<ColorSet> ret = nullptr;
 		if (getCurrentColor() != nullptr) {
-			if (getCurrentColor()->getGroup() != group) {
+			if (getCurrentColor()->getColorSet()->getGroup() != group) {
 				// new group, delete current group
 				if (global) {
-					setCurrentColor(nullptr);
+					setCurrentColorSet(nullptr);
 				}
 			}
 		}
 		// find a match
 		for (auto& it = privateData->colorlist.begin(); it != privateData->colorlist.end(); ++it) {
 			if ((*it)->getGroup() == group) {
-				if (getCurrentColor() == nullptr || getCurrentColor()->getUsage() >= (*it)->getUsage()) {
+				if (getCurrentColor() == nullptr || getCurrentColor()->getColorSet()->getUsage() >= (*it)->getUsage()) {
 					// first time in or a color as less usage than current color
 					if (global) {
-						setCurrentColor(*it);
+						setCurrentColorSet(*it);
 					}
 					ret = *it;
 					break;
@@ -130,6 +136,11 @@ namespace Software2552 {
 
 	//http://www.creativecolorschemes.com/resources/free-color-schemes/art-deco-color-scheme.shtml
 	void ColorList::setup() {
+		if (privateData == nullptr) {
+			return;
+		}
+		privateData->currentColor = std::make_shared<AnimiatedColor>();
+
 		//bugbug phase II read from json
 		// only needs to be setup one time since its static data
 		if (privateData->colorlist.empty()) {
@@ -239,15 +250,20 @@ namespace Software2552 {
 
 	// always return a valid pointer
 	shared_ptr<ColorSet> AnimiatedColor::getColorSet() {
-		if (color == nullptr) {
-			color = ColorList::getCurrentColor(); // use the global color
-			logTrace("using default colorset");
+		if (colorSet == nullptr) {
+			return ColorList::getCurrentColor()->getColorSet(); // use the global color
 		}
-		return color;
+		return colorSet;
 	}
-	AnimiatedColor::AnimiatedColor(shared_ptr<ColorSet>colorIn) :ofxAnimatableOfColor() {
-		color = colorIn;
+		// reset the object
+	void AnimiatedColor::setColorSet(shared_ptr<ColorSet>p) { 
+		if (p) {
+			colorSet = p;
+			setColor(ofColor(colorSet->getLightest()));
+			animateTo(ofColor(colorSet->getDarkest()));
+		}
 	}
+
 	void AnimiatedColor::getNextColors() {
 		setColorSet(ColorList::getNextColors(getColorSet()->getGroup(), false));
 	}
@@ -279,8 +295,6 @@ namespace Software2552 {
 		}
 
 		// set defaults or read from data bugbug add more data reads as needed
-		setColor(ofColor(getColorSet()->getLightest()));
-		animateTo(ofColor(getColorSet()->getDarkest()));
 		setDuration(0.5f);
 		setRepeatType(LOOP_BACK_AND_FORTH);
 		setCurve(LINEAR);

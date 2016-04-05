@@ -152,8 +152,5 @@ namespace Software2552 {
 		void shape(int twistx, int shifty, bool rect, bool fill, int rotate, int alpha = 100);
 	};
 
-	class Material : public ofMaterial {
-	public:
-	};
 
 }

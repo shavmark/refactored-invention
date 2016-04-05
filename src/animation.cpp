@@ -123,9 +123,11 @@ namespace Software2552 {
 		return locationPath; 
 	}
 
-	void ActorRole::drawIt(drawtype type) {//DrawingBasics::drawtype
+	void ActorRole::drawIt(drawtype type) {
 		if (okToDraw(type)) {
-			applyColor();
+			if (getType() == draw2d) {
+				applyColor(); // in 3d color comes from lights etc
+			}
 			myDraw();
 		}
 	};

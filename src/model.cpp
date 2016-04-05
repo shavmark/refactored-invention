@@ -245,11 +245,11 @@ namespace Software2552 {
 		return true;
 	}
 	 bool Actor::readActorFromScript(const Json::Value &data, Stage*stage) {
-		 if (player == nullptr) {
-			 logErrorString("missing player");
-			 return false;
-		 }
-		 setStage(stage);
+		if (player == nullptr) {
+			logErrorString("missing player");
+			return false;
+		}
+		setStage(stage);
 
 		// common and shared settings
 		Settings::readFromScript(data["settings"]);
@@ -258,9 +258,7 @@ namespace Software2552 {
 		references = parse<Reference>(data["references"]);
 
 		// unqiue or shared color, pointer allows for global updates
-		shared_ptr<AnimiatedColor> ac = std::make_shared<AnimiatedColor>(getColor());
-		ac->readFromScript(data["colorAnimation"]);
-		player->setColorAnimation(ac);
+		player->setColorAnimation(getColorAnimationPtr());
 
 		// all actors can have a location, draw order etc
 		player->readFromScript(data);
@@ -314,11 +312,6 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	// settings stores the color manager
-	shared_ptr<ColorSet> Settings::getColor() {
-		return colors; // may be null
-	}
-
 	// always return true as these are optional items
 	bool Settings::readFromScript(const Json::Value &data) {
 		// dumps too much so only enable if there is a bug: ECHOAll(data);
@@ -327,13 +320,7 @@ namespace Software2552 {
 			READSTRING(title, data);
 			READSTRING(notes, data);
 			font.readFromScript(data["font"]);
-			string colorGroupName;
-			READSTRING(colorGroupName, data);
-			if (colorGroupName.size() > 0) {
-				// make this the current color
-				colors = ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroupName), false);
-			}
-			
+			colorHelper.readFromScript(data);
 		}
 
 		return true;
@@ -423,10 +410,10 @@ namespace Software2552 {
 		return true;
 	}
 
-	void Settings::setSettings(const Settings& rhs) {
+	void Settings::setSettings(Settings& rhs) {
 		// only copy items that change as a default
 		font = rhs.font;
-		colors = rhs.colors;
+		colorHelper.setAnimatedColorPtr(rhs.getColorAnimationPtr());
 	}
 	//, "carride.mp4"
 	bool Video::myReadFromScript(const Json::Value &data) {
@@ -477,6 +464,37 @@ namespace Software2552 {
 		player.setFov(60);
 		return true;
 	}
+	void Material::begin() {
+		// the light highlight of the material  
+		ofFloatColor fc = ofFloatColor().fromHex(colorHelper.getAnimatedColorPtr()->getColorSet()->getForeground(), colorHelper.getAnimatedColorPtr()->getAlpha());
+		setSpecularColor(fc);
+		//setSpecularColor(ofColor(255, 255, 255, 255)); // does white work wonders? or what does color do?
+		ofMaterial::begin();
+	}
+	// return local pointer or global shared pointer
+	shared_ptr<AnimiatedColor> ColorHelper::getAnimatedColorPtr() { 
+		if (colorAnimation == nullptr) {
+			logTrace("Material using default colorset");
+			return ColorList::getCurrentColor();// use the global color
+		}
+		return colorAnimation; 
+	}
+
+	bool ColorHelper::readFromScript(const Json::Value &data) {
+		if (!data["colorAnimation"].empty()) {
+			colorAnimation = std::make_shared<AnimiatedColor>();
+			colorAnimation->readFromScript(data["colorAnimation"]);
+		}
+	}
+	bool Material::readFromScript(const Json::Value &data) {
+		// shininess is a value between 0 - 128, 128 being the most shiny // 
+		float shininess = 90;
+		READFLOAT(shininess, data);
+		setShininess(shininess);
+		colorHelper.readFromScript(data);
+
+		return true;
+	}
 	bool Light::myReadFromScript(const Json::Value &data) {
 		//bugbug fill in as an option, use Settings for color, or the defaults
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
@@ -484,8 +502,8 @@ namespace Software2552 {
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
 		setLoc(ofRandom(-200,200), 0, ofRandom(600,700));
-		getPlayer().setDiffuseColor(ofColor(255.f, 255.f, 255.f));
-		getPlayer().setSpecularColor(ofColor(0.f, 0.f, 255.f));
+		getPlayer().setDiffuseColor(ofColor(255, 0, 0));
+		getPlayer().setSpecularColor(ofColor(0, 0, 255));
 		return true;
 	}
 	bool PointLight::myReadFromScript(const Json::Value &data) {
@@ -557,7 +575,7 @@ namespace Software2552 {
 		ofPopStyle();
 	}
 
-	bool Plane::DerivedMyReadFromScript(const Json::Value &data) {
+	bool Plane::derivedMyReadFromScript(const Json::Value &data) {
 		return true;
 	}
 	DrawingPrimitive3d::~DrawingPrimitive3d() { 
@@ -574,34 +592,50 @@ namespace Software2552 {
 			player->enableColors();
 		}
 	}
-	bool DrawingPrimitive3d::myReadFromScript(const Json::Value &data) {
+	
+	bool ActorWithPrimativeBaseClass::myReadFromScript(const Json::Value &data) {
 		///ofPolyRenderMode renderType = OF_MESH_WIREFRAME; //bugbug enable phase II
-		wireFrame = true;
-		READBOOL(wireFrame, data);
-		fill = false;
-		READBOOL(fill, data);
-		return DerivedMyReadFromScript(data);
+		if (role()) {
+			bool wireFrame = true;
+			READBOOL(wireFrame, data);
+			bool fill = false;
+			READBOOL(fill, data);
+			role()->setFill(fill);
+			role()->setWireframe(wireFrame);
+			// pass on current animation
+			role()->material.colorHelper.setAnimatedColorPtr(getColorAnimationPtr());
+			role()->material.readFromScript(data);
+		}
+		return derivedMyReadFromScript(data);
 	}
-
+	// private draw helper
+	void DrawingPrimitive3d::basicDraw() {
+		if (useWireframe()) {
+			player->setScale(1.01f);
+			player->drawWireframe();
+			player->setScale(1.f);
+		}
+		else {
+			player->draw();
+		}
+	}
 	// assumes push/pop handled by caller
 	void DrawingPrimitive3d::myDraw() {
 		if (player) {
-			if (useFill()) {
-				ofFill();
-			}
-			else {
+			ofSetColor(0, 0, 0);//color comes from the light
+			material.begin();
+			if (!useFill()) {
 				ofNoFill();
 			}
-			if (useWireframe()){
-				player->drawWireframe();
-			}
 			else {
-				player->draw();
+				ofFill();
 			}
+			basicDraw();
+			material.end();
 		}
 	}
 
-	bool Cube::DerivedMyReadFromScript(const Json::Value &data) {
+	bool Cube::derivedMyReadFromScript(const Json::Value &data) {
 		float size = 100;//default
 		READFLOAT(size, data);
 		role()->setWireframe(true);
@@ -609,7 +643,15 @@ namespace Software2552 {
 		getPlayer()->roll(20.0f);// just as an example
 		return true;
 	}
-	bool Sphere::DerivedMyReadFromScript(const Json::Value &data) {
+	bool Cylinder::derivedMyReadFromScript(const Json::Value &data) {
+		getPlayer()->setPosition(ofGetWidth()*.8, ofGetHeight()*.75, 0);
+		return true;
+	}
+	bool Cone::derivedMyReadFromScript(const Json::Value &data) {
+		getPlayer()->setPosition(ofGetWidth()*.8, ofGetHeight()*.75, 0);
+		return true;
+	}
+	bool Sphere::derivedMyReadFromScript(const Json::Value &data) {
 		float radius = 100;//default
 		READFLOAT(radius, data);
 		getPlayer()->setRadius(radius);
@@ -620,8 +662,9 @@ namespace Software2552 {
 
 		// can be moving too, let json decide, need camera too
 		role()->setType(ActorRole::draw3dFixedCamera);
+		role()->setFill();
 		getStage()->fixed3d();
-
+		getPlayer()->setMode(OF_PRIMITIVE_TRIANGLES);
 		return true;
 	}
 	bool Background::myReadFromScript(const Json::Value &data) {
@@ -1025,7 +1068,7 @@ namespace Software2552 {
 		draw(0, 0, w, h);
 		fbo.end();// normal drawing resumes
 	}
-	void VideoSphere::setSettings(const Settings& rhs) { 
+	void VideoSphere::setSettings(Settings& rhs) { 
 		Settings::setSettings(rhs);
 		if (role()->video) {
 			role()->video->setSettings(rhs);

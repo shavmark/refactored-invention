@@ -61,6 +61,26 @@ namespace Software2552 {
 	};
 
 	// global color data
+	class AnimiatedColor : public ofxAnimatableOfColor {
+	public:
+		AnimiatedColor() :ofxAnimatableOfColor() { }
+		void draw();
+		void update();
+		bool paused() { return paused_; }
+		bool readFromScript(const Json::Value &data);
+		shared_ptr<ColorSet> getColorSet();
+		float getAlpha() { return alpha; }//bugbug flush this out, read it in, set it etc
+		void setAlpha(float a) { alpha = a; }
+		void getNextColors();
+		void setColorSet(shared_ptr<ColorSet>p);
+		bool useAnimation() { return usingAnimation; }
+		void setAnimation(bool b = true) { usingAnimation = true; }
+		shared_ptr<ColorSet> colorSet = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
+	private:
+		bool usingAnimation = false; // force  to set this to make sure its understood
+		float alpha = 255;
+	};
+	
 	class ColorList {
 	public:
 		ColorList();
@@ -72,7 +92,7 @@ namespace Software2552 {
 		class colordata {
 		public:
 			forward_list<shared_ptr<ColorSet>> colorlist; // global list of colors
-			shared_ptr<ColorSet> currentColor = nullptr;  // color set in use
+			shared_ptr<AnimiatedColor>currentColor = nullptr;  // color set in use, currentColor never changes but its content does so the pointer can be widely shared
 		};
 
 		// call getNext at start up and when ever colors should change
@@ -80,7 +100,7 @@ namespace Software2552 {
 		// get next color based on type and usage count
 		// example: type==cool gets the next cool type, type=Random gets any next color
 		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group, bool global);
-		static shared_ptr<ColorSet> getCurrentColor();
+		static shared_ptr<AnimiatedColor> getCurrentColor();
 
 		bool readFromScript(const Json::Value &data);
 
@@ -93,30 +113,9 @@ namespace Software2552 {
 
 	private:
 		static shared_ptr<colordata> privateData;// never call directly to assure allocation
-		static void setCurrentColor(shared_ptr<ColorSet>c) { privateData->currentColor = c; }
+		static void setCurrentColorSet(shared_ptr<ColorSet>c);
 	};
 
-	class AnimiatedColor : public ofxAnimatableOfColor {
-	public:
-		AnimiatedColor() :ofxAnimatableOfColor() { }
-		AnimiatedColor(shared_ptr<ColorSet> color);
-		// animates colors
-		void draw();
-		void update();
-		bool paused() { return paused_; }
-		bool readFromScript(const Json::Value &data);
-		shared_ptr<ColorSet> getColorSet();
-		float getAlpha() { return alpha; }//bugbug flush this out, read it in, set it etc
-		void setAlpha(float a) { alpha = a; }
-		void getNextColors();
-		void setColorSet(shared_ptr<ColorSet>p) { color = p; }
-		bool useAnimation() { return usingAnimation; }
-		void setAnimation(bool b = true) { usingAnimation = true; }
-	private:
-		bool usingAnimation = false; // force  to set this to make sure its understood
-		float alpha = 255;
-		shared_ptr<ColorSet> color = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
-	};
 
 	
 }
