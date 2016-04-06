@@ -160,11 +160,12 @@ namespace Software2552 {
 			std::unordered_map<char, int>  earthtone ={
 			{ 'A',0x493829 },{ 'B',  0x816C5B },{ 'C',  0xA9A18C },{ 'D',  0x613318 },{ 'E',  0x855723 },{ 'F',  0xB99C6B },{ 'G',  0x8F3B1B },{ 'H', 0xD57500 },
 			{ 'I',  0xDBCA69 },{ 'J',  0x404F24 },{ 'K',  0x668D3C },{ 'L',  0xBDD09F },{ 'M',  0x4E6172 },{ 'N',  0x83929F },{ 'O',  0xA3ADB8} };
-
+#define INHEX(a)
 			//A C B D A C see the color doc to fill these in. use the 4 colors then pick the lightest and darkest 
 			add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
 			add(ColorSet::White, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff);
-
+			add(ColorSet::OrangeAndBlack, ofColor::black.getHex(), ofColor::orangeRed.getHex(), ofColor::orangeRed.getHex(), ofColor::orangeRed.getHex(), ofColor::orangeRed.getHex(), ofColor::black.getHex());
+			
 			/* bugbug load all these once color is working etc
 			add(ColorSet::Modern, E, D, ofColor::black.getHex(), ofColor::white.getHex());
 

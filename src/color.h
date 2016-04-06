@@ -17,7 +17,7 @@ namespace Software2552 {
 	class ColorSet : public objectLifeTimeManager {
 	public:
 		enum ColorGroup {
-			Modern, Smart, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
+			Modern, Smart, OrangeAndBlack, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
 		};
 		enum ColorType {
 			Fore, Back, Text, Other, Lightest, Darkest
