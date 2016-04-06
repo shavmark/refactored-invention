@@ -73,11 +73,13 @@ namespace Software2552 {
 		bool readFromScript(const Json::Value &data);
 		// avoid name clashes and wrap the most used items, else access the contained object for more
 
-		shared_ptr<FloatAnimation> getScaleAnimationHelper();
-		shared_ptr<PointAnimation> getLocationAnimationHelper();
+		shared_ptr<FloatAnimation> getScaleAnimationHelper() { return scaleAnimation; }
+		shared_ptr<PointAnimation> getLocationAnimationHelper() { return locationAnimation; }
 		shared_ptr<AnimiatedColor> getColorAnimationHelper() { return colorAnimation; }
 
-		virtual float getTimeBeforeStart(float t) { return getLocationAnimationHelper()->getWait(); }
+		ofPoint& getCurrentPosition();
+		void setPosition(ofPoint& p);
+		virtual float getTimeBeforeStart(float t) { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getWait():0; }
 
 		// helpers to wrap basic functions
 		void setupForDrawing() { mySetup(); };
@@ -88,17 +90,18 @@ namespace Software2552 {
 
 		int w = 0;
 		int h = 0;
-		
+		ofPoint defaultStart;
+
 		int drawOrder = 0; // sorted by value so any value is ok
 
 		string &getLocationPath();
 		void setLocationPath(const string&s) { locationPath = s; }
 
 		static bool OKToRemove(shared_ptr<ActorRole> me) {
-			return me->getLocationAnimationHelper()->OKToRemove(me->getLocationAnimationHelper());
+			return objectLifeTimeManager::OKToRemove(me->getLocationAnimationHelper());
 		}
 		static bool OKToRemoveNormalPointer(ActorRole* me) {
-			return me->getLocationAnimationHelper()->OKToRemove(me->getLocationAnimationHelper());
+			return objectLifeTimeManager::OKToRemove(me->getLocationAnimationHelper());
 		}
 		void setType(drawtype typeIn) { type = typeIn; }
 	protected:

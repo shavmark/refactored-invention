@@ -340,6 +340,7 @@ namespace Software2552 {
 
 		return true;
 	}
+
 	bool Dates::readFromScript(const Json::Value &data) {
 		Settings::readFromScript(data["settings"]);
 		timelineDate.readFromScript(data["timelineDate"]); // date item existed
@@ -552,7 +553,7 @@ namespace Software2552 {
 	}
 	void Ball::Role::myDraw() {
 		ofFill();
-		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), getLocationAnimationHelper()->getCurrentPosition().y, radius);
+		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), getCurrentPosition().y, radius);
 		//glColor4ub(255, 255, 255, 255);
 		ofRect(0, floorLine + radius, ofGetWidth(), 1);
 
@@ -564,7 +565,7 @@ namespace Software2552 {
 
 	void Text::Role::myDraw() {
 		//bugbug add in some animation
-		drawText(text, getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
+		drawText(text, getCurrentPosition().x, getCurrentPosition().y);
 	}
 
 	void Text::Role::drawText(const string &s, int x, int y) {
@@ -606,7 +607,7 @@ namespace Software2552 {
 		return derivedMyReadFromScript(data);
 	}
 	void DrawingPrimitive3d::myUpdate() {
-		getPlayer()->setPosition(getLocationAnimationHelper()->getCurrentPosition());
+		getPlayer()->setPosition(getCurrentPosition());
 	}
 	// private draw helper
 	void DrawingPrimitive3d::basicDraw() {
@@ -700,7 +701,10 @@ namespace Software2552 {
 			role()->setGradientMode(noGradient);
 		}
 		
-		role()->getLocationAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
+		if (role()->getLocationAnimationHelper()){
+			//bugbug finish this 
+			role()->getLocationAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
+		}
 
 		if (getStage() && !data["image"].empty()) {
 			shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data["image"]);
@@ -721,7 +725,10 @@ namespace Software2552 {
 	void Visual::setFullSize() {
 		fullsize = true;
 		getLocationAnimationHelper()->setPosition(ofPoint());
-		getLocationAnimationHelper()->setAnimationEnabled(false);
+
+		if (getLocationAnimationHelper()) {
+			getLocationAnimationHelper()->setAnimationEnabled(false);
+		}
 	}
 	void Background::Role::myDraw() {
 		if (mode == flat) {

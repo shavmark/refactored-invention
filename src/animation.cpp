@@ -28,6 +28,9 @@ namespace Software2552 {
 	}
 
 	bool objectLifeTimeManager::OKToRemove(shared_ptr<objectLifeTimeManager> me) {
+		if (me == nullptr) {
+			return false; 
+		}
 		if (me->isExpired()) {
 			return true;
 		}
@@ -70,6 +73,24 @@ namespace Software2552 {
 		}
 		return false;
 	}
+	ofPoint& getCurrentPosition();
+	void ActorRole::setPosition(ofPoint& p) { 
+		if (getLocationAnimationHelper()) {
+			getLocationAnimationHelper()->setPosition(p);
+		}
+		else {
+			defaultStart = p;
+		}
+	}
+
+	ofPoint& ActorRole::getCurrentPosition() {
+		if (getLocationAnimationHelper()) {
+			return getLocationAnimationHelper()->getCurrentPosition();
+		}
+		return defaultStart;// 0,0,0 by defaault
+	}
+
+	// need "scale"{}, animation etc wrapers in json
 	bool FloatAnimation::readFromScript(const Json::Value &data){
 		//bugbug how to make common read animation items one function?
 		float duration = 0;
@@ -154,37 +175,43 @@ namespace Software2552 {
 		READSTRING(curveName, data);
 		setCurve(ofxAnimatable::getCurveFromName(curveName));
 
-		int repeat = 1;
-		READINT(repeat, data);
-		setRepeatTimes(repeat);
+int repeat = 1;
+READINT(repeat, data);
+setRepeatTimes(repeat);
 
-		string repeatType = "PLAY_ONCE";
-		READSTRING(repeatType, data);
+string repeatType = "PLAY_ONCE";
+READSTRING(repeatType, data);
 
-		if (repeatType == "LOOP") {
-			setRepeatType(LOOP);
-		}
-		if (repeatType == "PLAY_ONCE") {
-			setRepeatType(PLAY_ONCE);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH") {
-			setRepeatType(LOOP_BACK_AND_FORTH);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH_ONCE") {
-			setRepeatType(LOOP_BACK_AND_FORTH_ONCE);
-		}
-		else if (repeatType == "PLAY_N_TIMES") {
-			setRepeatType(PLAY_N_TIMES);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH_N_TIMES") {
-			setRepeatType(LOOP_BACK_AND_FORTH_N_TIMES);
-		}
+if (repeatType == "LOOP") {
+	setRepeatType(LOOP);
+}
+if (repeatType == "PLAY_ONCE") {
+	setRepeatType(PLAY_ONCE);
+}
+else if (repeatType == "LOOP_BACK_AND_FORTH") {
+	setRepeatType(LOOP_BACK_AND_FORTH);
+}
+else if (repeatType == "LOOP_BACK_AND_FORTH_ONCE") {
+	setRepeatType(LOOP_BACK_AND_FORTH_ONCE);
+}
+else if (repeatType == "PLAY_N_TIMES") {
+	setRepeatType(PLAY_N_TIMES);
+}
+else if (repeatType == "LOOP_BACK_AND_FORTH_N_TIMES") {
+	setRepeatType(LOOP_BACK_AND_FORTH_N_TIMES);
+}
 
-		float animationDuration = 0.55f;
-		READFLOAT(animationDuration, data);
-		setDuration(animationDuration);
+float animationDuration = 0.55f;
+READFLOAT(animationDuration, data);
+setDuration(animationDuration);
 
-		return true;
+return true;
+	}
+	void FloatAnimation::update() {
+		if (isAnimationEnabled()) {
+			float dt = 1.0f / 60.0f;
+			ofxAnimatableFloat::update(dt);
+		}
 	}
 	void PointAnimation::update() {
 		if (isAnimationEnabled()) {
@@ -193,21 +220,6 @@ namespace Software2552 {
 		}
 	}
 
-	shared_ptr<FloatAnimation>  ActorRole::getScaleAnimationHelper() {
-		// allocate on demand, then objects not in need of animation will be smaller
-		if (scaleAnimation == nullptr) {
-			scaleAnimation = std::make_shared<FloatAnimation>();
-		}
-		return scaleAnimation;
-	}
-
-	shared_ptr<PointAnimation> ActorRole::getLocationAnimationHelper() {
-		// allocate on demand, then objects not in need of animation will be smaller
-		if (locationAnimation == nullptr) {
-			locationAnimation = std::make_shared<PointAnimation>();
-		}
-		return locationAnimation;
-	}
 	bool ActorRole::readFromScript(const Json::Value &data) {
 
 		READSTRING(locationPath, data);
@@ -217,14 +229,26 @@ namespace Software2552 {
 		readJsonValue(w, data["width"]);
 		readJsonValue(h, data["height"]);
 
-		getLocationAnimationHelper()->readFromScript(data);
-		getScaleAnimationHelper()->readFromScript(data);
+		if (!data["animation"].empty()) {
+			// allocate on demand, then objects not in need of animation will be smaller
+			locationAnimation = std::make_shared<PointAnimation>();
+			if (locationAnimation) {
+				locationAnimation->readFromScript(data["animation"]);
+			}
+		}
+		if (!data["scale"].empty()) {
+			// allocate on demand, then objects not in need of animation will be smaller
+			scaleAnimation = std::make_shared<FloatAnimation>();
+			if (scaleAnimation) {
+				scaleAnimation->readFromScript(data["animation"]);
+			}
+		}
 		//bugbug should I move color helper here too? 
 		//bugbug add in some rotate too? its afloat across x,y,z
 		return true;
 	}
 	void ActorRole::updateForDrawing() {
-		
+
 		if (getColorAnimationHelper()) {
 			getColorAnimationHelper()->update();
 		}
@@ -241,8 +265,8 @@ namespace Software2552 {
 			getColorAnimationHelper()->draw();
 		}
 	}
-	string &ActorRole::getLocationPath() { 
-		return locationPath; 
+	string &ActorRole::getLocationPath() {
+		return locationPath;
 	}
 
 	void ActorRole::drawIt(drawtype type) {
@@ -256,7 +280,13 @@ namespace Software2552 {
 
 	bool ActorRole::okToDraw(drawtype type) {
 		drawtype dt = getType();
-		if (type != getType() || getLocationAnimationHelper()->paused() || getLocationAnimationHelper()->isExpired()) {
+		if (type != getType()){
+			return false;
+		}
+		if (getLocationAnimationHelper() == nullptr) {
+			return true;
+		}
+		if (getLocationAnimationHelper()->paused() || getLocationAnimationHelper()->isExpired()) {
 			return false;
 		}
 		// if still in wait threshold
