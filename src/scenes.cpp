@@ -159,6 +159,7 @@ namespace Software2552 {
 
 	void Stage::draw() {
 		//bugbug enable basic items in json like ofDrawGrid and other items from ofBaseRenderer
+		ofDrawGridPlane(100, 100, false);
 
 		if (drawIn2d) {
 			ofPushStyle();

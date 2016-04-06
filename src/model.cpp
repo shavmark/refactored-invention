@@ -410,7 +410,7 @@ namespace Software2552 {
 		return true;
 	}
 
-	void Settings::setSettings(Settings& rhs) {
+	void Settings::setSettings(const Settings& rhs) {
 		// only copy items that change as a default
 		font = rhs.font;
 		colorHelper.setAnimatedColorPtr(rhs.getColorAnimationPtr());
@@ -456,7 +456,7 @@ namespace Software2552 {
 		}
 	}
 	
-	bool Camera::myReadFromScript(const Json::Value &data) {
+	bool Camera::readFromScript(const Json::Value &data) {
 		//bugbug fill in
 		setOrbit(false); // not rotating
 		//player.setScale(-1, -1, 1); // showing video
@@ -472,7 +472,7 @@ namespace Software2552 {
 		ofMaterial::begin();
 	}
 	// return local pointer or global shared pointer
-	shared_ptr<AnimiatedColor> ColorHelper::getAnimatedColorPtr() { 
+	shared_ptr<AnimiatedColor> ColorHelper::getAnimatedColorPtr() const { 
 		if (colorAnimation == nullptr) {
 			logTrace("Material using default colorset");
 			return ColorList::getCurrentColor();// use the global color
@@ -485,6 +485,7 @@ namespace Software2552 {
 			colorAnimation = std::make_shared<AnimiatedColor>();
 			colorAnimation->readFromScript(data["colorAnimation"]);
 		}
+		return true;
 	}
 	bool Material::readFromScript(const Json::Value &data) {
 		// shininess is a value between 0 - 128, 128 being the most shiny // 
@@ -495,25 +496,27 @@ namespace Software2552 {
 
 		return true;
 	}
-	bool Light::myReadFromScript(const Json::Value &data) {
+	bool Light::readFromScript(const Json::Value &data) {
 		//bugbug fill in as an option, use Settings for color, or the defaults
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
 		setLoc(ofRandom(-200,200), 0, ofRandom(600,700));
-		getPlayer().setDiffuseColor(ofColor(255, 0, 0));
-		getPlayer().setSpecularColor(ofColor(0, 0, 255));
-		return true;
+		colorHelper.readFromScript(data);
+		// help http://www.glprogramming.com/red/chapter05.html
+		getPlayer().setDiffuseColor(ofFloatColor().fromHex(colorHelper.getAnimatedColorPtr()->getColorSet()->getForeground()));
+		getPlayer().setSpecularColor(ofFloatColor().fromHex(colorHelper.getAnimatedColorPtr()->getColorSet()->getLightest()));
+		getPlayer().setAmbientColor(ofFloatColor().fromHex(colorHelper.getAnimatedColorPtr()->getColorSet()->getBackground()));
+		//bugbug what about alpha?
+		return myReadFromScript(data);
 	}
 	bool PointLight::myReadFromScript(const Json::Value &data) {
 		//bugbug fill in as an option, use Settings for color, or the defaults
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
-		getPlayer().setDiffuseColor(ofColor(255.f, 255.f, 255.f)); // set defaults
 		// specular color, the highlight/shininess color //
-		getPlayer().setSpecularColor(ofColor(255.f, 0, 255.f));
 		setLoc(ofRandom(ofGetWidth()*.2, ofGetWidth()*.4), ofRandom(ofGetHeight()*.2, ofGetHeight()*.4), ofRandom(500,700));
 		//could get from json? not sure yet getAnimationHelper()->setPositionY(ofGetHeight()*.2);
 		return true;
@@ -523,8 +526,6 @@ namespace Software2552 {
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
-		getPlayer().setDiffuseColor(ofColor(0.f, 0.f, 255.f));
-		getPlayer().setSpecularColor(ofColor(255.f, 255.f, 255.f));
 		getPlayer().setOrientation(ofVec3f(0, 90, 0));
 		setLoc(ofGetWidth() / 2, ofGetHeight() / 2, 260);
 		return true;
@@ -537,8 +538,6 @@ namespace Software2552 {
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
 		//could get from json? not sure yet getAnimationHelper()->setPositionY(ofGetHeight()*.2);
 		//directionalLight->player.setOrientation(ofVec3f(0, 90, 0));
-		getPlayer().setDiffuseColor(ofColor(255.f, 0.f, 0.f));
-		getPlayer().setSpecularColor(ofColor(255.f, 255.f, 255.f));
 		setLoc(ofGetWidth()*.1, ofGetHeight()*.1, 220);
 		// size of the cone of emitted light, angle between light axis and side of cone //
 		// angle range between 0 - 90 in degrees //

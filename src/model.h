@@ -40,7 +40,7 @@ namespace Software2552 {
 	class ColorHelper {
 	public:
 		bool readFromScript(const Json::Value &data);
-		shared_ptr<AnimiatedColor> getAnimatedColorPtr() { return colorAnimation; }
+		shared_ptr<AnimiatedColor> getAnimatedColorPtr() const;
 		void setAnimatedColorPtr(shared_ptr<AnimiatedColor>p) { colorAnimation = p; }
 	private:
 		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
@@ -83,16 +83,15 @@ namespace Software2552 {
 	public:
 		Settings() {	}
 		Settings(const string& nameIn) {name = nameIn;	}
-		void operator=(const Settings& rhs) {setSettings(rhs);	}
 		bool readFromScript(const Json::Value &data);
 
 		ofTrueTypeFont& getFont() { return font.get(); }
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
 		bool operator==(const Settings& rhs) { return rhs.name == name; }
 		string &getName() { return name; }
-		virtual void setSettings(Settings& rhs);
+		virtual void setSettings(const Settings& rhs);
 		virtual void setSettings(Settings* rhs);
-		shared_ptr<AnimiatedColor> getColorAnimationPtr() { return colorHelper.getAnimatedColorPtr(); }
+		shared_ptr<AnimiatedColor> getColorAnimationPtr() const { return colorHelper.getAnimatedColorPtr(); }
 	protected:
 		Font   font;
 		ColorHelper colorHelper;
@@ -200,9 +199,7 @@ namespace Software2552 {
 	// camera, lights etc
 	class EquipementBaseClass : public objectLifeTimeManager {
 	public:
-		bool readFromScript(const Json::Value &data) { return myReadFromScript(data); }
-	private:
-		virtual bool myReadFromScript(const Json::Value &data) =0;// for derived classes
+		virtual bool readFromScript(const Json::Value &data) = 0;
 	};
 	// cameras (and others like it) are not actors
 	class Camera : public EquipementBaseClass {
@@ -211,9 +208,9 @@ namespace Software2552 {
 		void setOrbit(bool b = true) { useOrbit = b; }
 		bool isOrbiting() const { return useOrbit; }
 		ofEasyCam& getPlayer() { return player; }
+		bool readFromScript(const Json::Value &data);
 	private:
 		ofEasyCam player;
-		bool myReadFromScript(const Json::Value &data);
 		bool useOrbit = false;
 	};
 	class Light : public EquipementBaseClass {
@@ -224,11 +221,11 @@ namespace Software2552 {
 		void setZ(float z) { loc.z = z; }
 		void setLoc(float x, float y = 0, float z = 0) { loc.x = x; loc.y = y; loc.z = z; }
 		ofPoint loc; // light is set on object within camera scope
-		void setColorAnimation(shared_ptr<AnimiatedColor>p) { colorAnimation = p; }
+		bool readFromScript(const Json::Value &data);
 	private:
 		ofLight player;
-		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
-		virtual bool myReadFromScript(const Json::Value &data);
+		ColorHelper colorHelper;
+		virtual bool myReadFromScript(const Json::Value &data) { return true;}
 	};
 	class PointLight : public Light {
 	public:
