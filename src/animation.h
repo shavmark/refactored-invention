@@ -40,15 +40,27 @@ namespace Software2552 {
 		float   waitTime = 0;
 		float	refreshRate = 0;
 	};
+
+	class FloatAnimation : public ofxAnimatableFloat, public objectLifeTimeManager {
+	public:
+		void update();
+		bool readFromScript(const Json::Value &data);
+		void startAnimationAfterDelay(float delay) { ofxAnimatableFloat::startAnimationAfterDelay(delay); }
+		bool paused() { return paused_; }
+		bool isAnimationEnabled() { return animating_; }
+		void setAnimationEnabled(bool b = true) { animating_ = b; }
+	private:
+	};
+
 	class PointAnimation : public ofxAnimatableOfPoint, public objectLifeTimeManager {
 	public:
 		void update();
+		bool readFromScript(const Json::Value &data);
 		void startAnimationAfterDelay(float delay) { ofxAnimatableOfPoint::startAnimationAfterDelay(delay); }
 		bool paused() {	return paused_;	}
-		bool isAnimationEnabled() { return animationEnabled; }
-		void setAnimationEnabled(bool b= true) { animationEnabled=b; }
+		bool isAnimationEnabled() { return animating_; }
+		void setAnimationEnabled(bool b= true) { animating_ =b; }
 	private:
-		bool animationEnabled = false;
 	};
 	// basic drawing info, bugbug maybe color set goes here too, not sure yet
 	class AnimiatedColor;
@@ -57,10 +69,15 @@ namespace Software2552 {
 		enum drawtype {  draw2d, draw3dFixedCamera, draw3dMovingCamera };
 		ActorRole() {  }
 		ActorRole(const string&path) { 	setLocationPath(path); 		}
+
 		bool readFromScript(const Json::Value &data);
 		// avoid name clashes and wrap the most used items, else access the contained object for more
-		shared_ptr<PointAnimation> getAnimationHelper();
-		virtual float getTimeBeforeStart(float t) { return getAnimationHelper()->getWait(); }
+
+		shared_ptr<FloatAnimation> getScaleAnimationHelper();
+		shared_ptr<PointAnimation> getLocationAnimationHelper();
+		shared_ptr<AnimiatedColor> getColorAnimationHelper() { return colorAnimation; }
+
+		virtual float getTimeBeforeStart(float t) { return getLocationAnimationHelper()->getWait(); }
 
 		// helpers to wrap basic functions
 		void setupForDrawing() { mySetup(); };
@@ -68,7 +85,6 @@ namespace Software2552 {
 		void drawIt(drawtype type);
 
 		void setColorAnimation(shared_ptr<AnimiatedColor>p) { colorAnimation = p;		}
-		shared_ptr<AnimiatedColor> getColorAnimation() {return colorAnimation;}
 
 		int w = 0;
 		int h = 0;
@@ -79,10 +95,10 @@ namespace Software2552 {
 		void setLocationPath(const string&s) { locationPath = s; }
 
 		static bool OKToRemove(shared_ptr<ActorRole> me) {
-			return me->getAnimationHelper()->OKToRemove(me->getAnimationHelper());
+			return me->getLocationAnimationHelper()->OKToRemove(me->getLocationAnimationHelper());
 		}
 		static bool OKToRemoveNormalPointer(ActorRole* me) {
-			return me->getAnimationHelper()->OKToRemove(me->getAnimationHelper());
+			return me->getLocationAnimationHelper()->OKToRemove(me->getLocationAnimationHelper());
 		}
 		void setType(drawtype typeIn) { type = typeIn; }
 	protected:
@@ -98,7 +114,9 @@ namespace Software2552 {
 		virtual void myDraw() {};
 		string   locationPath;   // location of item to draw
 		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
-		shared_ptr<PointAnimation> ani = nullptr; // call all the other items via here
+		shared_ptr<PointAnimation> locationAnimation = nullptr; // optional movement
+		shared_ptr<FloatAnimation> scaleAnimation = nullptr; // 2d scale multply x,y by scale, 1 by default bugbug 
+		
 	};
 
 

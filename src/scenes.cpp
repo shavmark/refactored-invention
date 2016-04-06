@@ -183,14 +183,14 @@ namespace Software2552 {
 	// pause them all
 	void Stage::pause() {
 		for (auto& a : animatables) {
-			a->getDefaultRole()->getAnimationHelper()->pause();
+			a->getDefaultRole()->getLocationAnimationHelper()->pause();
 		}
 		//bugbug pause moving camera, grabber etc
 		myPause();
 	}
 	void Stage::resume() {
 		for (auto& a : animatables) {
-			a->getDefaultRole()->getAnimationHelper()->resume();
+			a->getDefaultRole()->getLocationAnimationHelper()->resume();
 		}
 		//bugbug pause moving camera, grabber etc
 		myResume();
@@ -298,7 +298,7 @@ namespace Software2552 {
 		float f = 0;
 		
 		for (const auto& a : getAnimatables()) {
-			setIfGreater(f, a->getDefaultRole()->getAnimationHelper()->getObjectLifetime() + a->getDefaultRole()->getAnimationHelper()->getWait());
+			setIfGreater(f, a->getDefaultRole()->getLocationAnimationHelper()->getObjectLifetime() + a->getDefaultRole()->getLocationAnimationHelper()->getWait());
 		}
 
 		return f;

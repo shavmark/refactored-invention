@@ -33,9 +33,11 @@ namespace Software2552 {
 #define READSTRING(var, data) readStringFromJson(var, data[#var])
 #define READDATE(var, data) readStringFromJson(var, data[#var])
 
-	class Point3D : public ofVec3f {
+	class Point3D : public ofPoint {
 	public:
 		bool readFromScript(const Json::Value &data);
+	private:
+		void convert(float, float, float); // convert to real locations
 	};
 	class ColorHelper {
 	public:
@@ -149,14 +151,14 @@ namespace Software2552 {
 
 		shared_ptr<vector<shared_ptr<Reference>>>  getReferences() { return references; }
 
-		void setAnimation(bool f = true) { if (isValid()) getDefaultRole()->getAnimationHelper()->setAnimationEnabled(f); }
+		void setAnimation(bool f = true) { if (isValid()) getDefaultRole()->getLocationAnimationHelper()->setAnimationEnabled(f); }
 		void setType(ActorRole::drawtype type) { if (getDefaultRole())getDefaultRole()->setType(type); }
-		void animateTo(const ofPoint& p) { if (isValid())getDefaultRole()->getAnimationHelper()->animateTo(p); }
-		void setAnimationPosition(const ofPoint& p) { if (isValid())getDefaultRole()->getAnimationHelper()->setPosition(p); }
-		void setAnimationPositionX(float x) { if (isValid())getDefaultRole()->getAnimationHelper()->setPositionX(x); }
-		void setAnimationPositionY(float y) { if (isValid())getDefaultRole()->getAnimationHelper()->setPositionX(y); }
-		void setAnimationPositionZ(float z) { if (isValid())getDefaultRole()->getAnimationHelper()->setPositionX(z); }
-		shared_ptr<PointAnimation> getAnimation() {		return getDefaultRole()->getAnimationHelper();	}
+		void animateTo(const ofPoint& p) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->animateTo(p); }
+		void setAnimationPosition(const ofPoint& p) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->setPosition(p); }
+		void setAnimationPositionX(float x) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->setPositionX(x); }
+		void setAnimationPositionY(float y) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->setPositionX(y); }
+		void setAnimationPositionZ(float z) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->setPositionX(z); }
+		shared_ptr<PointAnimation> getAnimation() {		return getDefaultRole()->getLocationAnimationHelper();	}
 		void setupActor() { if (getDefaultRole()) getDefaultRole()->setupForDrawing(); }
 		void updateActor() { if (getDefaultRole()) getDefaultRole()->updateForDrawing(); }
 		void setStage(Stage*s) { stage = s; }
@@ -165,7 +167,7 @@ namespace Software2552 {
 		virtual bool myReadFromScript(const Json::Value &data) { return true; };
 
 		class Stage* stage=nullptr;// where object is to live
-		bool isValid() { return getDefaultRole() && getDefaultRole()->getAnimationHelper(); }
+		bool isValid() { return getDefaultRole() && getDefaultRole()->getLocationAnimationHelper(); }
 		
 		ActorRole* player=nullptr; // need a down cast to get specific items
 		shared_ptr<vector<shared_ptr<Reference>>> references=nullptr; // research reference to show where actor came from
@@ -293,6 +295,7 @@ namespace Software2552 {
 		bool useWireframe() { return wireFrame; }
 		void setFill(bool b = true) { fill = b; }
 		bool useFill() { return fill; }
+		void myUpdate();
 		void myDraw();
 		of3dPrimitive* getPlayer() { return player; }
 		Material  material;

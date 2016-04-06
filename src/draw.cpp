@@ -292,7 +292,7 @@ namespace Software2552 {
 		ofFill();
 		ofSetRectMode(OF_RECTMODE_CENTER);	// center around the position
 		ofSetColor(255, 0, 0);
-		ofRect(getAnimationHelper()->getCurrentPosition().x, getAnimationHelper()->getCurrentPosition().y, w, h);
+		ofRect(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y, w, h);
 	}
 
 
