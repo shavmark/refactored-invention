@@ -7,7 +7,7 @@ void ofApp::setup(){
 	//Software2552::SoundIn::setup();// move to timeline or scene
 	//Software2552::SoundOut::setup();// move to timeline or scene
 
-	ofSetLogLevel(OF_LOG_VERBOSE);//OF_LOG_VERBOSE  OF_LOG_NOTICE
+	ofSetLogLevel(OF_LOG_NOTICE);//OF_LOG_VERBOSE  OF_LOG_NOTICE
 	timeline.setup();//logErrorString
 	timeline.readScript("json3.json");
 	timeline.start();

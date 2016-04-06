@@ -16,34 +16,21 @@ namespace Software2552 {
 	// colors can have a time out or a wait count via Animator
 	class ColorSet : public objectLifeTimeManager {
 	public:
+		//convertStringToGroup must be updated to match ColorGroup
 		enum ColorGroup {
-			Modern, Smart, OrangeAndBlack, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
+			Modern, Smart, Orange, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
 		};
-		enum ColorType {
-			Fore, Back, Text, Other, Lightest, Darkest
-		};
+
 		//bugbug color set may need 4 or more colors once we do more with graphics
 		// something like fore/back/text/other[n], not sure, or maybe we
 		// just use multiple ColorSets, find out more as we continue on
 		ColorSet(const ColorGroup groupIn, int fore, int back, int text, int other, int lightest, int darkest);
-		int getForeground() {
-			return getHex(ColorSet::ColorType::Fore);
-		}
-		int getBackground() {
-			return getHex(ColorSet::ColorType::Back);
-		}
-		int getFontColor() {
-			return getHex(ColorSet::ColorType::Text);
-		}
-		int getLightest() {
-			return getHex(ColorSet::ColorType::Lightest);
-		}
-		int getDarkest() {
-			return getHex(ColorSet::ColorType::Darkest);
-		}
-		int getOther() {
-			return getHex(ColorSet::ColorType::Other);
-		}
+		int getForeground() { return getHex(ColorSet::ColorType::Fore); }
+		int getBackground() { return getHex(ColorSet::ColorType::Back); }
+		int getFontColor() { return getHex(ColorSet::ColorType::Text); }
+		int getLightest() { return getHex(ColorSet::ColorType::Lightest); }
+		int getDarkest() { return getHex(ColorSet::ColorType::Darkest); }
+		int getOther() { return getHex(ColorSet::ColorType::Other); }
 
 		static ColorGroup convertStringToGroup(const string&name);
 		ColorGroup getGroup() const {return group;}
@@ -53,6 +40,11 @@ namespace Software2552 {
 		int size() { return colors.size(); }
 		ColorSet& operator++() { usage++; return *this; }
 		int getUsage() { return usage; }
+	protected:
+		// these get confused with hex values when not used correctly so protect them
+		enum ColorType {
+			Fore, Back, Text, Other, Lightest, Darkest
+		};
 	private:
 		void setSetcolors(int c, ...);
 		ColorGroup group;
@@ -75,6 +67,16 @@ namespace Software2552 {
 		void setColorSet(shared_ptr<ColorSet>p);
 		bool useAnimation() { return usingAnimation; }
 		void setAnimation(bool b = true) { usingAnimation = true; }
+		// avoid long access code
+		int getForeground() { return getColorSet()->getForeground(); }
+		int getBackground() { return getColorSet()->getBackground(); }
+		int getFontColor() { return getColorSet()->getFontColor(); }
+		int getLightest() { return getColorSet()->getLightest(); }
+		int getDarkest() { return getColorSet()->getDarkest(); }
+		int getOther() { return getColorSet()->getOther(); }
+		ofFloatColor getFloatObject(int hex) { return ofFloatColor().fromHex(hex, getAlpha()); }
+		ofColor getColorObject(int hex) { return ofFloatColor().fromHex(hex, getAlpha()); }
+
 		shared_ptr<ColorSet> colorSet = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
 	private:
 		bool usingAnimation = false; // force  to set this to make sure its understood

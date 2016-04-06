@@ -76,8 +76,10 @@ namespace Software2552 {
 
 	bool Stage::readFromScript(const Json::Value &data) {
 		Settings::readFromScript(data["settings"]);
-#define SETANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
-		SETANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
+#define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
+#define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
+		ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
+		ADDLIGHT(light, Light);
 		//SETANIMATION(picture, Picture);
 		//SETANIMATION(ball, Ball);
 		//SETANIMATION(video, Video);
@@ -159,7 +161,13 @@ namespace Software2552 {
 
 	void Stage::draw() {
 		//bugbug enable basic items in json like ofDrawGrid and other items from ofBaseRenderer
+		ofPushStyle();
+		ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+		ofRotate(270); 
+		ofRotateX(-90);
 		ofDrawGridPlane(100, 100, false);
+		ofPopStyle();
+
 
 		if (drawIn2d) {
 			ofPushStyle();

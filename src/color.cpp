@@ -109,6 +109,9 @@ namespace Software2552 {
 		else if (name == "EarthTone") {
 			return EarthTone;
 		}
+		else if (name == "Orange") {
+			return Orange;
+		}
 		else if (name == "Black") {
 			return Black;
 		}
@@ -164,8 +167,8 @@ namespace Software2552 {
 			//A C B D A C see the color doc to fill these in. use the 4 colors then pick the lightest and darkest 
 			add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
 			add(ColorSet::White, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff);
-			add(ColorSet::OrangeAndBlack, ofColor::black.getHex(), ofColor::orangeRed.getHex(), ofColor::orangeRed.getHex(), ofColor::orangeRed.getHex(), ofColor::orangeRed.getHex(), ofColor::black.getHex());
-			
+			add(ColorSet::Orange, ofColor::orange.getHex(), ofColor::orangeRed.getHex(), ofColor::orange.getHex(), ofColor::orangeRed.getHex(), ofColor::orange.getHex(), ofColor::orangeRed.getHex());
+
 			/* bugbug load all these once color is working etc
 			add(ColorSet::Modern, E, D, ofColor::black.getHex(), ofColor::white.getHex());
 
@@ -260,8 +263,8 @@ namespace Software2552 {
 	void AnimiatedColor::setColorSet(shared_ptr<ColorSet>p) { 
 		if (p) {
 			colorSet = p;
-			setColor(ofColor(colorSet->getLightest()));
-			animateTo(ofColor(colorSet->getDarkest()));
+			setColor(ofColor(getLightest(), getAlpha()));
+			animateTo(ofColor(getDarkest(), getAlpha()));
 		}
 	}
 
@@ -279,8 +282,7 @@ namespace Software2552 {
 			applyCurrentColor();
 		}
 		else {
-			ofColor c = ofColor::fromHex(getColorSet()->getHex(ColorSet::ColorType::Fore), getAlpha());
-			ofSetColor(c);//background set by background manager
+			ofSetColor(ofColor::fromHex(getForeground(), getAlpha()));//background set by background manager
 		}
 	}
 	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
@@ -288,10 +290,10 @@ namespace Software2552 {
 		if (!data.empty()) {
 			READBOOL(usingAnimation, data);
 			READFLOAT(alpha, data);
-			string colorGroupName;
-			READSTRING(colorGroupName, data);
-			if (colorGroupName.size()> 0) {
-				setColorSet(ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroupName), false));
+			string colorGroup;
+			READSTRING(colorGroup, data);
+			if (colorGroup.size()> 0) {
+				setColorSet(ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroup), false));
 			}
 		}
 

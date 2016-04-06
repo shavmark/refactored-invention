@@ -405,7 +405,8 @@ namespace Software2552 {
 
 		getPlayer().setFont(getFontPointer());
 		
-		getPlayer().setColor(role()->getColorAnimation()->getColorSet()->getFontColor());
+		// object holds it own color bugbug maybe just set current color right before draw?
+		getPlayer().setColor(colorHelper.getColorObject(colorHelper.getForeground()));
 
 		return true;
 	}
@@ -466,8 +467,7 @@ namespace Software2552 {
 	}
 	void Material::begin() {
 		// the light highlight of the material  
-		ofFloatColor fc = ofFloatColor().fromHex(colorHelper.getAnimatedColorPtr()->getColorSet()->getForeground(), colorHelper.getAnimatedColorPtr()->getAlpha());
-		setSpecularColor(fc);
+		setSpecularColor(colorHelper.getFloatObject(colorHelper.getForeground()));
 		//setSpecularColor(ofColor(255, 255, 255, 255)); // does white work wonders? or what does color do?
 		ofMaterial::begin();
 	}
@@ -502,12 +502,12 @@ namespace Software2552 {
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
-		setLoc(ofRandom(-200,200), 0, ofRandom(600,700));
+		setLoc(ofRandom(-100,100), 0, ofRandom(300,500));
 		colorHelper.readFromScript(data);
 		// help http://www.glprogramming.com/red/chapter05.html
-		getPlayer().setDiffuseColor(ofFloatColor().fromHex(colorHelper.getAnimatedColorPtr()->getColorSet()->getForeground()));
-		getPlayer().setSpecularColor(ofFloatColor().fromHex(colorHelper.getAnimatedColorPtr()->getColorSet()->getLightest()));
-		getPlayer().setAmbientColor(ofFloatColor().fromHex(colorHelper.getAnimatedColorPtr()->getColorSet()->getBackground()));
+		getPlayer().setDiffuseColor(colorHelper.getFloatObject(colorHelper.getLightest()));
+		getPlayer().setSpecularColor(colorHelper.getFloatObject(colorHelper.getDarkest()));
+		getPlayer().setAmbientColor(colorHelper.getFloatObject(colorHelper.getBackground()));
 		//bugbug what about alpha?
 		return myReadFromScript(data);
 	}
@@ -567,13 +567,8 @@ namespace Software2552 {
 	}
 
 	void Text::Role::drawText(const string &s, int x, int y) {
-		ofPushStyle();
-		ofColor c = ofColor().fromHex(getColorAnimation()->getColorSet()->getFontColor());
-		ofSetColor(c, getColorAnimation()->getAlpha());
-
 		Font font;
 		font.get().drawString(s, x, y);
-		ofPopStyle();
 	}
 
 	bool Plane::derivedMyReadFromScript(const Json::Value &data) {
@@ -724,18 +719,18 @@ namespace Software2552 {
 	}
 	void Background::Role::myDraw() {
 		if (mode == flat) {
+
 			// just a plane background
-			ofBackgroundHex(getColorAnimation()->getColorSet()->getBackground(), getColorAnimation()->getAlpha());
+			ofBackgroundHex(getColorAnimation()->getBackground(), getColorAnimation()->getAlpha());
 		}
 		else if (mode != noGradient) {
-			ofBackgroundGradient(getColorAnimation()->getColorSet()->getForeground(),getColorAnimation()->getColorSet()->getBackground(), ofMode);
+			ofBackgroundGradient(getColorAnimation()->getForeground(),getColorAnimation()->getBackground(), ofMode);
 		}
 		if (type == none) {
 			return;
 		}
 		// set by default since this is set first other usage of fore color will override
-		ofColor c = ofColor::fromHex(getColorAnimation()->getColorSet()->getHex(ColorSet::ColorType::Fore), getColorAnimation()->getAlpha());
-		ofSetColor(c);
+		ofSetColor(getColorAnimation()->getColorObject(getColorAnimation()->getForeground()));
 	}
 
 	// colors and background change over time but not at the same time
@@ -983,15 +978,6 @@ namespace Software2552 {
 	}
 	void TextureVideo::Role::myDraw() {
 		return; // not using fbo for video bugbug clean this up;
-		if (player.isFrameNew()) { // bugbug not sure why but this needs to be drawn ever time
-			fbo.begin();
-			ofEnableAlphaBlending();
-			ofColor c = ofColor().fromHex(getColorAnimation()->getColorSet()->getForeground());
-			ofSetColor(c, getColorAnimation()->getAlpha());
-			player.draw(0, 0);
-			ofDisableAlphaBlending();
-			fbo.end();
-		}
 
 	}
 	void TextureVideo::Role::mySetup() {
@@ -999,7 +985,6 @@ namespace Software2552 {
 	bool TextureVideo::Role::mybind() {
 		if (player.isInitialized() && fbo.isUsingTexture()) {
 			player.getTexture().bind();
-			//fbo.getTexture().bind();
 			return true;
 		}
 		return false;
@@ -1007,8 +992,6 @@ namespace Software2552 {
 	bool TextureVideo::Role::myunbind() {
 		if (player.isInitialized() && player.isUsingTexture()) {
 			player.getTexture().unbind();
-			//bugbug try with grabber 
-			//fbo.getTexture().unbind();
 			return true;
 		}
 		return false;
@@ -1021,11 +1004,6 @@ namespace Software2552 {
 				return false;
 			}
 			getPlayer().play();
-			// not used getRole<Role>()->fbo.allocate(getPlayer().getWidth()*2, getPlayer().getHeight(), GL_RGBA);
-			// Clear its content
-			// not used getRole<Role>()->fbo.begin();
-			// not used ofClear(0, 0, 0, 0);
-			// not used getRole<Role>()->fbo.end();
 		}
 		return true;
 	}

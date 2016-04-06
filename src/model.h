@@ -40,6 +40,16 @@ namespace Software2552 {
 	class ColorHelper {
 	public:
 		bool readFromScript(const Json::Value &data);
+		void setColor(int hex) {ofSetColor(getAnimatedColorPtr()->getColorObject(hex));	}
+		int getForeground() { return getAnimatedColorPtr()->getForeground(); }
+		int getBackground() { return getAnimatedColorPtr()->getBackground(); }
+		int getFontColor() { return getAnimatedColorPtr()->getFontColor(); }
+		int getLightest() { return getAnimatedColorPtr()->getLightest(); }
+		int getDarkest() { return getAnimatedColorPtr()->getDarkest(); }
+		int getOther() { return getAnimatedColorPtr()->getOther(); }
+		ofFloatColor getFloatObject(int hex) { return ofFloatColor().fromHex(hex, getAnimatedColorPtr()->getAlpha()); }
+		ofColor getColorObject(int hex) { return ofFloatColor().fromHex(hex, getAnimatedColorPtr()->getAlpha()); }
+
 		shared_ptr<AnimiatedColor> getAnimatedColorPtr() const;
 		void setAnimatedColorPtr(shared_ptr<AnimiatedColor>p) { colorAnimation = p; }
 	private:
