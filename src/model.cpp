@@ -568,7 +568,9 @@ namespace Software2552 {
 
 	void Text::Role::drawText(const string &s, int x, int y) {
 		ofPushStyle();
-		ofSetColor(getColorAnimation()->getColorSet()->getFontColor());
+		ofColor c = ofColor().fromHex(getColorAnimation()->getColorSet()->getFontColor());
+		ofSetColor(c, getColorAnimation()->getAlpha());
+
 		Font font;
 		font.get().drawString(s, x, y);
 		ofPopStyle();
@@ -983,11 +985,11 @@ namespace Software2552 {
 		return; // not using fbo for video bugbug clean this up;
 		if (player.isFrameNew()) { // bugbug not sure why but this needs to be drawn ever time
 			fbo.begin();
-			int alpha = 255; // amount of smoothing bugbug play with this later
-			//ofEnableAlphaBlending();
-			ofSetColor(255, 255, 255, alpha);
+			ofEnableAlphaBlending();
+			ofColor c = ofColor().fromHex(getColorAnimation()->getColorSet()->getForeground());
+			ofSetColor(c, getColorAnimation()->getAlpha());
 			player.draw(0, 0);
-			//ofDisableAlphaBlending();
+			ofDisableAlphaBlending();
 			fbo.end();
 		}
 
