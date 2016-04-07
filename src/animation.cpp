@@ -24,13 +24,13 @@ namespace Software2552 {
 		refreshRate = 0;
 	}
 
-	void objectLifeTimeManager::start() { 
-		startTime = ofGetElapsedTimef(); 
+	void objectLifeTimeManager::start() {
+		startTime = ofGetElapsedTimef();
 	}
 
 	bool objectLifeTimeManager::OKToRemove(shared_ptr<objectLifeTimeManager> me) {
 		if (me == nullptr) {
-			return false; 
+			return false;
 		}
 		if (me->isExpired()) {
 			return true;
@@ -75,7 +75,7 @@ namespace Software2552 {
 		return false;
 	}
 
-	void ActorRole::setPosition(ofPoint& p) { 
+	void ActorRole::setPosition(ofPoint& p) {
 		if (getLocationAnimationHelper()) {
 			getLocationAnimationHelper()->setPosition(p);
 		}
@@ -88,14 +88,14 @@ namespace Software2552 {
 		if (getLocationAnimationHelper()) {
 			return getLocationAnimationHelper()->getCurrentPosition();
 		}
-		return defaultStart;// 0,0,0 by defaault
+		return defaultStart;// 0,0,0 by default bugbug set on of object vs this saved one
 	}
-	void ColorHelper::setColor(int hex) { 
-		ofSetColor(getAnimatedColorPtr()->getColorObject(hex)); 
+	void ColorHelper::setColor(int hex) {
+		ofSetColor(getAnimatedColorPtr()->getColorObject(hex));
 	}
 
 	// need "scale"{}, animation etc wrapers in json
-	bool FloatAnimation::readFromScript(const Json::Value &data){
+	bool FloatAnimation::readFromScript(const Json::Value &data) {
 		//bugbug how to make common read animation items one function?
 		float duration = 0;
 		READFLOAT(duration, data);
@@ -105,7 +105,7 @@ namespace Software2552 {
 		READFLOAT(wait, data);
 		setWait(wait);
 
-		float start=0.0f, end = 0.0f;
+		float start = 0.0f, end = 0.0f;
 		READFLOAT(start, data);
 		READFLOAT(end, data);
 
@@ -175,7 +175,7 @@ namespace Software2552 {
 		pointEnd.readFromScript(data["finish"]);
 		animateTo(pointEnd);
 
-		string curveName="EASE_IN"; // there is a boat load of coolness here
+		string curveName = "EASE_IN"; // there is a boat load of coolness here
 		READSTRING(curveName, data);
 		setCurve(ofxAnimatable::getCurveFromName(curveName));
 
@@ -217,7 +217,7 @@ namespace Software2552 {
 			ofxAnimatableFloat::update(dt);
 		}
 	}
-	
+
 	void RotationAnimation::update() {
 		if (isAnimationEnabled()) {
 			float dt = 1.0f / 60.0f;
@@ -230,6 +230,9 @@ namespace Software2552 {
 			ofxAnimatableOfPoint::update(dt);
 		}
 	}
+	// try to keep wrappers out of site to avoid clutter
+	// we want to run w/o crashing in very low memory so we need to check all our pointers, we can chug along
+	// until memory frees up, a crash would be very bad
 	int ColorHelper::getForeground() { return getAnimatedColorPtr()->getColorSet()->getForeground(); }
 	int ColorHelper::getBackground() { return getAnimatedColorPtr()->getColorSet()->getBackground(); }
 	int ColorHelper::getFontColor() { return getAnimatedColorPtr()->getColorSet()->getFontColor(); }
@@ -238,6 +241,19 @@ namespace Software2552 {
 	int ColorHelper::getOther() { return getAnimatedColorPtr()->getColorSet()->getOther(); }
 	int ColorHelper::getAlpha() { return getAnimatedColorPtr()->getAlpha(); }
 	void ColorHelper::getNextColors() { getAnimatedColorPtr()->getNextColors(); }
+	void ActorRole::setAnimationPosition(const ofPoint& p) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPosition(p); }
+	void ActorRole::setAnimationPositionX(float x) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(x); }
+	void ActorRole::setAnimationPositionY(float y) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(y); }
+	void ActorRole::setAnimationPositionZ(float z) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(z); }
+	void ActorRole::animateTo(const ofPoint& p) { if (getLocationAnimationHelper())getLocationAnimationHelper()->animateTo(p); }
+	bool ActorRole::refreshAnimation() { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->refreshAnimation() : false; }
+	void ActorRole::setAnimationEnabled(bool f) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setAnimationEnabled(f); }
+	float ActorRole::getTimeBeforeStart(float t) { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getWait() : 0; }
+	void ActorRole::pause(){ if (getLocationAnimationHelper())getLocationAnimationHelper()->pause();}
+	void ActorRole::resume() { if (getLocationAnimationHelper())getLocationAnimationHelper()->pause(); }
+	float ActorRole::getObjectLifetime() { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getObjectLifetime() : 0; }
+	void ActorRole::setRefreshRate(uint64_t rateIn) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setRefreshRate(rateIn); }
+	float ActorRole::getWait() { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getWait() : 0; }
 
 	bool ActorRole::readActorFromScript(const Json::Value &data) {
 		READSTRING(name, data);

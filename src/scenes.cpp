@@ -79,14 +79,14 @@ namespace Software2552 {
 	}
 
 	bool Stage::readFromScript(const Json::Value &data) {
-//		Settings::readFromScript(data["settings"]);
+
 #define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
 #define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
-		ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
-		ADDLIGHT(light, Light);
-		//SETANIMATION(picture, Picture);
-		//SETANIMATION(ball, Ball);
-		//SETANIMATION(video, Video);
+		//ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
+		//ADDLIGHT(light, Light);
+		//ADDANIMATION(picture, Picture);
+		//ADDANIMATION(ball, Ball);
+		//ADDANIMATION(video, Video);
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
@@ -97,9 +97,9 @@ namespace Software2552 {
 			CreateReadAndaddLight<Light>(data["light"]);
 		}
 		// read back ground after sort as its objects are inserted in the front of the draw list
-		//if (!data["background"].empty()) {
-			//CreateReadAndaddBackgroundItems(data["background"]);
-		//}
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
 		return true;
 		
 		// data must Cap first char of key words
@@ -187,14 +187,14 @@ namespace Software2552 {
 	// pause them all
 	void Stage::pause() {
 		for (auto& a : animatables) {
-			a->getLocationAnimationHelper()->pause();
+			a->pause();
 		}
 		//bugbug pause moving camera, grabber etc
 		myPause();
 	}
 	void Stage::resume() {
 		for (auto& a : animatables) {
-			a->getLocationAnimationHelper()->resume();
+			a->resume();
 		}
 		//bugbug pause moving camera, grabber etc
 		myResume();
@@ -264,10 +264,22 @@ namespace Software2552 {
 		}
 	}
 	void Stage::appendToAnimatable(shared_ptr<ActorRole>p) {
-		fixed3d(p->draw3dFixedCamera);
-		moving3d(p->draw3dMovingCamera);
-		fixed2d(p->draw2d);
-		animatables.push_back(p);
+		// only save working pointers
+		if (p != nullptr) {
+			ActorRole::drawtype tp = p->getType();
+			if (p->getType() == ActorRole::draw3dFixedCamera) {
+				fixed3d(true); // do not set to false in case its already set
+			}
+			if (p->getType() == ActorRole::draw3dMovingCamera) {
+				moving3d(true); // do not set to false in case its already set
+			}
+			if (p->getType() == ActorRole::draw2d) {
+				fixed2d(true); // do not set to false in case its already set
+			}
+			p->setupForDrawing();
+	
+			animatables.push_back(p);
+		}
 	}
 
 	void Stage::pre3dDraw() {
@@ -309,7 +321,7 @@ namespace Software2552 {
 		float f = 0;
 		
 		for (const auto& a : getAnimatables()) {
-			setIfGreater(f, a->getLocationAnimationHelper()->getObjectLifetime() + a->getLocationAnimationHelper()->getWait());
+			setIfGreater(f, a->getObjectLifetime() + a->getWait());
 		}
 
 		return f;

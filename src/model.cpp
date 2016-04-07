@@ -361,7 +361,6 @@ namespace Software2552 {
 	// return local pointer or global shared pointer
 	shared_ptr<AnimiatedColor> ColorHelper::getAnimatedColorPtr() const { 
 		if (colorAnimation == nullptr) {
-			logTrace("Material using default colorset");
 			return ColorList::getCurrentColor();// use the global color
 		}
 		return colorAnimation; 
@@ -591,10 +590,8 @@ namespace Software2552 {
 			setGradientMode(noGradient);
 		}
 		
-		if (getLocationAnimationHelper()){
-			//bugbug finish this 
-			getLocationAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
-		}
+		//bugbug finish this 
+		setRefreshRate(60000);// just set something different while in dev
 
 		if (!data["image"].empty()) {
 			shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data["image"]);
@@ -634,7 +631,7 @@ namespace Software2552 {
 
 	// colors and background change over time but not at the same time
 	void Background::myUpdate() {
-		if (type == ColorChanging && getLocationAnimationHelper()->refreshAnimation()) {
+		if (type == ColorChanging && refreshAnimation()) {
 			colorHelper.getNextColors();
 			if (mode != noGradient) {
 				//bugbug test out refreshAnimation
@@ -654,7 +651,7 @@ namespace Software2552 {
 
 	}
 	void Paragraph::myDraw() {
-		player.setPosition(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
+		player.setPosition(getCurrentPosition().x, getCurrentPosition().y);
 		player.draw();
 	}
 	bool ChannelList::skipChannel(const string&keyname) {
@@ -740,13 +737,14 @@ namespace Software2552 {
 	// add this one http://clab.concordia.ca/?page_id=944
 	void Video::myDraw() {
 		if (w == 0 || h == 0) {
-			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
+			player.draw(getCurrentPosition().x, getCurrentPosition().y);
 		}
 		else {
-			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y, w, h);
+			player.draw(getCurrentPosition().x, getCurrentPosition().y, w, h);
 		}
 	}
 	void Video::mySetup() {
+		string debug = getLocationPath();
 		if (!player.isLoaded()) {
 			if (!player.load(getLocationPath())) {
 				logErrorString("setup video Player");
@@ -786,25 +784,27 @@ namespace Software2552 {
 	float Video::getTimeBeforeStart(float t) {
 
 		// if json sets a wait use it
-		if (getLocationAnimationHelper()->getWait() > 0) {
-			setIfGreater(t, getLocationAnimationHelper()->getWait());
+		if (getWait() > 0) {
+			setIfGreater(t, getWait());
 		}
 		else {
 			// will need to load it now to get the true lenght
 			if (!player.isLoaded()) {
 				player.load(getLocationPath());
 			}
-			float duration = getLocationAnimationHelper()->getObjectLifetime();
+			float duration = getObjectLifetime();
 			setIfGreater(t, duration);
 		}
 		return t;
 	}
 	void Picture::myDraw() {
 		if (w == 0 || h == 0) {
-			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
+			player.draw(getCurrentPosition().x, getCurrentPosition().y);
 		}
 		else {
-			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y, w, h);
+			int x = getCurrentPosition().x;
+			int y = getCurrentPosition().y;
+			player.draw(getCurrentPosition().x, getCurrentPosition().y, w, h);
 		}
 	}
 	void Audio::mySetup() {
@@ -840,7 +840,7 @@ namespace Software2552 {
 
 	void CameraGrabber::myDraw() {
 		if (player.isInitialized()) {
-			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
+			player.draw(getCurrentPosition().x, getCurrentPosition().y);
 		}
 	}
 	bool CameraGrabber::myReadFromScript(const Json::Value &data) {

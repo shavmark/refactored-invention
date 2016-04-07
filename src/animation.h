@@ -77,6 +77,7 @@ namespace Software2552 {
 		void setAnimationEnabled(bool b = true) { animating_ = b; }
 	private:
 	};
+	//bugbug see about ofxEasing instead or with
 	class RotationAnimation : public ofxAnimatableFloat {
 	public:
 		void update();
@@ -179,30 +180,29 @@ namespace Software2552 {
 			*this = rhs;
 		}
 		bool operator==(const ActorRole& rhs) { return rhs.name == name; }
-		//void setupActor() { if (getDefaultRole()) getDefaultRole()->setupForDrawing(); }
-		//void updateActor() { if (getDefaultRole()) getDefaultRole()->updateForDrawing(); }
 
-		shared_ptr<RotationAnimation> getRotationAnimationHelper() { return rotationAnimation; }
-		shared_ptr<FloatAnimation> getScaleAnimationHelper() { return scaleAnimation; }
-		shared_ptr<PointAnimation> getLocationAnimationHelper() { return locationAnimation; }
-		shared_ptr<AnimiatedColor> getColorAnimationPtr() const { return colorHelper.getAnimatedColorPtr(); }
-		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
 		ofTrueTypeFont* getFont() { return font.get(); }
+		void setAnimationPosition(const ofPoint& p);
+		void setAnimationPositionX(float x);
+		void setAnimationPositionY(float y);
+		void setAnimationPositionZ(float z);
+		void animateTo(const ofPoint& p);
+		bool refreshAnimation();
+		void setAnimationEnabled(bool f);
+		void resume();
+		void pause();
+		float getObjectLifetime();
+		void setRefreshRate(uint64_t);
+		float getWait();
 
-		void setAnimationPosition(const ofPoint& p) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPosition(p); }
-		void setAnimationPositionX(float x) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(x); }
-		void setAnimationPositionY(float y) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(y); }
-		void setAnimationPositionZ(float z) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(z); }
-		void animateTo(const ofPoint& p) { if (getLocationAnimationHelper())getLocationAnimationHelper()->animateTo(p); }
-
-		void setAnimationEnabled(bool f) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setAnimationEnabled(f); }
 		ofPoint& getCurrentPosition();
 		void setPosition(ofPoint& p);
-		virtual float getTimeBeforeStart(float t) { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getWait():0; }
+		virtual float getTimeBeforeStart(float t);
 
 		// helpers to wrap basic functions
 		void setupForDrawing() { mySetup(); };
 		void updateForDrawing();
+
 		void drawIt(drawtype type);
 
 		int w = 0;
@@ -218,18 +218,23 @@ namespace Software2552 {
 			return objectLifeTimeManager::OKToRemove(me->getLocationAnimationHelper());
 		}
 		void setType(drawtype typeIn) { type = typeIn; }
-
+		drawtype getType() { return type; }
+		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
+		shared_ptr<AnimiatedColor> getColorAnimationPtr() const { return colorHelper.getAnimatedColorPtr(); }
 
 	protected:
 		FontHelper  font;
 		ColorHelper colorHelper;
-		drawtype getType() { return type; }
+		
 		void applyColor();
 		string notes;// unstructured string of info, can be shown to the user
 		string title; // title object
 		string name; // any object can have a name, note, date, reference, duration
 
 	private:
+		shared_ptr<RotationAnimation> getRotationAnimationHelper() { return rotationAnimation; }
+		shared_ptr<FloatAnimation> getScaleAnimationHelper() { return scaleAnimation; }
+		shared_ptr<PointAnimation> getLocationAnimationHelper() { return locationAnimation; }
 		virtual bool myReadFromScript(const Json::Value &data) { return true; };
 
 		bool okToDraw(drawtype type);
