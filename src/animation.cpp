@@ -1,6 +1,7 @@
 #include "2552software.h"
 #include "animation.h"
 #include "model.h"
+#include "scenes.h"
 
 namespace Software2552 {
 
@@ -73,7 +74,7 @@ namespace Software2552 {
 		}
 		return false;
 	}
-	ofPoint& getCurrentPosition();
+
 	void ActorRole::setPosition(ofPoint& p) { 
 		if (getLocationAnimationHelper()) {
 			getLocationAnimationHelper()->setPosition(p);
@@ -88,6 +89,9 @@ namespace Software2552 {
 			return getLocationAnimationHelper()->getCurrentPosition();
 		}
 		return defaultStart;// 0,0,0 by defaault
+	}
+	void ColorHelper::setColor(int hex) { 
+		ofSetColor(getAnimatedColorPtr()->getColorObject(hex)); 
 	}
 
 	// need "scale"{}, animation etc wrapers in json
@@ -175,39 +179,46 @@ namespace Software2552 {
 		READSTRING(curveName, data);
 		setCurve(ofxAnimatable::getCurveFromName(curveName));
 
-int repeat = 1;
-READINT(repeat, data);
-setRepeatTimes(repeat);
+		int repeat = 1;
+		READINT(repeat, data);
+		setRepeatTimes(repeat);
 
-string repeatType = "PLAY_ONCE";
-READSTRING(repeatType, data);
+		string repeatType = "PLAY_ONCE";
+		READSTRING(repeatType, data);
 
-if (repeatType == "LOOP") {
-	setRepeatType(LOOP);
-}
-if (repeatType == "PLAY_ONCE") {
-	setRepeatType(PLAY_ONCE);
-}
-else if (repeatType == "LOOP_BACK_AND_FORTH") {
-	setRepeatType(LOOP_BACK_AND_FORTH);
-}
-else if (repeatType == "LOOP_BACK_AND_FORTH_ONCE") {
-	setRepeatType(LOOP_BACK_AND_FORTH_ONCE);
-}
-else if (repeatType == "PLAY_N_TIMES") {
-	setRepeatType(PLAY_N_TIMES);
-}
-else if (repeatType == "LOOP_BACK_AND_FORTH_N_TIMES") {
-	setRepeatType(LOOP_BACK_AND_FORTH_N_TIMES);
-}
+		if (repeatType == "LOOP") {
+			setRepeatType(LOOP);
+		}
+		if (repeatType == "PLAY_ONCE") {
+			setRepeatType(PLAY_ONCE);
+		}
+		else if (repeatType == "LOOP_BACK_AND_FORTH") {
+			setRepeatType(LOOP_BACK_AND_FORTH);
+		}
+		else if (repeatType == "LOOP_BACK_AND_FORTH_ONCE") {
+			setRepeatType(LOOP_BACK_AND_FORTH_ONCE);
+		}
+		else if (repeatType == "PLAY_N_TIMES") {
+			setRepeatType(PLAY_N_TIMES);
+		}
+		else if (repeatType == "LOOP_BACK_AND_FORTH_N_TIMES") {
+			setRepeatType(LOOP_BACK_AND_FORTH_N_TIMES);
+		}
 
-float animationDuration = 0.55f;
-READFLOAT(animationDuration, data);
-setDuration(animationDuration);
+		float animationDuration = 0.55f;
+		READFLOAT(animationDuration, data);
+		setDuration(animationDuration);
 
-return true;
+		return true;
 	}
 	void FloatAnimation::update() {
+		if (isAnimationEnabled()) {
+			float dt = 1.0f / 60.0f;
+			ofxAnimatableFloat::update(dt);
+		}
+	}
+	
+	void RotationAnimation::update() {
 		if (isAnimationEnabled()) {
 			float dt = 1.0f / 60.0f;
 			ofxAnimatableFloat::update(dt);
@@ -219,15 +230,39 @@ return true;
 			ofxAnimatableOfPoint::update(dt);
 		}
 	}
+	int ColorHelper::getForeground() { return getAnimatedColorPtr()->getColorSet()->getForeground(); }
+	int ColorHelper::getBackground() { return getAnimatedColorPtr()->getColorSet()->getBackground(); }
+	int ColorHelper::getFontColor() { return getAnimatedColorPtr()->getColorSet()->getFontColor(); }
+	int ColorHelper::getLightest() { return getAnimatedColorPtr()->getColorSet()->getLightest(); }
+	int ColorHelper::getDarkest() { return getAnimatedColorPtr()->getColorSet()->getDarkest(); }
+	int ColorHelper::getOther() { return getAnimatedColorPtr()->getColorSet()->getOther(); }
+	int ColorHelper::getAlpha() { return getAnimatedColorPtr()->getAlpha(); }
+	void ColorHelper::getNextColors() { getAnimatedColorPtr()->getNextColors(); }
 
-	bool ActorRole::readFromScript(const Json::Value &data) {
-
+	bool ActorRole::readActorFromScript(const Json::Value &data) {
+		READSTRING(name, data);
+		READSTRING(title, data);
+		READSTRING(notes, data);
 		READSTRING(locationPath, data);
 		READINT(drawOrder, data);
 		string s = getLocationPath();//just for debug
 		// optional sizes, locations, durations for animation etc
 		readJsonValue(w, data["width"]);
 		readJsonValue(h, data["height"]);
+
+		font.readFromScript(data);
+		colorHelper.readFromScript(data);
+		// any actor can have a reference
+		references = parse<Reference>(data["references"]);
+
+		// unqiue or shared color, pointer allows for global updates
+		//setColorAnimation(getColorAnimationPtr());
+
+		// all actors can have a location, draw order etc
+		//readFromScript(data);
+
+		// read derived class data
+		myReadFromScript(data);
 
 		if (!data["animation"].empty()) {
 			// allocate on demand, then objects not in need of animation will be smaller
@@ -263,23 +298,35 @@ return true;
 		//bugbug add in some rotate too? its afloat across x,y,z
 		return true;
 	}
+	// return current color, track its usage count
+	shared_ptr<AnimiatedColor> ColorList::getCurrentColor() {
+		if (privateData) {
+			if (privateData->currentColor && privateData->currentColor->getColorSet()) {
+				++(*privateData->currentColor->getColorSet()); // mark usage if data has been set
+				return privateData->currentColor;
+			}
+		}
+		return nullptr;
+	}
+
 	void ActorRole::updateForDrawing() {
 
-		if (getColorAnimationHelper()) {
-			getColorAnimationHelper()->update();
-		}
+		colorHelper.getAnimatedColorPtr()->update(); // always returns a pointer
+
 		if (getLocationAnimationHelper()) {
 			getLocationAnimationHelper()->update();
 		}
 		if (getScaleAnimationHelper()) {
 			getScaleAnimationHelper()->update();
 		}
+		if (getRotationAnimationHelper()) {
+			getRotationAnimationHelper()->update();
+		}
+		
 		myUpdate(); // call derived classes
 	};
 	void ActorRole::applyColor() {
-		if (getColorAnimationHelper()) {
-			getColorAnimationHelper()->draw();
-		}
+		colorHelper.getAnimatedColorPtr()->draw(); // always returns a pointer
 	}
 	string &ActorRole::getLocationPath() {
 		return locationPath;
@@ -323,6 +370,113 @@ return true;
 			getLocationAnimationHelper()->setExpired(true);
 			return false;
 		}
+	}
+	// helpers
+	ofTrueTypeFont* FontHelper::get() {
+		if (font == nullptr) {
+			getPointer();
+		}
+		if (font != nullptr) {
+			return &font->ttf;
+		}
+		return nullptr;
+	}
+	ofFloatColor ColorHelper::getFloatObject(int hex) { 
+		return ofFloatColor().fromHex(hex, getAnimatedColorPtr()->getAlpha()); 
+	}
+	ofColor ColorHelper::getColorObject(int hex) { 
+		return ofFloatColor().fromHex(hex, getAnimatedColorPtr()->getAlpha()); 
+	}
+
+	shared_ptr<ofxSmartFont> FontHelper::getPointer() {
+		if (font == nullptr) {
+			font = ofxSmartFont::get(defaultFontFile, defaultFontSize);
+			if (font == nullptr) {
+				// name is not unqiue, just a helper of some kind I guess
+				font = ofxSmartFont::add(defaultFontFile, defaultFontSize, defaultFontName);
+			}
+		}
+		if (font == nullptr) {
+			logErrorString("font is null");
+		}
+		return font;
+	}
+	bool FontHelper::readFromScript(const Json::Value &data) {
+		if (!data["font"].empty()) {
+
+			string name;
+			int size = defaultFontSize;
+			string filename;
+
+			readStringFromJson(name, data["font"]["name"]);
+			readStringFromJson(filename, data["font"]["file"]);
+			readJsonValue(size, data["font"]["size"]);
+
+			// filename required to create a font, else default font is used
+			if (filename.size() != 0) {
+				font = ofxSmartFont::get(filename, size);
+				if (font == nullptr) {
+					// name is not unqiue, just a helper of some kind I guess
+					font = ofxSmartFont::add(filename, size, name);
+				}
+				if (font == nullptr) {
+					logErrorString("font file issue");
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	// always return a valid pointer
+	shared_ptr<ColorSet> AnimiatedColor::getColorSet() {
+		if (colorSet == nullptr) {
+			return ColorList::getCurrentColor()->getColorSet(); // use the global color
+		}
+		return colorSet;
+	}
+	// reset the object
+	void AnimiatedColor::setColorSet(shared_ptr<ColorSet>p) {
+		if (p) {
+			colorSet = p;
+			setColor(ofColor(getColorSet()->getLightest(), getAlpha()));
+			animateTo(ofColor(getColorSet()->getDarkest(), getAlpha()));
+		}
+	}
+
+	void AnimiatedColor::getNextColors() {
+		setColorSet(ColorList::getNextColors(getColorSet()->getGroup(), false));
+	}
+	void AnimiatedColor::update() {
+		float dt = 1.0f / 60.0f;//bugbug does this time to frame count? I think so
+		ofxAnimatableOfColor::update(dt);
+		if (getColorSet()) {//bugbug can we advance color if desired here? 
+		}
+	}
+	void AnimiatedColor::draw() {
+		if (useAnimation()) {
+			applyCurrentColor();
+		}
+		else {
+			ofSetColor(ofColor::fromHex(getColorSet()->getForeground(), getAlpha()));//background set by background manager
+		}
+	}
+	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
+	bool AnimiatedColor::readFromScript(const Json::Value &data) {
+		if (!data.empty()) {
+			READBOOL(usingAnimation, data);
+			READFLOAT(alpha, data);
+			string colorGroup;
+			READSTRING(colorGroup, data);
+			if (colorGroup.size()> 0) {
+				setColorSet(ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroup), false));
+			}
+		}
+
+		// set defaults or read from data bugbug add more data reads as needed
+		setDuration(0.5f);
+		setRepeatType(LOOP_BACK_AND_FORTH);
+		setCurve(LINEAR);
+		return true;
 	}
 
 }

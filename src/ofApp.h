@@ -12,7 +12,6 @@
 #include "2552software.h"
 #include "kinect2552.h"
 #include "timeline.h"
-#include "draw.h"
 
 class ofApp : public ofBaseApp{
 

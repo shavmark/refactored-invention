@@ -1,7 +1,7 @@
 #include "2552software.h"
+#include "scenes.h"
 #include "model.h"
 #include "animation.h"
-#include "scenes.h"
 #include <algorithm>
 
 // maps json to drawing and animation tools
@@ -79,31 +79,6 @@ namespace Software2552 {
 	}
 
 
-	// helpers
-	ofTrueTypeFont& Font::get() {
-		if (font == nullptr) {
-			getPointer();
-		}
-		if (font != nullptr) {
-			return font->ttf;
-		}
-		ofTrueTypeFont font2;
-		return font2; // default bugbug temp return type
-	}
-
-	shared_ptr<ofxSmartFont> Font::getPointer() {
-		if (font == nullptr) {
-			font = ofxSmartFont::get(defaultFontFile, defaultFontSize);
-			if (font == nullptr) {
-				// name is not unqiue, just a helper of some kind I guess
-				font = ofxSmartFont::add(defaultFontFile, defaultFontSize, defaultFontName);
-			}
-		}
-		if (font == nullptr) {
-			logErrorString("font is null");
-		}
-		return font;
-	}
 
 	//bugbug todo weave into errors, even on release mode as anyone can break a json file
 	void echoValue(const Json::Value &data, bool isError) {
@@ -170,20 +145,6 @@ namespace Software2552 {
 	}
 #endif // _DEBUG
 
-	// read in list of Json values
-	template<typename T> shared_ptr<vector<shared_ptr<T>>> parse(const Json::Value &data)
-	{
-		shared_ptr<vector<shared_ptr<T>>>  results = nullptr;
-		if (data.size() > 0) {
-			results = std::make_shared<vector<shared_ptr<T>>>();
-		}
-		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-			shared_ptr<T> item = std::make_shared<T>();
-			item->readFromScript(data[j]);
-			results->push_back(item);
-		}
-		return results;
-	}
 	// get a string from json
 	bool readStringFromJson(string &value, const Json::Value& data) {
 		if (readJsonValue(value, data)) {
@@ -240,52 +201,17 @@ namespace Software2552 {
 		bc = rhs.bc;
 		assign(rhs.year(), rhs.month(), rhs.day(), rhs.hour(), rhs.minute(), rhs.second(), rhs.microsecond(), rhs.microsecond());
 	}
-	void Settings::setSettings(Settings* rhs) {
-		if (rhs != nullptr) {
-			setSettings(*rhs);
-		}
-	}
 	bool Ball::myReadFromScript(const Json::Value &data) {
 		// can read any of these items from json here
-		role()->setAnimationPositionY(role()->floorLine - 100);
-		role()->setAnimationEnabled(true);
+		setAnimationPositionY(floorLine - 100);
+		setAnimationEnabled(true);
 		
-		readJsonValue(role()->radius, data["radius"]);
+		readJsonValue(radius, data["radius"]);
 		ofPoint p;
-		p.y = role()->floorLine;
-		role()->animateTo(p);
+		p.y = floorLine;
+		animateTo(p);
 		return true;
 	}
-	Actor::Actor(ActorRole *p) :Settings() {
-		references = nullptr;
-		player = p;
-	}
-
-	 bool Actor::readActorFromScript(const Json::Value &data, Stage*stage) {
-		if (player == nullptr) {
-			logErrorString("missing player");
-			return false;
-		}
-		setStage(stage);
-
-		// common and shared settings
-		Settings::readFromScript(data["settings"]);
-
-		// any actor can have a reference
-		references = parse<Reference>(data["references"]);
-
-		// unqiue or shared color, pointer allows for global updates
-		player->setColorAnimation(getColorAnimationPtr());
-
-		// all actors can have a location, draw order etc
-		player->readFromScript(data);
-
-		// read derived class data
-		myReadFromScript(data);
-
-		return true;
-	}
-
 	bool Channel::readFromScript(const Json::Value &data) {
 		READSTRING(keyname, data);
 		float lifetime=0;
@@ -305,46 +231,8 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	bool Font::readFromScript(const Json::Value &data) {
-
-		string name;
-		int size = defaultFontSize;
-		string filename;
-
-		readStringFromJson(name, data["font"]["name"]);
-		readStringFromJson(filename, data["font"]["file"]);
-		readJsonValue(size, data["font"]["size"]);
-
-		// filename required to create a font, else default font is used
-		if (filename.size() != 0) {
-			font = ofxSmartFont::get(filename, size);
-			if (font == nullptr) {
-				// name is not unqiue, just a helper of some kind I guess
-				font = ofxSmartFont::add(filename, size, name);
-			}
-			if (font == nullptr) {
-				logErrorString("font file issue");
-				return false;
-			}
-		}
-		return true;
-	}
-	// always return true as these are optional items
-	bool Settings::readFromScript(const Json::Value &data) {
-		// dumps too much so only enable if there is a bug: ECHOAll(data);
-		if (!data.empty()) { // ignore reference as an array or w/o data at this point
-			READSTRING(name, data);
-			READSTRING(title, data);
-			READSTRING(notes, data);
-			font.readFromScript(data["font"]);
-			colorHelper.readFromScript(data);
-		}
-
-		return true;
-	}
 
 	bool Dates::readFromScript(const Json::Value &data) {
-		Settings::readFromScript(data["settings"]);
 		timelineDate.readFromScript(data["timelineDate"]); // date item existed
 		lastUpdateDate.readFromScript(data["lastUpdateDate"]); // last time object was updated
 		itemDate.readFromScript(data["itemDate"]);
@@ -382,7 +270,7 @@ namespace Software2552 {
 	}
 	
 	bool Text::myReadFromScript(const Json::Value &data) {
-		readStringFromJson(role()->getText(), data["text"]["str"]);
+		readStringFromJson(getText(), data["text"]["str"]);
 		return true;
 	}
 
@@ -423,15 +311,10 @@ namespace Software2552 {
 		return true;
 	}
 
-	void Settings::setSettings(const Settings& rhs) {
-		// only copy items that change as a default
-		font = rhs.font;
-		colorHelper.setAnimatedColorPtr(rhs.getColorAnimationPtr());
-	}
 	//, "carride.mp4"
 	bool Video::myReadFromScript(const Json::Value &data) {
 		setType(ActorRole::draw2d);
-		role()->setAnimationEnabled(true);
+		setAnimationEnabled(true);
 		float speed = 0;
 		READFLOAT(speed, data);
 		if (speed != 0) {
@@ -553,7 +436,7 @@ namespace Software2552 {
 		setLoc(-ofGetWidth()*.1, ofGetHeight()*.1, 100);
 		return true;
 	}
-	void Ball::Role::myDraw() {
+	void Ball::myDraw() {
 		ofFill();
 		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), getCurrentPosition().y, radius);
 		//glColor4ub(255, 255, 255, 255);
@@ -565,14 +448,14 @@ namespace Software2552 {
 
 	}
 
-	void Text::Role::myDraw() {
+	void Text::myDraw() {
 		//bugbug add in some animation
 		drawText(text, getCurrentPosition().x, getCurrentPosition().y);
 	}
 
-	void Text::Role::drawText(const string &s, int x, int y) {
-		Font font;
-		font.get().drawString(s, x, y);
+	void Text::drawText(const string &s, int x, int y) {
+		FontHelper font;
+		font.get()->drawString(s, x, y);
 	}
 
 	bool Plane::derivedMyReadFromScript(const Json::Value &data) {
@@ -595,35 +478,39 @@ namespace Software2552 {
 	
 	bool ActorWithPrimativeBaseClass::myReadFromScript(const Json::Value &data) {
 		///ofPolyRenderMode renderType = OF_MESH_WIREFRAME; //bugbug enable phase II
-		if (role()) {
+		if (get()) {
 			bool wireFrame = true;
 			READBOOL(wireFrame, data);
 			bool fill = false;
 			READBOOL(fill, data);
-			role()->setFill(fill);
-			role()->setWireframe(wireFrame);
+			get()->setFill(fill);
+			get()->setWireframe(wireFrame);
 			// pass on current animation
-			role()->material.colorHelper.setAnimatedColorPtr(getColorAnimationPtr());
-			role()->material.readFromScript(data);
+			get()->material.colorHelper.setAnimatedColorPtr(getColorAnimationPtr());
+			get()->material.readFromScript(data);
 		}
 		return derivedMyReadFromScript(data);
 	}
 	void DrawingPrimitive3d::myUpdate() {
-		getPlayer()->setPosition(getCurrentPosition());
+		if (getPlayer()) {
+			getPlayer()->setPosition(getCurrentPosition());
+		}
 	}
 	// private draw helper
 	void DrawingPrimitive3d::basicDraw() {
-		player->setScale(ofRandom(100));
-		player->rotate(180, 0, 1, 0.0);
-		if (useWireframe()) {
-			ofPushMatrix();
-			//player->setScale(1.01f);
-			player->drawWireframe();
-			//player->setScale(1.f);
-			ofPopMatrix();
-		}
-		else {
-			player->draw();
+		if (getPlayer()) {
+			player->setScale(ofRandom(100));
+			player->rotate(180, 0, 1, 0.0);
+			if (useWireframe()) {
+				ofPushMatrix();
+				//player->setScale(1.01f);
+				player->drawWireframe();
+				//player->setScale(1.f);
+				ofPopMatrix();
+			}
+			else {
+				player->draw();
+			}
 		}
 	}
 	// assumes push/pop handled by caller
@@ -645,9 +532,11 @@ namespace Software2552 {
 	bool Cube::derivedMyReadFromScript(const Json::Value &data) {
 		float size = 100;//default
 		READFLOAT(size, data);
-		role()->setWireframe(true);
-		getPlayer()->set(size);
-		getPlayer()->roll(20.0f);// just as an example
+		if (get() && getPlayer()) {
+			get()->setWireframe(true);
+			getPlayer()->set(size);
+			getPlayer()->roll(20.0f);// just as an example
+		}
 		return true;
 	}
 	bool Cylinder::derivedMyReadFromScript(const Json::Value &data) {
@@ -657,19 +546,20 @@ namespace Software2552 {
 		return true;
 	}
 	bool Sphere::derivedMyReadFromScript(const Json::Value &data) {
-		float radius = 100;//default
-		READFLOAT(radius, data);
-		getPlayer()->setRadius(radius);
+		if (get() && getPlayer()) {
+			float radius = 100;//default
+			READFLOAT(radius, data);
+			getPlayer()->setRadius(radius);
 
-		float resolution = 100;//default
-		READFLOAT(resolution, data);
-		getPlayer()->setResolution(resolution);
+			float resolution = 100;//default
+			READFLOAT(resolution, data);
+			getPlayer()->setResolution(resolution);
 
-		// can be moving too, let json decide, need camera too
-		role()->setType(ActorRole::draw3dFixedCamera);
-		role()->setFill();
-		getStage()->fixed3d();
-		getPlayer()->setMode(OF_PRIMITIVE_TRIANGLES);
+			// can be moving too, let json decide, need camera too
+			get()->setType(ActorRole::draw3dFixedCamera);
+			get()->setFill();
+			getPlayer()->setMode(OF_PRIMITIVE_TRIANGLES);
+		}
 		return true;
 	}
 	bool Background::myReadFromScript(const Json::Value &data) {
@@ -677,48 +567,48 @@ namespace Software2552 {
 		string type;
 		readStringFromJson(type, data["colortype"]);
 		if (type == "fixed") {
-			role()->setType(ColorFixed);
+			setType(ColorFixed);
 		}
 		else {
-			role()->setType(ColorChanging);
+			setType(ColorChanging);
 		}
 		type = "";
 		readStringFromJson(type, data["gradient"]);
 		if (type == "linear") {
-			role()->ofMode = OF_GRADIENT_LINEAR;
-			role()->setGradientMode(linear);
+			ofMode = OF_GRADIENT_LINEAR;
+			setGradientMode(linear);
 		}
 		else if (type == "bar") {
-			role()->ofMode = OF_GRADIENT_BAR;
-			role()->setGradientMode(bar);
+			ofMode = OF_GRADIENT_BAR;
+			setGradientMode(bar);
 		}
 		else if (type == "circular") {
-			role()->ofMode = OF_GRADIENT_CIRCULAR;
-			role()->setGradientMode(circular);
+			ofMode = OF_GRADIENT_CIRCULAR;
+			setGradientMode(circular);
 		}
 		else if (type == "flat") {
-			role()->setGradientMode(flat);
+			setGradientMode(flat);
 		}
 		else {
-			role()->setGradientMode(noGradient);
+			setGradientMode(noGradient);
 		}
 		
-		if (role()->getLocationAnimationHelper()){
+		if (getLocationAnimationHelper()){
 			//bugbug finish this 
-			role()->getLocationAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
+			getLocationAnimationHelper()->setRefreshRate(60000);// just set something different while in dev
 		}
 
-		if (getStage() && !data["image"].empty()) {
+		if (!data["image"].empty()) {
 			shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data["image"]);
 			if (p) {
-				p->role()->setFullSize();
+				p->setFullSize();
 			}
 		}
 		
-		if (getStage() && !data["video"].empty()) {
+		if (!data["video"].empty()) {
 			shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data["video"]);
 			if (p) {
-				p->role()->setFullSize();
+				p->setFullSize();
 				p->getPlayer().setSpeed(0.25f);
 			}
 		}
@@ -729,26 +619,25 @@ namespace Software2552 {
 		setPosition(ofPoint());
 		setAnimationEnabled(false);
 	}
-	void Background::Role::myDraw() {
+	void Background::myDraw() {
 		if (mode == flat) {
-
 			// just a plane background
-			ofBackgroundHex(getColorAnimationHelper()->getBackground(), getColorAnimationHelper()->getAlpha());
+			ofBackgroundHex(colorHelper.getBackground(), colorHelper.getAlpha());
 		}
 		else if (mode != noGradient) {
-			ofBackgroundGradient(getColorAnimationHelper()->getForeground(),getColorAnimationHelper()->getBackground(), ofMode);
+			ofBackgroundGradient(colorHelper.getForeground(), colorHelper.getBackground(), ofMode);
 		}
 		if (type == none) {
 			return;
 		}
 		// set by default since this is set first other usage of fore color will override
-		ofSetColor(getColorAnimationHelper()->getColorObject(getColorAnimationHelper()->getForeground()));
+		ofSetColor(colorHelper.getColorObject(colorHelper.getForeground()));
 	}
 
 	// colors and background change over time but not at the same time
-	void Background::Role::myUpdate() {
+	void Background::myUpdate() {
 		if (type == ColorChanging && getLocationAnimationHelper()->refreshAnimation()) {
-			getColorAnimationHelper()->getNextColors();
+			colorHelper.getNextColors();
 			if (mode != noGradient) {
 				//bugbug test out refreshAnimation
 				switch ((int)ofRandom(0, 3)) {
@@ -766,7 +655,7 @@ namespace Software2552 {
 		}
 
 	}
-	void Paragraph::Role::myDraw() {
+	void Paragraph::myDraw() {
 		player.setPosition(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
 		player.draw();
 	}
@@ -789,12 +678,6 @@ namespace Software2552 {
 			}
 		}
 		return false;
-	}
-	Actor::~Actor() {
-		if (player != nullptr) {
-			delete player;
-			player = nullptr;
-		}
 	}
 	bool ChannelList::read(const string&path) {
 		ofxJSON json;
@@ -857,7 +740,7 @@ namespace Software2552 {
 	}
 
 	// add this one http://clab.concordia.ca/?page_id=944
-	void Video::Role::myDraw() {
+	void Video::myDraw() {
 		if (w == 0 || h == 0) {
 			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
 		}
@@ -865,7 +748,7 @@ namespace Software2552 {
 			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y, w, h);
 		}
 	}
-	void Video::Role::mySetup() {
+	void Video::mySetup() {
 		if (!player.isLoaded()) {
 			if (!player.load(getLocationPath())) {
 				logErrorString("setup video Player");
@@ -875,7 +758,7 @@ namespace Software2552 {
 		player.play();
 
 	}
-	void Video::Role::myUpdate() {
+	void Video::myUpdate() {
 		if (fullsize) {
 			w = ofGetWidth();
 			h = ofGetHeight();
@@ -883,7 +766,7 @@ namespace Software2552 {
 		player.update();
 	}
 
-	void Picture::Role::myUpdate() {
+	void Picture::myUpdate() {
 		if (fullsize) {
 			w = ofGetWidth();
 			h = ofGetHeight();
@@ -891,7 +774,7 @@ namespace Software2552 {
 		player.update();
 	}
 
-	void Picture::Role::mySetup() { 
+	void Picture::mySetup() { 
 		if (!isLoaded) {
 			if (!ofLoadImage(player, getLocationPath())) {
 				logErrorString("setup Picture Player");
@@ -902,7 +785,7 @@ namespace Software2552 {
 		}
 	}
 
-	float Video::Role::getTimeBeforeStart(float t) {
+	float Video::getTimeBeforeStart(float t) {
 
 		// if json sets a wait use it
 		if (getLocationAnimationHelper()->getWait() > 0) {
@@ -918,7 +801,7 @@ namespace Software2552 {
 		}
 		return t;
 	}
-	void Picture::Role::myDraw() {
+	void Picture::myDraw() {
 		if (w == 0 || h == 0) {
 			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
 		}
@@ -926,14 +809,14 @@ namespace Software2552 {
 			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y, w, h);
 		}
 	}
-	void Audio::Role::mySetup() {
+	void Audio::mySetup() {
 		if (!player.load(getLocationPath())) {
 			logErrorString("setup audio Player");
 		}
 		// some of this data could come from data in the future
 		player.play();
 	}
-	int CameraGrabber::Role::find() {
+	int CameraGrabber::find() {
 		//bugbug does Kintect show up?
 		vector<ofVideoDevice> devices = player.listDevices();
 		for (vector<ofVideoDevice>::const_iterator it = devices.begin(); it != devices.end(); ++it) {
@@ -943,13 +826,13 @@ namespace Software2552 {
 		}
 		return 0;// try first found as a default
 	}
-	void CameraGrabber::Role::myUpdate() { 
+	void CameraGrabber::myUpdate() { 
 		if (player.isInitialized()) {
 			player.update();
 		}
 	}
 
-	bool CameraGrabber::Role::loadGrabber(int wIn, int hIn) {
+	bool CameraGrabber::loadGrabber(int wIn, int hIn) {
 		id = find();
 		player.setDeviceID(id);
 		player.setDesiredFrameRate(30);
@@ -957,7 +840,7 @@ namespace Software2552 {
 		return b;
 	}
 
-	void CameraGrabber::Role::myDraw() {
+	void CameraGrabber::myDraw() {
 		if (player.isInitialized()) {
 			player.draw(getLocationAnimationHelper()->getCurrentPosition().x, getLocationAnimationHelper()->getCurrentPosition().y);
 		}
@@ -971,20 +854,20 @@ namespace Software2552 {
 		setType(ActorRole::draw2d);
 		return true;
 	}
-	void TextureVideo::Role::myDraw() {
+	void TextureVideo::myDraw() {
 		return; // not using fbo for video bugbug clean this up;
 
 	}
-	void TextureVideo::Role::mySetup() {
+	void TextureVideo::mySetup() {
 	}
-	bool TextureVideo::Role::mybind() {
+	bool TextureVideo::mybind() {
 		if (player.isInitialized() && fbo.isUsingTexture()) {
 			player.getTexture().bind();
 			return true;
 		}
 		return false;
 	}
-	bool TextureVideo::Role::myunbind() {
+	bool TextureVideo::myunbind() {
 		if (player.isInitialized() && player.isUsingTexture()) {
 			player.getTexture().unbind();
 			return true;
@@ -994,7 +877,7 @@ namespace Software2552 {
 	bool TextureVideo::myReadFromScript(const Json::Value &data) {
 		//bugbug fill this in with json reads as needed
 		if (!getPlayer().isLoaded()) {
-			if (!getPlayer().load(getDefaultRole()->getLocationPath())) {
+			if (!getPlayer().load(getLocationPath())) {
 				logErrorString("setup TextureVideo Player");
 				return false;
 			}
@@ -1002,34 +885,26 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	ofTexture& TextureVideo::Role::getTexture() { 
+	ofTexture& TextureVideo::getTexture() { 
 		return player.getTexture();
-		//bugbug use this for grabber maybe?
-		if (fbo.checkStatus()) {
-			return fbo.getTexture();
-		}
-		return defaulttexture;
 	}
 
-	void VideoSphere::Role::myDraw() {
+	void VideoSphere::myDraw() {
 		//bugbug just need to do this one time, maybe set a flag
 		if (video->getTexture().isAllocated() && !set) {
 			sphere.getPlayer()->mapTexCoordsFromTexture(video->getTexture());
 			sphere.getPlayer()->rotate(180, 0, 1, 0.0);
 			set = true;
 		}
-		video->role()->mybind();
-		sphere.role()->myDraw();
-		video->role()->myunbind();
+		video->mybind();
+		getSphere().get()->myDraw();
+		video->myunbind();
 	}
 	bool VideoSphere::myReadFromScript(const Json::Value &data) {
 
 		setType(ActorRole::draw3dFixedCamera);
-		if (getStage()) {
-			getStage()->fixed3d();
-			role()->video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
-		}
-		getSphere().role()->setWireframe(false);
+		video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
+		getSphere().get()->setWireframe(false);
 		getSphere().getPlayer()->set(250, 180);// set default
 		return true;
 	}
@@ -1042,60 +917,47 @@ namespace Software2552 {
 		draw(0, 0, w, h);
 		fbo.end();// normal drawing resumes
 	}
-	void VideoSphere::setSettings(Settings& rhs) { 
-		Settings::setSettings(rhs);
-		if (role()->video) {
-			role()->video->setSettings(rhs);
-		}
-	}
 
 	bool SolarSystem::myReadFromScript(const Json::Value &data) {
-		if (getStage()) {
-			shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data);
- 			if (p) {
-				ofPoint min(p->getSphere().getPlayer()->getRadius() * 2, 0, 200);
-				addPlanets(data["Planets"], min, *this);
-				return true;
-			}
+		shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data);
+ 		if (p) {
+			ofPoint min(p->getSphere().getPlayer()->getRadius() * 2, 0, 200);
+			addPlanets(data["Planets"], min);
+			return true;
 		}
 		//bugbug if there are no camareas a this point add in two defaults, one fixed and the other moving
 		// do the same for VideoSphere, post a trace if this is done
 		return false;
 	}
-	void SolarSystem::addPlanets(const Json::Value &data, ofPoint& min, Settings& settings) {
-		if (getStage()) {
-			ofPoint point;
-			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-				shared_ptr<Planet> p = getStage()->CreateReadAndaddAnimatable<Planet>(data);
-				if (p) {
-					point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
-					point.y = ofRandom(min.y, 500);
-					point.z = ofRandom(min.z, 500);
-					p->getSphere().getPlayer()->setPosition(point); // data stored as pointer so this updates the list
-				}
+	void SolarSystem::addPlanets(const Json::Value &data, ofPoint& min) {
+		ofPoint point;
+		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+			shared_ptr<Planet> p = getStage()->CreateReadAndaddAnimatable<Planet>(data);
+			if (p) {
+				point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
+				point.y = ofRandom(min.y, 500);
+				point.z = ofRandom(min.z, 500);
+				p->getSphere().getPlayer()->setPosition(point); // data stored as pointer so this updates the list
 			}
 		}
 	}
 
 	bool Planet::myReadFromScript(const Json::Value &data) {
-		if (getStage()) {
-			getStage()->moving3d();
-		}
 		setType(ActorRole::draw3dMovingCamera);
-		getSphere().role()->setWireframe(false);
+		getSphere().get()->setWireframe(false);
 		float r = ofRandom(5, 100);
 		getSphere().getPlayer()->set(r, 40);
 		//bugbug could get sphere location here
 
-		role()->getTexturePtr()->create(getDefaultRole()->getLocationPath(), r * 2, r * 2);
+		getTexturePtr()->create(getLocationPath(), r * 2, r * 2);
 
-		getSphere().getPlayer()->mapTexCoordsFromTexture(role()->getTexturePtr()->getTexture());
+		getSphere().getPlayer()->mapTexCoordsFromTexture(getTexturePtr()->getTexture());
 		return true;
 	}
-	void Planet::Role::myDraw() {
+	void Planet::myDraw() {
 		getTexturePtr()->bind();
 		sphere.getPlayer()->rotate(30, 0, 2.0, 0.0);
-		sphere.role()->myDraw();
+		sphere.get()->myDraw();
 		getTexturePtr()->unbind();
 	}
 }

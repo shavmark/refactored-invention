@@ -52,37 +52,6 @@ namespace Software2552 {
 		vector<int> colors; //hex values of all matching colors
 	};
 
-	// global color data
-	class AnimiatedColor : public ofxAnimatableOfColor {
-	public:
-		AnimiatedColor() :ofxAnimatableOfColor() { }
-		void draw();
-		void update();
-		bool paused() { return paused_; }
-		bool readFromScript(const Json::Value &data);
-		shared_ptr<ColorSet> getColorSet();
-		float getAlpha() { return alpha; }//bugbug flush this out, read it in, set it etc
-		void setAlpha(float a) { alpha = a; }
-		void getNextColors();
-		void setColorSet(shared_ptr<ColorSet>p);
-		bool useAnimation() { return usingAnimation; }
-		void setAnimation(bool b = true) { usingAnimation = true; }
-		// avoid long access code
-		int getForeground() { return getColorSet()->getForeground(); }
-		int getBackground() { return getColorSet()->getBackground(); }
-		int getFontColor() { return getColorSet()->getFontColor(); }
-		int getLightest() { return getColorSet()->getLightest(); }
-		int getDarkest() { return getColorSet()->getDarkest(); }
-		int getOther() { return getColorSet()->getOther(); }
-		ofFloatColor getFloatObject(int hex) { return ofFloatColor().fromHex(hex, getAlpha()); }
-		ofColor getColorObject(int hex) { return ofFloatColor().fromHex(hex, getAlpha()); }
-
-		shared_ptr<ColorSet> colorSet = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
-	private:
-		bool usingAnimation = false; // force  to set this to make sure its understood
-		float alpha = 255;
-	};
-	
 	class ColorList {
 	public:
 		ColorList();

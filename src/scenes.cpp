@@ -7,21 +7,29 @@
 //  ofSetBackgroundAuto(...).Passing in a value of false turns off the automatic background clearing.
 
 namespace Software2552 {
-
+	
+	shared_ptr<Stage> stage=nullptr; // one global stage, makes it easy to change between stages
+	// always valid stage pointer
+	shared_ptr<Stage> getStage() {
+		if (stage == nullptr) {
+			getScene("Generic"); // default
+		}
+		return stage;
+	}
 	// convert name to object
 	shared_ptr<Stage> getScene(const string&name)
 	{
 		if (name == "Space") {
-			return std::make_shared<SpaceScene>();
+			return stage = std::make_shared<SpaceScene>();
 		}
 		if (name == "Test") {
-			return std::make_shared<TestScene>();
+			return stage = std::make_shared<TestScene>();
 		}
 		if (name == "Generic") {
-			return std::make_shared<GenericScene>();
+			return stage = std::make_shared<GenericScene>();
 		}
 		logTrace("name not known (ignored) using default scene " + name);
-		return std::make_shared<GenericScene>();
+		return stage = std::make_shared<GenericScene>();
 	}
 
 	// return a possibly modifed version such as camera moved
@@ -61,21 +69,20 @@ namespace Software2552 {
 	shared_ptr<Background> Stage::CreateReadAndaddBackgroundItems(const Json::Value &data) {
 		shared_ptr<Background> b = std::make_shared<Background>();
 		if (b != nullptr) {
-			b->setSettings(this); // inherit settings
-			if (b->readActorFromScript(data, this)) {
+			if (b->readActorFromScript(data)) {
 				// only save if data was read in 
-				animatables.push_front(b);
+				appendToAnimatable(b);
 			}
 		}
 		return b;
 	}
 	///bigger the number the more forward
-	bool compareOrder(shared_ptr<Actor>first, shared_ptr<Actor>second)	{
-		return (first->getDefaultRole()->drawOrder < second->getDefaultRole()->drawOrder);
+	bool compareOrder(shared_ptr<ActorRole>first, shared_ptr<ActorRole>second)	{
+		return (first->drawOrder < second->drawOrder);
 	}
 
 	bool Stage::readFromScript(const Json::Value &data) {
-		Settings::readFromScript(data["settings"]);
+//		Settings::readFromScript(data["settings"]);
 #define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
 #define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
 		ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
@@ -183,14 +190,14 @@ namespace Software2552 {
 	// pause them all
 	void Stage::pause() {
 		for (auto& a : animatables) {
-			a->getDefaultRole()->getLocationAnimationHelper()->pause();
+			a->getLocationAnimationHelper()->pause();
 		}
 		//bugbug pause moving camera, grabber etc
 		myPause();
 	}
 	void Stage::resume() {
 		for (auto& a : animatables) {
-			a->getDefaultRole()->getLocationAnimationHelper()->resume();
+			a->getLocationAnimationHelper()->resume();
 		}
 		//bugbug pause moving camera, grabber etc
 		myResume();
@@ -215,7 +222,7 @@ namespace Software2552 {
 	}
 	void Stage::update() {
 		for (auto& a : animatables) {
-			a->getDefaultRole()->updateForDrawing();
+			a->updateForDrawing();
 		}
 		myUpdate();// dervived class update
 
@@ -259,6 +266,13 @@ namespace Software2552 {
 			}
 		}
 	}
+	void Stage::appendToAnimatable(shared_ptr<ActorRole>p) {
+		fixed3d(p->draw3dFixedCamera);
+		moving3d(p->draw3dMovingCamera);
+		fixed2d(p->draw2d);
+		animatables.push_back(p);
+	}
+
 	void Stage::pre3dDraw() {
 		//ofBackground(ofColor::blue); // white enables all colors in pictures/videos
 		ofSetSmoothLighting(true);
@@ -298,7 +312,7 @@ namespace Software2552 {
 		float f = 0;
 		
 		for (const auto& a : getAnimatables()) {
-			setIfGreater(f, a->getDefaultRole()->getLocationAnimationHelper()->getObjectLifetime() + a->getDefaultRole()->getLocationAnimationHelper()->getWait());
+			setIfGreater(f, a->getLocationAnimationHelper()->getObjectLifetime() + a->getLocationAnimationHelper()->getWait());
 		}
 
 		return f;
@@ -314,7 +328,7 @@ namespace Software2552 {
 	void Stage::draw2d() {
 		myDraw2d();
 		for (auto& a : animatables) {
-			a->getDefaultRole()->drawIt(ActorRole::draw2d);
+			a->drawIt(ActorRole::draw2d);
 		}
 
 		//ofBackground(ofColor::black);
@@ -325,13 +339,13 @@ namespace Software2552 {
 	void Stage::draw3dMoving() {
 		myDraw3dMoving();
 		for (auto& a : animatables) {
-			a->getDefaultRole()->drawIt(ActorRole::draw3dMovingCamera);
+			a->drawIt(ActorRole::draw3dMovingCamera);
 		}
 	}
 	void Stage::draw3dFixed() {
 		myDraw3dFixed();
 		for (auto& a : animatables) {
-			a->getDefaultRole()->drawIt(ActorRole::draw3dFixedCamera);
+			a->drawIt(ActorRole::draw3dFixedCamera);
 		}
 	}
 	shared_ptr<Camera> Stage::CreateReadAndaddCamera(const Json::Value &data, bool rotate) {

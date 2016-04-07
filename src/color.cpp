@@ -34,7 +34,7 @@ namespace Software2552 {
 		if (privateData) {
 			// clean up deleted items every so often
 			for (auto& d : privateData->colorlist) {
-				d->refreshAnimation();
+				//bugbug figure this out d->refreshAnimation();
 			}
 			// remove expired colors
 			removeExpiredItems(privateData->colorlist);
@@ -44,16 +44,6 @@ namespace Software2552 {
 				getNextColors(getCurrentColor()->getColorSet()->getGroup(), true); // updates global list
 			}
 		}
-	}
-	// return current color, track its usage count
-	shared_ptr<AnimiatedColor> ColorList::getCurrentColor() {
-		if (privateData) {
-			if (privateData->currentColor && privateData->currentColor->colorSet) {
-				++(*privateData->currentColor->colorSet); // mark usage if data has been set
-				return privateData->currentColor;
-			}
-		}
-		return nullptr;
 	}
 	void ColorList::setCurrentColorSet(shared_ptr<ColorSet>c) {
 		if (privateData) {
@@ -252,56 +242,5 @@ namespace Software2552 {
 #endif // 0
 	}
 
-	// always return a valid pointer
-	shared_ptr<ColorSet> AnimiatedColor::getColorSet() {
-		if (colorSet == nullptr) {
-			return ColorList::getCurrentColor()->getColorSet(); // use the global color
-		}
-		return colorSet;
-	}
-		// reset the object
-	void AnimiatedColor::setColorSet(shared_ptr<ColorSet>p) { 
-		if (p) {
-			colorSet = p;
-			setColor(ofColor(getLightest(), getAlpha()));
-			animateTo(ofColor(getDarkest(), getAlpha()));
-		}
-	}
-
-	void AnimiatedColor::getNextColors() {
-		setColorSet(ColorList::getNextColors(getColorSet()->getGroup(), false));
-	}
-	void AnimiatedColor::update() {
-		float dt = 1.0f / 60.0f;//bugbug does this time to frame count? I think so
-		ofxAnimatableOfColor::update(dt);
-		if (getColorSet()) {//bugbug can we advance color if desired here? 
-		}
-	}
-	void AnimiatedColor::draw() {
-		if (useAnimation()) {
-			applyCurrentColor();
-		}
-		else {
-			ofSetColor(ofColor::fromHex(getForeground(), getAlpha()));//background set by background manager
-		}
-	}
-	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
-	bool AnimiatedColor::readFromScript(const Json::Value &data) {
-		if (!data.empty()) {
-			READBOOL(usingAnimation, data);
-			READFLOAT(alpha, data);
-			string colorGroup;
-			READSTRING(colorGroup, data);
-			if (colorGroup.size()> 0) {
-				setColorSet(ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroup), false));
-			}
-		}
-
-		// set defaults or read from data bugbug add more data reads as needed
-		setDuration(0.5f);
-		setRepeatType(LOOP_BACK_AND_FORTH);
-		setCurve(LINEAR);
-		return true;
-	}
 
 }

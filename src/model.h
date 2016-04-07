@@ -2,7 +2,6 @@
 
 #include "2552software.h"
 #include "animation.h"
-#include "color.h"
 #include "draw.h"
 #include <forward_list>
 
@@ -15,7 +14,6 @@ namespace Software2552 {
 	bool echoJSONTree(const string& functionname, const Json::Value &root, bool isError = false);
 #define ECHOAll(data) echoJSONTree(__FUNCTION__, data);
 #define ERROR_ECHOAll(data) echoJSONTree(__FUNCTION__, data, true);
-	template<typename T> shared_ptr<vector<shared_ptr<T>>> parse(const Json::Value &data, const string&location);
 
 #if _DEBUG
 	template<typename T> void traceVector(T& vec);
@@ -39,24 +37,6 @@ namespace Software2552 {
 	private:
 		void convert(float, float, float); // convert to real locations
 	};
-	class ColorHelper {
-	public:
-		bool readFromScript(const Json::Value &data);
-		void setColor(int hex) {ofSetColor(getAnimatedColorPtr()->getColorObject(hex));	}
-		int getForeground() { return getAnimatedColorPtr()->getForeground(); }
-		int getBackground() { return getAnimatedColorPtr()->getBackground(); }
-		int getFontColor() { return getAnimatedColorPtr()->getFontColor(); }
-		int getLightest() { return getAnimatedColorPtr()->getLightest(); }
-		int getDarkest() { return getAnimatedColorPtr()->getDarkest(); }
-		int getOther() { return getAnimatedColorPtr()->getOther(); }
-		ofFloatColor getFloatObject(int hex) { return ofFloatColor().fromHex(hex, getAnimatedColorPtr()->getAlpha()); }
-		ofColor getColorObject(int hex) { return ofFloatColor().fromHex(hex, getAnimatedColorPtr()->getAlpha()); }
-
-		shared_ptr<AnimiatedColor> getAnimatedColorPtr() const;
-		void setAnimatedColorPtr(shared_ptr<AnimiatedColor>p) { colorAnimation = p; }
-	private:
-		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
-	};
 
 	//http://pocoproject.org/slides/070-DateAndTime.pdf
 	class DateAndTime : public Poco::DateTime {
@@ -73,49 +53,8 @@ namespace Software2552 {
 		int timeZoneDifferential;
 		int bc; // non zero if its a bc date
 	};
-
-	// simple helper to read in font data from json 
-#define defaultFontSize 14
-#define defaultFontFile "fonts/Raleway-Thin.ttf"
-#define defaultFontName "Raleway-Thin"
-
-	//bugbug do we want to expire fonts? maybe in 2.0
-	class Font  { 
-	public:
-		ofTrueTypeFont& get();
-		shared_ptr<ofxSmartFont> getPointer();
-		bool readFromScript(const Json::Value &data);
-	private:
-		shared_ptr<ofxSmartFont> font;
-	};
-
-
-	//  settings get copied a lot as they are the default data for all classes so they need to stay small
-	class Settings {
-	public:
-		Settings() {	}
-		Settings(const string& nameIn) {name = nameIn;	}
-		bool readFromScript(const Json::Value &data);
-
-		ofTrueTypeFont& getFont() { return font.get(); }
-		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
-		bool operator==(const Settings& rhs) { return rhs.name == name; }
-		string &getName() { return name; }
-		virtual void setSettings(const Settings& rhs);
-		virtual void setSettings(Settings* rhs);
-		// color is shared
-		shared_ptr<AnimiatedColor> getColorAnimationPtr() const { return colorHelper.getAnimatedColorPtr(); }
-	protected:
-		Font   font;
-		ColorHelper colorHelper;
-		string notes;// unstructured string of info, can be shown to the user
-		string title; // title object
-		string name; // any object can have a name, note, date, reference, duration
-
-	private:
-	};
-
-	class Dates : public Settings {
+	
+	class Dates {
 	public:
 		bool readFromScript(const Json::Value &data);
 	protected:
@@ -135,31 +74,6 @@ namespace Software2552 {
 		string source;
 	};
 
-	// an actor is a drawable that contains the drawing object for that graphic
-	class Stage;
-	class Actor : public Settings {
-	public:
-		Actor(ActorRole *p);
-		~Actor();
-
-		template<typename T> T* getRole() { return (T*)getDefaultRole(); }
-		ActorRole* getDefaultRole() { return player; }
-		template<typename T> T& getPlayer() { return *getRole<Role>()->player; } // assume player always allocated
-		bool readActorFromScript(const Json::Value &data, Stage*);
-
-		shared_ptr<vector<shared_ptr<Reference>>>  getReferences() { return references; }
-
-		void setType(ActorRole::drawtype type) { if (getDefaultRole())getDefaultRole()->setType(type); }
-		void setupActor() { if (getDefaultRole()) getDefaultRole()->setupForDrawing(); }
-		void updateActor() { if (getDefaultRole()) getDefaultRole()->updateForDrawing(); }
-		void setStage(Stage*s) { stage = s; }
-		Stage* getStage() { return stage; }
-	private: 
-		virtual bool myReadFromScript(const Json::Value &data) { return true; };
-		class Stage* stage=nullptr;// where object is to live
-		ActorRole* player=nullptr; // need a down cast to get specific items
-		shared_ptr<vector<shared_ptr<Reference>>> references=nullptr; // research reference to show where actor came from
-	};
 	class TextureFromImage : public ofTexture {
 	public:
 		void create(const string& name, float w, float h);
@@ -175,22 +89,14 @@ namespace Software2552 {
 
 
 	// wrap drawing object with references and settings data
-	class Ball : public Actor {
+	class Ball : public ActorRole {
 	public:
 		// bouncy ball with nice colors is pretty nice, does not take too much really
-		class Role : public ActorRole {
-		public:
-			void myDraw();
-
-			int floorLine = 630;
-			int xMargin = 0;
-			int widthCol = 60;
-			float radius = 100;
-		};
-
-		// data read during scene creation bugbug move all data reads to scene creation?
-		Ball() :Actor(new Role()) {  }
-		Role* role() { return getRole<Role>(); }
+		void myDraw();
+		int floorLine = 630;
+		int xMargin = 0;
+		int widthCol = 60;
+		float radius = 100;
 
 	private:
 		bool myReadFromScript(const Json::Value &data);
@@ -245,25 +151,22 @@ namespace Software2552 {
 	private:
 		virtual bool myReadFromScript(const Json::Value &data);
 	};
-	class CameraGrabber : public Actor {
+	class CameraGrabber : public ActorRole {
 	public:
-		class Role : public ActorRole {
-		public:
-			void myUpdate();
-			void myDraw();
-			void mySetup() { loadGrabber(w, h); }
-			int w = 320;
-			int h = 240;
-			int x = 0;
-			int y = 0;
-			ofVideoGrabber player;
-		private:
-			bool loadGrabber(int wIn, int hIn);
-			int find();
-			int id = 0;
-		};
-		CameraGrabber() :Actor(new Role()) {}
+		void myUpdate();
+		void myDraw();
+		void mySetup() { loadGrabber(w, h); }
+		int w = 320;
+		int h = 240;
+		int x = 0;
+		int y = 0;
+		ofVideoGrabber& getPlayer() { return player; }
+
 	private:
+		ofVideoGrabber player;
+		bool loadGrabber(int wIn, int hIn);
+		int find();
+		int id = 0;
 		bool myReadFromScript(const Json::Value &data);
 	};
 	class Material : public ofMaterial {
@@ -293,105 +196,83 @@ namespace Software2552 {
 		bool fill = false;
 		void basicDraw();
 	};
-	class ActorWithPrimativeBaseClass : public Actor {
+	class ActorWithPrimativeBaseClass : public ActorRole {
 	public:
-		ActorWithPrimativeBaseClass(DrawingPrimitive3d *p) :Actor(p){}
+		ActorWithPrimativeBaseClass(DrawingPrimitive3d *p) :ActorRole() { primative = p; }
 		bool myReadFromScript(const Json::Value &data);
-		DrawingPrimitive3d* role() { return getRole<DrawingPrimitive3d>(); }
-
+		DrawingPrimitive3d* get() { return primative; }
 	private:
+		DrawingPrimitive3d * primative;
 		virtual bool derivedMyReadFromScript(const Json::Value &data) { return true; }
 	};
 	// do not use templates as its hard to make base class pointers to them
 	class Cube : public ActorWithPrimativeBaseClass {
 	public:
 		Cube() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofBoxPrimitive)) {		}
-		ofBoxPrimitive* getPlayer() { return (ofBoxPrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
+		ofBoxPrimitive* getPlayer() { return (ofBoxPrimitive*)get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Plane : public ActorWithPrimativeBaseClass {
 	public:
 		Plane() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofPlanePrimitive)) {		}
-		ofPlanePrimitive* getPlayer() { return (ofPlanePrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
+		ofPlanePrimitive* getPlayer() { return (ofPlanePrimitive*)get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Sphere : public ActorWithPrimativeBaseClass {
 	public:
 		Sphere() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofSpherePrimitive)) {		}
-		ofSpherePrimitive* getPlayer() { return (ofSpherePrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
+		ofSpherePrimitive* getPlayer() { return (ofSpherePrimitive*)get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Cylinder : public ActorWithPrimativeBaseClass {
 	public:
 		Cylinder() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofCylinderPrimitive)) {		}
-		ofCylinderPrimitive* getPlayer() { return (ofCylinderPrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
+		ofCylinderPrimitive* getPlayer() { return (ofCylinderPrimitive*)get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Cone : public ActorWithPrimativeBaseClass {
 	public:
 		Cone() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofConePrimitive)) {		}
-		ofConePrimitive* getPlayer() { return (ofConePrimitive*)(getRole<DrawingPrimitive3d>()->getPlayer()); }
+		ofConePrimitive* getPlayer() { return (ofConePrimitive*)get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 
 	//bugbug add other shapes
-	class Text : public Actor {
+	class Text : public ActorRole {
 	public:
-		class Role : public ActorRole {
-		public:
-			void myDraw();
-			void drawText(const string &s, int x, int y);
-			void setText(const string&t) { text = t; }
-			string& getText() { return text; }
-			string text;
-		};
-		Text() : Actor(new Role) {  }
-		void drawText(const string &s, int x, int y) { getRole<Role>()->drawText(s, x, y); };
-		void setText(const string&t) { getRole<Role>()->setText(t); }
-		Role* role() { return getRole<Role>(); }
+		void myDraw();
+		void drawText(const string &s, int x, int y);
+		void setText(const string&t) { text = t; }
+		string& getText() { return text; }
 
 	private:
+		string text;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
-	class Paragraph : public Actor {
+	class Paragraph : public ActorRole {
 	public:
-		// put advanced drawing in these objects
-		class Role : public ActorRole {
-		public:
-			Role() : ActorRole() {}
-			void myDraw();
-			ofxParagraph player;
-		private:
-		};
+		void myDraw();
 
-		Paragraph() :Actor(new Role()) {  }
-		ofxParagraph& getPlayer() { return getRole<Role>()->player; }
-		Role* role() { return getRole<Role>(); }
+		ofxParagraph& getPlayer() { return player; }
 
 	private:
+		ofxParagraph player;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
 	
-	class Audio : public Actor {
+	class Audio : public ActorRole {
 	public:
-		// sound gets drawing basics for path and possibly other items in the future
-		class Role : public ActorRole {
-		public:
-			//bugbug tie into the main sound code we added
-			void mySetup();
-			ofSoundPlayer player;
-		};
-
-		Audio() :Actor(new Role()) {  }
-		ofSoundPlayer& getPlayer() { return getRole<Role>()->player; }
+		void mySetup();
+		ofSoundPlayer& getPlayer() { return player; }
 	private:
+		ofSoundPlayer player;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
@@ -403,141 +284,103 @@ namespace Software2552 {
 		bool fullsize = false; // keep full size of screen, like for a background
 	};
 
-	class Video : public Actor {
+	class Video : public Visual {
 	public:
 		// put advanced drawing in these objects
-		class Role :public Visual {
-		public:
-			void myUpdate();
-			void myDraw();
-			void mySetup();
-			float getTimeBeforeStart(float t);
-			ofVideoPlayer player;
-		};
-		Video() :Actor(new Role()) {  }
-		Role* role() { return getRole<Role>(); }
-		ofVideoPlayer& getPlayer() { return getRole<Role>()->player; }
+		void myUpdate();
+		void myDraw();
+		void mySetup();
+		float getTimeBeforeStart(float t);
+		ofVideoPlayer& getPlayer() { return player; }
 	private:
+		ofVideoPlayer player;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
-	class TextureVideo : public Actor {
+	class TextureVideo : public ActorRole {
 	public:
-		class Role : public ActorRole {
-		public:
-			Role() : ActorRole() {  }
-			Role(const string& path) : ActorRole(path) { }
-			void myUpdate() { player.update(); }
-			void myDraw();
-			void mySetup();
-			bool textureReady() { return  player.isInitialized(); }
-			bool mybind();
-			bool myunbind();
-			ofVideoPlayer player;
-			ofTexture& getTexture();
-			ofFbo fbo;
-		private:
-			ofTexture defaulttexture;
-		};
-		TextureVideo(const string&s) :Actor(new Role(s)) {  }
-		TextureVideo() :Actor(new Role()) {  }
-		ofVideoPlayer& getPlayer() { return getRole<Role>()->player; }
-		ofTexture& getTexture() { return getRole<Role>()->getTexture(); }
-		Role* role() { return getRole<Role>(); }
-
+		TextureVideo() : ActorRole() { }
+		TextureVideo(const string& path) : ActorRole(path) { }
+		void myUpdate() { player.update(); }
+		void myDraw();
+		void mySetup();
+		bool textureReady() { return  player.isInitialized(); }
+		bool mybind();
+		bool myunbind();
+		ofTexture& getTexture();
+		ofVideoPlayer& getPlayer() { return player; }
 	private:
+		ofFbo fbo;
+		ofTexture defaulttexture;
+		ofVideoPlayer player;
 		bool myReadFromScript(const Json::Value &data);
 
 	};
-	class VideoSphere : public Actor {
+	class VideoSphere : public ActorRole {
 	public:
-		class Role : public ActorRole {
-		public:
-			friend VideoSphere;
-			Role() : ActorRole() {	}
-			Role(const string& path) : ActorRole(path) { video = std::make_shared<TextureVideo>(path); }
-			void myDraw();
-			Sphere sphere;
-			shared_ptr<TextureVideo> video = nullptr;
-		private:
-			bool set = false;
-		};
-		VideoSphere(const string&s) :Actor(new Role(s)) {		}
-		VideoSphere() :Actor(new Role()) {  }
-		void setSettings(Settings& rhs);
-		Sphere& getSphere() { return getRole<Role>()->sphere; }
-		Role* role() { return getRole<Role>(); }
+		VideoSphere() : ActorRole() { }
+		VideoSphere(const string& path) : ActorRole(path) { video = std::make_shared<TextureVideo>(path); }
+
+		void myDraw();
+		Sphere& getSphere() { return sphere; }
 
 	private:
+		bool set = false;
+		Sphere sphere;
+		shared_ptr<TextureVideo> video = nullptr;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
-	class Planet : public Actor {
+	class Planet : public ActorRole {
 	public:
-		class Role : public ActorRole {
-		public:
-			Role() : ActorRole() { texture = std::make_shared<TextureFromImage>(); }
-			void myDraw();
-			Sphere sphere;
-			shared_ptr<TextureFromImage> getTexturePtr() { return texture; }
-		private:
-			shared_ptr<TextureFromImage> texture = nullptr;
-		};
-		Planet() :Actor(new Role()) {  }
-		Sphere& getSphere() { return getRole<Role>()->sphere; }
-		Role* role() { return getRole<Role>(); }
+		Planet() : ActorRole() { texture = std::make_shared<TextureFromImage>(); }
+		
+		void myDraw();
+		shared_ptr<TextureFromImage> getTexturePtr() { return texture; }
+		Sphere& getSphere() { return sphere; }
 
 	private:
+		shared_ptr<TextureFromImage> texture = nullptr;
+		Sphere sphere;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
-	class SolarSystem : public Actor {
+	class SolarSystem : public ActorRole {
 	public:
-		SolarSystem() :Actor(new ActorRole()) {  }
-		void addPlanets(const Json::Value &data, ofPoint& min, Settings& settings);
+		SolarSystem() :ActorRole() {  }
+		void addPlanets(const Json::Value &data, ofPoint& min);
 
 	private:
 		bool myReadFromScript(const Json::Value &data);
 	};
 
 
-	class Picture : public Actor {
+	class Picture : public Visual {
 	public:
-		class Role : public Visual {
-		public:
-			void myUpdate();
-			void mySetup();
-			void myDraw();
-			ofImage player;
-		};
-
-		Picture() :Actor(new Role()) {  }
-		Role* role() { return getRole<Role>(); }
-		ofImage& getPlayer() { return getRole<Role>()->player; }
+		void myUpdate();
+		void mySetup();
+		void myDraw();
+		ofImage& getPlayer() { return player; }
 	private:
+		ofImage player;
 		bool myReadFromScript(const Json::Value &data);
 	};
 	
-	class Background : public Actor {
+	class Background : public Visual {
 	public:
 		enum TypeOfBackground { ColorFixed, ColorChanging,  none };
 		enum TypeOfGradient {	linear = ofGradientMode::OF_GRADIENT_LINEAR,	circular = ofGradientMode::OF_GRADIENT_CIRCULAR,
 			bar = ofGradientMode::OF_GRADIENT_BAR,	flat, noGradient	};
-		class Role : public ActorRole {
-		public:
-			void myDraw();
-			void myUpdate();// make image a vector then rotate via animation
-			void setType(TypeOfBackground typeIn = ColorFixed) { type = typeIn; }
-			void setGradientMode(const TypeOfGradient& modeIn) { mode = modeIn; }
-			ofGradientMode ofMode;
-		private:
-			TypeOfGradient mode = TypeOfGradient::noGradient;
-			TypeOfBackground type = ColorFixed;
-		};
-		Background() :Actor(new Role()) {  }
-		Role* role() { return getRole<Role>(); }
+
+		void myDraw();
+		void myUpdate();// make image a vector then rotate via animation
+		void setType(TypeOfBackground typeIn = ColorFixed) { type = typeIn; }
+		void setGradientMode(const TypeOfGradient& modeIn) { mode = modeIn; }
 
 	private:
+		ofGradientMode ofMode;
+		TypeOfGradient mode = TypeOfGradient::noGradient;
+		TypeOfBackground type = ColorFixed;
 		bool myReadFromScript(const Json::Value &data);
 
 	};

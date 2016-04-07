@@ -7,7 +7,7 @@
 // home of custom scenes
 
 namespace Software2552 {
-
+	extern shared_ptr<Stage> getStage();
 	// calls the shots, uses the Animation classes to do so bugbug code this in, add it to its own file
 	// it replaces time line
 	class Director {
@@ -22,7 +22,7 @@ namespace Software2552 {
 	shared_ptr<Stage> getScene(const string&name);
 
 	// contains  elements of a stage
-	class Stage : public Settings {
+	class Stage {
 	public:
 		void setup();
 		void update();
@@ -33,23 +33,15 @@ namespace Software2552 {
 		float findMaxWait();
 		void drawlights();
 		string &getKeyName() { return keyname; }
-
+		void setDefault(const ActorRole&actor) { defaultRole = actor; }
+		ActorRole& getDefault() { return defaultRole; }
 		// things to draw
 
-		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, Stage*stage=nullptr) {
+		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data) {
 			shared_ptr<T> p = std::make_shared<T>();
 			if (p != nullptr) { // try to run in low memory as much as possible for small devices
-				if (stage) {
-					p->setSettings(*stage);
-					if (p->readActorFromScript(data, stage)) {
-						appendToAnimatable(p);
-					}
-				}
-				else {
-					p->setSettings(*this);
-					if (p->readActorFromScript(data, this)) {
-						appendToAnimatable(p);
-					}
+				if (p->readActorFromScript(data)) {
+					appendToAnimatable(p);
 				}
 			}
 			return p;
@@ -57,7 +49,7 @@ namespace Software2552 {
 		virtual shared_ptr<Background> CreateReadAndaddBackgroundItems(const Json::Value &data);
 		shared_ptr<Camera> CreateReadAndaddCamera(const Json::Value &data, bool rotate = false);
 		template<typename T>shared_ptr<T> CreateReadAndaddLight(const Json::Value &data);
-		list<shared_ptr<Actor>>& getAnimatables() { return animatables; }
+		list<shared_ptr<ActorRole>>& getAnimatables() { return animatables; }
 
 		void fixed3d(bool b = true) { drawIn3dFixed = b; }
 		void moving3d(bool b = true) { drawIn3dMoving = b; }
@@ -94,20 +86,18 @@ namespace Software2552 {
 		string keyname;
 
 	private:
+		ActorRole defaultRole;// allow the passing of settings like font and color easily
 
-		void appendToAnimatable(shared_ptr<Actor>p) { animatables.push_back(p); }
+		void appendToAnimatable(shared_ptr<ActorRole>p);
 
-		static bool OKToRemove(shared_ptr<Actor> me) {
-			return me->getDefaultRole()->OKToRemoveNormalPointer(me->getDefaultRole());
-		}
-		void removeExpiredItems(list<shared_ptr<Actor>>&v) {
-			v.remove_if(OKToRemove);
+		void removeExpiredItems(list<shared_ptr<ActorRole>>&v) {
+			v.remove_if(ActorRole::OKToRemove);
 		}
 		template<typename T> void removeExpiredItems(vector<shared_ptr<T>>&v) {
 			v.erase(std::remove_if(v.begin(), v.end(), objectLifeTimeManager::OKToRemove), v.end());
 		}
 
-		list<shared_ptr<Actor>> animatables; // use list as it could be large with lots of adds/deletes over time
+		list<shared_ptr<ActorRole>> animatables; // use list as it could be large with lots of adds/deletes over time
 		vector<shared_ptr<Camera>> cameras;  // expect list to be smaller and more fixed, also want index acess "camera 2"
 		vector<shared_ptr<Light>> lights;    // expect list to be smaller and more fixed
 
