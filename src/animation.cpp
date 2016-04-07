@@ -243,6 +243,22 @@ return true;
 				scaleAnimation->readFromScript(data["animation"]);
 			}
 		}
+		if (!data["rotation"].empty()) {
+		}
+		if (!data["scale"].empty()) {
+		}
+		if (!data["animation"].empty()) {
+			//if (!getAnimation()) {
+				//setAnimation(std::make_shared<PointAnimation>());
+			//}
+			//getAnimation()->readFromScript(data);
+		}
+
+		//shared_ptr<RotationAnimation> getRotationAnimationHelper() { return rotationAnimation; }
+		//shared_ptr<FloatAnimation> getScaleAnimationHelper() { return scaleAnimation; }
+		//shared_ptr<PointAnimation> getLocationAnimationHelper() { return locationAnimation; }
+		//shared_ptr<AnimiatedColor> getColorAnimationHelper() { return colorAnimation; }
+
 		//bugbug should I move color helper here too? 
 		//bugbug add in some rotate too? its afloat across x,y,z
 		return true;

@@ -103,6 +103,7 @@ namespace Software2552 {
 		string &getName() { return name; }
 		virtual void setSettings(const Settings& rhs);
 		virtual void setSettings(Settings* rhs);
+		// color is shared
 		shared_ptr<AnimiatedColor> getColorAnimationPtr() const { return colorHelper.getAnimatedColorPtr(); }
 	protected:
 		Font   font;
@@ -138,10 +139,7 @@ namespace Software2552 {
 	class Stage;
 	class Actor : public Settings {
 	public:
-		Actor(ActorRole *p) :Settings() {
-			references = nullptr;
-			player = p;
-		}
+		Actor(ActorRole *p);
 		~Actor();
 
 		template<typename T> T* getRole() { return (T*)getDefaultRole(); }
@@ -151,24 +149,14 @@ namespace Software2552 {
 
 		shared_ptr<vector<shared_ptr<Reference>>>  getReferences() { return references; }
 
-		void setAnimation(bool f = true) { if (isValid()) getDefaultRole()->getLocationAnimationHelper()->setAnimationEnabled(f); }
 		void setType(ActorRole::drawtype type) { if (getDefaultRole())getDefaultRole()->setType(type); }
-		void animateTo(const ofPoint& p) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->animateTo(p); }
-		void setAnimationPosition(const ofPoint& p) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->setPosition(p); }
-		void setAnimationPositionX(float x) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->setPositionX(x); }
-		void setAnimationPositionY(float y) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->setPositionX(y); }
-		void setAnimationPositionZ(float z) { if (isValid())getDefaultRole()->getLocationAnimationHelper()->setPositionX(z); }
-		shared_ptr<PointAnimation> getAnimation() {		return getDefaultRole()->getLocationAnimationHelper();	}
 		void setupActor() { if (getDefaultRole()) getDefaultRole()->setupForDrawing(); }
 		void updateActor() { if (getDefaultRole()) getDefaultRole()->updateForDrawing(); }
 		void setStage(Stage*s) { stage = s; }
 		Stage* getStage() { return stage; }
 	private: 
 		virtual bool myReadFromScript(const Json::Value &data) { return true; };
-
 		class Stage* stage=nullptr;// where object is to live
-		bool isValid() { return getDefaultRole() && getDefaultRole()->getLocationAnimationHelper(); }
-		
 		ActorRole* player=nullptr; // need a down cast to get specific items
 		shared_ptr<vector<shared_ptr<Reference>>> references=nullptr; // research reference to show where actor came from
 	};

@@ -247,16 +247,20 @@ namespace Software2552 {
 	}
 	bool Ball::myReadFromScript(const Json::Value &data) {
 		// can read any of these items from json here
-		setAnimationPositionY(role()->floorLine - 100);
-		setAnimation(true);
-		role()->getColorAnimationHelper()->setAnimation();//enable 
+		role()->setAnimationPositionY(role()->floorLine - 100);
+		role()->setAnimationEnabled(true);
 		
 		readJsonValue(role()->radius, data["radius"]);
 		ofPoint p;
 		p.y = role()->floorLine;
-		getAnimation()->animateTo(p);
+		role()->animateTo(p);
 		return true;
 	}
+	Actor::Actor(ActorRole *p) :Settings() {
+		references = nullptr;
+		player = p;
+	}
+
 	 bool Actor::readActorFromScript(const Json::Value &data, Stage*stage) {
 		if (player == nullptr) {
 			logErrorString("missing player");
@@ -269,8 +273,6 @@ namespace Software2552 {
 
 		// any actor can have a reference
 		references = parse<Reference>(data["references"]);
-
-		getAnimation()->readFromScript(data);
 
 		// unqiue or shared color, pointer allows for global updates
 		player->setColorAnimation(getColorAnimationPtr());
@@ -429,7 +431,7 @@ namespace Software2552 {
 	//, "carride.mp4"
 	bool Video::myReadFromScript(const Json::Value &data) {
 		setType(ActorRole::draw2d);
-		setAnimation(true);
+		role()->setAnimationEnabled(true);
 		float speed = 0;
 		READFLOAT(speed, data);
 		if (speed != 0) {
@@ -724,11 +726,8 @@ namespace Software2552 {
 	}
 	void Visual::setFullSize() {
 		fullsize = true;
-		getLocationAnimationHelper()->setPosition(ofPoint());
-
-		if (getLocationAnimationHelper()) {
-			getLocationAnimationHelper()->setAnimationEnabled(false);
-		}
+		setPosition(ofPoint());
+		setAnimationEnabled(false);
 	}
 	void Background::Role::myDraw() {
 		if (mode == flat) {
@@ -965,13 +964,11 @@ namespace Software2552 {
 	}
 	bool CameraGrabber::myReadFromScript(const Json::Value &data) {
 		//"Logitech HD Pro Webcam C920"
-		getAnimation()->readFromScript(data);
 
 		return true;
 	}
 	bool Picture::myReadFromScript(const Json::Value &data) { 
 		setType(ActorRole::draw2d);
-		getAnimation()->readFromScript(data);
 		return true;
 	}
 	void TextureVideo::Role::myDraw() {

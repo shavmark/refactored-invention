@@ -51,7 +51,11 @@ namespace Software2552 {
 		void setAnimationEnabled(bool b = true) { animating_ = b; }
 	private:
 	};
-
+	class RotationAnimation : public ofxAnimatableFloat {
+	public:
+		float angle=1;
+		float x=0, y = 0, z = 0;
+	};
 	class PointAnimation : public ofxAnimatableOfPoint, public objectLifeTimeManager {
 	public:
 		void update();
@@ -72,11 +76,19 @@ namespace Software2552 {
 
 		bool readFromScript(const Json::Value &data);
 		// avoid name clashes and wrap the most used items, else access the contained object for more
-
+		
+		shared_ptr<RotationAnimation> getRotationAnimationHelper() { return rotationAnimation; }
 		shared_ptr<FloatAnimation> getScaleAnimationHelper() { return scaleAnimation; }
 		shared_ptr<PointAnimation> getLocationAnimationHelper() { return locationAnimation; }
 		shared_ptr<AnimiatedColor> getColorAnimationHelper() { return colorAnimation; }
 
+		void setAnimationPosition(const ofPoint& p) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPosition(p); }
+		void setAnimationPositionX(float x) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(x); }
+		void setAnimationPositionY(float y) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(y); }
+		void setAnimationPositionZ(float z) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(z); }
+		void animateTo(const ofPoint& p) { if (getLocationAnimationHelper())getLocationAnimationHelper()->animateTo(p); }
+
+		void setAnimationEnabled(bool f) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setAnimationEnabled(f); }
 		ofPoint& getCurrentPosition();
 		void setPosition(ofPoint& p);
 		virtual float getTimeBeforeStart(float t) { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getWait():0; }
@@ -116,6 +128,7 @@ namespace Software2552 {
 		virtual void myUpdate() {};
 		virtual void myDraw() {};
 		string   locationPath;   // location of item to draw
+		shared_ptr<RotationAnimation> rotationAnimation = nullptr; // optional rotation
 		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
 		shared_ptr<PointAnimation> locationAnimation = nullptr; // optional movement
 		shared_ptr<FloatAnimation> scaleAnimation = nullptr; // 2d scale multply x,y by scale, 1 by default bugbug 
