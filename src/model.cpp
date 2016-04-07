@@ -476,19 +476,17 @@ namespace Software2552 {
 		}
 	}
 	
-	bool ActorWithPrimativeBaseClass::myReadFromScript(const Json::Value &data) {
+	bool DrawingPrimitive3d::myReadFromScript(const Json::Value &data) {
 		///ofPolyRenderMode renderType = OF_MESH_WIREFRAME; //bugbug enable phase II
-		if (get()) {
-			bool wireFrame = true;
-			READBOOL(wireFrame, data);
-			bool fill = false;
-			READBOOL(fill, data);
-			get()->setFill(fill);
-			get()->setWireframe(wireFrame);
-			// pass on current animation
-			get()->material.colorHelper.setAnimatedColorPtr(getColorAnimationPtr());
-			get()->material.readFromScript(data);
-		}
+		bool wireFrame = true;
+		READBOOL(wireFrame, data);
+		bool fill = false;
+		READBOOL(fill, data);
+		setFill(fill);
+		setWireframe(wireFrame);
+		// pass on current animation
+		material.colorHelper.setAnimatedColorPtr(getColorAnimationPtr());
+		material.readFromScript(data);
 		return derivedMyReadFromScript(data);
 	}
 	void DrawingPrimitive3d::myUpdate() {
@@ -532,8 +530,8 @@ namespace Software2552 {
 	bool Cube::derivedMyReadFromScript(const Json::Value &data) {
 		float size = 100;//default
 		READFLOAT(size, data);
-		if (get() && getPlayer()) {
-			get()->setWireframe(true);
+		if (getPlayer()) {
+			setWireframe(true);
 			getPlayer()->set(size);
 			getPlayer()->roll(20.0f);// just as an example
 		}
@@ -546,7 +544,7 @@ namespace Software2552 {
 		return true;
 	}
 	bool Sphere::derivedMyReadFromScript(const Json::Value &data) {
-		if (get() && getPlayer()) {
+		if (getPlayer()) {
 			float radius = 100;//default
 			READFLOAT(radius, data);
 			getPlayer()->setRadius(radius);
@@ -556,8 +554,8 @@ namespace Software2552 {
 			getPlayer()->setResolution(resolution);
 
 			// can be moving too, let json decide, need camera too
-			get()->setType(ActorRole::draw3dFixedCamera);
-			get()->setFill();
+			setType(ActorRole::draw3dFixedCamera);
+			setFill();
 			getPlayer()->setMode(OF_PRIMITIVE_TRIANGLES);
 		}
 		return true;
@@ -897,14 +895,14 @@ namespace Software2552 {
 			set = true;
 		}
 		video->mybind();
-		getSphere().get()->myDraw();
+		getSphere().myDraw();
 		video->myunbind();
 	}
 	bool VideoSphere::myReadFromScript(const Json::Value &data) {
 
 		setType(ActorRole::draw3dFixedCamera);
 		video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
-		getSphere().get()->setWireframe(false);
+		getSphere().setWireframe(false);
 		getSphere().getPlayer()->set(250, 180);// set default
 		return true;
 	}
@@ -944,7 +942,7 @@ namespace Software2552 {
 
 	bool Planet::myReadFromScript(const Json::Value &data) {
 		setType(ActorRole::draw3dMovingCamera);
-		getSphere().get()->setWireframe(false);
+		getSphere().setWireframe(false);
 		float r = ofRandom(5, 100);
 		getSphere().getPlayer()->set(r, 40);
 		//bugbug could get sphere location here
@@ -957,7 +955,7 @@ namespace Software2552 {
 	void Planet::myDraw() {
 		getTexturePtr()->bind();
 		sphere.getPlayer()->rotate(30, 0, 2.0, 0.0);
-		sphere.get()->myDraw();
+		sphere.myDraw();
 		getTexturePtr()->unbind();
 	}
 }

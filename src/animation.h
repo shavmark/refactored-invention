@@ -9,16 +9,27 @@
 
 namespace Software2552 {
 	// read in list of Json values
-	template<typename T> shared_ptr<vector<shared_ptr<T>>> parse(const Json::Value &data)
+	template<typename T> shared_ptr<T> parseNoList(const Json::Value &data)
+	{
+		shared_ptr<T>  results = nullptr;
+		if (data.size() > 0) {
+			results = std::make_shared<T>();
+			if (results) {
+				results->readFromScript(data);
+			}
+		}
+		return results;
+	}
+	template<typename T> shared_ptr<vector<shared_ptr<T>>> parseList(const Json::Value &data)
 	{
 		shared_ptr<vector<shared_ptr<T>>>  results = nullptr;
 		if (data.size() > 0) {
 			results = std::make_shared<vector<shared_ptr<T>>>();
-		}
-		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-			shared_ptr<T> item = std::make_shared<T>();
-			item->readFromScript(data[j]);
-			results->push_back(item);
+			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+				shared_ptr<T> item = std::make_shared<T>();
+				item->readFromScript(data[j]);
+				results->push_back(item);
+			}
 		}
 		return results;
 	}
@@ -69,6 +80,9 @@ namespace Software2552 {
 	class RotationAnimation : public ofxAnimatableFloat {
 	public:
 		void update();
+		bool readFromScript(const Json::Value &data) {
+			return true;//bugbug fill this in
+		}
 		bool isAnimationEnabled() { return animating_; }
 		void setAnimationEnabled(bool b = true) { animating_ = b; }
 		float angle=1;
@@ -88,6 +102,8 @@ namespace Software2552 {
 	class ColorSet;
 	class AnimiatedColor : public ofxAnimatableOfColor {
 	public:
+		friend class ColorList;
+
 		AnimiatedColor() :ofxAnimatableOfColor() { }
 		void draw();
 		void update();

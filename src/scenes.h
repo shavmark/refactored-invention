@@ -33,8 +33,6 @@ namespace Software2552 {
 		float findMaxWait();
 		void drawlights();
 		string &getKeyName() { return keyname; }
-		void setDefault(const ActorRole&actor) { defaultRole = actor; }
-		ActorRole& getDefault() { return defaultRole; }
 		// things to draw
 
 		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data) {
@@ -86,7 +84,6 @@ namespace Software2552 {
 		string keyname;
 
 	private:
-		ActorRole defaultRole;// allow the passing of settings like font and color easily
 
 		void appendToAnimatable(shared_ptr<ActorRole>p);
 
@@ -125,14 +122,6 @@ namespace Software2552 {
 		void myDraw3dFixed();
 
 		CrazyMesh mesh;
-	};
-	class SpaceScene : public Stage {
-	public:
-		SpaceScene() :Stage() {
-			drawIn3dFixed = drawIn3dMoving = true;
-		}
-		bool myCreate(const Json::Value &data);
-	private:
 	};
 
 

@@ -176,12 +176,12 @@ namespace Software2552 {
 		ColorHelper colorHelper;
 	};
 
-	class ActorWithPrimativeBaseClass;
+	
 	class DrawingPrimitive3d : public ActorRole {
 	public:
 		DrawingPrimitive3d(of3dPrimitive *p, drawtype type = draw3dFixedCamera);
 		~DrawingPrimitive3d();
-
+		bool myReadFromScript(const Json::Value &data);
 		void setWireframe(bool b = true) { wireFrame = b; }
 		bool useWireframe() { return wireFrame; }
 		void setFill(bool b = true) { fill = b; }
@@ -191,53 +191,46 @@ namespace Software2552 {
 		of3dPrimitive* getPlayer() { return player; }
 		Material  material;
 	private:
+		virtual bool derivedMyReadFromScript(const Json::Value &data)=0;
 		of3dPrimitive *player = nullptr; // allow derived pointers and polymorphism
 		bool wireFrame = true;
 		bool fill = false;
 		void basicDraw();
 	};
-	class ActorWithPrimativeBaseClass : public ActorRole {
-	public:
-		ActorWithPrimativeBaseClass(DrawingPrimitive3d *p) :ActorRole() { primative = p; }
-		bool myReadFromScript(const Json::Value &data);
-		DrawingPrimitive3d* get() { return primative; }
-	private:
-		DrawingPrimitive3d * primative;
-		virtual bool derivedMyReadFromScript(const Json::Value &data) { return true; }
-	};
 	// do not use templates as its hard to make base class pointers to them
-	class Cube : public ActorWithPrimativeBaseClass {
+	class Cube : public DrawingPrimitive3d {
 	public:
-		Cube() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofBoxPrimitive)) {		}
-		ofBoxPrimitive* getPlayer() { return (ofBoxPrimitive*)get(); }
+		Cube() : DrawingPrimitive3d(new ofBoxPrimitive()) {		}
+		ofBoxPrimitive* getPlayer() { return (ofBoxPrimitive*)DrawingPrimitive3d::getPlayer(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
-	class Plane : public ActorWithPrimativeBaseClass {
+	class Plane : public DrawingPrimitive3d {
 	public:
-		Plane() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofPlanePrimitive)) {		}
-		ofPlanePrimitive* getPlayer() { return (ofPlanePrimitive*)get(); }
+		Plane() : DrawingPrimitive3d(new ofPlanePrimitive()) {		}
+		ofPlanePrimitive* getPlayer() { return (ofPlanePrimitive*)DrawingPrimitive3d::getPlayer(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
-	class Sphere : public ActorWithPrimativeBaseClass {
+	class Sphere : public DrawingPrimitive3d {
 	public:
-		Sphere() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofSpherePrimitive)) {		}
-		ofSpherePrimitive* getPlayer() { return (ofSpherePrimitive*)get(); }
+		Sphere() : DrawingPrimitive3d(new ofSpherePrimitive()) {		}
+		
+		ofSpherePrimitive* getPlayer() { return (ofSpherePrimitive*)DrawingPrimitive3d::getPlayer(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
-	class Cylinder : public ActorWithPrimativeBaseClass {
+	class Cylinder : public DrawingPrimitive3d {
 	public:
-		Cylinder() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofCylinderPrimitive)) {		}
-		ofCylinderPrimitive* getPlayer() { return (ofCylinderPrimitive*)get(); }
+		Cylinder() : DrawingPrimitive3d(new ofCylinderPrimitive()) {		}
+		ofCylinderPrimitive* getPlayer() { return (ofCylinderPrimitive*)DrawingPrimitive3d::getPlayer(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
-	class Cone : public ActorWithPrimativeBaseClass {
+	class Cone : public DrawingPrimitive3d {
 	public:
-		Cone() : ActorWithPrimativeBaseClass(new DrawingPrimitive3d(new ofConePrimitive)) {		}
-		ofConePrimitive* getPlayer() { return (ofConePrimitive*)get(); }
+		Cone() : DrawingPrimitive3d(new ofConePrimitive()) {		}
+		ofConePrimitive* getPlayer() { return (ofConePrimitive*)DrawingPrimitive3d::getPlayer(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};

@@ -19,9 +19,6 @@ namespace Software2552 {
 	// convert name to object
 	shared_ptr<Stage> getScene(const string&name)
 	{
-		if (name == "Space") {
-			return stage = std::make_shared<SpaceScene>();
-		}
 		if (name == "Test") {
 			return stage = std::make_shared<TestScene>();
 		}
@@ -396,10 +393,4 @@ namespace Software2552 {
 		mesh.setup();
 	}
 	 
-	bool SpaceScene::myCreate(const Json::Value &data) {
-
-
-		return true;
-	}
-
 }
