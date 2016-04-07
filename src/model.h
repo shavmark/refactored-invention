@@ -113,41 +113,39 @@ namespace Software2552 {
 		void orbit();
 		void setOrbit(bool b = true) { useOrbit = b; }
 		bool isOrbiting() const { return useOrbit; }
-		ofEasyCam& getPlayer() { return player; }
 		bool readFromScript(const Json::Value &data);
+		ofEasyCam worker;
 	private:
-		ofEasyCam player;
 		bool useOrbit = false;
 	};
 	class Light : public EquipementBaseClass {
 	public:
-		ofLight &getPlayer() { return player; }
 		void setX(float x) { loc.x = x; }
 		void setY(float y) { loc.y = y; }
 		void setZ(float z) { loc.z = z; }
 		void setLoc(float x, float y = 0, float z = 0) { loc.x = x; loc.y = y; loc.z = z; }
 		ofPoint loc; // light is set on object within camera scope
 		bool readFromScript(const Json::Value &data);
+		ofLight worker;
 	private:
-		ofLight player;
 		ColorHelper colorHelper;
 		virtual bool myReadFromScript(const Json::Value &data) { return true;}
 	};
 	class PointLight : public Light {
 	public:
-		PointLight() :Light() { getPlayer().setPointLight(); }
+		PointLight() :Light() { worker.setPointLight(); }
 	private:
 		virtual bool myReadFromScript(const Json::Value &data);
 	};
 	class DirectionalLight : public Light {
 	public:
-		DirectionalLight() :Light() { getPlayer().setDirectional(); }
+		DirectionalLight() :Light() { worker.setDirectional(); }
 	private:
 		virtual bool myReadFromScript(const Json::Value &data);
 	};
 	class SpotLight : public Light {
 	public:
-		SpotLight() :Light() { getPlayer().setSpotlight(); }
+		SpotLight() :Light() { worker.setSpotlight(); }
 	private:
 		virtual bool myReadFromScript(const Json::Value &data);
 	};
@@ -160,10 +158,9 @@ namespace Software2552 {
 		int h = 240;
 		int x = 0;
 		int y = 0;
-		ofVideoGrabber& getPlayer() { return player; }
 
 	private:
-		ofVideoGrabber player;
+		ofVideoGrabber worker;
 		bool loadGrabber(int wIn, int hIn);
 		int find();
 		int id = 0;
@@ -188,11 +185,11 @@ namespace Software2552 {
 		bool useFill() { return fill; }
 		void myUpdate();
 		void myDraw();
-		of3dPrimitive* getPlayer() { return player; }
+		of3dPrimitive* get() { return worker; }
 		Material  material;
 	private:
 		virtual bool derivedMyReadFromScript(const Json::Value &data)=0;
-		of3dPrimitive *player = nullptr; // allow derived pointers and polymorphism
+		of3dPrimitive *worker = nullptr; // allow derived pointers and polymorphism
 		bool wireFrame = true;
 		bool fill = false;
 		void basicDraw();
@@ -201,14 +198,14 @@ namespace Software2552 {
 	class Cube : public DrawingPrimitive3d {
 	public:
 		Cube() : DrawingPrimitive3d(new ofBoxPrimitive()) {		}
-		ofBoxPrimitive* getPlayer() { return (ofBoxPrimitive*)DrawingPrimitive3d::getPlayer(); }
+		ofBoxPrimitive* get() { return (ofBoxPrimitive*)DrawingPrimitive3d::get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Plane : public DrawingPrimitive3d {
 	public:
 		Plane() : DrawingPrimitive3d(new ofPlanePrimitive()) {		}
-		ofPlanePrimitive* getPlayer() { return (ofPlanePrimitive*)DrawingPrimitive3d::getPlayer(); }
+		ofPlanePrimitive* get() { return (ofPlanePrimitive*)DrawingPrimitive3d::get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
@@ -216,21 +213,21 @@ namespace Software2552 {
 	public:
 		Sphere() : DrawingPrimitive3d(new ofSpherePrimitive()) {		}
 		
-		ofSpherePrimitive* getPlayer() { return (ofSpherePrimitive*)DrawingPrimitive3d::getPlayer(); }
+		ofSpherePrimitive* get() { return (ofSpherePrimitive*)DrawingPrimitive3d::get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Cylinder : public DrawingPrimitive3d {
 	public:
 		Cylinder() : DrawingPrimitive3d(new ofCylinderPrimitive()) {		}
-		ofCylinderPrimitive* getPlayer() { return (ofCylinderPrimitive*)DrawingPrimitive3d::getPlayer(); }
+		ofCylinderPrimitive* get() { return (ofCylinderPrimitive*)DrawingPrimitive3d::get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
 	class Cone : public DrawingPrimitive3d {
 	public:
 		Cone() : DrawingPrimitive3d(new ofConePrimitive()) {		}
-		ofConePrimitive* getPlayer() { return (ofConePrimitive*)DrawingPrimitive3d::getPlayer(); }
+		ofConePrimitive* get() { return (ofConePrimitive*)DrawingPrimitive3d::get(); }
 	private:
 		bool derivedMyReadFromScript(const Json::Value &data);
 	};
@@ -252,10 +249,8 @@ namespace Software2552 {
 	public:
 		void myDraw();
 
-		ofxParagraph& getPlayer() { return player; }
-
 	private:
-		ofxParagraph player;
+		ofxParagraph worker;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
@@ -263,9 +258,8 @@ namespace Software2552 {
 	class Audio : public ActorRole {
 	public:
 		void mySetup();
-		ofSoundPlayer& getPlayer() { return player; }
 	private:
-		ofSoundPlayer player;
+		ofSoundPlayer worker;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
@@ -279,14 +273,14 @@ namespace Software2552 {
 
 	class Video : public Visual {
 	public:
+		friend class VideoTexture;
 		// put advanced drawing in these objects
 		void myUpdate();
 		void myDraw();
 		void mySetup();
 		float getTimeBeforeStart(float t);
-		ofVideoPlayer& getPlayer() { return player; }
 	private:
-		ofVideoPlayer player;
+		ofVideoPlayer worker;
 		bool myReadFromScript(const Json::Value &data);
 	};
 
@@ -294,18 +288,17 @@ namespace Software2552 {
 	public:
 		TextureVideo() : ActorRole() { }
 		TextureVideo(const string& path) : ActorRole(path) { }
-		void myUpdate() { player.update(); }
+		void myUpdate() { worker.update(); }
 		void myDraw();
 		void mySetup();
-		bool textureReady() { return  player.isInitialized(); }
+		bool textureReady() { return  worker.isInitialized(); }
 		bool mybind();
 		bool myunbind();
 		ofTexture& getTexture();
-		ofVideoPlayer& getPlayer() { return player; }
 	private:
 		ofFbo fbo;
 		ofTexture defaulttexture;
-		ofVideoPlayer player;
+		ofVideoPlayer worker;
 		bool myReadFromScript(const Json::Value &data);
 
 	};
@@ -353,9 +346,8 @@ namespace Software2552 {
 		void myUpdate();
 		void mySetup();
 		void myDraw();
-		ofImage& getPlayer() { return player; }
 	private:
-		ofImage player;
+		ofImage worker;
 		bool myReadFromScript(const Json::Value &data);
 	};
 	

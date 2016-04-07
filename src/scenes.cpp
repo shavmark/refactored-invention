@@ -86,7 +86,7 @@ namespace Software2552 {
 		//ADDLIGHT(light, Light);
 		//ADDANIMATION(picture, Picture);
 		//ADDANIMATION(ball, Ball);
-		//ADDANIMATION(video, Video);
+		ADDANIMATION(video, Video);
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
@@ -97,9 +97,9 @@ namespace Software2552 {
 			CreateReadAndaddLight<Light>(data["light"]);
 		}
 		// read back ground after sort as its objects are inserted in the front of the draw list
-		if (!data["background"].empty()) {
-			CreateReadAndaddBackgroundItems(data["background"]);
-		}
+		//if (!data["background"].empty()) {
+		//CreateReadAndaddBackgroundItems(data["background"]);
+		//}
 		return true;
 		
 		// data must Cap first char of key words
@@ -227,13 +227,13 @@ namespace Software2552 {
 	// setup light and material for drawing
 	void Stage::installLightAndMaterialThenDraw(shared_ptr<Camera>cam, bool drawFixed) {
 		if (cam != nullptr) {
-			cam->getPlayer().begin();
+			cam->worker.begin();
 			cam->orbit(); 
 			for (auto& light : lights) {
-				ofPoint p = light->getPlayer().getPosition();
-				light->getPlayer().setPosition(light->loc);
-				light->getPlayer().enable();
-				light->getPlayer().draw();
+				ofPoint p = light->worker.getPosition();
+				light->worker.setPosition(light->loc);
+				light->worker.enable();
+				light->worker.draw();
 			}
 			if (cam->isOrbiting()) {
 				if (drawIn3dMoving && !drawFixed) {
@@ -245,15 +245,15 @@ namespace Software2552 {
 					draw3dFixed();
 				}
 			}
-			cam->getPlayer().end();
+			cam->worker.end();
 		}
 		else {
 			// draw w/o a camera
 			ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2); // center when not using a camera
 			for (auto& light : lights) {
-				light->getPlayer().setPosition(0, 0, 600);
-				light->getPlayer().enable();
-				light->getPlayer().draw();
+				light->worker.setPosition(0, 0, 600);
+				light->worker.enable();
+				light->worker.draw();
 			}
 			if (drawIn3dMoving && !drawFixed) {
 				draw3dMoving();
@@ -292,7 +292,7 @@ namespace Software2552 {
 		// clean up
 		ofDisableDepthTest();
 		for (auto& light : lights) {
-			light->getPlayer().disable();
+			light->worker.disable();
 		}
 		ofDisableLighting();
 	}
@@ -329,9 +329,9 @@ namespace Software2552 {
 	// show light location, great for debugging and kind of fun too
 	void Stage::drawlights() {
 		for (const auto& light : getLights()) {
-			ofSetColor(light->getPlayer().getDiffuseColor());
-			ofPoint pos = light->getPlayer().getPosition();
-			ofDrawSphere(light->getPlayer().getPosition(), 20.f);
+			ofSetColor(light->worker.getDiffuseColor());
+			ofPoint pos = light->worker.getPosition();
+			ofDrawSphere(light->worker.getPosition(), 20.f);
 		}
 	}
 	void Stage::draw2d() {
@@ -364,7 +364,7 @@ namespace Software2552 {
 		}
 		if (p->readFromScript(data)) {
 			p->setOrbit(rotate);
-			p->getPlayer().setPosition(0, 0, ofRandom(100,500));//bugbug clean up the rand stuff via data and more organized random
+			p->worker.setPosition(0, 0, ofRandom(100,500));//bugbug clean up the rand stuff via data and more organized random
 			add(p);
 		}
 		return p;

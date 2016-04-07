@@ -279,7 +279,7 @@ namespace Software2552 {
 
 		string str;
 		readStringFromJson(str, data["text"]["str"]);
-		getPlayer().setText(str);
+		worker.setText(str);
 
 		int indent;
 		int leading;
@@ -287,26 +287,26 @@ namespace Software2552 {
 		string alignment; // paragraph is a data type in this usage
 
 		if (READINT(indent, data)) {
-			getPlayer().setIndent(indent);
+			worker.setIndent(indent);
 		}
 		if (READINT(leading, data)) {
-			getPlayer().setLeading(leading);
+			worker.setLeading(leading);
 		}
 		if (READINT(spacing, data)) {
-			getPlayer().setSpacing(leading);
+			worker.setSpacing(spacing);
 		}
 		READSTRING(alignment, data);
 		if (alignment == "center") { //bugbug ignore case
-			getPlayer().setAlignment(ofxParagraph::ALIGN_CENTER);
+			worker.setAlignment(ofxParagraph::ALIGN_CENTER);
 		}
 		else if (alignment == "right") { //bugbug ignore case
-			getPlayer().setAlignment(ofxParagraph::ALIGN_RIGHT);
+			worker.setAlignment(ofxParagraph::ALIGN_RIGHT);
 		}
 
-		getPlayer().setFont(getFontPointer());
+		worker.setFont(getFontPointer());
 		
 		// object holds it own color bugbug maybe just set current color right before draw?
-		getPlayer().setColor(colorHelper.getColorObject(colorHelper.getForeground()));
+		worker.setColor(colorHelper.getColorObject(colorHelper.getForeground()));
 
 		return true;
 	}
@@ -318,19 +318,19 @@ namespace Software2552 {
 		float speed = 0;
 		READFLOAT(speed, data);
 		if (speed != 0) {
-			getPlayer().setSpeed(speed);
+			worker.setSpeed(speed);
 		}
 		float volume=1;//default
 		READFLOAT(volume, data);
-		getPlayer().setVolume(volume);
+		worker.setVolume(volume);
 		return true;
 	}
 	bool Audio::myReadFromScript(const Json::Value &data) {
 		float volume = 1;//default
 		READFLOAT(volume, data);
-		getPlayer().setVolume(volume);
-		getPlayer().setMultiPlay(true);
-		getPlayer().setSpeed(ofRandom(0.8, 1.2));// get from data
+		worker.setVolume(volume);
+		worker.setMultiPlay(true);
+		worker.setSpeed(ofRandom(0.8, 1.2));// get from data
 
 		return true;
 	}
@@ -340,7 +340,7 @@ namespace Software2552 {
 			float longitude = 10 * time;
 			float latitude = 10 * sin(time*0.8);
 			float radius = 600 + 50 * sin(time*0.4);
-			player.orbit(longitude, latitude, radius, ofPoint(0, 0, 0));
+			worker.orbit(longitude, latitude, radius, ofPoint(0, 0, 0));
 		}
 	}
 	
@@ -348,8 +348,8 @@ namespace Software2552 {
 		//bugbug fill in
 		setOrbit(false); // not rotating
 		//player.setScale(-1, -1, 1); // showing video
-		player.setPosition(ofRandom(-100, 200), ofRandom(60, 70), ofRandom(600, 700));
-		player.setFov(60);
+		worker.setPosition(ofRandom(-100, 200), ofRandom(60, 70), ofRandom(600, 700));
+		worker.setFov(60);
 		return true;
 	}
 	void Material::begin() {
@@ -391,9 +391,9 @@ namespace Software2552 {
 		setLoc(ofRandom(-100,100), 0, ofRandom(300,500));
 		colorHelper.readFromScript(data);
 		// help http://www.glprogramming.com/red/chapter05.html
-		getPlayer().setDiffuseColor(colorHelper.getFloatObject(colorHelper.getLightest()));
-		getPlayer().setSpecularColor(colorHelper.getFloatObject(colorHelper.getDarkest()));
-		getPlayer().setAmbientColor(colorHelper.getFloatObject(colorHelper.getBackground()));
+		worker.setDiffuseColor(colorHelper.getFloatObject(colorHelper.getLightest()));
+		worker.setSpecularColor(colorHelper.getFloatObject(colorHelper.getDarkest()));
+		worker.setAmbientColor(colorHelper.getFloatObject(colorHelper.getBackground()));
 		//bugbug what about alpha?
 		return myReadFromScript(data);
 	}
@@ -412,7 +412,7 @@ namespace Software2552 {
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
-		getPlayer().setOrientation(ofVec3f(0, 90, 0));
+		worker.setOrientation(ofVec3f(0, 90, 0));
 		setLoc(ofGetWidth() / 2, ofGetHeight() / 2, 260);
 		return true;
 	}
@@ -427,11 +427,11 @@ namespace Software2552 {
 		setLoc(ofGetWidth()*.1, ofGetHeight()*.1, 220);
 		// size of the cone of emitted light, angle between light axis and side of cone //
 		// angle range between 0 - 90 in degrees //
-		getPlayer().setSpotlightCutOff(50);
+		worker.setSpotlightCutOff(50);
 
 		// rate of falloff, illumitation decreases as the angle from the cone axis increases //
 		// range 0 - 128, zero is even illumination, 128 is max falloff //
-		getPlayer().setSpotConcentration(2);
+		worker.setSpotConcentration(2);
 		setLoc(-ofGetWidth()*.1, ofGetHeight()*.1, 100);
 		return true;
 	}
@@ -461,17 +461,17 @@ namespace Software2552 {
 		return true;
 	}
 	DrawingPrimitive3d::~DrawingPrimitive3d() { 
-		if (player) {
-			delete player;
-			player = nullptr;
+		if (worker) {
+			delete worker;
+			worker = nullptr;
 		}
 	}
 
 	DrawingPrimitive3d::DrawingPrimitive3d(of3dPrimitive *p, drawtype type) : ActorRole() {
-		player = p; 
+		worker = p;
 		setType(type); 
-		if (player) {
-			player->enableColors();
+		if (worker) {
+			worker->enableColors();
 		}
 	}
 	
@@ -489,50 +489,48 @@ namespace Software2552 {
 		return derivedMyReadFromScript(data);
 	}
 	void DrawingPrimitive3d::myUpdate() {
-		if (getPlayer()) {
-			getPlayer()->setPosition(getCurrentPosition());
+		if (get()) {
+			get()->setPosition(getCurrentPosition());
 		}
 	}
 	// private draw helper
 	void DrawingPrimitive3d::basicDraw() {
-		if (getPlayer()) {
-			player->setScale(ofRandom(100));
-			player->rotate(180, 0, 1, 0.0);
+		if (get() && worker) {
+			worker->setScale(ofRandom(100));
+			worker->rotate(180, 0, 1, 0.0);
 			if (useWireframe()) {
 				ofPushMatrix();
 				//player->setScale(1.01f);
-				player->drawWireframe();
+				worker->drawWireframe();
 				//player->setScale(1.f);
 				ofPopMatrix();
 			}
 			else {
-				player->draw();
+				worker->draw();
 			}
 		}
 	}
 	// assumes push/pop handled by caller
 	void DrawingPrimitive3d::myDraw() {
-		if (player) {
-			ofSetColor(0, 0, 0);//color comes from the light
-			material.begin();
-			if (!useFill()) {
-				ofNoFill();
-			}
-			else {
-				ofFill();
-			}
-			basicDraw();
-			material.end();
+		ofSetColor(0, 0, 0);//color comes from the light
+		material.begin();
+		if (!useFill()) {
+			ofNoFill();
 		}
+		else {
+			ofFill();
+		}
+		basicDraw();
+		material.end();
 	}
 
 	bool Cube::derivedMyReadFromScript(const Json::Value &data) {
 		float size = 100;//default
 		READFLOAT(size, data);
-		if (getPlayer()) {
+		if (get()) {
 			setWireframe(true);
-			getPlayer()->set(size);
-			getPlayer()->roll(20.0f);// just as an example
+			get()->set(size);
+			get()->roll(20.0f);// just as an example
 		}
 		return true;
 	}
@@ -543,19 +541,19 @@ namespace Software2552 {
 		return true;
 	}
 	bool Sphere::derivedMyReadFromScript(const Json::Value &data) {
-		if (getPlayer()) {
+		if (get()) {
 			float radius = 100;//default
 			READFLOAT(radius, data);
-			getPlayer()->setRadius(radius);
+			get()->setRadius(radius);
 
 			float resolution = 100;//default
 			READFLOAT(resolution, data);
-			getPlayer()->setResolution(resolution);
+			get()->setResolution(resolution);
 
 			// can be moving too, let json decide, need camera too
 			setType(ActorRole::draw3dFixedCamera);
 			setFill();
-			getPlayer()->setMode(OF_PRIMITIVE_TRIANGLES);
+			get()->setMode(OF_PRIMITIVE_TRIANGLES);
 		}
 		return true;
 	}
@@ -604,7 +602,6 @@ namespace Software2552 {
 			shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data["video"]);
 			if (p) {
 				p->setFullSize();
-				p->getPlayer().setSpeed(0.25f);
 			}
 		}
 		return true;
@@ -613,6 +610,8 @@ namespace Software2552 {
 		fullsize = true;
 		setPosition(ofPoint());
 		setAnimationEnabled(false);
+		//bugbug get this somewhere setSpeed(0.25f);
+
 	}
 	void Background::myDraw() {
 		if (mode == flat) {
@@ -651,8 +650,8 @@ namespace Software2552 {
 
 	}
 	void Paragraph::myDraw() {
-		player.setPosition(getCurrentPosition().x, getCurrentPosition().y);
-		player.draw();
+		worker.setPosition(getCurrentPosition().x, getCurrentPosition().y);
+		worker.draw();
 	}
 	bool ChannelList::skipChannel(const string&keyname) {
 		for (auto& item : list) {
@@ -737,21 +736,21 @@ namespace Software2552 {
 	// add this one http://clab.concordia.ca/?page_id=944
 	void Video::myDraw() {
 		if (w == 0 || h == 0) {
-			player.draw(getCurrentPosition().x, getCurrentPosition().y);
+			worker.draw(getCurrentPosition().x, getCurrentPosition().y);
 		}
 		else {
-			player.draw(getCurrentPosition().x, getCurrentPosition().y, w, h);
+			worker.draw(getCurrentPosition().x, getCurrentPosition().y, w, h);
 		}
 	}
 	void Video::mySetup() {
 		string debug = getLocationPath();
-		if (!player.isLoaded()) {
-			if (!player.load(getLocationPath())) {
+		if (!isLoaded) {
+			if (!worker.load(getLocationPath())) {
 				logErrorString("setup video Player");
 			}
-			//player.setPixelFormat(OF_PIXELS_NATIVE);
+			isLoaded = true; // avoid keep on trying
 		}
-		player.play();
+		worker.play();
 
 	}
 	void Video::myUpdate() {
@@ -759,7 +758,7 @@ namespace Software2552 {
 			w = ofGetWidth();
 			h = ofGetHeight();
 		}
-		player.update();
+		worker.update();
 	}
 
 	void Picture::myUpdate() {
@@ -767,17 +766,15 @@ namespace Software2552 {
 			w = ofGetWidth();
 			h = ofGetHeight();
 		}
-		player.update();
+		worker.update();
 	}
 
 	void Picture::mySetup() { 
 		if (!isLoaded) {
-			if (!ofLoadImage(player, getLocationPath())) {
+			if (!ofLoadImage(worker, getLocationPath())) {
 				logErrorString("setup Picture Player");
 			}
-			else {
-				isLoaded = true;
-			}
+			isLoaded = true; // avoid keep on trying
 		}
 	}
 
@@ -789,8 +786,8 @@ namespace Software2552 {
 		}
 		else {
 			// will need to load it now to get the true lenght
-			if (!player.isLoaded()) {
-				player.load(getLocationPath());
+			if (!worker.isLoaded()) {
+				worker.load(getLocationPath());
 			}
 			float duration = getObjectLifetime();
 			setIfGreater(t, duration);
@@ -799,24 +796,24 @@ namespace Software2552 {
 	}
 	void Picture::myDraw() {
 		if (w == 0 || h == 0) {
-			player.draw(getCurrentPosition().x, getCurrentPosition().y);
+			worker.draw(getCurrentPosition().x, getCurrentPosition().y);
 		}
 		else {
 			int x = getCurrentPosition().x;
 			int y = getCurrentPosition().y;
-			player.draw(getCurrentPosition().x, getCurrentPosition().y, w, h);
+			worker.draw(getCurrentPosition().x, getCurrentPosition().y, w, h);
 		}
 	}
 	void Audio::mySetup() {
-		if (!player.load(getLocationPath())) {
+		if (!worker.load(getLocationPath())) {
 			logErrorString("setup audio Player");
 		}
 		// some of this data could come from data in the future
-		player.play();
+		worker.play();
 	}
 	int CameraGrabber::find() {
 		//bugbug does Kintect show up?
-		vector<ofVideoDevice> devices = player.listDevices();
+		vector<ofVideoDevice> devices = worker.listDevices();
 		for (vector<ofVideoDevice>::const_iterator it = devices.begin(); it != devices.end(); ++it) {
 			if (it->deviceName == getLocationPath()) {
 				return it->id;
@@ -825,22 +822,22 @@ namespace Software2552 {
 		return 0;// try first found as a default
 	}
 	void CameraGrabber::myUpdate() { 
-		if (player.isInitialized()) {
-			player.update();
+		if (worker.isInitialized()) {
+			worker.update();
 		}
 	}
 
 	bool CameraGrabber::loadGrabber(int wIn, int hIn) {
 		id = find();
-		player.setDeviceID(id);
-		player.setDesiredFrameRate(30);
-		bool b =  player.initGrabber(wIn, hIn);
+		worker.setDeviceID(id);
+		worker.setDesiredFrameRate(30);
+		bool b = worker.initGrabber(wIn, hIn);
 		return b;
 	}
 
 	void CameraGrabber::myDraw() {
-		if (player.isInitialized()) {
-			player.draw(getCurrentPosition().x, getCurrentPosition().y);
+		if (worker.isInitialized()) {
+			worker.draw(getCurrentPosition().x, getCurrentPosition().y);
 		}
 	}
 	bool CameraGrabber::myReadFromScript(const Json::Value &data) {
@@ -859,39 +856,39 @@ namespace Software2552 {
 	void TextureVideo::mySetup() {
 	}
 	bool TextureVideo::mybind() {
-		if (player.isInitialized() && fbo.isUsingTexture()) {
-			player.getTexture().bind();
+		if (worker.isInitialized() && fbo.isUsingTexture()) {
+			worker.getTexture().bind();
 			return true;
 		}
 		return false;
 	}
 	bool TextureVideo::myunbind() {
-		if (player.isInitialized() && player.isUsingTexture()) {
-			player.getTexture().unbind();
+		if (worker.isInitialized() && worker.isUsingTexture()) {
+			worker.getTexture().unbind();
 			return true;
 		}
 		return false;
 	}
 	bool TextureVideo::myReadFromScript(const Json::Value &data) {
 		//bugbug fill this in with json reads as needed
-		if (!getPlayer().isLoaded()) {
-			if (!getPlayer().load(getLocationPath())) {
+		if (!worker.isLoaded()) {
+			if (!worker.load(getLocationPath())) {
 				logErrorString("setup TextureVideo Player");
 				return false;
 			}
-			getPlayer().play();
+			worker.play();
 		}
 		return true;
 	}
 	ofTexture& TextureVideo::getTexture() { 
-		return player.getTexture();
+		return worker.getTexture();
 	}
 
 	void VideoSphere::myDraw() {
 		//bugbug just need to do this one time, maybe set a flag
 		if (video->getTexture().isAllocated() && !set) {
-			sphere.getPlayer()->mapTexCoordsFromTexture(video->getTexture());
-			sphere.getPlayer()->rotate(180, 0, 1, 0.0);
+			sphere.get()->mapTexCoordsFromTexture(video->getTexture());
+			sphere.get()->rotate(180, 0, 1, 0.0);
 			set = true;
 		}
 		video->mybind();
@@ -903,7 +900,7 @@ namespace Software2552 {
 		setType(ActorRole::draw3dFixedCamera);
 		video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
 		getSphere().setWireframe(false);
-		getSphere().getPlayer()->set(250, 180);// set default
+		getSphere().get()->set(250, 180);// set default
 		return true;
 	}
 	void TextureFromImage::create(const string& name, float w, float h) {
@@ -919,7 +916,7 @@ namespace Software2552 {
 	bool SolarSystem::myReadFromScript(const Json::Value &data) {
 		shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data);
  		if (p) {
-			ofPoint min(p->getSphere().getPlayer()->getRadius() * 2, 0, 200);
+			ofPoint min(p->getSphere().get()->getRadius() * 2, 0, 200);
 			addPlanets(data["Planets"], min);
 			return true;
 		}
@@ -935,7 +932,7 @@ namespace Software2552 {
 				point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
 				point.y = ofRandom(min.y, 500);
 				point.z = ofRandom(min.z, 500);
-				p->getSphere().getPlayer()->setPosition(point); // data stored as pointer so this updates the list
+				p->getSphere().get()->setPosition(point); // data stored as pointer so this updates the list
 			}
 		}
 	}
@@ -944,17 +941,17 @@ namespace Software2552 {
 		setType(ActorRole::draw3dMovingCamera);
 		getSphere().setWireframe(false);
 		float r = ofRandom(5, 100);
-		getSphere().getPlayer()->set(r, 40);
+		getSphere().get()->set(r, 40);
 		//bugbug could get sphere location here
 
 		getTexturePtr()->create(getLocationPath(), r * 2, r * 2);
 
-		getSphere().getPlayer()->mapTexCoordsFromTexture(getTexturePtr()->getTexture());
+		getSphere().get()->mapTexCoordsFromTexture(getTexturePtr()->getTexture());
 		return true;
 	}
 	void Planet::myDraw() {
 		getTexturePtr()->bind();
-		sphere.getPlayer()->rotate(30, 0, 2.0, 0.0);
+		sphere.get()->rotate(30, 0, 2.0, 0.0);
 		sphere.myDraw();
 		getTexturePtr()->unbind();
 	}
