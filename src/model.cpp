@@ -203,13 +203,7 @@ namespace Software2552 {
 	}
 	bool Ball::myReadFromScript(const Json::Value &data) {
 		// can read any of these items from json here
-		setAnimationPositionY(floorLine - 100);
-		setAnimationEnabled(true);
-		
 		readJsonValue(radius, data["radius"]);
-		ofPoint p;
-		p.y = floorLine;
-		animateTo(p);
 		return true;
 	}
 	bool Channel::readFromScript(const Json::Value &data) {
@@ -358,18 +352,15 @@ namespace Software2552 {
 		//setSpecularColor(ofColor(255, 255, 255, 255)); // does white work wonders? or what does color do?
 		ofMaterial::begin();
 	}
-	// return local pointer or global shared pointer
-	shared_ptr<AnimiatedColor> ColorHelper::getAnimatedColorPtr() const { 
-		if (colorAnimation == nullptr) {
-			return ColorList::getCurrentColor();// use the global color
-		}
-		return colorAnimation; 
-	}
 
 	bool ColorHelper::readFromScript(const Json::Value &data) {
 		if (!data["colorAnimation"].empty()) {
 			colorAnimation = std::make_shared<AnimiatedColor>();
 			colorAnimation->readFromScript(data["colorAnimation"]);
+		}
+		if (colorAnimation == nullptr) {
+			// low memory or no color from json, either way we use the global clor
+			colorAnimation = ColorList::getCurrentColor();// use the global color
 		}
 		return true;
 	}
@@ -436,15 +427,9 @@ namespace Software2552 {
 		return true;
 	}
 	void Ball::myDraw() {
-		ofFill();
-		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), getCurrentPosition().y, radius);
-		//glColor4ub(255, 255, 255, 255);
-		ofRect(0, floorLine + radius, ofGetWidth(), 1);
-
-		//vertical lines
-		ofRect(xMargin, 0, 1, floorLine + radius);
-		ofRect(xMargin + widthCol + radius, 0, 1, floorLine + radius);
-
+		
+		float y = getCurrentPosition().y;
+		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), y, radius);
 	}
 
 	void Text::myDraw() {
@@ -479,12 +464,9 @@ namespace Software2552 {
 		///ofPolyRenderMode renderType = OF_MESH_WIREFRAME; //bugbug enable phase II
 		bool wireFrame = true;
 		READBOOL(wireFrame, data);
-		bool fill = false;
-		READBOOL(fill, data);
-		setFill(fill);
 		setWireframe(wireFrame);
 		// pass on current animation
-		material.colorHelper.setAnimatedColorPtr(getColorAnimationPtr());
+		material.colorHelper.colorAnimation = colorHelper.colorAnimation;
 		material.readFromScript(data);
 		return derivedMyReadFromScript(data);
 	}
@@ -564,8 +546,11 @@ namespace Software2552 {
 		if (type == "fixed") {
 			setType(ColorFixed);
 		}
-		else {
+		else if (type == "changing") {
 			setType(ColorChanging);
+		}
+		else {
+			setType(none);
 		}
 		type = "";
 		readStringFromJson(type, data["gradient"]);
@@ -604,6 +589,10 @@ namespace Software2552 {
 				p->setFullSize();
 			}
 		}
+
+		if (!data["rainbow"].empty()) {
+			getStage()->CreateReadAndaddAnimatable<Rainbow>(data["rainbow"]);
+		}
 		return true;
 	}
 	void Visual::setFullSize() {
@@ -627,7 +616,33 @@ namespace Software2552 {
 		// set by default since this is set first other usage of fore color will override
 		ofSetColor(colorHelper.getColorObject(colorHelper.getForeground()));
 	}
+	bool Rainbow::myReadFromScript(const Json::Value &data) {
+		return true;
+	}
+	void Rainbow::myUpdate()	{
+		if (w != ofGetWidth() && h != ofGetHeight()) {
+			w = ofGetWidth();
+			h = ofGetHeight();
 
+			worker.allocate(w, h, OF_IMAGE_COLOR);
+
+			for (float y = 0; y<h; y++) {
+				for (float x = 0; x<w; x++) {
+
+					float hue = x / w * 255;
+					float sat = ofMap(y, 0, h / 2, 0, 255, true);
+					float bri = ofMap(y, h / 2, h, 255, 0, true);
+
+					worker.setColor(x, y, ofColor::fromHsb(hue, sat, bri));
+				}
+			}
+			worker.update();
+		}
+	}
+	void Rainbow::myDraw() {
+		ofSetColor(ofColor::white);
+		worker.draw(0, 0);
+	}
 	// colors and background change over time but not at the same time
 	void Background::myUpdate() {
 		if (type == ColorChanging && refreshAnimation()) {

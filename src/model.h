@@ -93,9 +93,6 @@ namespace Software2552 {
 	public:
 		// bouncy ball with nice colors is pretty nice, does not take too much really
 		void myDraw();
-		int floorLine = 630;
-		int xMargin = 0;
-		int widthCol = 60;
 		float radius = 100;
 
 	private:
@@ -181,8 +178,6 @@ namespace Software2552 {
 		bool myReadFromScript(const Json::Value &data);
 		void setWireframe(bool b = true) { wireFrame = b; }
 		bool useWireframe() { return wireFrame; }
-		void setFill(bool b = true) { fill = b; }
-		bool useFill() { return fill; }
 		void myUpdate();
 		void myDraw();
 		of3dPrimitive* get() { return worker; }
@@ -191,7 +186,6 @@ namespace Software2552 {
 		virtual bool derivedMyReadFromScript(const Json::Value &data)=0;
 		of3dPrimitive *worker = nullptr; // allow derived pointers and polymorphism
 		bool wireFrame = true;
-		bool fill = false;
 		void basicDraw();
 	};
 	// do not use templates as its hard to make base class pointers to them
@@ -254,6 +248,14 @@ namespace Software2552 {
 		bool myReadFromScript(const Json::Value &data);
 	};
 
+	class Rainbow : public ActorRole {
+	public:
+		void myUpdate();
+		void myDraw();
+	private:
+		ofImage worker;
+		bool myReadFromScript(const Json::Value &data);
+	};
 	
 	class Audio : public ActorRole {
 	public:

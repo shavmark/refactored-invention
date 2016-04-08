@@ -76,8 +76,8 @@ namespace Software2552 {
 	}
 
 	void ActorRole::setPosition(ofPoint& p) {
-		if (getLocationAnimationHelper()) {
-			getLocationAnimationHelper()->setPosition(p);
+		if (locationAnimation) {
+			locationAnimation->setPosition(p);
 		}
 		else {
 			defaultStart = p;
@@ -85,13 +85,13 @@ namespace Software2552 {
 	}
 
 	ofPoint& ActorRole::getCurrentPosition() {
-		if (getLocationAnimationHelper()) {
-			return getLocationAnimationHelper()->getCurrentPosition();
+		if (locationAnimation) {
+			return locationAnimation->getCurrentPosition();
 		}
 		return defaultStart;// 0,0,0 by default bugbug set on of object vs this saved one
 	}
 	void ColorHelper::setColor(int hex) {
-		ofSetColor(getAnimatedColorPtr()->getColorObject(hex));
+		ofSetColor(colorAnimation->getColorObject(hex));
 	}
 
 	// need "scale"{}, animation etc wrapers in json
@@ -167,9 +167,9 @@ namespace Software2552 {
 		point0.readFromScript(data["start"]);
 		setPosition(point0);
 
-		bool enableAnimation = false;
-		READBOOL(enableAnimation, data);
-		setAnimationEnabled(enableAnimation);
+		bool enable = false;
+		READBOOL(enable, data);
+		setAnimationEnabled(enable);
 
 		Point3D pointEnd; // defaults to 0,0,0
 		pointEnd.readFromScript(data["finish"]);
@@ -179,11 +179,11 @@ namespace Software2552 {
 		READSTRING(curveName, data);
 		setCurve(ofxAnimatable::getCurveFromName(curveName));
 
-		int repeat = 1;
+		int repeat = 0;
 		READINT(repeat, data);
 		setRepeatTimes(repeat);
 
-		string repeatType = "PLAY_ONCE";
+		string repeatType = "LOOP_BACK_AND_FORTH";
 		READSTRING(repeatType, data);
 
 		if (repeatType == "LOOP") {
@@ -233,50 +233,54 @@ namespace Software2552 {
 	// try to keep wrappers out of site to avoid clutter
 	// we want to run w/o crashing in very low memory so we need to check all our pointers, we can chug along
 	// until memory frees up, a crash would be very bad
-	int ColorHelper::getForeground() { return getAnimatedColorPtr()->getColorSet()->getForeground(); }
-	int ColorHelper::getBackground() { return getAnimatedColorPtr()->getColorSet()->getBackground(); }
-	int ColorHelper::getFontColor() { return getAnimatedColorPtr()->getColorSet()->getFontColor(); }
-	int ColorHelper::getLightest() { return getAnimatedColorPtr()->getColorSet()->getLightest(); }
-	int ColorHelper::getDarkest() { return getAnimatedColorPtr()->getColorSet()->getDarkest(); }
-	int ColorHelper::getOther() { return getAnimatedColorPtr()->getColorSet()->getOther(); }
-	int ColorHelper::getAlpha() { return getAnimatedColorPtr()->getAlpha(); }
-	void ColorHelper::getNextColors() { getAnimatedColorPtr()->getNextColors(); }
-	void ActorRole::setAnimationPosition(const ofPoint& p) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPosition(p); }
-	void ActorRole::setAnimationPositionX(float x) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(x); }
-	void ActorRole::setAnimationPositionY(float y) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(y); }
-	void ActorRole::setAnimationPositionZ(float z) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setPositionX(z); }
-	void ActorRole::animateTo(const ofPoint& p) { if (getLocationAnimationHelper())getLocationAnimationHelper()->animateTo(p); }
-	bool ActorRole::refreshAnimation() { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->refreshAnimation() : false; }
-	void ActorRole::setAnimationEnabled(bool f) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setAnimationEnabled(f); }
-	float ActorRole::getTimeBeforeStart(float t) { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getWait() : 0; }
-	void ActorRole::pause(){ if (getLocationAnimationHelper())getLocationAnimationHelper()->pause();}
-	void ActorRole::resume() { if (getLocationAnimationHelper())getLocationAnimationHelper()->pause(); }
-	float ActorRole::getObjectLifetime() { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getObjectLifetime() : 0; }
-	void ActorRole::setRefreshRate(uint64_t rateIn) { if (getLocationAnimationHelper())getLocationAnimationHelper()->setRefreshRate(rateIn); }
-	float ActorRole::getWait() { return (getLocationAnimationHelper()) ? getLocationAnimationHelper()->getWait() : 0; }
+	int ColorHelper::getForeground() { return colorAnimation->getColorSet()->getForeground(); }
+	int ColorHelper::getBackground() { return colorAnimation->getColorSet()->getBackground(); }
+	int ColorHelper::getFontColor() { return colorAnimation->getColorSet()->getFontColor(); }
+	int ColorHelper::getLightest() { return colorAnimation->getColorSet()->getLightest(); }
+	int ColorHelper::getDarkest() { return colorAnimation->getColorSet()->getDarkest(); }
+	int ColorHelper::getOther() { return colorAnimation->getColorSet()->getOther(); }
+	int ColorHelper::getAlpha() { return colorAnimation->getAlpha(); }
+	void ColorHelper::getNextColors() { colorAnimation->getNextColors(); }
+	void ActorRole::setAnimationPosition(const ofPoint& p) { if (locationAnimation)locationAnimation->setPosition(p); }
+	void ActorRole::setAnimationPositionX(float x) { if (locationAnimation)locationAnimation->setPositionX(x); }
+	void ActorRole::setAnimationPositionY(float y) { if (locationAnimation)locationAnimation->setPositionY(y); }
+	void ActorRole::setAnimationPositionZ(float z) { if (locationAnimation)locationAnimation->setPositionZ(z); }
+	void ActorRole::animateTo(const ofPoint& p) { if (locationAnimation)locationAnimation->animateTo(p); }
+	bool ActorRole::refreshAnimation() { return (locationAnimation) ? locationAnimation->refreshAnimation() : false; }
+	void ActorRole::setAnimationEnabled(bool f) { if (locationAnimation)locationAnimation->setAnimationEnabled(f); }
+	float ActorRole::getTimeBeforeStart(float t) { return (locationAnimation) ? locationAnimation->getWait() : 0; }
+	void ActorRole::pause(){ if (locationAnimation)locationAnimation->pause();}
+	void ActorRole::resume() { if (locationAnimation)locationAnimation->pause(); }
+	float ActorRole::getObjectLifetime() { return (locationAnimation) ? locationAnimation->getObjectLifetime() : 0; }
+	void ActorRole::setRefreshRate(uint64_t rateIn) { if (locationAnimation)locationAnimation->setRefreshRate(rateIn); }
+	float ActorRole::getWait() { return (locationAnimation) ? locationAnimation->getWait() : 0; }
 
 	bool ActorRole::readActorFromScript(const Json::Value &data) {
-		READSTRING(name, data);
-		READSTRING(title, data);
-		READSTRING(notes, data);
-		READSTRING(locationPath, data);
-		READINT(drawOrder, data);
-		string s = getLocationPath();//just for debug
-		// optional sizes, locations, durations for animation etc
-		readJsonValue(w, data["width"]);
-		readJsonValue(h, data["height"]);
+		if (data.size()) {
+			READSTRING(name, data);
+			READSTRING(title, data);
+			READSTRING(notes, data);
+			READSTRING(locationPath, data);
+			fill = true;
+			READBOOL(fill, data);
+			READINT(drawOrder, data);
+			string s = getLocationPath();//just for debug
+			// optional sizes, locations, durations for animation etc
+			readJsonValue(w, data["width"]);
+			readJsonValue(h, data["height"]);
 
-		// actors can have a lot of attributes, but if not no memory is used
-		font.readFromScript(data);
-		colorHelper.readFromScript(data);
-		// any actor can have a reference
-		references = parseList<Reference>(data["references"]);
-		locationAnimation = parseNoList<PointAnimation>(data["animation"]);
-		scaleAnimation = parseNoList<FloatAnimation>(data["scale"]);
-		rotationAnimation = parseNoList<RotationAnimation>(data["rotation"]);
+			// actors can have a lot of attributes, but if not no memory is used
+			font.readFromScript(data);
+			colorHelper.readFromScript(data);
+			// any actor can have a reference
+			references = parseList<Reference>(data["references"]);
+			locationAnimation = parseNoList<PointAnimation>(data["animation"]);
+			scaleAnimation = parseNoList<FloatAnimation>(data["scale"]);
+			rotationAnimation = parseNoList<RotationAnimation>(data["rotation"]);
 
-		// read derived class data
-		myReadFromScript(data);
+			// read derived class data
+			myReadFromScript(data);
+		}
 		return true;
 	}
 	// return current color, track its usage count
@@ -292,22 +296,22 @@ namespace Software2552 {
 
 	void ActorRole::updateForDrawing() {
 
-		colorHelper.getAnimatedColorPtr()->update(); // always returns a pointer
+		colorHelper.colorAnimation->update(); // always returns a pointer
 
-		if (getLocationAnimationHelper()) {
-			getLocationAnimationHelper()->update();
+		if (locationAnimation) {
+			locationAnimation->update();
 		}
-		if (getScaleAnimationHelper()) {
-			getScaleAnimationHelper()->update();
+		if (scaleAnimation) {
+			scaleAnimation->update();
 		}
-		if (getRotationAnimationHelper()) {
-			getRotationAnimationHelper()->update();
+		if (rotationAnimation) {
+			rotationAnimation->update();
 		}
 		
 		myUpdate(); // call derived classes
 	};
 	void ActorRole::applyColor() {
-		colorHelper.getAnimatedColorPtr()->draw(); // always returns a pointer
+		colorHelper.colorAnimation->draw(); // always returns a pointer
 	}
 	string &ActorRole::getLocationPath() {
 		return locationPath;
@@ -315,6 +319,12 @@ namespace Software2552 {
 
 	void ActorRole::drawIt(drawtype type) {
 		if (okToDraw(type)) {
+			if (useFill()) {
+				ofFill();
+			}
+			else {
+				ofNoFill();
+			}
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
 			}
@@ -327,28 +337,28 @@ namespace Software2552 {
 		if (type != getType()){
 			return false;
 		}
-		if (getLocationAnimationHelper() == nullptr) {
+		if (locationAnimation == nullptr) {
 			return true;
 		}
-		if (getLocationAnimationHelper()->paused() || getLocationAnimationHelper()->isExpired()) {
+		if (locationAnimation->paused() || locationAnimation->isExpired()) {
 			return false;
 		}
 		// if still in wait threshold
-		float t = ofGetElapsedTimef() - getLocationAnimationHelper()->getStart();
-		if (t < getLocationAnimationHelper()->getWait()) {
+		float t = ofGetElapsedTimef() - locationAnimation->getStart();
+		if (t < locationAnimation->getWait()) {
 			return false; // in wait mode, nothing else to do
 		}
 		//wait = 0; // skip all future usage of wait once we start
 				  // duration 0 means always draw
-		if (getLocationAnimationHelper()->getObjectLifetime() == 0) {
+		if (locationAnimation->getObjectLifetime() == 0) {
 			return true;
 		}
-		if (t < getLocationAnimationHelper()->getObjectLifetime()) {
+		if (t < locationAnimation->getObjectLifetime()) {
 			return true;
 		}
 		else {
-			float olt = getLocationAnimationHelper()->getObjectLifetime();
-			getLocationAnimationHelper()->setExpired(true);
+			float olt = locationAnimation->getObjectLifetime();
+			locationAnimation->setExpired(true);
 			return false;
 		}
 	}
@@ -363,10 +373,10 @@ namespace Software2552 {
 		return nullptr;
 	}
 	ofFloatColor ColorHelper::getFloatObject(int hex) { 
-		return ofFloatColor().fromHex(hex, getAnimatedColorPtr()->getAlpha()); 
+		return ofFloatColor().fromHex(hex, colorAnimation->getAlpha());
 	}
 	ofColor ColorHelper::getColorObject(int hex) { 
-		return ofFloatColor().fromHex(hex, getAnimatedColorPtr()->getAlpha()); 
+		return ofFloatColor().fromHex(hex, colorAnimation->getAlpha());
 	}
 
 	shared_ptr<ofxSmartFont> FontHelper::getPointer() {

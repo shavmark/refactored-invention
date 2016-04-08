@@ -68,7 +68,7 @@ namespace Software2552 {
 		if (b != nullptr) {
 			if (b->readActorFromScript(data)) {
 				// only save if data was read in 
-				appendToAnimatable(b);
+				addToAnimatable(b, true);
 			}
 		}
 		return b;
@@ -83,16 +83,17 @@ namespace Software2552 {
 
 	bool Stage::readFromScript(const Json::Value &data) {
 		//bool b = pic.loadImage("hubble1.jpg");
-		ADDANIMATION(picture, Picture);
-		if (!data["background"].empty()) {
-			CreateReadAndaddBackgroundItems(data["background"]);
-		}
+		//ADDANIMATION(rainbow, Rainbow);
+		ADDANIMATION(ball, Ball);
+		getAnimatables().sort(compareOrder);
+		//if (!data["background"].empty()) {
+			//CreateReadAndaddBackgroundItems(data["background"]);
+		//}
 		return true;
 		//ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
 		//ADDLIGHT(light, Light);
 		
 		ADDANIMATION(picture, Picture);
-		//ADDANIMATION(ball, Ball);
 		//ADDANIMATION(video, Video);
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
@@ -171,7 +172,9 @@ namespace Software2552 {
 	};
 
 	void Stage::draw() {
-		
+		ofDisableDepthTest();
+		ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);// default positions, cameras may change
+
 		if (drawIn2d) {
 			ofPushStyle();
 			draw2d();
@@ -263,7 +266,7 @@ namespace Software2552 {
 			}
 		}
 	}
-	void Stage::appendToAnimatable(shared_ptr<ActorRole>p) {
+	void Stage::addToAnimatable(shared_ptr<ActorRole>p, bool inFront) {
 		// only save working pointers
 		if (p != nullptr) {
 			ActorRole::drawtype tp = p->getType();
@@ -277,8 +280,12 @@ namespace Software2552 {
 				fixed2d(true); // do not set to false in case its already set
 			}
 			p->setupForDrawing();
-	
-			animatables.push_back(p);
+			if (inFront) {
+				animatables.push_front(p);
+			}
+			else {
+				animatables.push_back(p);
+			}
 		}
 	}
 
@@ -286,7 +293,8 @@ namespace Software2552 {
 		//ofBackground(ofColor::blue); // white enables all colors in pictures/videos
 		ofSetSmoothLighting(true);
 		ofDisableAlphaBlending();
-		ofEnableDepthTest();
+		//ofEnableDepthTest();
+		ofDisableDepthTest();
 	}
 	void Stage::post3dDraw() {
 		// clean up

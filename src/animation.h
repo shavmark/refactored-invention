@@ -141,10 +141,8 @@ namespace Software2552 {
 		ofColor getColorObject(int hex);
 		int getAlpha();
 		void getNextColors();
-		shared_ptr<AnimiatedColor> getAnimatedColorPtr() const;
-		void setAnimatedColorPtr(shared_ptr<AnimiatedColor>p) { colorAnimation = p; }
-	private:
 		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
+	private:
 	};
 	// simple helper to read in font data from json 
 #define defaultFontSize 14
@@ -174,7 +172,7 @@ namespace Software2552 {
 		// avoid name clashes and wrap the most used items, else access the contained object for more
 		void operator=(const ActorRole&rhs) {
 			font = rhs.font;
-			colorHelper.setAnimatedColorPtr(rhs.getColorAnimationPtr());
+			colorHelper.colorAnimation = rhs.colorHelper.colorAnimation;
 		}
 		void setDefaults(const ActorRole&rhs){
 			*this = rhs;
@@ -215,12 +213,13 @@ namespace Software2552 {
 		void setLocationPath(const string&s) { locationPath = s; }
 
 		static bool OKToRemove(shared_ptr<ActorRole> me) {
-			return objectLifeTimeManager::OKToRemove(me->getLocationAnimationHelper());
+			return objectLifeTimeManager::OKToRemove(me->locationAnimation);
 		}
 		void setType(drawtype typeIn) { type = typeIn; }
 		drawtype getType() { return type; }
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
-		shared_ptr<AnimiatedColor> getColorAnimationPtr() const { return colorHelper.getAnimatedColorPtr(); }
+		void setFill(bool b = true) { fill = b; }
+		bool useFill() { return fill; }
 
 	protected:
 		FontHelper  font;
@@ -232,9 +231,6 @@ namespace Software2552 {
 		string name; // any object can have a name, note, date, reference, duration
 
 	private:
-		shared_ptr<RotationAnimation> getRotationAnimationHelper() { return rotationAnimation; }
-		shared_ptr<FloatAnimation> getScaleAnimationHelper() { return scaleAnimation; }
-		shared_ptr<PointAnimation> getLocationAnimationHelper() { return locationAnimation; }
 		virtual bool myReadFromScript(const Json::Value &data) { return true; };
 
 		bool okToDraw(drawtype type);
@@ -243,6 +239,7 @@ namespace Software2552 {
 		virtual void mySetup() {};
 		virtual void myUpdate() {};
 		virtual void myDraw() {};
+		bool fill = false;
 		string   locationPath;   // location of item to draw
 		shared_ptr<RotationAnimation> rotationAnimation = nullptr; // optional rotation
 		shared_ptr<PointAnimation> locationAnimation = nullptr; // optional movement

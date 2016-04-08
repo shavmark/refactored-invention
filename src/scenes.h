@@ -39,7 +39,7 @@ namespace Software2552 {
 			shared_ptr<T> p = std::make_shared<T>();
 			if (p != nullptr) { // try to run in low memory as much as possible for small devices
 				if (p->readActorFromScript(data)) {
-					appendToAnimatable(p);
+					addToAnimatable(p);
 				}
 			}
 			return p;
@@ -85,7 +85,7 @@ namespace Software2552 {
 
 	private:
 
-		void appendToAnimatable(shared_ptr<ActorRole>p);
+		void addToAnimatable(shared_ptr<ActorRole>p, bool inFront=false);
 
 		void removeExpiredItems(list<shared_ptr<ActorRole>>&v) {
 			v.remove_if(ActorRole::OKToRemove);
