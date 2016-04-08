@@ -35,11 +35,11 @@ namespace Software2552 {
 		string &getKeyName() { return keyname; }
 		// things to draw
 
-		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data) {
+		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, bool inFront=false) {
 			shared_ptr<T> p = std::make_shared<T>();
 			if (p != nullptr) { // try to run in low memory as much as possible for small devices
 				if (p->readActorFromScript(data)) {
-					addToAnimatable(p);
+					addToAnimatable(p, inFront);
 				}
 			}
 			return p;

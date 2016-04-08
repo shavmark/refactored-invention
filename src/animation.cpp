@@ -256,32 +256,40 @@ namespace Software2552 {
 	float ActorRole::getWait() { return (locationAnimation) ? locationAnimation->getWait() : 0; }
 
 	bool ActorRole::readActorFromScript(const Json::Value &data) {
+		fill = true; // set default
+		drawOrder = 0;
+		w = h = 0;
+		references = nullptr;
+		locationAnimation = nullptr;
+		scaleAnimation = nullptr;
+		rotationAnimation = nullptr;
+
 		if (data.size()) {
 			READSTRING(name, data);
 			READSTRING(title, data);
 			READSTRING(notes, data);
 			READSTRING(locationPath, data);
-			fill = true;
 			READBOOL(fill, data);
 			READINT(drawOrder, data);
 			string s = getLocationPath();//just for debug
 			// optional sizes, locations, durations for animation etc
 			readJsonValue(w, data["width"]);
 			readJsonValue(h, data["height"]);
-
-			// actors can have a lot of attributes, but if not no memory is used
-			font.readFromScript(data);
-			colorHelper.readFromScript(data);
 			// any actor can have a reference
 			references = parseList<Reference>(data["references"]);
 			locationAnimation = parseNoList<PointAnimation>(data["animation"]);
 			scaleAnimation = parseNoList<FloatAnimation>(data["scale"]);
 			rotationAnimation = parseNoList<RotationAnimation>(data["rotation"]);
-
-			// read derived class data
-			myReadFromScript(data);
 		}
-		return true;
+
+		// let helper objects deal with empty data in their own way
+
+		// actors can have a lot of attributes, but if not no memory is used
+		font.readFromScript(data);
+		colorHelper.readFromScript(data);
+
+		// read derived class data
+		return myReadFromScript(data);
 	}
 	// return current color, track its usage count
 	shared_ptr<AnimiatedColor> ColorList::getCurrentColor() {
@@ -293,6 +301,8 @@ namespace Software2552 {
 		}
 		return nullptr;
 	}
+
+	ColorHelper::ColorHelper() { colorAnimation = ColorList::getCurrentColor(); } // default to global color
 
 	void ActorRole::updateForDrawing() {
 
@@ -393,7 +403,7 @@ namespace Software2552 {
 		return font;
 	}
 	bool FontHelper::readFromScript(const Json::Value &data) {
-		if (!data["font"].empty()) {
+		if (data.size() > 0 && !data["font"].empty()) {
 
 			string name;
 			int size = defaultFontSize;

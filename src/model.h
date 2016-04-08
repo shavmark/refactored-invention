@@ -267,6 +267,7 @@ namespace Software2552 {
 
 	class Visual : public ActorRole {
 	public:
+		void myUpdate();
 		void setFullSize();
 	protected:
 		bool isLoaded = false;

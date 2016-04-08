@@ -83,12 +83,12 @@ namespace Software2552 {
 
 	bool Stage::readFromScript(const Json::Value &data) {
 		//bool b = pic.loadImage("hubble1.jpg");
-		//ADDANIMATION(rainbow, Rainbow);
+		ADDANIMATION(rainbow, Rainbow);
 		ADDANIMATION(ball, Ball);
 		getAnimatables().sort(compareOrder);
-		//if (!data["background"].empty()) {
-			//CreateReadAndaddBackgroundItems(data["background"]);
-		//}
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
 		return true;
 		//ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
 		//ADDLIGHT(light, Light);
@@ -172,17 +172,23 @@ namespace Software2552 {
 	};
 
 	void Stage::draw() {
+		
 		ofDisableDepthTest();
-		ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);// default positions, cameras may change
+
+		ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);// default position, cameras may change location
 
 		if (drawIn2d) {
 			ofPushStyle();
+			ofPushMatrix();
 			draw2d();
+			ofPopMatrix();
 			ofPopStyle();
 		}
 		if (drawIn3dMoving || drawIn3dFixed) {
 			ofPushStyle();
+			ofPushMatrix();
 			draw3d();
+			ofPopMatrix();
 			ofPopStyle();
 		}
 	}

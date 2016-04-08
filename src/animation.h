@@ -129,6 +129,7 @@ namespace Software2552 {
 
 	class ColorHelper {
 	public:
+		ColorHelper();
 		bool readFromScript(const Json::Value &data);
 		void setColor(int hex);
 		int getForeground();
@@ -141,7 +142,7 @@ namespace Software2552 {
 		ofColor getColorObject(int hex);
 		int getAlpha();
 		void getNextColors();
-		shared_ptr<AnimiatedColor> colorAnimation = nullptr; // optional color
+		shared_ptr<AnimiatedColor> colorAnimation; // optional color
 	private:
 	};
 	// simple helper to read in font data from json 

@@ -1,4 +1,5 @@
 // store notes here
+// cool graphics http://nogoodexcuse.hubris.xyz/tag/opacity/
 //http://zmc.space/2016/kinect-v2-introduction/ good tutorial
 //https://forum.openframeworks.cc/t/interactive-mediawall-at-ipgs-nyc-headquarters/22012
 //get cams from all over https://github.com/bakercp/ofxIpVideoGrabber

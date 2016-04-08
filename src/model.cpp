@@ -354,13 +354,9 @@ namespace Software2552 {
 	}
 
 	bool ColorHelper::readFromScript(const Json::Value &data) {
-		if (!data["colorAnimation"].empty()) {
+		if (data.size() > 0 && !data["colorAnimation"].empty()) {
 			colorAnimation = std::make_shared<AnimiatedColor>();
 			colorAnimation->readFromScript(data["colorAnimation"]);
-		}
-		if (colorAnimation == nullptr) {
-			// low memory or no color from json, either way we use the global clor
-			colorAnimation = ColorList::getCurrentColor();// use the global color
 		}
 		return true;
 	}
@@ -577,27 +573,36 @@ namespace Software2552 {
 		setRefreshRate(60000);// just set something different while in dev
 
 		if (!data["image"].empty()) {
-			shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data["image"]);
+			shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data["image"], true);
 			if (p) {
 				p->setFullSize();
 			}
 		}
 		
 		if (!data["video"].empty()) {
-			shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data["video"]);
+			shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data["video"], true);
 			if (p) {
 				p->setFullSize();
 			}
 		}
 
 		if (!data["rainbow"].empty()) {
-			getStage()->CreateReadAndaddAnimatable<Rainbow>(data["rainbow"]);
+			getStage()->CreateReadAndaddAnimatable<Rainbow>(data["rainbow"], true);
 		}
 		return true;
 	}
+	void Visual::myUpdate() {
+		if (fullsize) {
+			w = ofGetWidth();
+			h = ofGetHeight();
+			ofPoint pt;// upper left in a centered world
+			pt.x = -ofGetWidth() / 2;
+			pt.y = -ofGetHeight() / 2;
+			setPosition(pt);
+		}
+	}
 	void Visual::setFullSize() {
 		fullsize = true;
-		setPosition(ofPoint());
 		setAnimationEnabled(false);
 		//bugbug get this somewhere setSpeed(0.25f);
 
@@ -770,18 +775,12 @@ namespace Software2552 {
 
 	}
 	void Video::myUpdate() {
-		if (fullsize) {
-			w = ofGetWidth();
-			h = ofGetHeight();
-		}
+		Visual::myUpdate();
 		worker.update();
 	}
 
 	void Picture::myUpdate() {
-		if (fullsize) {
-			w = ofGetWidth();
-			h = ofGetHeight();
-		}
+		Visual::myUpdate();
 		worker.update();
 	}
 
