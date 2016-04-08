@@ -735,11 +735,12 @@ namespace Software2552 {
 
 	// add this one http://clab.concordia.ca/?page_id=944
 	void Video::myDraw() {
+		ofPoint& pt = getCurrentPosition();
 		if (w == 0 || h == 0) {
-			worker.draw(getCurrentPosition().x, getCurrentPosition().y);
+			worker.draw(pt.x, pt.y);
 		}
 		else {
-			worker.draw(getCurrentPosition().x, getCurrentPosition().y, w, h);
+			worker.draw(pt.x, pt.y, w, h);
 		}
 	}
 	void Video::mySetup() {
@@ -795,13 +796,13 @@ namespace Software2552 {
 		return t;
 	}
 	void Picture::myDraw() {
+		ofPoint& pt = getCurrentPosition();
+
 		if (w == 0 || h == 0) {
-			worker.draw(getCurrentPosition().x, getCurrentPosition().y);
+			worker.draw(pt.x, pt.y);
 		}
 		else {
-			int x = getCurrentPosition().x;
-			int y = getCurrentPosition().y;
-			worker.draw(getCurrentPosition().x, getCurrentPosition().y, w, h);
+			worker.draw(pt.x, pt.y, w, h);
 		}
 	}
 	void Audio::mySetup() {

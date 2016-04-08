@@ -77,16 +77,23 @@ namespace Software2552 {
 	bool compareOrder(shared_ptr<ActorRole>first, shared_ptr<ActorRole>second)	{
 		return (first->drawOrder < second->drawOrder);
 	}
-
-	bool Stage::readFromScript(const Json::Value &data) {
-
+	// samples https://sites.google.com/site/ofauckland/examples
 #define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
 #define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
+
+	bool Stage::readFromScript(const Json::Value &data) {
+		//bool b = pic.loadImage("hubble1.jpg");
+		ADDANIMATION(picture, Picture);
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
+		return true;
 		//ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
 		//ADDLIGHT(light, Light);
-		//ADDANIMATION(picture, Picture);
+		
+		ADDANIMATION(picture, Picture);
 		//ADDANIMATION(ball, Ball);
-		ADDANIMATION(video, Video);
+		//ADDANIMATION(video, Video);
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
@@ -97,9 +104,9 @@ namespace Software2552 {
 			CreateReadAndaddLight<Light>(data["light"]);
 		}
 		// read back ground after sort as its objects are inserted in the front of the draw list
-		//if (!data["background"].empty()) {
-		//CreateReadAndaddBackgroundItems(data["background"]);
-		//}
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
 		return true;
 		
 		// data must Cap first char of key words
@@ -164,15 +171,7 @@ namespace Software2552 {
 	};
 
 	void Stage::draw() {
-		//bugbug enable basic items in json like ofDrawGrid and other items from ofBaseRenderer
-		ofPushStyle();
-		ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
-		ofRotate(270); 
-		ofRotateX(-90);
-		ofDrawGridPlane(100, 100, false);
-		ofPopStyle();
-
-
+		
 		if (drawIn2d) {
 			ofPushStyle();
 			draw2d();
@@ -218,6 +217,7 @@ namespace Software2552 {
 		mySetup();
 	}
 	void Stage::update() {
+		
 		for (auto& a : animatables) {
 			a->updateForDrawing();
 		}
