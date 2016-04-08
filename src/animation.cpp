@@ -218,12 +218,6 @@ namespace Software2552 {
 		}
 	}
 
-	void RotationAnimation::update() {
-		if (isAnimationEnabled()) {
-			float dt = 1.0f / 60.0f;
-			ofxAnimatableFloat::update(dt);
-		}
-	}
 	void PointAnimation::update() {
 		if (isAnimationEnabled()) {
 			float dt = 1.0f / 60.0f;
@@ -278,7 +272,7 @@ namespace Software2552 {
 			// any actor can have a reference
 			references = parseList<Reference>(data["references"]);
 			locationAnimation = parseNoList<PointAnimation>(data["animation"]);
-			scaleAnimation = parseNoList<FloatAnimation>(data["scale"]);
+			scaleAnimation = parseNoList<ScaleAnimation>(data["scale"]);
 			rotationAnimation = parseNoList<RotationAnimation>(data["rotation"]);
 		}
 
@@ -326,7 +320,18 @@ namespace Software2552 {
 	string &ActorRole::getLocationPath() {
 		return locationPath;
 	}
-
+	float ActorRole::rotate() {
+		if (rotationAnimation) {
+			return rotationAnimation->getCurrentValue();//bugbug need to rotate object not screen
+		}
+		return 0.0f;
+	}
+	float ActorRole::scale() {
+		if (scaleAnimation) {
+			return scaleAnimation->getCurrentValue();
+		}
+		return 1.0f;
+	}
 	void ActorRole::drawIt(drawtype type) {
 		if (okToDraw(type)) {
 			if (useFill()) {

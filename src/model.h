@@ -256,7 +256,18 @@ namespace Software2552 {
 		ofImage worker;
 		bool myReadFromScript(const Json::Value &data);
 	};
-	
+	class Arrow : public ActorRole {
+	public:
+		void myDraw() {
+			ofDrawArrow(start, end, headSize);
+		};
+	private:
+		Point3D start;
+		Point3D end;
+		float headSize = 1.05f;
+		bool myReadFromScript(const Json::Value &data);
+	};
+
 	class Audio : public ActorRole {
 	public:
 		void mySetup();

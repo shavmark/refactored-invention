@@ -83,8 +83,9 @@ namespace Software2552 {
 
 	bool Stage::readFromScript(const Json::Value &data) {
 		//bool b = pic.loadImage("hubble1.jpg");
-		ADDANIMATION(rainbow, Rainbow);
-		ADDANIMATION(ball, Ball);
+		//ADDANIMATION(rainbow, Rainbow);
+		ADDANIMATION(arrow, Arrow);
+		//ADDANIMATION(ball, Ball);
 		getAnimatables().sort(compareOrder);
 		if (!data["background"].empty()) {
 			CreateReadAndaddBackgroundItems(data["background"]);
@@ -173,13 +174,13 @@ namespace Software2552 {
 
 	void Stage::draw() {
 		
-		ofDisableDepthTest();
+		ofDisableDepthTest(); // bugbug make this a var read in via json so we can make more advanced graphics later
 
-		ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);// default position, cameras may change location
 
 		if (drawIn2d) {
 			ofPushStyle();
 			ofPushMatrix();
+			ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);// default position, cameras may change location
 			draw2d();
 			ofPopMatrix();
 			ofPopStyle();

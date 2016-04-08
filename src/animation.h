@@ -3,7 +3,7 @@
 #include "ofxAnimatableFloat.h"
 #include "ofxAnimatableOfPoint.h"
 #include "ofxAnimatableOfColor.h"
-
+#include "ofxEasing.h"
 
 // supports animation
 
@@ -77,17 +77,27 @@ namespace Software2552 {
 		void setAnimationEnabled(bool b = true) { animating_ = b; }
 	private:
 	};
-	//bugbug see about ofxEasing instead or with
-	class RotationAnimation : public ofxAnimatableFloat {
+	class RotationAnimation : public FloatAnimation {
 	public:
-		void update();
 		bool readFromScript(const Json::Value &data) {
+			setDuration(0.5f);
+			setRepeatType(LOOP_BACK_AND_FORTH);
+			setCurve(LINEAR);
+			animateFromTo(0, 360.0f);// full range
 			return true;//bugbug fill this in
 		}
-		bool isAnimationEnabled() { return animating_; }
-		void setAnimationEnabled(bool b = true) { animating_ = b; }
-		float angle=1;
-		float x=0, y = 0, z = 0;
+	private:
+	};
+	class ScaleAnimation : public FloatAnimation {
+	public:
+		bool readFromScript(const Json::Value &data) {
+			setDuration(0.5f);
+			setRepeatType(LOOP_BACK_AND_FORTH);
+			setCurve(LINEAR);
+			animateFromTo(1, 100);// full range
+			return true;//bugbug fill this in
+		}
+	private:
 	};
 	class PointAnimation : public ofxAnimatableOfPoint, public objectLifeTimeManager {
 	public:
@@ -221,7 +231,8 @@ namespace Software2552 {
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
 		void setFill(bool b = true) { fill = b; }
 		bool useFill() { return fill; }
-
+		float rotate();//bugbug may need to go to x,y,z
+		float scale();
 	protected:
 		FontHelper  font;
 		ColorHelper colorHelper;
@@ -244,7 +255,7 @@ namespace Software2552 {
 		string   locationPath;   // location of item to draw
 		shared_ptr<RotationAnimation> rotationAnimation = nullptr; // optional rotation
 		shared_ptr<PointAnimation> locationAnimation = nullptr; // optional movement
-		shared_ptr<FloatAnimation> scaleAnimation = nullptr; // 2d scale multply x,y by scale, 1 by default bugbug 
+		shared_ptr<ScaleAnimation> scaleAnimation = nullptr; // 2d scale multply x,y by scale, 1 by default bugbug 
 		shared_ptr<vector<shared_ptr<Reference>>> references = nullptr; // research reference to show where actor came from
 
 	};

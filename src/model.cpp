@@ -15,10 +15,12 @@ namespace Software2552 {
 	}
 	bool Point3D::readFromScript(const Json::Value &data) {
 		float x=0.0f, y=00.0f, z=00.0f;
-		READFLOAT(x,data);
-		READFLOAT(y, data);
-		READFLOAT(z, data);
-		convert(x*0.01f, y*0.01f, z*0.01f);
+		if (data.size() > 0) {
+			READFLOAT(x, data);
+			READFLOAT(y, data);
+			READFLOAT(z, data);
+			convert(x*0.01f, y*0.01f, z*0.01f);
+		}
 		return true;
 	}
 
@@ -425,7 +427,18 @@ namespace Software2552 {
 	void Ball::myDraw() {
 		
 		float y = getCurrentPosition().y;
-		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), y, radius);
+		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), y, radius*scale());
+
+	}
+	bool Arrow::myReadFromScript(const Json::Value &data) {
+		end.x = ofGetWidth() / 2;
+		end.z = 600;
+		if (data.size() > 0) {
+			start.readFromScript(data);
+			end.readFromScript(data);
+			READFLOAT(headSize, data);
+		}
+		return true;
 	}
 
 	void Text::myDraw() {
@@ -474,13 +487,13 @@ namespace Software2552 {
 	// private draw helper
 	void DrawingPrimitive3d::basicDraw() {
 		if (get() && worker) {
-			worker->setScale(ofRandom(100));
+			//worker->setScale(ofRandom(100));
 			worker->rotate(180, 0, 1, 0.0);
 			if (useWireframe()) {
 				ofPushMatrix();
-				//player->setScale(1.01f);
+				worker->setScale(1.01f);
 				worker->drawWireframe();
-				//player->setScale(1.f);
+				worker->setScale(1.f);
 				ofPopMatrix();
 			}
 			else {
