@@ -8,6 +8,7 @@
 // supports animation
 
 namespace Software2552 {
+	AnimRepeat getRepeatTypeFromString();
 	// read in list of Json values
 	template<typename T> shared_ptr<T> parseNoList(const Json::Value &data)
 	{
@@ -76,29 +77,45 @@ namespace Software2552 {
 		bool isAnimationEnabled() { return animating_; }
 		void setAnimationEnabled(bool b = true) { animating_ = b; }
 	private:
+		virtual bool myReadFromScript(const Json::Value &data) { return true; };
 	};
-	class RotationAnimation : public FloatAnimation {
+	class BaseAnimation : public FloatAnimation {
 	public:
-		bool readFromScript(const Json::Value &data) {
-			setDuration(0.5f);
-			setRepeatType(LOOP_BACK_AND_FORTH);
-			setCurve(LINEAR);
-			animateFromTo(0, 360.0f);// full range
-			return true;//bugbug fill this in
+		BaseAnimation(float minValueIn = 0, float maxValueIn = 100) :FloatAnimation(){ 
+			minValue = minValueIn; 
+			maxValue = maxValueIn;
 		}
+		bool myReadFromScript(const Json::Value &data);
+	private:
+		float minValue;
+		float maxValue;
+	};
+	class RotationAnimation : public BaseAnimation {
+	public:
+		RotationAnimation() : BaseAnimation(0.0f, 360.0f) {}
 	private:
 	};
-	class ScaleAnimation : public FloatAnimation {
+	class Rotation {
 	public:
-		bool readFromScript(const Json::Value &data) {
-			setDuration(0.5f);
-			setRepeatType(LOOP_BACK_AND_FORTH);
-			setCurve(LINEAR);
-			animateFromTo(1, 100);// full range
-			return true;//bugbug fill this in
-		}
+		bool readFromScript(const Json::Value &data);
+		void update();
+		RotationAnimation x;
+		RotationAnimation y;
+		RotationAnimation z;
 	private:
 	};
+
+	class ScaleAnimation : public BaseAnimation {
+	public:
+		ScaleAnimation() : BaseAnimation(0.0f, 200.0f) {}
+	private:
+	};
+	class AlphaAnimation : public BaseAnimation {
+	public:
+		AlphaAnimation() : BaseAnimation(0.0f, 255.0f) {}
+	private:
+	};
+
 	class PointAnimation : public ofxAnimatableOfPoint, public objectLifeTimeManager {
 	public:
 		void update();
@@ -253,11 +270,12 @@ namespace Software2552 {
 		virtual void myDraw() {};
 		bool fill = false;
 		string   locationPath;   // location of item to draw
-		shared_ptr<RotationAnimation> rotationAnimation = nullptr; // optional rotation
+		shared_ptr<Rotation> rotationAnimation = nullptr; // optional rotation
 		shared_ptr<PointAnimation> locationAnimation = nullptr; // optional movement
 		shared_ptr<ScaleAnimation> scaleAnimation = nullptr; // 2d scale multply x,y by scale, 1 by default bugbug 
+		shared_ptr<AlphaAnimation> alphaAnimation = nullptr; 
 		shared_ptr<vector<shared_ptr<Reference>>> references = nullptr; // research reference to show where actor came from
-
+		
 	};
 
 

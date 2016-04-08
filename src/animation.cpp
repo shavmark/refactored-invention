@@ -93,9 +93,25 @@ namespace Software2552 {
 	void ColorHelper::setColor(int hex) {
 		ofSetColor(colorAnimation->getColorObject(hex));
 	}
-
+	bool BaseAnimation::myReadFromScript(const Json::Value &data) {
+		float from = minValue;
+		float to = maxValue;
+		READFLOAT(from, data);
+		READFLOAT(to, data);
+		animateFromTo(from, to);// full range
+		return true;// fill this in as needed
+	}
+	bool Rotation::readFromScript(const Json::Value &data) {
+		x.readFromScript(data["x"]);
+		y.readFromScript(data["y"]);
+		z.readFromScript(data["z"]);
+		return true;
+	}
 	// need "scale"{}, animation etc wrapers in json
 	bool FloatAnimation::readFromScript(const Json::Value &data) {
+		if (data.size() == 0) {
+			return true;
+		}
 		//bugbug how to make common read animation items one function?
 		float duration = 0;
 		READFLOAT(duration, data);
@@ -123,34 +139,39 @@ namespace Software2552 {
 		READINT(repeat, data);
 		setRepeatTimes(repeat);
 
-		string repeatType = "PLAY_ONCE";
+		string repeatType = "LOOP_BACK_AND_FORTH";
 		READSTRING(repeatType, data);
-
-		if (repeatType == "LOOP") {
-			setRepeatType(LOOP);
-		}
-		if (repeatType == "PLAY_ONCE") {
-			setRepeatType(PLAY_ONCE);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH") {
-			setRepeatType(LOOP_BACK_AND_FORTH);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH_ONCE") {
-			setRepeatType(LOOP_BACK_AND_FORTH_ONCE);
-		}
-		else if (repeatType == "PLAY_N_TIMES") {
-			setRepeatType(PLAY_N_TIMES);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH_N_TIMES") {
-			setRepeatType(LOOP_BACK_AND_FORTH_N_TIMES);
-		}
+		setRepeatType(getRepeatTypeFromString());
 
 		float animationDuration = 0.55f;
 		READFLOAT(animationDuration, data);
 		setDuration(animationDuration);
 
+		return myReadFromScript(data);
+	}
+	// helper
+	AnimRepeat getRepeatTypeFromString() {
+		string repeatType = "PLAY_ONCE";
 
-		return true;
+		if (repeatType == "LOOP") {
+			return LOOP;
+		}
+		if (repeatType == "PLAY_ONCE") {
+			return PLAY_ONCE;
+		}
+		else if (repeatType == "LOOP_BACK_AND_FORTH") {
+			return LOOP_BACK_AND_FORTH;
+		}
+		else if (repeatType == "LOOP_BACK_AND_FORTH_ONCE") {
+			return LOOP_BACK_AND_FORTH_ONCE;
+		}
+		else if (repeatType == "PLAY_N_TIMES") {
+			return PLAY_N_TIMES;
+		}
+		else if (repeatType == "LOOP_BACK_AND_FORTH_N_TIMES") {
+			return LOOP_BACK_AND_FORTH_N_TIMES;
+		}
+
 	}
 	// only read in one time, to make things more dynamic change at run time
 	bool PointAnimation::readFromScript(const Json::Value &data) {
@@ -185,25 +206,7 @@ namespace Software2552 {
 
 		string repeatType = "LOOP_BACK_AND_FORTH";
 		READSTRING(repeatType, data);
-
-		if (repeatType == "LOOP") {
-			setRepeatType(LOOP);
-		}
-		if (repeatType == "PLAY_ONCE") {
-			setRepeatType(PLAY_ONCE);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH") {
-			setRepeatType(LOOP_BACK_AND_FORTH);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH_ONCE") {
-			setRepeatType(LOOP_BACK_AND_FORTH_ONCE);
-		}
-		else if (repeatType == "PLAY_N_TIMES") {
-			setRepeatType(PLAY_N_TIMES);
-		}
-		else if (repeatType == "LOOP_BACK_AND_FORTH_N_TIMES") {
-			setRepeatType(LOOP_BACK_AND_FORTH_N_TIMES);
-		}
+		setRepeatType(getRepeatTypeFromString());
 
 		float animationDuration = 0.55f;
 		READFLOAT(animationDuration, data);
@@ -273,7 +276,7 @@ namespace Software2552 {
 			references = parseList<Reference>(data["references"]);
 			locationAnimation = parseNoList<PointAnimation>(data["animation"]);
 			scaleAnimation = parseNoList<ScaleAnimation>(data["scale"]);
-			rotationAnimation = parseNoList<RotationAnimation>(data["rotation"]);
+			rotationAnimation = parseNoList<Rotation>(data["rotation"]);
 		}
 
 		// let helper objects deal with empty data in their own way
@@ -314,6 +317,11 @@ namespace Software2552 {
 		
 		myUpdate(); // call derived classes
 	};
+	void Rotation::update() {
+		x.update();
+		y.update();
+		z.update();
+	}
 	void ActorRole::applyColor() {
 		colorHelper.colorAnimation->draw(); // always returns a pointer
 	}
@@ -322,7 +330,8 @@ namespace Software2552 {
 	}
 	float ActorRole::rotate() {
 		if (rotationAnimation) {
-			return rotationAnimation->getCurrentValue();//bugbug need to rotate object not screen
+			//bugbug convert to a proper rotate
+			return rotationAnimation->x.getCurrentValue();//bugbug need to rotate object not screen
 		}
 		return 0.0f;
 	}
