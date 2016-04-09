@@ -18,23 +18,26 @@ namespace Software2552 {
 	public:
 		//convertStringToGroup must be updated to match ColorGroup
 		enum ColorGroup {
-			Modern, Smart, Orange, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
+			Modern, Smart, Orange, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random, lastcolor//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
 		};
-
+		void update();
 		//bugbug color set may need 4 or more colors once we do more with graphics
 		// something like fore/back/text/other[n], not sure, or maybe we
 		// just use multiple ColorSets, find out more as we continue on
-		ColorSet(const ColorGroup groupIn, int fore, int back, int text, int other, int lightest, int darkest);
-		int getForeground() { return getHex(ColorSet::ColorType::Fore); }
-		int getBackground() { return getHex(ColorSet::ColorType::Back); }
-		int getFontColor() { return getHex(ColorSet::ColorType::Text); }
-		int getLightest() { return getHex(ColorSet::ColorType::Lightest); }
-		int getDarkest() { return getHex(ColorSet::ColorType::Darkest); }
-		int getOther() { return getHex(ColorSet::ColorType::Other); }
+		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest);
+		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back);
+		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> basecolor);
+
+		// will return default if requested item is not in the set
+		ofColor& getForeground() { return get(Fore); }
+		ofColor& getBackground() { return get(Back); }
+		ofColor& getLightest() { return get(Lightest); }
+		ofColor& getDarkest() { return get(Darkest); }
+		ofColor& getCustom(int index) { return get(lastcolor+index); } //bugbug support later, defaults for now
 
 		static ColorGroup convertStringToGroup(const string&name);
 		ColorGroup getGroup() const {return group;}
-		int getHex(int index) const  {return colors[index];	}
+		ofColor& get(int index);
 		bool operator== (const ColorSet& rhs) {	return getGroup() == rhs.getGroup();}
 		// return true if less than, and both of the desired type or Random
 		int size() { return colors.size(); }
@@ -46,10 +49,11 @@ namespace Software2552 {
 			Fore, Back, Text, Other, Lightest, Darkest
 		};
 	private:
+		ofColor defaultColor;
 		void setSetcolors(int c, ...);
 		ColorGroup group;
 		int usage = 0;// usage count
-		vector<int> colors; //hex values of all matching colors
+		vector<shared_ptr<AnimiatedColor>> colors; //hex values of all matching colors
 	};
 
 	class ColorList {
@@ -80,7 +84,7 @@ namespace Software2552 {
 			v.remove_if(objectLifeTimeManager::OKToRemove);
 		}
 
-		shared_ptr<ColorSet> add(const ColorSet::ColorGroup group, int fore, int back, int text, int other, int lightest, int darkest);
+		void add(const ColorSet::ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back = nullptr, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest=nullptr);
 
 	private:
 		static shared_ptr<colordata> privateData;// never call directly to assure allocation

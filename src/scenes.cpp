@@ -88,9 +88,9 @@ namespace Software2552 {
 		//ADDANIMATION(arrow, Arrow);
 		ADDANIMATION(ball, Ball);
 		getAnimatables().sort(compareOrder);
-		//if (!data["background"].empty()) {
-			//CreateReadAndaddBackgroundItems(data["background"]);
-		//}
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
 		return true;
 		//ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
 		//ADDLIGHT(light, Light);
@@ -107,9 +107,9 @@ namespace Software2552 {
 			CreateReadAndaddLight<Light>(data["light"]);
 		}
 		// read back ground after sort as its objects are inserted in the front of the draw list
-		if (!data["background"].empty()) {
-			CreateReadAndaddBackgroundItems(data["background"]);
-		}
+		//if (!data["background"].empty()) {
+			//CreateReadAndaddBackgroundItems(data["background"]);
+		//}
 		return true;
 		
 		// data must Cap first char of key words

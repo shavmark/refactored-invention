@@ -302,7 +302,7 @@ namespace Software2552 {
 		worker.setFont(getFontPointer());
 		
 		// object holds it own color bugbug maybe just set current color right before draw?
-		worker.setColor(colorHelper.getColorObject(colorHelper.getForeground()));
+		worker.setColor(colorHelper.getForeground());
 
 		return true;
 	}
@@ -350,15 +350,19 @@ namespace Software2552 {
 	}
 	void Material::begin() {
 		// the light highlight of the material  
-		setSpecularColor(colorHelper.getFloatObject(colorHelper.getForeground()));
+		setSpecularColor(colorHelper.getForeground());
 		//setSpecularColor(ofColor(255, 255, 255, 255)); // does white work wonders? or what does color do?
 		ofMaterial::begin();
 	}
 
 	bool ColorHelper::setup(const Json::Value &data) {
 		if (data.size() > 0 && !data["colorAnimation"].empty()) {
-			colorAnimation = std::make_shared<AnimiatedColor>();
-			colorAnimation->setup(data["colorAnimation"]);
+			if (!colorAnimation) {
+				colorAnimation = std::make_shared<AnimiatedColor>();
+			}
+			if (colorAnimation){
+				colorAnimation->setup(data["colorAnimation"]);
+			}
 		}
 		return true;
 	}
@@ -380,9 +384,9 @@ namespace Software2552 {
 		setLoc(ofRandom(-100,100), 0, ofRandom(300,500));
 		colorHelper.setup(data);
 		// help http://www.glprogramming.com/red/chapter05.html
-		worker.setDiffuseColor(colorHelper.getFloatObject(colorHelper.getLightest()));
-		worker.setSpecularColor(colorHelper.getFloatObject(colorHelper.getDarkest()));
-		worker.setAmbientColor(colorHelper.getFloatObject(colorHelper.getBackground()));
+		worker.setDiffuseColor(colorHelper.getLightest());
+		worker.setSpecularColor(colorHelper.getDarkest());
+		worker.setAmbientColor(colorHelper.getBackground());
 		//bugbug what about alpha?
 		return mysetup(data);
 	}
@@ -623,16 +627,16 @@ namespace Software2552 {
 	void Background::myDraw() {
 		if (mode == flat) {
 			// just a plane background
-			ofBackgroundHex(colorHelper.getBackground(), colorHelper.getAlpha());
+			ofBackground(colorHelper.getBackground());
 		}
 		else if (mode != noGradient) {
-			ofBackgroundGradient(colorHelper.getForeground(), colorHelper.getBackground(), ofMode);
+			ofBackgroundGradient(colorHelper.getLightest(), colorHelper.getDarkest(), ofMode);
 		}
 		if (type == none) {
 			return;
 		}
 		// set by default since this is set first other usage of fore color will override
-		ofSetColor(colorHelper.getColorObject(colorHelper.getForeground()));
+		ofSetColor(colorHelper.getForeground());
 	}
 	bool Rainbow::mysetup(const Json::Value &data) {
 		return true;
@@ -823,15 +827,6 @@ namespace Software2552 {
 		return t;
 	}
 	void Picture::myDraw() {
-		ofPushMatrix();
-		ofTranslate(worker.getWidth() / 2, worker.getHeight() / 2, 0);//move pivot to centre
-		ofRotate(ofGetFrameNum() * .05, 0, 0, 1);//rotate from centre
-		ofPushMatrix();
-		ofTranslate(-worker.getWidth() / 2, -worker.getHeight() / 2, 0);//move back by the centre offset
-		worker.draw(0, 0);
-		ofPopMatrix();
-		ofPopMatrix();
-		return;
 		ofPoint& pt = getCurrentPosition();
 		if (w == 0 || h == 0) {
 			worker.draw(pt.x, pt.y);

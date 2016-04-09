@@ -8,17 +8,25 @@
 namespace Software2552 {
 	shared_ptr<ColorList::colordata> ColorList::privateData=nullptr; // declare static data
 
-	ColorSet::ColorSet(const ColorGroup groupIn, int fore, int back, int text, int other, int lightest, int darkest) : objectLifeTimeManager() {
-		group = groupIn;
-		setSetcolors(6, fore, back, text, other, lightest, darkest);
+	ofColor& ColorSet::get(int index) { 
+		if (index < colors.size() && colors[index] != nullptr) {
+			return colors[index]->getCurrentColor();
+		}
+		return defaultColor;
 	}
+	void ColorSet::update() {
+		for (auto& c : colors) {
+			c->update();
+		}
+	}
+	// set 1 or more colors in the set
 	void ColorSet::setSetcolors(int c, ...) {
 		colors.clear();
 
 		va_list args;
 		va_start(args, c);
 		for (int i = 0; i < c; ++i) {
-			colors.push_back(va_arg(args, int));
+			colors.push_back(va_arg(args, shared_ptr<AnimiatedColor>));
 		}
 		va_end(args);
 	}
@@ -77,14 +85,11 @@ namespace Software2552 {
 		}
 		return ret;
 	}
-	shared_ptr<ColorSet> ColorList::add(const ColorSet::ColorGroup group, int fore, int back, int text, int other, int lightest, int darkest) {
-		// colors stored as hex
-		shared_ptr<ColorSet> s = std::make_shared<ColorSet>(group,
-			fore,	back,	text,	other,	lightest,	darkest);
-
+	void ColorList::add(const ColorSet::ColorGroup group, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest) {
+		shared_ptr<ColorSet> s = std::make_shared<ColorSet>(group, fore, back, lightest, darkest);
 		privateData->colorlist.push_front(s);
-		return s;
 	}
+
 
 	ColorSet::ColorGroup ColorSet::convertStringToGroup(const string&name) {
 		if (name == "Modern") {
@@ -126,7 +131,76 @@ namespace Software2552 {
 			setup();
 		}
 	}
+	ColorSet::ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor> back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest) : objectLifeTimeManager() {
+		group = groupIn;
+		defaultColor = ofColor::black;
+		setSetcolors(4, fore, back, lightest, darkest);
+	}
+	ColorSet::ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor> back) : objectLifeTimeManager() {
+		group = groupIn;
+		defaultColor = ofColor::black;
+		if (fore && back) {
+			shared_ptr<AnimiatedColor>inverted = std::make_shared<AnimiatedColor>();
+			if (inverted) {
+				ofColor c = fore->getCurrentColor().getInverted();
+				inverted->setColor(c);
+			}
+			shared_ptr<AnimiatedColor>lerp = std::make_shared<AnimiatedColor>();
+			if (lerp) {
+				ofColor c = fore->getCurrentColor().getLerped(back->getCurrentColor(), 0.5f);
+				lerp->setColor(c);
+			}
+			// make colors from one
+			setSetcolors(4, fore, back, inverted, lerp);
+		}
+	}
+	ColorSet::ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> basecolor) : objectLifeTimeManager() {
+		group = groupIn;
+		defaultColor = ofColor::black;//c.invert(); lerp ofColor r = ofColor::red;
+									  ///     ofColor b = ofColor::blue;
+									  ///     b.lerp(r, 0.5); // now purple
+		if (basecolor) {
+			shared_ptr<AnimiatedColor>inverted = std::make_shared<AnimiatedColor>();
+			if (inverted) {
+				ofColor c = basecolor->getCurrentColor().getInverted();
+				inverted->setColor(c);
+			}
+			shared_ptr<AnimiatedColor>lerp = std::make_shared<AnimiatedColor>();
+			if (lerp && inverted) {
+				ofColor c = basecolor->getCurrentColor().getLerped(inverted->getCurrentColor(), 0.5f);
+				lerp->setColor(c);
+			}
+			// make colors from one
+			setSetcolors(4, basecolor, inverted, basecolor, lerp);
+		}
+	}
 
+	// color will animate
+	shared_ptr<AnimiatedColor> create(const ofColor& start, const ofColor& end) {
+		shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
+		if (ac) {
+			ac->setColor(start);//bugbug get from json
+			ac->animateTo(end);//bugbug look at delays and final color, good json data
+		}
+		return ac;
+	}
+	// no animation
+	shared_ptr<AnimiatedColor> create(const ofColor& start) {
+		shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
+		if (ac) {
+			ac->setColor(start);//bugbug get from json
+		}
+		return ac;
+	}
+	// only alpha changes
+	shared_ptr<AnimiatedColor> create(const ofColor& start, int alpha) {
+		shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
+		if (ac) {
+			ac->setColor(start);
+			ac->animateToAlpha(alpha);
+		}
+		return ac;
+	}
 	//http://www.creativecolorschemes.com/resources/free-color-schemes/art-deco-color-scheme.shtml
 	void ColorList::setup() {
 		if (privateData == nullptr) {
@@ -153,13 +227,26 @@ namespace Software2552 {
 			std::unordered_map<char, int>  earthtone ={
 			{ 'A',0x493829 },{ 'B',  0x816C5B },{ 'C',  0xA9A18C },{ 'D',  0x613318 },{ 'E',  0x855723 },{ 'F',  0xB99C6B },{ 'G',  0x8F3B1B },{ 'H', 0xD57500 },
 			{ 'I',  0xDBCA69 },{ 'J',  0x404F24 },{ 'K',  0x668D3C },{ 'L',  0xBDD09F },{ 'M',  0x4E6172 },{ 'N',  0x83929F },{ 'O',  0xA3ADB8} };
-#define INHEX(a)
+#define SETACOLOR(a)create(ofColor::fromHex(a))
+#define SETACOLORRANGE(a,b,c,d)create(ofColor::fromHex(a, b), ofColor::fromHex(c, d))
+#define SETACOLORALPHA(a,b)create(ofColor::fromHex(a),b)
 			//A C B D A C see the color doc to fill these in. use the 4 colors then pick the lightest and darkest 
+	
+			shared_ptr<AnimiatedColor>light = create(ofColor::fromHex(modern['A']));// example
+
+			add(ColorSet::Modern, SETACOLORRANGE(modern['A'], 255, modern['B'], 255), SETACOLORALPHA(modern['C'], 100), light, SETACOLOR(modern['C']));
+			add(ColorSet::White, create(ofColor::white));
+			add(ColorSet::Orange, create(ofColor::orange, ofColor::orangeRed));
+
+			/* bugbug load all these once color is working etc
+			// a full color
 			add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
+
+			add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
+
 			add(ColorSet::White, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff);
 			add(ColorSet::Orange, ofColor::orange.getHex(), ofColor::orangeRed.getHex(), ofColor::orange.getHex(), ofColor::orangeRed.getHex(), ofColor::orange.getHex(), ofColor::orangeRed.getHex());
 
-			/* bugbug load all these once color is working etc
 			add(ColorSet::Modern, E, D, ofColor::black.getHex(), ofColor::white.getHex());
 
 			add(ColorSet::Modern, N, M, ofColor::white, ofColor::white);

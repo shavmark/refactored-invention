@@ -103,11 +103,6 @@ namespace Software2552 {
 		ScaleAnimation() : FloatAnimation(1.0f, 5.0f) {}
 	private:
 	};
-	class AlphaAnimation : public FloatAnimation {
-	public:
-		AlphaAnimation() : FloatAnimation(1.0f, 255.0f) {}
-	private:
-	};
 
 	class PointAnimation : public ofxAnimatableOfPoint, public objectLifeTimeManager {
 	public:
@@ -131,20 +126,21 @@ namespace Software2552 {
 		bool paused() { return paused_; }
 		bool setup(const Json::Value &data);
 		shared_ptr<ColorSet> getColorSet();
-		int getAlpha();
-		void setAlpha(int val);
+		void setAlpha(float val);
 		void getNextColors();
 		void setColorSet(shared_ptr<ColorSet>p);
 		bool useAnimation() { return usingAnimation; }
 		void setAnimation(bool b = true) { usingAnimation = true; }
 		// avoid long access code
-		ofFloatColor getFloatObject(int hex, int alpha) { return ofFloatColor().fromHex(hex, alpha); }
-		ofColor getColorObject(int hex, int alpha) { return ofFloatColor().fromHex(hex, alpha); }
-		shared_ptr<AlphaAnimation> alphaAnimation = nullptr;// just holds an alpha value
+		ofFloatColor getFloatObject();
+		ofColor getColorObject();
+		float from = 255;// alpha
+		float to = 255;
 
 	private:
 		shared_ptr<ColorSet> colorSet = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
 		bool usingAnimation = false; // force  to set this to make sure its understood
+
 	};
 
 	class ColorHelper {
@@ -152,15 +148,12 @@ namespace Software2552 {
 		ColorHelper();
 		bool setup(const Json::Value &data);
 		void setColor(int hex, int alpha);
-		int getForeground();
-		int getBackground();
-		int getFontColor();
-		int getLightest();
-		int getDarkest();
-		int getOther();
-		int getAlpha();
-		ofFloatColor getFloatObject(int hex);
-		ofColor getColorObject(int hex);
+		ofColor& getForeground();
+		ofColor& getBackground();
+		ofColor& getFontColor();
+		ofColor& getLightest();
+		ofColor& getDarkest();
+		ofColor& getOther();
 		void getNextColors();
 		shared_ptr<AnimiatedColor> colorAnimation; // optional color
 	private:

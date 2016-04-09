@@ -92,9 +92,6 @@ namespace Software2552 {
 		}
 		return defaultStart;// 0,0,0 by default bugbug set on of object vs this saved one
 	}
-	void ColorHelper::setColor(int hex, int alpha) {
-		ofSetColor(colorAnimation->getColorObject(hex, alpha));
-	}
 	bool Rotation::setup(const Json::Value &data) {
 		FloatAnimation::setup(data);
 		x.setup(data["x"]);
@@ -220,14 +217,12 @@ namespace Software2552 {
 	// try to keep wrappers out of site to avoid clutter
 	// we want to run w/o crashing in very low memory so we need to check all our pointers, we can chug along
 	// until memory frees up, a crash would be very bad
-	int ColorHelper::getAlpha() { return colorAnimation->getAlpha(); }
 	
-	int ColorHelper::getForeground() { return colorAnimation->getColorSet()->getForeground(); }
-	int ColorHelper::getBackground() { return colorAnimation->getColorSet()->getBackground(); }
-	int ColorHelper::getFontColor() { return colorAnimation->getColorSet()->getFontColor(); }
-	int ColorHelper::getLightest() { return colorAnimation->getColorSet()->getLightest(); }
-	int ColorHelper::getDarkest() { return colorAnimation->getColorSet()->getDarkest(); }
-	int ColorHelper::getOther() { return colorAnimation->getColorSet()->getOther(); }
+	ofColor& ColorHelper::getForeground() { return colorAnimation->getColorSet()->getForeground(); }
+	ofColor& ColorHelper::getBackground() { return colorAnimation->getColorSet()->getBackground(); }
+	ofColor& ColorHelper::getFontColor() { return colorAnimation->getColorSet()->getForeground(); }
+	ofColor& ColorHelper::getLightest() { return colorAnimation->getColorSet()->getLightest(); }
+	ofColor& ColorHelper::getDarkest() { return colorAnimation->getColorSet()->getDarkest(); }
 	void ColorHelper::getNextColors() { colorAnimation->getNextColors(); }
 	void ActorRole::setAnimationPosition(const ofPoint& p) { if (locationAnimation)locationAnimation->setPosition(p); }
 	void ActorRole::setAnimationPositionX(float x) { if (locationAnimation)locationAnimation->setPositionX(x); }
@@ -243,12 +238,8 @@ namespace Software2552 {
 	void ActorRole::setRefreshRate(uint64_t rateIn) { if (locationAnimation)locationAnimation->setRefreshRate(rateIn); }
 	float ActorRole::getWait() { return (locationAnimation) ? locationAnimation->getWait() : 0; }
 
-	int AnimiatedColor::getAlpha() { return (alphaAnimation) ? alphaAnimation->getCurrentValue() : 255; }
-	void AnimiatedColor::setAlpha(int val) {
-		if (alphaAnimation) {
-			alphaAnimation->reset(val); // set and stop animation
-		}
-		// if no animation helper no alpha
+	void AnimiatedColor::setAlpha(float val) {
+		setAlphaOnly(val);
 	}
 
 	bool ActorRole::setup(const Json::Value &data) {
@@ -328,6 +319,14 @@ namespace Software2552 {
 		return locationPath;
 	}
 	float ActorRole::rotate() {
+		//bugbug use rotationAnimation and make sure w and h are set for ration
+		if (w && h) {
+			ofTranslate(w / 2, h / 2, 0);//move pivot to centre
+			ofRotate(ofGetFrameNum() * .05, 0, 0, 1);//rotate from centre
+			ofTranslate(-w / 2, -w / 2, 0);//move back by the centre offset
+		}
+		return 0;
+
 		if (rotationAnimation) {
 			//bugbug convert to a proper rotate
 			return rotationAnimation->x.getCurrentValue();//bugbug need to rotate object not screen
@@ -348,15 +347,17 @@ namespace Software2552 {
 			else {
 				ofNoFill();
 			}
-			
-			if (colorHelper.getAlpha() != 255) {
+			bool disableEAP = false;
+			if (colorHelper.colorAnimation->from != colorHelper.colorAnimation->to && colorHelper.colorAnimation->from != 255) {
+				disableEAP = true;
 				ofEnableAlphaBlending(); // only use when needed for performance
 			}
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
 			}
+			rotate();
 			myDraw();
-			if (colorHelper.getAlpha() != 255) {
+			if (disableEAP) {
 				ofDisableAlphaBlending(); 
 			}
 		}
@@ -402,11 +403,11 @@ namespace Software2552 {
 		}
 		return nullptr;
 	}
-	ofFloatColor ColorHelper::getFloatObject(int hex) {
-		return ofFloatColor().fromHex(hex, getAlpha());
+	ofFloatColor AnimiatedColor::getFloatObject() { 
+		return ofFloatColor(getCurrentColor());
 	}
-	ofColor ColorHelper::getColorObject(int hex) {
-		return ofFloatColor().fromHex(hex, getAlpha());
+	ofColor AnimiatedColor::getColorObject() { 
+		return getCurrentColor();
 	}
 
 	shared_ptr<ofxSmartFont> FontHelper::getPointer() {
@@ -459,8 +460,8 @@ namespace Software2552 {
 	void AnimiatedColor::setColorSet(shared_ptr<ColorSet>p) {
 		if (p) {
 			colorSet = p;
-			setColor(ofColor(getColorSet()->getLightest()));
-			animateTo(ofColor(getColorSet()->getDarkest()));
+			setColor(getColorSet()->getLightest());
+			animateTo(getColorSet()->getDarkest());
 		}
 	}
 
@@ -470,9 +471,6 @@ namespace Software2552 {
 	void AnimiatedColor::update() {
 		float dt = 1.0f / 60.0f;//bugbug does this time to frame count? I think so
 		ofxAnimatableOfColor::update(dt);
-		if (alphaAnimation) {
-			alphaAnimation->update();
-		}
 		if (getColorSet()) {//bugbug can we advance color if desired here? 
 		}
 	}
@@ -481,7 +479,7 @@ namespace Software2552 {
 			applyCurrentColor();
 		}
 		else {
-			ofSetColor(ofColor::fromHex(getColorSet()->getForeground(), getAlpha()));
+			ofSetColor(getColorSet()->getForeground());
 			//background set by background manager
 		}
 	}
@@ -494,14 +492,13 @@ namespace Software2552 {
 				// must be set before alpha
 				setColorSet(ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroup), false));
 			}
-			float from = 255;
 			READFLOAT(from, data);
-			float to = 255;
 			READFLOAT(to, data);
 			if (from != 255) {
 				setAlphaOnly(from);
 			}
-			if (to != 255) {
+			// anmation requested
+			if (from != to && from != 255) {
 				animateToAlpha(to); // will not animate color
 				usingAnimation = true; // can still be turned off below
 			}
