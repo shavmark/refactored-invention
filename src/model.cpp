@@ -825,7 +825,7 @@ namespace Software2552 {
 	void Picture::myDraw() {
 		ofPushMatrix();
 		ofTranslate(worker.getWidth() / 2, worker.getHeight() / 2, 0);//move pivot to centre
-		ofRotate(ofGetFrameNum() * .01, 0, 0, 1);//rotate from centre
+		ofRotate(ofGetFrameNum() * .05, 0, 0, 1);//rotate from centre
 		ofPushMatrix();
 		ofTranslate(-worker.getWidth() / 2, -worker.getHeight() / 2, 0);//move back by the centre offset
 		worker.draw(0, 0);

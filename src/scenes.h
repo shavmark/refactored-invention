@@ -73,8 +73,8 @@ namespace Software2552 {
 		virtual void myDraw3dFixed() {};
 		virtual void myDraw3dMoving() {};
 
-		virtual void pre3dDraw();
-		virtual void post3dDraw();
+		virtual void preDraw();
+		virtual void postDraw();
 		virtual void mySetup() {}
 		virtual void myUpdate() {}
 		virtual void myPause() {}

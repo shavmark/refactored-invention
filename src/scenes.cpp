@@ -84,13 +84,13 @@ namespace Software2552 {
 	bool Stage::setup(const Json::Value &data) {
 		//bool b = pic.loadImage("hubble1.jpg");
 		//ADDANIMATION(rainbow, Rainbow);
-		ADDANIMATION(picture, Picture);
+		//ADDANIMATION(picture, Picture);
 		//ADDANIMATION(arrow, Arrow);
-		//ADDANIMATION(ball, Ball);
+		ADDANIMATION(ball, Ball);
 		getAnimatables().sort(compareOrder);
-		if (!data["background"].empty()) {
-			CreateReadAndaddBackgroundItems(data["background"]);
-		}
+		//if (!data["background"].empty()) {
+			//CreateReadAndaddBackgroundItems(data["background"]);
+		//}
 		return true;
 		//ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
 		//ADDLIGHT(light, Light);
@@ -174,10 +174,7 @@ namespace Software2552 {
 	};
 
 	void Stage::draw() {
-		
-		ofDisableDepthTest(); // bugbug make this a var read in via json so we can make more advanced graphics later
-
-
+		preDraw();
 		if (drawIn2d) {
 			ofPushStyle();
 			ofPushMatrix();
@@ -193,6 +190,7 @@ namespace Software2552 {
 			ofPopMatrix();
 			ofPopStyle();
 		}
+		postDraw();
 	}
 	// pause them all
 	void Stage::pause() {
@@ -297,24 +295,23 @@ namespace Software2552 {
 		}
 	}
 
-	void Stage::pre3dDraw() {
+	void Stage::preDraw() {
+		ofDisableDepthTest(); // bugbug make this a var read in via json so we can make more advanced graphics later
 		//ofBackground(ofColor::blue); // white enables all colors in pictures/videos
 		ofSetSmoothLighting(true);
 		ofDisableAlphaBlending();
+
 		//ofEnableDepthTest();
-		ofDisableDepthTest();
 	}
-	void Stage::post3dDraw() {
+	void Stage::postDraw() {
 		// clean up
-		ofDisableDepthTest();
+		ofEnableDepthTest();
 		for (auto& light : lights) {
 			light->worker.disable();
 		}
 		ofDisableLighting();
 	}
 	void Stage::draw3d() {
-
-		pre3dDraw();
 
 		// fixed camera
 		if (drawIn3dFixed) {
@@ -330,7 +327,6 @@ namespace Software2552 {
 			}
 		}
 
-		post3dDraw();
 	}
 	// find overall duration of a scene
 	float Stage::findMaxWait() {

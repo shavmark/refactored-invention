@@ -100,12 +100,12 @@ namespace Software2552 {
 
 	class ScaleAnimation : public FloatAnimation {
 	public:
-		ScaleAnimation() : FloatAnimation(0.0f, 200.0f) {}
+		ScaleAnimation() : FloatAnimation(1.0f, 5.0f) {}
 	private:
 	};
 	class AlphaAnimation : public FloatAnimation {
 	public:
-		AlphaAnimation() : FloatAnimation(0.0f, 255.0f) {}
+		AlphaAnimation() : FloatAnimation(1.0f, 255.0f) {}
 	private:
 	};
 
@@ -131,36 +131,36 @@ namespace Software2552 {
 		bool paused() { return paused_; }
 		bool setup(const Json::Value &data);
 		shared_ptr<ColorSet> getColorSet();
-		float getAlpha() { return alpha; }//bugbug flush this out, read it in, set it etc
-		void setAlpha(float a) { alpha = a; }
+		int getAlpha();
+		void setAlpha(int val);
 		void getNextColors();
 		void setColorSet(shared_ptr<ColorSet>p);
 		bool useAnimation() { return usingAnimation; }
 		void setAnimation(bool b = true) { usingAnimation = true; }
 		// avoid long access code
-		ofFloatColor getFloatObject(int hex) { return ofFloatColor().fromHex(hex, getAlpha()); }
-		ofColor getColorObject(int hex) { return ofFloatColor().fromHex(hex, getAlpha()); }
+		ofFloatColor getFloatObject(int hex, int alpha) { return ofFloatColor().fromHex(hex, alpha); }
+		ofColor getColorObject(int hex, int alpha) { return ofFloatColor().fromHex(hex, alpha); }
+		shared_ptr<AlphaAnimation> alphaAnimation = nullptr;// just holds an alpha value
 
 	private:
 		shared_ptr<ColorSet> colorSet = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
 		bool usingAnimation = false; // force  to set this to make sure its understood
-		float alpha = 255;
 	};
 
 	class ColorHelper {
 	public:
 		ColorHelper();
 		bool setup(const Json::Value &data);
-		void setColor(int hex);
+		void setColor(int hex, int alpha);
 		int getForeground();
 		int getBackground();
 		int getFontColor();
 		int getLightest();
 		int getDarkest();
 		int getOther();
+		int getAlpha();
 		ofFloatColor getFloatObject(int hex);
 		ofColor getColorObject(int hex);
-		int getAlpha();
 		void getNextColors();
 		shared_ptr<AnimiatedColor> colorAnimation; // optional color
 	private:
@@ -213,7 +213,6 @@ namespace Software2552 {
 		float getObjectLifetime();
 		void setRefreshRate(uint64_t);
 		float getWait();
-
 		ofPoint& getCurrentPosition();
 		void setPosition(ofPoint& p);
 		virtual float getTimeBeforeStart(float t);
@@ -266,7 +265,6 @@ namespace Software2552 {
 		shared_ptr<Rotation> rotationAnimation = nullptr; // optional rotation
 		shared_ptr<PointAnimation> locationAnimation = nullptr; // optional movement
 		shared_ptr<ScaleAnimation> scaleAnimation = nullptr; // 2d scale multply x,y by scale, 1 by default bugbug 
-		shared_ptr<AlphaAnimation> alphaAnimation = nullptr; 
 		shared_ptr<vector<shared_ptr<Reference>>> references = nullptr; // research reference to show where actor came from
 		
 	};
