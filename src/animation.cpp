@@ -5,6 +5,8 @@
 
 namespace Software2552 {
 
+	void setAnimationValues(ofxAnimatable*p, const Json::Value &data, string& curveName, string& repeatType);
+	AnimRepeat getRepeatTypeFromString(const string& repeatType);
 
 	//ColorSet Animator::getFirstColor(ColorSet::ColorGroup group) {
 	//	std::vector<ColorSet>::iterator itr = std::find(data.begin(), data.end(), ColorSet(group));
@@ -93,66 +95,39 @@ namespace Software2552 {
 	void ColorHelper::setColor(int hex) {
 		ofSetColor(colorAnimation->getColorObject(hex));
 	}
-	bool BaseAnimation::myReadFromScript(const Json::Value &data) {
-		float from = minValue;
-		float to = maxValue;
-		READFLOAT(from, data);
-		READFLOAT(to, data);
-		animateFromTo(from, to);// full range
-		return true;// fill this in as needed
-	}
-	bool Rotation::readFromScript(const Json::Value &data) {
-		x.readFromScript(data["x"]);
-		y.readFromScript(data["y"]);
-		z.readFromScript(data["z"]);
+	bool Rotation::setup(const Json::Value &data) {
+		FloatAnimation::setup(data);
+		x.setup(data["x"]);
+		y.setup(data["y"]);
+		z.setup(data["z"]);
 		return true;
 	}
+	FloatAnimation::FloatAnimation(float fromIn, float toIn) :ofxAnimatableFloat(), objectLifeTimeManager() {
+		from = fromIn;
+		to = toIn;
+	}
+
 	// need "scale"{}, animation etc wrapers in json
-	bool FloatAnimation::readFromScript(const Json::Value &data) {
-		if (data.size() == 0) {
-			return true;
+	bool FloatAnimation::setup(const Json::Value &data) {
+		if (data.size() > 0) {
+			objectLifeTimeManager::setup(data);
+
+			setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
+
+			READFLOAT(from, data);
+			READFLOAT(to, data);
+
+			animateFromTo(from, to);
+
+			bool enableAnimation = false;
+			READBOOL(enableAnimation, data);
+			setAnimationEnabled(enableAnimation);
 		}
-		//bugbug how to make common read animation items one function?
-		float duration = 0;
-		READFLOAT(duration, data);
-		setObjectLifetime(duration);
 
-		float wait = 0;
-		READFLOAT(wait, data);
-		setWait(wait);
-
-		float start = 0.0f, end = 0.0f;
-		READFLOAT(start, data);
-		READFLOAT(end, data);
-
-		animateFromTo(start, end);
-
-		bool enableAnimation = false;
-		READBOOL(enableAnimation, data);
-		setAnimationEnabled(enableAnimation);
-
-		string curveName = "EASE_IN"; // there is a boat load of coolness here
-		READSTRING(curveName, data);
-		setCurve(ofxAnimatable::getCurveFromName(curveName));
-
-		int repeat = 1;
-		READINT(repeat, data);
-		setRepeatTimes(repeat);
-
-		string repeatType = "LOOP_BACK_AND_FORTH";
-		READSTRING(repeatType, data);
-		setRepeatType(getRepeatTypeFromString());
-
-		float animationDuration = 0.55f;
-		READFLOAT(animationDuration, data);
-		setDuration(animationDuration);
-
-		return myReadFromScript(data);
+		return true;
 	}
 	// helper
-	AnimRepeat getRepeatTypeFromString() {
-		string repeatType = "PLAY_ONCE";
-
+	AnimRepeat getRepeatTypeFromString(const string& repeatType) {
 		if (repeatType == "LOOP") {
 			return LOOP;
 		}
@@ -173,46 +148,60 @@ namespace Software2552 {
 		}
 
 	}
-	// only read in one time, to make things more dynamic change at run time
-	bool PointAnimation::readFromScript(const Json::Value &data) {
+	void setAnimationValues(ofxAnimatable*p, const Json::Value &data, string& curveName, string& repeatType) {
+		if (p) {
+			READSTRING(curveName, data);
+			p->setCurve(ofxAnimatable::getCurveFromName(curveName));
 
-		float duration = 0;
-		READFLOAT(duration, data);
-		setObjectLifetime(duration);
+			int repeat = 0;
+			READINT(repeat, data);
+			p->setRepeatTimes(repeat);
 
-		float wait = 0;
-		READFLOAT(wait, data);
-		setWait(wait);
+			READSTRING(repeatType, data);
+			p->setRepeatType(getRepeatTypeFromString(repeatType));
 
-		Point3D point0; // defaults to 0,0,0
-		point0.readFromScript(data["start"]);
-		setPosition(point0);
+			float animationDuration = 0.55f;
+			READFLOAT(animationDuration, data);
+			p->setDuration(animationDuration);
+		}
+	}
+	
+	bool objectLifeTimeManager::setup(const Json::Value &data) {
+		usageCount = 0;     // number of times this animation was used
+		objectlifetime = 0; // 0=forever, how long object lives after it starts drawing
+		expired = false;    // object is expired
+		startTime = 0;
+		waitTime = 0;
+		refreshRate = 0;
 
-		bool enable = false;
-		READBOOL(enable, data);
-		setAnimationEnabled(enable);
-
-		Point3D pointEnd; // defaults to 0,0,0
-		pointEnd.readFromScript(data["finish"]);
-		animateTo(pointEnd);
-
-		string curveName = "EASE_IN"; // there is a boat load of coolness here
-		READSTRING(curveName, data);
-		setCurve(ofxAnimatable::getCurveFromName(curveName));
-
-		int repeat = 0;
-		READINT(repeat, data);
-		setRepeatTimes(repeat);
-
-		string repeatType = "LOOP_BACK_AND_FORTH";
-		READSTRING(repeatType, data);
-		setRepeatType(getRepeatTypeFromString());
-
-		float animationDuration = 0.55f;
-		READFLOAT(animationDuration, data);
-		setDuration(animationDuration);
-
+		READFLOAT(waitTime, data);
+		READFLOAT(objectlifetime, data);
+		READFLOAT(refreshRate, data);
+		
 		return true;
+	}
+
+		// only read in one time, to make things more dynamic change at run time
+	bool PointAnimation::setup(const Json::Value &data) {
+		if (data.size() > 0) {
+			objectLifeTimeManager::setup(data);
+
+			setAnimationValues(this, data, string("EASE_IN"), string("LOOP_BACK_AND_FORTH"));
+
+			bool enable = false;
+			READBOOL(enable, data);
+			setAnimationEnabled(enable);
+
+			Point3D point0; // defaults to 0,0,0
+			point0.readFromScript(data["from"]);
+			setPosition(point0);
+
+			Point3D pointEnd; // defaults to 0,0,0
+			pointEnd.readFromScript(data["to"]);
+			animateTo(pointEnd);
+
+			return true;
+		}
 	}
 	void FloatAnimation::update() {
 		if (isAnimationEnabled()) {

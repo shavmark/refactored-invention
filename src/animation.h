@@ -52,6 +52,7 @@ namespace Software2552 {
 		bool operator> (const objectLifeTimeManager& rhs) { return usageCount > rhs.usageCount; }
 		int getAnimationUsageCount() const { return usageCount; }
 		bool refreshAnimation();
+		bool setup(const Json::Value &data);
 		// how long to wait
 		virtual void getTimeBeforeStart(float& t) {	setIfGreater(t, getObjectLifetime() + getWait());		}
 		static bool OKToRemove(shared_ptr<objectLifeTimeManager> me);
@@ -60,44 +61,36 @@ namespace Software2552 {
 		}
 
 	private:
-		int	    usageCount=0;     // number of times this animation was used
-		float   objectlifetime=0; // 0=forever, how long object lives after it starts drawing
-		bool	expired=false;    // object is expired
-		float	startTime = 0;
-		float   waitTime = 0;
-		float	refreshRate = 0;
+		int	    usageCount;     // number of times this animation was used
+		float   objectlifetime; // 0=forever, how long object lives after it starts drawing
+		bool	expired;    // object is expired
+		float	startTime;
+		float   waitTime;
+		float	refreshRate;
 	};
 
 	class FloatAnimation : public ofxAnimatableFloat, public objectLifeTimeManager {
 	public:
+		FloatAnimation(float toIn = 0, float fromIn = 100);
 		void update();
-		bool readFromScript(const Json::Value &data);
+		virtual bool setup(const Json::Value &data);
 		void startAnimationAfterDelay(float delay) { ofxAnimatableFloat::startAnimationAfterDelay(delay); }
 		bool paused() { return paused_; }
 		bool isAnimationEnabled() { return animating_; }
 		void setAnimationEnabled(bool b = true) { animating_ = b; }
 	private:
-		virtual bool myReadFromScript(const Json::Value &data) { return true; };
+		float to;
+		float from;
 	};
-	class BaseAnimation : public FloatAnimation {
+	class RotationAnimation : public FloatAnimation {
 	public:
-		BaseAnimation(float minValueIn = 0, float maxValueIn = 100) :FloatAnimation(){ 
-			minValue = minValueIn; 
-			maxValue = maxValueIn;
-		}
-		bool myReadFromScript(const Json::Value &data);
-	private:
-		float minValue;
-		float maxValue;
-	};
-	class RotationAnimation : public BaseAnimation {
-	public:
-		RotationAnimation() : BaseAnimation(0.0f, 360.0f) {}
+		RotationAnimation() : FloatAnimation(0.0f, 100.0f) {}
 	private:
 	};
-	class Rotation {
+	class Rotation : public FloatAnimation {
 	public:
-		bool readFromScript(const Json::Value &data);
+		Rotation() : FloatAnimation(0.0f, 360.0f) {}
+		bool setup(const Json::Value &data);
 		void update();
 		RotationAnimation x;
 		RotationAnimation y;
@@ -105,21 +98,21 @@ namespace Software2552 {
 	private:
 	};
 
-	class ScaleAnimation : public BaseAnimation {
+	class ScaleAnimation : public FloatAnimation {
 	public:
-		ScaleAnimation() : BaseAnimation(0.0f, 200.0f) {}
+		ScaleAnimation() : FloatAnimation(0.0f, 200.0f) {}
 	private:
 	};
-	class AlphaAnimation : public BaseAnimation {
+	class AlphaAnimation : public FloatAnimation {
 	public:
-		AlphaAnimation() : BaseAnimation(0.0f, 255.0f) {}
+		AlphaAnimation() : FloatAnimation(0.0f, 255.0f) {}
 	private:
 	};
 
 	class PointAnimation : public ofxAnimatableOfPoint, public objectLifeTimeManager {
 	public:
 		void update();
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		void startAnimationAfterDelay(float delay) { ofxAnimatableOfPoint::startAnimationAfterDelay(delay); }
 		bool paused() {	return paused_;	}
 		bool isAnimationEnabled() { return animating_; }

@@ -823,8 +823,16 @@ namespace Software2552 {
 		return t;
 	}
 	void Picture::myDraw() {
+		ofPushMatrix();
+		ofTranslate(worker.getWidth() / 2, worker.getHeight() / 2, 0);//move pivot to centre
+		ofRotate(ofGetFrameNum() * .01, 0, 0, 1);//rotate from centre
+		ofPushMatrix();
+		ofTranslate(-worker.getWidth() / 2, -worker.getHeight() / 2, 0);//move back by the centre offset
+		worker.draw(0, 0);
+		ofPopMatrix();
+		ofPopMatrix();
+		return;
 		ofPoint& pt = getCurrentPosition();
-
 		if (w == 0 || h == 0) {
 			worker.draw(pt.x, pt.y);
 		}

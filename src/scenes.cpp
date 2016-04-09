@@ -84,7 +84,8 @@ namespace Software2552 {
 	bool Stage::readFromScript(const Json::Value &data) {
 		//bool b = pic.loadImage("hubble1.jpg");
 		//ADDANIMATION(rainbow, Rainbow);
-		ADDANIMATION(arrow, Arrow);
+		ADDANIMATION(picture, Picture);
+		//ADDANIMATION(arrow, Arrow);
 		//ADDANIMATION(ball, Ball);
 		getAnimatables().sort(compareOrder);
 		if (!data["background"].empty()) {
