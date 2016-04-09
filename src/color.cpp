@@ -22,7 +22,7 @@ namespace Software2552 {
 		}
 		va_end(args);
 	}
-	bool ColorList::readFromScript(const Json::Value &data) {
+	bool ColorList::setup(const Json::Value &data) {
 		string colorGroupName;
 		READSTRING(colorGroupName, data);
 		if (colorGroupName.size() > 0) {

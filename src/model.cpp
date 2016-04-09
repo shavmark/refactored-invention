@@ -13,7 +13,7 @@ namespace Software2552 {
 		y = (float)ofGetWidth() * ypercent;
 		z = zpercent;//not sure how to do this yet
 	}
-	bool Point3D::readFromScript(const Json::Value &data) {
+	bool Point3D::setup(const Json::Value &data) {
 		float x=0.0f, y=00.0f, z=00.0f;
 		if (data.size() > 0) {
 			READFLOAT(x, data);
@@ -68,11 +68,11 @@ namespace Software2552 {
 		return nullptr;
 	}
 
-	bool ChannelList::readFromScript(const Json::Value &data) {
+	bool ChannelList::setup(const Json::Value &data) {
 
 		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 			shared_ptr<Channel> channel = std::make_shared<Channel>();
-			channel->readFromScript(data[j]);
+			channel->setup(data[j]);
 			if (!channel->getSkip()) {
 				list.push_back(channel);
 			}
@@ -203,12 +203,12 @@ namespace Software2552 {
 		bc = rhs.bc;
 		assign(rhs.year(), rhs.month(), rhs.day(), rhs.hour(), rhs.minute(), rhs.second(), rhs.microsecond(), rhs.microsecond());
 	}
-	bool Ball::myReadFromScript(const Json::Value &data) {
+	bool Ball::mysetup(const Json::Value &data) {
 		// can read any of these items from json here
 		readJsonValue(radius, data["radius"]);
 		return true;
 	}
-	bool Channel::readFromScript(const Json::Value &data) {
+	bool Channel::setup(const Json::Value &data) {
 		READSTRING(keyname, data);
 		float lifetime=0;
 		READFLOAT(lifetime, data);
@@ -228,16 +228,16 @@ namespace Software2552 {
 		return true;
 	}
 
-	bool Dates::readFromScript(const Json::Value &data) {
-		timelineDate.readFromScript(data["timelineDate"]); // date item existed
-		lastUpdateDate.readFromScript(data["lastUpdateDate"]); // last time object was updated
-		itemDate.readFromScript(data["itemDate"]);
+	bool Dates::setup(const Json::Value &data) {
+		timelineDate.setup(data["timelineDate"]); // date item existed
+		lastUpdateDate.setup(data["lastUpdateDate"]); // last time object was updated
+		itemDate.setup(data["itemDate"]);
 		return true;
 	}
 
-	bool Reference::readFromScript(const Json::Value &data) {
-		Dates::readFromScript(data["dates"]);
-		if (Dates::readFromScript(data)) { // ignore reference as an array or w/o data at this point
+	bool Reference::setup(const Json::Value &data) {
+		Dates::setup(data["dates"]);
+		if (Dates::setup(data)) { // ignore reference as an array or w/o data at this point
 			// no base class so it repeats some data in base class ReferencedItem
 			READSTRING(location, data[STRINGIFY(Reference)]);
 			READSTRING(locationPath, data[STRINGIFY(Reference)]);
@@ -247,7 +247,7 @@ namespace Software2552 {
 		return false;
 	}
 
-	bool DateAndTime::readFromScript(const Json::Value &data) {
+	bool DateAndTime::setup(const Json::Value &data) {
 
 		if (READINT(bc, data)) {
 			return true;
@@ -265,13 +265,13 @@ namespace Software2552 {
 		return true;
 	}
 	
-	bool Text::myReadFromScript(const Json::Value &data) {
+	bool Text::mysetup(const Json::Value &data) {
 		readStringFromJson(getText(), data["text"]["str"]);
 		return true;
 	}
 
 	// return true if text read in
-	bool Paragraph::myReadFromScript(const Json::Value &data) {
+	bool Paragraph::mysetup(const Json::Value &data) {
 
 		string str;
 		readStringFromJson(str, data["text"]["str"]);
@@ -308,7 +308,7 @@ namespace Software2552 {
 	}
 
 	//, "carride.mp4"
-	bool Video::myReadFromScript(const Json::Value &data) {
+	bool Video::mysetup(const Json::Value &data) {
 		setType(ActorRole::draw2d);
 		setAnimationEnabled(true);
 		float speed = 0;
@@ -321,7 +321,7 @@ namespace Software2552 {
 		worker.setVolume(volume);
 		return true;
 	}
-	bool Audio::myReadFromScript(const Json::Value &data) {
+	bool Audio::mysetup(const Json::Value &data) {
 		float volume = 1;//default
 		READFLOAT(volume, data);
 		worker.setVolume(volume);
@@ -340,7 +340,7 @@ namespace Software2552 {
 		}
 	}
 	
-	bool Camera::readFromScript(const Json::Value &data) {
+	bool Camera::setup(const Json::Value &data) {
 		//bugbug fill in
 		setOrbit(false); // not rotating
 		//player.setScale(-1, -1, 1); // showing video
@@ -355,38 +355,38 @@ namespace Software2552 {
 		ofMaterial::begin();
 	}
 
-	bool ColorHelper::readFromScript(const Json::Value &data) {
+	bool ColorHelper::setup(const Json::Value &data) {
 		if (data.size() > 0 && !data["colorAnimation"].empty()) {
 			colorAnimation = std::make_shared<AnimiatedColor>();
-			colorAnimation->readFromScript(data["colorAnimation"]);
+			colorAnimation->setup(data["colorAnimation"]);
 		}
 		return true;
 	}
-	bool Material::readFromScript(const Json::Value &data) {
+	bool Material::setup(const Json::Value &data) {
 		// shininess is a value between 0 - 128, 128 being the most shiny // 
 		float shininess = 90;
 		READFLOAT(shininess, data);
 		setShininess(shininess);
-		colorHelper.readFromScript(data);
+		colorHelper.setup(data);
 
 		return true;
 	}
-	bool Light::readFromScript(const Json::Value &data) {
+	bool Light::setup(const Json::Value &data) {
 		//bugbug fill in as an option, use Settings for color, or the defaults
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
 		setLoc(ofRandom(-100,100), 0, ofRandom(300,500));
-		colorHelper.readFromScript(data);
+		colorHelper.setup(data);
 		// help http://www.glprogramming.com/red/chapter05.html
 		worker.setDiffuseColor(colorHelper.getFloatObject(colorHelper.getLightest()));
 		worker.setSpecularColor(colorHelper.getFloatObject(colorHelper.getDarkest()));
 		worker.setAmbientColor(colorHelper.getFloatObject(colorHelper.getBackground()));
 		//bugbug what about alpha?
-		return myReadFromScript(data);
+		return mysetup(data);
 	}
-	bool PointLight::myReadFromScript(const Json::Value &data) {
+	bool PointLight::mysetup(const Json::Value &data) {
 		//bugbug fill in as an option, use Settings for color, or the defaults
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
 		// specular color, the highlight/shininess color //
@@ -396,7 +396,7 @@ namespace Software2552 {
 		//could get from json? not sure yet getAnimationHelper()->setPositionY(ofGetHeight()*.2);
 		return true;
 	}
-	bool DirectionalLight::myReadFromScript(const Json::Value &data) {
+	bool DirectionalLight::mysetup(const Json::Value &data) {
 		//bugbug fill in as an option, use Settings for color, or the defaults
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
 		// specular color, the highlight/shininess color //
@@ -405,7 +405,7 @@ namespace Software2552 {
 		setLoc(ofGetWidth() / 2, ofGetHeight() / 2, 260);
 		return true;
 	}
-	bool SpotLight::myReadFromScript(const Json::Value &data) {
+	bool SpotLight::mysetup(const Json::Value &data) {
 		//bugbug fill in as an option, use Settings for color, or the defaults
 		//get from json player.setDiffuseColor(ofColor(0.f, 255.f, 0.f));
 		// specular color, the highlight/shininess color //
@@ -430,12 +430,12 @@ namespace Software2552 {
 		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), y, radius*scale());
 
 	}
-	bool Arrow::myReadFromScript(const Json::Value &data) {
+	bool Arrow::mysetup(const Json::Value &data) {
 		end.x = ofGetWidth() / 2;
 		end.z = 600;
 		if (data.size() > 0) {
-			start.readFromScript(data);
-			end.readFromScript(data);
+			start.setup(data);
+			end.setup(data);
 			READFLOAT(headSize, data);
 		}
 		return true;
@@ -451,7 +451,7 @@ namespace Software2552 {
 		font.get()->drawString(s, x, y);
 	}
 
-	bool Plane::derivedMyReadFromScript(const Json::Value &data) {
+	bool Plane::derivedMysetup(const Json::Value &data) {
 		return true;
 	}
 	DrawingPrimitive3d::~DrawingPrimitive3d() { 
@@ -469,15 +469,15 @@ namespace Software2552 {
 		}
 	}
 	
-	bool DrawingPrimitive3d::myReadFromScript(const Json::Value &data) {
+	bool DrawingPrimitive3d::mysetup(const Json::Value &data) {
 		///ofPolyRenderMode renderType = OF_MESH_WIREFRAME; //bugbug enable phase II
 		bool wireFrame = true;
 		READBOOL(wireFrame, data);
 		setWireframe(wireFrame);
 		// pass on current animation
 		material.colorHelper.colorAnimation = colorHelper.colorAnimation;
-		material.readFromScript(data);
-		return derivedMyReadFromScript(data);
+		material.setup(data);
+		return derivedMysetup(data);
 	}
 	void DrawingPrimitive3d::myUpdate() {
 		if (get()) {
@@ -515,7 +515,7 @@ namespace Software2552 {
 		material.end();
 	}
 
-	bool Cube::derivedMyReadFromScript(const Json::Value &data) {
+	bool Cube::derivedMysetup(const Json::Value &data) {
 		float size = 100;//default
 		READFLOAT(size, data);
 		if (get()) {
@@ -525,13 +525,13 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	bool Cylinder::derivedMyReadFromScript(const Json::Value &data) {
+	bool Cylinder::derivedMysetup(const Json::Value &data) {
 		return true;
 	}
-	bool Cone::derivedMyReadFromScript(const Json::Value &data) {
+	bool Cone::derivedMysetup(const Json::Value &data) {
 		return true;
 	}
-	bool Sphere::derivedMyReadFromScript(const Json::Value &data) {
+	bool Sphere::derivedMysetup(const Json::Value &data) {
 		if (get()) {
 			float radius = 100;//default
 			READFLOAT(radius, data);
@@ -548,7 +548,7 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	bool Background::myReadFromScript(const Json::Value &data) {
+	bool Background::mysetup(const Json::Value &data) {
 
 		string type;
 		readStringFromJson(type, data["colortype"]);
@@ -634,7 +634,7 @@ namespace Software2552 {
 		// set by default since this is set first other usage of fore color will override
 		ofSetColor(colorHelper.getColorObject(colorHelper.getForeground()));
 	}
-	bool Rainbow::myReadFromScript(const Json::Value &data) {
+	bool Rainbow::mysetup(const Json::Value &data) {
 		return true;
 	}
 	void Rainbow::myUpdate()	{
@@ -717,7 +717,7 @@ namespace Software2552 {
 		}
 		try {
 
-			readFromScript(json["channelList"]);
+			setup(json["channelList"]);
 			if (getList().size() == 0) {
 				logErrorString("missing channelList");
 				return false;
@@ -730,7 +730,7 @@ namespace Software2552 {
 				if (readStringFromJson(sceneType, json["scenes"][i]["sceneType"])) {
 					shared_ptr<Stage> p = getScene(sceneType);
 					// read common items here
-					//p->settings.readFromScript(json["scenes"][i]["settings"]);
+					//p->settings.setup(json["scenes"][i]["settings"]);
 					readStringFromJson(p->getKeyName(), json["scenes"][i]["keyname"]);
 					if (skipChannel(p->getKeyName())) {
 						continue;
@@ -739,7 +739,7 @@ namespace Software2552 {
 						int i = 1; // just for debugging
 					}
 					// save with right playitem
-					if (p->readFromScript(json["scenes"][i])) {
+					if (p->setup(json["scenes"][i])) {
 						// find stage and set it
 						if (!setStage(p)) {
 							logTrace("scene not in playlist (ignored) " + p->getKeyName());
@@ -876,12 +876,12 @@ namespace Software2552 {
 			worker.draw(getCurrentPosition().x, getCurrentPosition().y);
 		}
 	}
-	bool CameraGrabber::myReadFromScript(const Json::Value &data) {
+	bool CameraGrabber::mysetup(const Json::Value &data) {
 		//"Logitech HD Pro Webcam C920"
 
 		return true;
 	}
-	bool Picture::myReadFromScript(const Json::Value &data) { 
+	bool Picture::mysetup(const Json::Value &data) { 
 		setType(ActorRole::draw2d);
 		return true;
 	}
@@ -905,7 +905,7 @@ namespace Software2552 {
 		}
 		return false;
 	}
-	bool TextureVideo::myReadFromScript(const Json::Value &data) {
+	bool TextureVideo::mysetup(const Json::Value &data) {
 		//bugbug fill this in with json reads as needed
 		if (!worker.isLoaded()) {
 			if (!worker.load(getLocationPath())) {
@@ -931,7 +931,7 @@ namespace Software2552 {
 		getSphere().myDraw();
 		video->myunbind();
 	}
-	bool VideoSphere::myReadFromScript(const Json::Value &data) {
+	bool VideoSphere::mysetup(const Json::Value &data) {
 
 		setType(ActorRole::draw3dFixedCamera);
 		video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
@@ -949,7 +949,7 @@ namespace Software2552 {
 		fbo.end();// normal drawing resumes
 	}
 
-	bool SolarSystem::myReadFromScript(const Json::Value &data) {
+	bool SolarSystem::mysetup(const Json::Value &data) {
 		shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data);
  		if (p) {
 			ofPoint min(p->getSphere().get()->getRadius() * 2, 0, 200);
@@ -973,7 +973,7 @@ namespace Software2552 {
 		}
 	}
 
-	bool Planet::myReadFromScript(const Json::Value &data) {
+	bool Planet::mysetup(const Json::Value &data) {
 		setType(ActorRole::draw3dMovingCamera);
 		getSphere().setWireframe(false);
 		float r = ofRandom(5, 100);

@@ -193,11 +193,11 @@ namespace Software2552 {
 			setAnimationEnabled(enable);
 
 			Point3D point0; // defaults to 0,0,0
-			point0.readFromScript(data["from"]);
+			point0.setup(data["from"]);
 			setPosition(point0);
 
 			Point3D pointEnd; // defaults to 0,0,0
-			pointEnd.readFromScript(data["to"]);
+			pointEnd.setup(data["to"]);
 			animateTo(pointEnd);
 
 			return true;
@@ -241,7 +241,7 @@ namespace Software2552 {
 	void ActorRole::setRefreshRate(uint64_t rateIn) { if (locationAnimation)locationAnimation->setRefreshRate(rateIn); }
 	float ActorRole::getWait() { return (locationAnimation) ? locationAnimation->getWait() : 0; }
 
-	bool ActorRole::readActorFromScript(const Json::Value &data) {
+	bool ActorRole::setup(const Json::Value &data) {
 		fill = true; // set default
 		drawOrder = 0;
 		w = h = 0;
@@ -266,16 +266,17 @@ namespace Software2552 {
 			locationAnimation = parseNoList<PointAnimation>(data["animation"]);
 			scaleAnimation = parseNoList<ScaleAnimation>(data["scale"]);
 			rotationAnimation = parseNoList<Rotation>(data["rotation"]);
+			alphaAnimation = parseNoList<AlphaAnimation>(data["alpha"]);
 		}
 
 		// let helper objects deal with empty data in their own way
 
 		// actors can have a lot of attributes, but if not no memory is used
-		font.readFromScript(data);
-		colorHelper.readFromScript(data);
+		font.setup(data);
+		colorHelper.setup(data);
 
 		// read derived class data
-		return myReadFromScript(data);
+		return mysetup(data);
 	}
 	// return current color, track its usage count
 	shared_ptr<AnimiatedColor> ColorList::getCurrentColor() {
@@ -302,6 +303,9 @@ namespace Software2552 {
 		}
 		if (rotationAnimation) {
 			rotationAnimation->update();
+		}
+		if (alphaAnimation) {
+			alphaAnimation->update();
 		}
 		
 		myUpdate(); // call derived classes
@@ -405,7 +409,7 @@ namespace Software2552 {
 		}
 		return font;
 	}
-	bool FontHelper::readFromScript(const Json::Value &data) {
+	bool FontHelper::setup(const Json::Value &data) {
 		if (data.size() > 0 && !data["font"].empty()) {
 
 			string name;
@@ -465,7 +469,7 @@ namespace Software2552 {
 		}
 	}
 	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
-	bool AnimiatedColor::readFromScript(const Json::Value &data) {
+	bool AnimiatedColor::setup(const Json::Value &data) {
 		if (!data.empty()) {
 			READBOOL(usingAnimation, data);
 			READFLOAT(alpha, data);

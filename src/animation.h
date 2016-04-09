@@ -16,7 +16,7 @@ namespace Software2552 {
 		if (data.size() > 0) {
 			results = std::make_shared<T>();
 			if (results) {
-				results->readFromScript(data);
+				results->setup(data);
 			}
 		}
 		return results;
@@ -28,7 +28,7 @@ namespace Software2552 {
 			results = std::make_shared<vector<shared_ptr<T>>>();
 			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 				shared_ptr<T> item = std::make_shared<T>();
-				item->readFromScript(data[j]);
+				item->setup(data[j]);
 				results->push_back(item);
 			}
 		}
@@ -50,7 +50,7 @@ namespace Software2552 {
 		void setObjectLifetime(float t) { objectlifetime=t; }
 		void operator++ () { ++usageCount; }
 		bool operator> (const objectLifeTimeManager& rhs) { return usageCount > rhs.usageCount; }
-		int getAnimationUsageCount() const { return usageCount; }
+		int getUsage() const { return usageCount; }
 		bool refreshAnimation();
 		bool setup(const Json::Value &data);
 		// how long to wait
@@ -129,7 +129,7 @@ namespace Software2552 {
 		void draw();
 		void update();
 		bool paused() { return paused_; }
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		shared_ptr<ColorSet> getColorSet();
 		float getAlpha() { return alpha; }//bugbug flush this out, read it in, set it etc
 		void setAlpha(float a) { alpha = a; }
@@ -150,7 +150,7 @@ namespace Software2552 {
 	class ColorHelper {
 	public:
 		ColorHelper();
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		void setColor(int hex);
 		int getForeground();
 		int getBackground();
@@ -175,7 +175,7 @@ namespace Software2552 {
 	public:
 		ofTrueTypeFont* get();//bugbug fix this so its not a pointer and it always return some value
 		shared_ptr<ofxSmartFont> getPointer();
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 	private:
 		shared_ptr<ofxSmartFont> font;
 	};
@@ -189,7 +189,7 @@ namespace Software2552 {
 		ActorRole() {  }
 		ActorRole(const string&path) { 	setLocationPath(path);	}
 		
-		bool readActorFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		// avoid name clashes and wrap the most used items, else access the contained object for more
 		void operator=(const ActorRole&rhs) {
 			font = rhs.font;
@@ -253,7 +253,7 @@ namespace Software2552 {
 		string name; // any object can have a name, note, date, reference, duration
 
 	private:
-		virtual bool myReadFromScript(const Json::Value &data) { return true; };
+		virtual bool mysetup(const Json::Value &data) { return true; };
 
 		bool okToDraw(drawtype type);
 		drawtype type = draw2d;

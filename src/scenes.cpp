@@ -66,7 +66,7 @@ namespace Software2552 {
 	shared_ptr<Background> Stage::CreateReadAndaddBackgroundItems(const Json::Value &data) {
 		shared_ptr<Background> b = std::make_shared<Background>();
 		if (b != nullptr) {
-			if (b->readActorFromScript(data)) {
+			if (b->setup(data)) {
 				// only save if data was read in 
 				addToAnimatable(b, true);
 			}
@@ -81,7 +81,7 @@ namespace Software2552 {
 #define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
 #define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
 
-	bool Stage::readFromScript(const Json::Value &data) {
+	bool Stage::setup(const Json::Value &data) {
 		//bool b = pic.loadImage("hubble1.jpg");
 		//ADDANIMATION(rainbow, Rainbow);
 		ADDANIMATION(picture, Picture);
@@ -378,7 +378,7 @@ namespace Software2552 {
 		if (p == nullptr) {
 			return nullptr;
 		}
-		if (p->readFromScript(data)) {
+		if (p->setup(data)) {
 			p->setOrbit(rotate);
 			p->worker.setPosition(0, 0, ofRandom(100,500));//bugbug clean up the rand stuff via data and more organized random
 			add(p);
@@ -390,7 +390,7 @@ namespace Software2552 {
 		if (p == nullptr) {
 			return nullptr;
 		}
-		if (p->readFromScript(data)) {
+		if (p->setup(data)) {
 			add(p);
 		}
 		return p;

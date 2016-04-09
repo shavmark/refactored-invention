@@ -38,7 +38,7 @@ namespace Software2552 {
 		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, bool inFront=false) {
 			shared_ptr<T> p = std::make_shared<T>();
 			if (p != nullptr) { // try to run in low memory as much as possible for small devices
-				if (p->readActorFromScript(data)) {
+				if (p->setup(data)) {
 					addToAnimatable(p, inFront);
 				}
 			}
@@ -52,7 +52,7 @@ namespace Software2552 {
 		void fixed3d(bool b = true) { drawIn3dFixed = b; }
 		void moving3d(bool b = true) { drawIn3dMoving = b; }
 		void fixed2d(bool b = true) { drawIn2d = b; }
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 	protected:
 
 		bool drawIn3dFixed = false; 

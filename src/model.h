@@ -33,7 +33,7 @@ namespace Software2552 {
 
 	class Point3D : public ofPoint {
 	public:
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 	private:
 		void convert(float, float, float); // convert to real locations
 	};
@@ -48,7 +48,7 @@ namespace Software2552 {
 		string getDate() {
 			return Poco::DateTimeFormatter::format(timestamp(), format);
 		}
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 	private:
 		int timeZoneDifferential;
 		int bc; // non zero if its a bc date
@@ -56,7 +56,7 @@ namespace Software2552 {
 	
 	class Dates {
 	public:
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 	protected:
 		DateAndTime timelineDate; // date item existed
 		DateAndTime lastUpdateDate; // last time object was updated
@@ -66,7 +66,7 @@ namespace Software2552 {
 	// reference to a cited item
 	class Reference : public Dates {
 	public:
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 
 	protected:
 		string locationPath; // can be local too
@@ -96,13 +96,13 @@ namespace Software2552 {
 		float radius = 100;
 
 	private:
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 	// camera, lights etc
 	class EquipementBaseClass : public objectLifeTimeManager {
 	public:
-		virtual bool readFromScript(const Json::Value &data) = 0;
+		virtual bool setup(const Json::Value &data) = 0;
 	};
 	// cameras (and others like it) are not actors
 	class Camera : public EquipementBaseClass {
@@ -110,7 +110,7 @@ namespace Software2552 {
 		void orbit();
 		void setOrbit(bool b = true) { useOrbit = b; }
 		bool isOrbiting() const { return useOrbit; }
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		ofEasyCam worker;
 	private:
 		bool useOrbit = false;
@@ -122,29 +122,29 @@ namespace Software2552 {
 		void setZ(float z) { loc.z = z; }
 		void setLoc(float x, float y = 0, float z = 0) { loc.x = x; loc.y = y; loc.z = z; }
 		ofPoint loc; // light is set on object within camera scope
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		ofLight worker;
 	private:
 		ColorHelper colorHelper;
-		virtual bool myReadFromScript(const Json::Value &data) { return true;}
+		virtual bool mysetup(const Json::Value &data) { return true;}
 	};
 	class PointLight : public Light {
 	public:
 		PointLight() :Light() { worker.setPointLight(); }
 	private:
-		virtual bool myReadFromScript(const Json::Value &data);
+		virtual bool mysetup(const Json::Value &data);
 	};
 	class DirectionalLight : public Light {
 	public:
 		DirectionalLight() :Light() { worker.setDirectional(); }
 	private:
-		virtual bool myReadFromScript(const Json::Value &data);
+		virtual bool mysetup(const Json::Value &data);
 	};
 	class SpotLight : public Light {
 	public:
 		SpotLight() :Light() { worker.setSpotlight(); }
 	private:
-		virtual bool myReadFromScript(const Json::Value &data);
+		virtual bool mysetup(const Json::Value &data);
 	};
 	class CameraGrabber : public ActorRole {
 	public:
@@ -161,12 +161,12 @@ namespace Software2552 {
 		bool loadGrabber(int wIn, int hIn);
 		int find();
 		int id = 0;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 	class Material : public ofMaterial {
 	public:
 		void begin();
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		ColorHelper colorHelper;
 	};
 
@@ -175,7 +175,7 @@ namespace Software2552 {
 	public:
 		DrawingPrimitive3d(of3dPrimitive *p, drawtype type = draw3dFixedCamera);
 		~DrawingPrimitive3d();
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 		void setWireframe(bool b = true) { wireFrame = b; }
 		bool useWireframe() { return wireFrame; }
 		void myUpdate();
@@ -183,7 +183,7 @@ namespace Software2552 {
 		of3dPrimitive* get() { return worker; }
 		Material  material;
 	private:
-		virtual bool derivedMyReadFromScript(const Json::Value &data)=0;
+		virtual bool derivedMysetup(const Json::Value &data)=0;
 		of3dPrimitive *worker = nullptr; // allow derived pointers and polymorphism
 		bool wireFrame = true;
 		void basicDraw();
@@ -194,14 +194,14 @@ namespace Software2552 {
 		Cube() : DrawingPrimitive3d(new ofBoxPrimitive()) {		}
 		ofBoxPrimitive* get() { return (ofBoxPrimitive*)DrawingPrimitive3d::get(); }
 	private:
-		bool derivedMyReadFromScript(const Json::Value &data);
+		bool derivedMysetup(const Json::Value &data);
 	};
 	class Plane : public DrawingPrimitive3d {
 	public:
 		Plane() : DrawingPrimitive3d(new ofPlanePrimitive()) {		}
 		ofPlanePrimitive* get() { return (ofPlanePrimitive*)DrawingPrimitive3d::get(); }
 	private:
-		bool derivedMyReadFromScript(const Json::Value &data);
+		bool derivedMysetup(const Json::Value &data);
 	};
 	class Sphere : public DrawingPrimitive3d {
 	public:
@@ -209,21 +209,21 @@ namespace Software2552 {
 		
 		ofSpherePrimitive* get() { return (ofSpherePrimitive*)DrawingPrimitive3d::get(); }
 	private:
-		bool derivedMyReadFromScript(const Json::Value &data);
+		bool derivedMysetup(const Json::Value &data);
 	};
 	class Cylinder : public DrawingPrimitive3d {
 	public:
 		Cylinder() : DrawingPrimitive3d(new ofCylinderPrimitive()) {		}
 		ofCylinderPrimitive* get() { return (ofCylinderPrimitive*)DrawingPrimitive3d::get(); }
 	private:
-		bool derivedMyReadFromScript(const Json::Value &data);
+		bool derivedMysetup(const Json::Value &data);
 	};
 	class Cone : public DrawingPrimitive3d {
 	public:
 		Cone() : DrawingPrimitive3d(new ofConePrimitive()) {		}
 		ofConePrimitive* get() { return (ofConePrimitive*)DrawingPrimitive3d::get(); }
 	private:
-		bool derivedMyReadFromScript(const Json::Value &data);
+		bool derivedMysetup(const Json::Value &data);
 	};
 
 	//bugbug add other shapes
@@ -236,7 +236,7 @@ namespace Software2552 {
 
 	private:
 		string text;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 	class Paragraph : public ActorRole {
@@ -245,7 +245,7 @@ namespace Software2552 {
 
 	private:
 		ofxParagraph worker;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 	class Rainbow : public ActorRole {
@@ -254,7 +254,7 @@ namespace Software2552 {
 		void myDraw();
 	private:
 		ofImage worker;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 	class Arrow : public ActorRole {
 	public:
@@ -265,7 +265,7 @@ namespace Software2552 {
 		Point3D start;
 		Point3D end;
 		float headSize = 1.05f;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 	class Audio : public ActorRole {
@@ -273,7 +273,7 @@ namespace Software2552 {
 		void mySetup();
 	private:
 		ofSoundPlayer worker;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 	class Visual : public ActorRole {
@@ -295,7 +295,7 @@ namespace Software2552 {
 		float getTimeBeforeStart(float t);
 	private:
 		ofVideoPlayer worker;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 	class TextureVideo : public ActorRole {
@@ -313,7 +313,7 @@ namespace Software2552 {
 		ofFbo fbo;
 		ofTexture defaulttexture;
 		ofVideoPlayer worker;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 
 	};
 	class VideoSphere : public ActorRole {
@@ -328,7 +328,7 @@ namespace Software2552 {
 		bool set = false;
 		Sphere sphere;
 		shared_ptr<TextureVideo> video = nullptr;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 	class Planet : public ActorRole {
@@ -342,7 +342,7 @@ namespace Software2552 {
 	private:
 		shared_ptr<TextureFromImage> texture = nullptr;
 		Sphere sphere;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 	class SolarSystem : public ActorRole {
@@ -351,7 +351,7 @@ namespace Software2552 {
 		void addPlanets(const Json::Value &data, ofPoint& min);
 
 	private:
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 
 
@@ -362,7 +362,7 @@ namespace Software2552 {
 		void myDraw();
 	private:
 		ofImage worker;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 	};
 	
 	class Background : public Visual {
@@ -380,7 +380,7 @@ namespace Software2552 {
 		ofGradientMode ofMode;
 		TypeOfGradient mode = TypeOfGradient::noGradient;
 		TypeOfBackground type = ColorFixed;
-		bool myReadFromScript(const Json::Value &data);
+		bool mysetup(const Json::Value &data);
 
 	};
 
@@ -393,7 +393,7 @@ namespace Software2552 {
 		Channel(const string&keynameIn) { keyname = keynameIn;  }
 		enum ChannelType{History, Art, Sports, Any};
 		
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		bool operator==(const Channel rhs) { return rhs.keyname == keyname; }
 		string &getKeyName() { return keyname; }
 		shared_ptr<Stage> getStage() { return stage; }
@@ -416,7 +416,7 @@ namespace Software2552 {
 		shared_ptr<Channel> getbyName(const string&name);
 		shared_ptr<Channel> getbyNumber(int i = 0);
 
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 		void removeExpiredItems() {
 			list.erase(std::remove_if(list.begin(), list.end(), objectLifeTimeManager::OKToRemove), list.end());
 		}

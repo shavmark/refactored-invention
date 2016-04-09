@@ -73,7 +73,7 @@ namespace Software2552 {
 		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group, bool global);
 		static shared_ptr<AnimiatedColor> getCurrentColor();
 
-		bool readFromScript(const Json::Value &data);
+		bool setup(const Json::Value &data);
 
 	protected:
 		template<typename T> void removeExpiredItems(forward_list<shared_ptr<T>>&v) {
