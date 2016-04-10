@@ -86,7 +86,7 @@ namespace Software2552 {
 		}
 	}
 
-	ofPoint& ActorRole::getCurrentPosition() {
+	ofPoint ActorRole::getCurrentPosition() {
 		if (locationAnimation) {
 			return locationAnimation->getCurrentPosition();
 		}
@@ -263,7 +263,7 @@ namespace Software2552 {
 			rotationAnimation = parseNoList<Rotation>(data["rotation"]);
 		}
 
-		colorHelper = parseColor(data["colorAnimation"]); // always some kind of helper present
+		colorHelper = parseColor(data); // always some kind of helper present
 
 		// let helper objects deal with empty data in their own way
 
@@ -472,10 +472,19 @@ namespace Software2552 {
 				enable = true; // set on by default
 			}
 			READBOOL(enable, data);
-			setAnimationEnabled(true); 
-			// COLOROBJECT
-			// COLOROBJECT read data
-			// set COLOROBJECT as our color
+			setAnimationEnabled(true);
+
+			int color;//hex color
+			if (data["colorTo"].size() > 0) {
+				if (READINT(color, data["colorTo"])) {
+					animateTo(ofColor().fromHex(color, to));
+				}
+			}
+			if (data["colorFrom"].size() > 0) {
+				if (READINT(color, data["colorFrom"])) {
+					setColor(ofColor().fromHex(color, from));
+				}
+			}
 		}
 		setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
 		return true;

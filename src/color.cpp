@@ -8,20 +8,37 @@
 namespace Software2552 {
 	shared_ptr<ColorList::colordata> ColorList::privateData = nullptr; // declare static data
 
+	ColorSet::ColorSet(shared_ptr<ColorSet>rhs) {
+		if (rhs) {
+			defaultColor = rhs->defaultColor;
+			group = rhs->group;
+			colors = rhs->colors;
+		}
+	}
+
 	shared_ptr<ColorSet> parseColor(const Json::Value &data)
 	{
-		if (data.size() > 0) {
-			ColorList list;
-			shared_ptr<ColorSet> results = list.read(data); // get latest color set bugbug this will change global color
+		ColorList list;
+		shared_ptr<ColorSet> results = list.read(data); // get latest color set bugbug this will change global color
+
+		// will update the global copy of the named colorset  
+		if (data["colorAnimation"].size() > 0) {
 			if (!results) {
-				results = std::make_shared<ColorSet>();
+				results = std::make_shared<ColorSet>(); // make one only if it does not exist
 			}
 			if (results) {
-				results->setup(data);
+				results->setup(data["colorAnimation"]);
 			}
 		}
-		else {
-
+		else if (data["newColorAnimation"].size() > 0) {
+			// create a new color set
+			results = std::make_shared<ColorSet>(results); // make one only if it does not exist
+			if (results) {
+				results->setup(data["newColorAnimation"]);
+			}
+		}
+		if (results) {
+			return results;
 		}
 		return ColorList::getCurrentColor();
 	}
@@ -56,24 +73,33 @@ namespace Software2552 {
 			itr->second->applyCurrentColor();
 		}
 	}
+	// get or create 
+	shared_ptr<AnimiatedColor> ColorSet::getOrCreate(ColorType type) {
+		shared_ptr<AnimiatedColor> c = getAnimatedColor(type);
+		if (!c) {
+			c = std::make_shared<AnimiatedColor>();
+			addColor(type, c);
+		}
+		return c;
+	}
 	// lets us over ride the built in colors bugbug create a basic color than can then be re-done here as needed
 	void ColorSet::setup(const Json::Value &data) {
 		//bugbug good to read in to/from/color and other things
 		//Fore, Back, Lightest, Darkest, Color1, Color2
-		shared_ptr<AnimiatedColor> c = getAnimatedColor(Fore);
+		shared_ptr<AnimiatedColor> c = getOrCreate(Fore);
 		if (c) {
 			c->setup(data["fore"]);
 		}
-		if (c = getAnimatedColor(Back)) {
+		if (c = getOrCreate(Back)) {
 			c->setup(data["back"]);
 		}
-		if (c = getAnimatedColor(Back)) {
+		if (c = getOrCreate(Back)) {
 			c->setup(data["lightest"]);
 		}
-		if (c = getAnimatedColor(Back)) {
+		if (c = getOrCreate(Color1)) {
 			c->setup(data["color1"]);
 		}
-		if (c = getAnimatedColor(Back)) {
+		if (c = getOrCreate(Color2)) {
 			c->setup(data["color2"]);
 		}
 	}

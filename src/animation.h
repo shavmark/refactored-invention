@@ -188,7 +188,7 @@ namespace Software2552 {
 		float getObjectLifetime();
 		void setRefreshRate(uint64_t);
 		float getWait();
-		ofPoint& getCurrentPosition();
+		ofPoint getCurrentPosition();
 		void setPosition(ofPoint& p);
 		virtual float getTimeBeforeStart(float t);
 

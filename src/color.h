@@ -32,22 +32,22 @@ namespace Software2552 {
 		ColorSet();
 		ColorSet(const ColorGroup, shared_ptr<AnimiatedColor> basecolor);
 		ColorSet(const ColorGroup, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest = nullptr);
+		ColorSet(shared_ptr<ColorSet>);
 
 		// colors can be set or generated from the Fore color (the only color required)
-		ofColor& getForeground() { return get(Fore); }
+		ofColor getForeground() { return get(Fore); }
 		ofColor getBackground();
 		ofColor getLightest();
 		ofColor getDarkest();
 		ofColor getColor1();
 		ofColor getColor2();
 		bool alphaEnbled(); // true if any alpha enabled
-		bool operator== (const ColorSet& rhs) {	return getGroup() == rhs.getGroup();}
-		// return true if less than, and both of the desired type or Random
 
 	private:
 		enum ColorType {
 			Fore, Back, Lightest, Darkest, Color1, Color2
 		};
+		shared_ptr<AnimiatedColor> getOrCreate(ColorType type);
 		typedef std::unordered_map<ColorType, shared_ptr<AnimiatedColor>>ColorMap;
 		shared_ptr<AnimiatedColor>getAnimatedColor(ColorType type);
 		ColorGroup getGroup() const { return group; }
