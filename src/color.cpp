@@ -238,10 +238,6 @@ namespace Software2552 {
 
 		}
 	}
-	ofColor& ColorList::getForeground() { return getCurrentColor()->getForeground(); }
-	ofColor& ColorList::getBackground() { return getCurrentColor()->getBackground(); }
-	ofColor& ColorList::getLightest() { return getCurrentColor()->getLightest(); }
-	ofColor& ColorList::getDarkest() { return getCurrentColor()->getDarkest(); }
 
 	//http://www.creativecolorschemes.com/resources/free-color-schemes/art-deco-color-scheme.shtml
 	void ColorList::setup() {

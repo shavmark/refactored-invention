@@ -65,12 +65,6 @@ namespace Software2552 {
 		void update();
 		void setup();
 		bool setup(const Json::Value &data);
-		ofColor& getForeground();
-		ofColor& getBackground();
-		ofColor& getFontColor();
-		ofColor& getLightest();
-		ofColor& getDarkest();
-		ofColor& getOther();
 		void getNextColors();
 
 		class colordata {
