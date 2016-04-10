@@ -7,7 +7,31 @@
 
 namespace Software2552 {
 	shared_ptr<ColorList::colordata> ColorList::privateData = nullptr; // declare static data
-																	 // color will animate
+
+	shared_ptr<ColorSet> parseColor(const Json::Value &data)
+	{
+		if (data.size() > 0) {
+			shared_ptr<ColorSet> results = std::make_shared<ColorSet>();
+			if (results) {
+				results->setup(data);
+			}
+		}
+		else {
+
+		}
+		return ColorList::getCurrentColor();
+	}
+	// true if any alpha enabled
+	bool ColorSet::alphaEnbled() {
+		for (auto& c : colors) {
+			if (c && c->from != 255 && c->to != c->from) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	shared_ptr<AnimiatedColor> create(const ofColor& start, const ofColor& end) {
 		shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
 		if (ac) {
@@ -37,6 +61,12 @@ namespace Software2552 {
 #define SETACOLORRANGE(a,b,c,d)create(ofColor::fromHex(a, b), ofColor::fromHex(c, d))
 #define SETACOLORALPHA(a,b)create(ofColor::fromHex(a),b)
 
+	shared_ptr<AnimiatedColor>ColorSet::getAnimatedColor(int index)	{
+		if (index < colors.size()) {
+			return colors[index];
+		}
+		return nullptr;
+	}
 	ofColor& ColorSet::get(int index) {
 		if (index < colors.size() && colors[index] != nullptr) {
 			return colors[index]->getCurrentColor();
@@ -108,16 +138,22 @@ namespace Software2552 {
 			}
 		}
 		if (group == ColorSet::Modern) {
-			shared_ptr<AnimiatedColor>light = create(ofColor::fromHex(privateData->modern['A']));// example
+			shared_ptr<AnimiatedColor>A = create(ofColor::fromHex(privateData->modern['A']));// example
+			shared_ptr<AnimiatedColor>C = create(ofColor::fromHex(privateData->modern['C']));// example
 
-			add(ColorSet::Modern, SETACOLORRANGE(privateData->modern['A'], 255, privateData->modern['B'], 255),
-				SETACOLORALPHA(privateData->modern['C'], 100), light, SETACOLOR(privateData->modern['C']));
+			addbasic(ColorSet::Modern, SETACOLORRANGE(privateData->modern['A'], 255, privateData->modern['B'], 255),
+				SETACOLORALPHA(privateData->modern['C'], 100), C, A);
+
+			//jabc, lightest:c, darkest: a
+			addfull(ColorSet::Modern, SETACOLORALPHA(privateData->modern['J'], 1), 
+				SETACOLORRANGE(privateData->modern['A'], 255, privateData->modern['B'], 255),
+				SETACOLORALPHA(privateData->modern['B'], 100), SETACOLOR(privateData->modern['C']), C, A);
 		}
 		else if (group == ColorSet::White) {
-			add(ColorSet::White, create(ofColor::white));
+			addbasic(ColorSet::White, create(ofColor::white));//bugbug add "createColor":"white" kind of thing to json
 		}
 		else if (group == ColorSet::Orange) {
-			add(ColorSet::Orange, create(ofColor::orange, ofColor::orangeRed));
+			addbasic(ColorSet::Orange, create(ofColor::orange, ofColor::orangeRed));
 		}
 		return privateData->colorlist.begin();
 	}
@@ -149,11 +185,29 @@ namespace Software2552 {
 				}
 			}
 		}
+		if (!ret) {
+			return std::make_shared<ColorSet>(); // always return something
+		}
 		return ret;
 	}
-	void ColorList::add(const ColorSet::ColorGroup group, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest) {
+	// add basic list
+	shared_ptr<ColorSet>  ColorList::addbasic(const ColorSet::ColorGroup group, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest) {
 		shared_ptr<ColorSet> s = std::make_shared<ColorSet>(group, fore, back, lightest, darkest);
-		privateData->colorlist.push_front(s);
+		if (s) {
+			privateData->colorlist.push_front(s);
+		}
+		return s;
+	}
+	// add a full color list
+	void ColorList::addfull(const ColorSet::ColorGroup group, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back,
+		shared_ptr<AnimiatedColor> color1, shared_ptr<AnimiatedColor> color2,
+		shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest)
+	{
+		shared_ptr<ColorSet> s = addbasic(group, fore, back, lightest, darkest);
+		if (s) {
+			s->addColor(color1);
+			s->addColor(color2);
+		}
 	}
 
 
@@ -200,11 +254,23 @@ namespace Software2552 {
 	ColorSet::ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor> back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest) : objectLifeTimeManager() {
 		group = groupIn;
 		defaultColor = ofColor::greenYellow;
-		colors.push_back(fore);
-		colors.push_back(back);
-		colors.push_back(lightest);
-		colors.push_back(darkest);
+		setSetcolors(4, fore, back, lightest, darkest);
 	}
+	ofColor& ColorSet::getColor1() {
+		// assume data is propery allocated in the colors vector
+		if (colors[Color1] == nullptr) {
+			return get(Fore).getInverted();//bugbug figure out a color that is more unique, a lerp or such
+		}
+		return get(Color1);
+	}
+	ofColor& ColorSet::getColor2() {
+		// assume data is propery allocated in the colors vector
+		if (colors[Color2] == nullptr) {
+			return get(Back).getInverted();//bugbug figure out a color that is more unique, a lerp or such
+		}
+		return get(Color2);
+	}
+
 	ofColor& ColorSet::getLightest() {
 		// assume data is propery allocated in the colors vector
 		if (colors[Lightest] == nullptr) {
@@ -231,11 +297,7 @@ namespace Software2552 {
 				ofColor c = fore->getCurrentColor().getInverted();
 				inverted->setColor(c);
 			}
-			colors.push_back(fore);
-			colors.push_back(inverted);
-			colors.push_back(fore);
-			colors.push_back(inverted);
-
+			setSetcolors(4, fore, inverted, fore, inverted);
 		}
 	}
 
@@ -245,8 +307,7 @@ namespace Software2552 {
 			return;
 		}
 		if (privateData->currentColorSet == nullptr) {
-			privateData->currentColorSet = std::make_shared<ColorSet>();
-			getNextColors(ColorSet::Modern, true);// make sure there is a current color
+			privateData->currentColorSet = getNextColors(ColorSet::Modern, true);// make sure there is a current color
 		}
 		
 		//bugbug phase II read from json

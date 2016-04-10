@@ -26,35 +26,38 @@ namespace Software2552 {
 		//bugbug color set may need 4 or more colors once we do more with graphics
 		// something like fore/back/text/other[n], not sure, or maybe we
 		// just use multiple ColorSets, find out more as we continue on
-		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest=nullptr);
-		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> basecolor);
+		ColorSet(const ColorGroup, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest=nullptr);
+		ColorSet(const ColorGroup, shared_ptr<AnimiatedColor> basecolor);
 		ColorSet() {};
 		// will return default if requested item is not in the set
 		ofColor& getForeground() { return get(Fore); }
 		ofColor& getBackground() { return get(Back); }
 		ofColor& getLightest();
 		ofColor& getDarkest();
-		ofColor& getCustom(int index) { return get(lastcolor+index); } //bugbug support later, defaults for now
+		ofColor& getColor1();
+		ofColor& getColor2();
 		static ColorGroup convertStringToGroup(const string&name);
 		ColorGroup getGroup() const {return group;}
 		ofColor& get(int index);
+		shared_ptr<AnimiatedColor>getAnimatedColor(int index);
+		bool alphaEnbled(); // true if any alpha enabled
 		bool operator== (const ColorSet& rhs) {	return getGroup() == rhs.getGroup();}
 		// return true if less than, and both of the desired type or Random
 		int size() { return colors.size(); }
-		ColorSet& operator++() { usage++; return *this; }
-		int getUsage() { return usage; }
+		void addColor(shared_ptr<AnimiatedColor> c) { colors.push_back(c); }
 	protected:
 		// these get confused with hex values when not used correctly so protect them
 		enum ColorType {
-			Fore, Back, Lightest, Darkest
+			Fore, Back, Lightest, Darkest, Color1, Color2
 		};
 	private:
 		ofColor defaultColor;
 		void setSetcolors(int c, ...);
 		ColorGroup group;
-		int usage = 0;// usage count
 		vector<shared_ptr<AnimiatedColor>> colors; //hex values of all matching colors
 	};
+	
+	shared_ptr<ColorSet> parseColor(const Json::Value &data);
 
 	class ColorList {
 	public:
@@ -91,7 +94,10 @@ namespace Software2552 {
 		}
 
 	private:
-		static void add(const ColorSet::ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back = nullptr, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest = nullptr);
+		static shared_ptr<ColorSet> addbasic(const ColorSet::ColorGroup, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back = nullptr, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest = nullptr);
+		static void addfull(const ColorSet::ColorGroup, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, 
+			shared_ptr<AnimiatedColor> color1, shared_ptr<AnimiatedColor> color2,
+		shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest);
 		static std::forward_list<shared_ptr<ColorSet>>::iterator load(ColorSet::ColorGroup group);
 
 		static shared_ptr<colordata> privateData;// never call directly to assure allocation

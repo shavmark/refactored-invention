@@ -362,7 +362,7 @@ namespace Software2552 {
 		float shininess = 90;
 		READFLOAT(shininess, data);
 		setShininess(shininess);
-		colorHelper = parseNoList<ColorSet>(data["colorAnimation"]);
+		colorHelper = parseColor(data["colorAnimation"]);
 
 		return true;
 	}
@@ -374,7 +374,7 @@ namespace Software2552 {
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
 		setLoc(ofRandom(-100,100), 0, ofRandom(300,500));
 		// help http://www.glprogramming.com/red/chapter05.html
-		colorHelper = parseNoList<ColorSet>(data["colorAnimation"]);
+		colorHelper = parseColor(data["colorAnimation"]);
 		if (colorHelper) {
 			worker.setDiffuseColor(colorHelper->getLightest());
 			worker.setSpecularColor(colorHelper->getDarkest());

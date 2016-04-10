@@ -261,8 +261,9 @@ namespace Software2552 {
 			locationAnimation = parseNoList<PointAnimation>(data["animation"]);
 			scaleAnimation = parseNoList<ScaleAnimation>(data["scale"]);
 			rotationAnimation = parseNoList<Rotation>(data["rotation"]);
-			colorHelper = parseNoList<ColorSet>(data["colorAnimation"]);
 		}
+
+		colorHelper = parseColor(data["colorAnimation"]); // always some kind of helper present
 
 		// let helper objects deal with empty data in their own way
 
@@ -280,6 +281,7 @@ namespace Software2552 {
 				return privateData->currentColorSet;
 			}
 		}
+		// should never happen ... but return a reasonble value if it does
 		return nullptr;
 	}
 
@@ -345,10 +347,10 @@ namespace Software2552 {
 				ofNoFill();
 			}
 			bool disableEAP = false;
-//bugbug figure this out			if (colorHelper->from != colorHelper.colorAnimation->to && colorHelper.colorAnimation->from != 255) {
+			if (colorHelper->alphaEnbled()) {
 				disableEAP = true;
 				ofEnableAlphaBlending(); // only use when needed for performance
-										 //bugbug figure this out			}
+			}
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
 			}
