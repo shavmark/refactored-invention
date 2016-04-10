@@ -56,11 +56,25 @@ namespace Software2552 {
 			itr->second->applyCurrentColor();
 		}
 	}
+	// lets us over ride the built in colors bugbug create a basic color than can then be re-done here as needed
 	void ColorSet::setup(const Json::Value &data) {
 		//bugbug good to read in to/from/color and other things
-
-		for (auto& c : colors) {
-			c.second->setup(data);
+		//Fore, Back, Lightest, Darkest, Color1, Color2
+		shared_ptr<AnimiatedColor> c = getAnimatedColor(Fore);
+		if (c) {
+			c->setup(data["fore"]);
+		}
+		if (c = getAnimatedColor(Back)) {
+			c->setup(data["back"]);
+		}
+		if (c = getAnimatedColor(Back)) {
+			c->setup(data["lightest"]);
+		}
+		if (c = getAnimatedColor(Back)) {
+			c->setup(data["color1"]);
+		}
+		if (c = getAnimatedColor(Back)) {
+			c->setup(data["color2"]);
 		}
 	}
 	void ColorSet::update() {

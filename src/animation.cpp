@@ -457,7 +457,7 @@ namespace Software2552 {
 			applyCurrentColor();
 		}
 	}
-	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
+	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored by doing a set color
 	bool AnimiatedColor::setup(const Json::Value &data) {
 		if (!data.empty()) {
 			READFLOAT(from, data);
@@ -473,6 +473,9 @@ namespace Software2552 {
 			}
 			READBOOL(enable, data);
 			setAnimationEnabled(true); 
+			// COLOROBJECT
+			// COLOROBJECT read data
+			// set COLOROBJECT as our color
 		}
 		setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
 		return true;
