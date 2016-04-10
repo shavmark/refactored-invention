@@ -77,8 +77,9 @@ namespace Software2552 {
 			if (colorGroupName.size() > 0) {
 				getNextColors(ColorSet::convertStringToGroup(colorGroupName), false);
 			}
-			if (privateData && privateData->currentColorSet) {
-				privateData->currentColorSet->setup(data["colorAnimation"]);
+			//bugbug where is this allocated
+			if (privateData) {
+				privateData->currentColorSet = parseNoList<ColorSet>(data["colorAnimation"]);
 			}
 		}
 		return true;

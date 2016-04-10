@@ -302,7 +302,7 @@ namespace Software2552 {
 		worker.setFont(getFontPointer());
 		
 		// object holds it own color bugbug maybe just set current color right before draw?
-		worker.setColor(colorHelper.getForeground());
+		worker.setColor(colorHelper->getForeground());
 
 		return true;
 	}
@@ -350,7 +350,9 @@ namespace Software2552 {
 	}
 	void Material::begin() {
 		// the light highlight of the material  
-		setSpecularColor(colorHelper.getForeground());
+		if (colorHelper){
+			setSpecularColor(colorHelper->getForeground());
+		}
 		//setSpecularColor(ofColor(255, 255, 255, 255)); // does white work wonders? or what does color do?
 		ofMaterial::begin();
 	}
@@ -360,7 +362,7 @@ namespace Software2552 {
 		float shininess = 90;
 		READFLOAT(shininess, data);
 		setShininess(shininess);
-		colorHelper.setup(data);
+		colorHelper = parseNoList<ColorSet>(data["colorAnimation"]);
 
 		return true;
 	}
@@ -371,11 +373,13 @@ namespace Software2552 {
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
 		setLoc(ofRandom(-100,100), 0, ofRandom(300,500));
-		colorHelper = parseNoList<ColorSet>(data["colorAnimation"]);
 		// help http://www.glprogramming.com/red/chapter05.html
-		worker.setDiffuseColor(colorHelper.getLightest());
-		worker.setSpecularColor(colorHelper.getDarkest());
-		worker.setAmbientColor(colorHelper.getBackground());
+		colorHelper = parseNoList<ColorSet>(data["colorAnimation"]);
+		if (colorHelper) {
+			worker.setDiffuseColor(colorHelper->getLightest());
+			worker.setSpecularColor(colorHelper->getDarkest());
+			worker.setAmbientColor(colorHelper->getBackground());
+		}
 		//bugbug what about alpha?
 		return mysetup(data);
 	}
@@ -468,7 +472,7 @@ namespace Software2552 {
 		READBOOL(wireFrame, data);
 		setWireframe(wireFrame);
 		// pass on current animation
-		material.colorHelper.colorAnimation = colorHelper.colorAnimation;
+		material.colorHelper = colorHelper;
 		material.setup(data);
 		return derivedMysetup(data);
 	}
@@ -614,18 +618,20 @@ namespace Software2552 {
 
 	}
 	void Background::myDraw() {
-		if (mode == flat) {
-			// just a plane background
-			ofBackground(colorHelper.getBackground());
+		if (colorHelper) {
+			if (mode == flat) {
+				// just a plane background
+				ofBackground(colorHelper->getBackground());
+			}
+			else if (mode != noGradient) {
+				ofBackgroundGradient(colorHelper->getLightest(), colorHelper->getDarkest(), ofMode);
+			}
+			if (type == none) {
+				return;
+			}
+			// set by default since this is set first other usage of fore color will override
+			ofSetColor(colorHelper->getForeground());
 		}
-		else if (mode != noGradient) {
-			ofBackgroundGradient(colorHelper.getLightest(), colorHelper.getDarkest(), ofMode);
-		}
-		if (type == none) {
-			return;
-		}
-		// set by default since this is set first other usage of fore color will override
-		ofSetColor(colorHelper.getForeground());
 	}
 	bool Rainbow::mysetup(const Json::Value &data) {
 		return true;
@@ -657,7 +663,6 @@ namespace Software2552 {
 	// colors and background change over time but not at the same time
 	void Background::myUpdate() {
 		if (type == ColorChanging && refreshAnimation()) {
-			colorHelper.getNextColors();
 			if (mode != noGradient) {
 				//bugbug test out refreshAnimation
 				switch ((int)ofRandom(0, 3)) {

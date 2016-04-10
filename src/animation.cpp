@@ -345,10 +345,10 @@ namespace Software2552 {
 				ofNoFill();
 			}
 			bool disableEAP = false;
-			if (colorHelper->from != colorHelper.colorAnimation->to && colorHelper.colorAnimation->from != 255) {
+//bugbug figure this out			if (colorHelper->from != colorHelper.colorAnimation->to && colorHelper.colorAnimation->from != 255) {
 				disableEAP = true;
 				ofEnableAlphaBlending(); // only use when needed for performance
-			}
+										 //bugbug figure this out			}
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
 			}

@@ -28,7 +28,7 @@ namespace Software2552 {
 		// just use multiple ColorSets, find out more as we continue on
 		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest=nullptr);
 		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> basecolor);
-
+		ColorSet() {};
 		// will return default if requested item is not in the set
 		ofColor& getForeground() { return get(Fore); }
 		ofColor& getBackground() { return get(Back); }
