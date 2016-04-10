@@ -249,7 +249,7 @@ namespace Software2552 {
 			return;
 		}
 		if (privateData->currentColorSet == nullptr) {
-			privateData->currentColorSet = std::make_shared<AnimiatedColor>();
+			privateData->currentColorSet = std::make_shared<ColorSet>();
 			getNextColors(ColorSet::Modern, true);// make sure there is a current color
 		}
 		
