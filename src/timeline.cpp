@@ -32,7 +32,7 @@ namespace Software2552 {
 		//ofSeedRandom(); // turn of to debug if needed
 		ofSetVerticalSync(false);
 		ofSetFrameRate(frameRate);
-		ColorList list;// install color list, its static global data
+		ColorList colorlist; // just sets up the statics
 		return;
 
 		mesh.setup();

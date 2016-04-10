@@ -24,92 +24,70 @@ namespace Software2552 {
 	// true if any alpha enabled
 	bool ColorSet::alphaEnbled() {
 		for (auto& c : colors) {
-			if (c && c->from != 255 && c->to != c->from) {
+			if (c.second->from != 255 && c.second->to != c.second->from) {
 				return true;
 			}
 		}
 
 		return false;
 	}
-
-	shared_ptr<AnimiatedColor> create(const ofColor& start, const ofColor& end) {
-		shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
-		if (ac) {
-			ac->setColor(start);//bugbug get from json
-			ac->animateTo(end);//bugbug look at delays and final color, good json data
-		}
-		return ac;
-	}
-	// no animation
-	shared_ptr<AnimiatedColor> create(const ofColor& start) {
-		shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
-		if (ac) {
-			ac->setColor(start);//bugbug get from json
-		}
-		return ac;
-	}
-	// only alpha changes
-	shared_ptr<AnimiatedColor> create(const ofColor& start, int alpha) {
-		shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
-		if (ac) {
-			ac->setColor(start);
-			ac->animateToAlpha(alpha);
-		}
-		return ac;
-	}
-#define SETACOLOR(a)create(ofColor::fromHex(a))
-#define SETACOLORRANGE(a,b,c,d)create(ofColor::fromHex(a, b), ofColor::fromHex(c, d))
-#define SETACOLORALPHA(a,b)create(ofColor::fromHex(a),b)
-
-	shared_ptr<AnimiatedColor>ColorSet::getAnimatedColor(int index)	{
-		if (index < colors.size()) {
-			return colors[index];
+	shared_ptr<AnimiatedColor>ColorSet::getAnimatedColor(ColorType type) {
+		ColorMap::iterator itr = colors.find(type);
+		if (itr != colors.end())	{
+			return itr->second;
 		}
 		return nullptr;
 	}
-	ofColor& ColorSet::get(int index) {
-		if (index < colors.size() && colors[index] != nullptr) {
-			return colors[index]->getCurrentColor();
+
+	ofColor ColorSet::get(ColorType type) {
+		ColorMap::iterator itr = colors.find(type);
+		if (itr != colors.end()) {
+			return itr->second->getCurrentColor();
 		}
 		return defaultColor;
 	}
 	void ColorSet::draw() { 
-		if (colors[Fore]) {
-			colors[Fore]->applyCurrentColor();
+		ColorMap::iterator itr = colors.find(Fore);
+		if (itr != colors.end()) {
+			itr->second->applyCurrentColor();
 		}
 	}
 	void ColorSet::setup(const Json::Value &data) {
 		//bugbug good to read in to/from/color and other things
-		//for (auto& c : colors) {
-			//c->setup();
-		//}
+
+		for (auto& c : colors) {
+			c.second->setup(data);
+		}
 	}
 	void ColorSet::update() {
 		for (auto& c : colors) {
-			c->update();
+			c.second->update();
 		}
 	}
-	// set 1 or more colors in the set
-	void ColorSet::setSetcolors(int c, ...) {
-		colors.clear();
+	// set 1 or more colors in the set bugbug function is just an example of var args now
+	//void ColorSet::setSetcolors(int c, ...) {
+	//	colors.clear();
 
-		va_list args;
-		va_start(args, c);
-		for (int i = 0; i < c; ++i) {
-			colors.push_back(va_arg(args, shared_ptr<AnimiatedColor>));
-		}
-		va_end(args);
-	}
+	//va_list args;
+	//va_start(args, c);
+	//for (int i = 0; i < c; ++i) {
+			// null is not saved
+			//	if (va_arg(args, shared_ptr<AnimiatedColor>)) {
+				//colors.push_back(va_arg(args, shared_ptr<AnimiatedColor>));
+				//}
+				//}
+				//va_end(args);
+				//}
 	bool ColorList::setup(const Json::Value &data) {
 		if (data.size() > 0 && !data["colorAnimation"].empty()) {
-			string colorGroupName;
-			READSTRING(colorGroupName, data);
-			if (colorGroupName.size() > 0) {
-				getNextColors(ColorSet::convertStringToGroup(colorGroupName), false);
-			}
 			//bugbug where is this allocated
 			if (privateData) {
-				privateData->currentColorSet = parseNoList<ColorSet>(data["colorAnimation"]);
+				string colorGroupName;
+				READSTRING(colorGroupName, data);
+				if (colorGroupName.size() > 0) {
+					getNextColors(ColorSet::convertStringToGroup(colorGroupName), true);
+				}
+				privateData->currentColorSet = parseColor(data["colorAnimation"]); // could return null
 			}
 		}
 		return true;
@@ -137,23 +115,77 @@ namespace Software2552 {
 				return it; // color already present
 			}
 		}
+		// local helper
+		class aColor {
+		public:
+			aColor(std::unordered_map<char, int> *p) { map = p; }
+			int get(char c) { if (map) return (*map)[c]; return 0; }
+
+			ofColor color(char c, int alpha=255) { return ofColor::fromHex(get(c), alpha); }
+
+			shared_ptr<AnimiatedColor> create(char c, int alpha, char c2, int alpha2=255) {
+				return create(color('A', 255), color('B', 255));
+			}
+
+			shared_ptr<AnimiatedColor> create(const ofColor& c) {
+				shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
+				if (ac) {
+					ac->setColor(c);
+				}
+				return ac;
+			}
+			shared_ptr<AnimiatedColor> create(const ofColor& start, const ofColor& end) {
+				shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
+				if (ac) {
+					ac->setColor(start);//bugbug get from json
+					ac->animateTo(end);//bugbug look at delays and final color, good json data
+				}
+				return ac;
+			}
+			// no animation
+			shared_ptr<AnimiatedColor> create(char c) {
+				shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
+				if (ac) {
+					ac->setColor(color(c));//bugbug get from json
+				}
+				return ac;
+			}
+			// only alpha changes
+			shared_ptr<AnimiatedColor> create(char start, int alpha) {
+				shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
+				if (ac) {
+					ac->setColor(color(start));
+					ac->animateToAlpha(alpha);
+				}
+				return ac;
+			}
+
+			std::unordered_map<char, int> *map;
+		};
+#define CREATE(a) c.create(a)
 		if (group == ColorSet::Modern) {
-			shared_ptr<AnimiatedColor>A = create(ofColor::fromHex(privateData->modern['A']));// example
-			shared_ptr<AnimiatedColor>C = create(ofColor::fromHex(privateData->modern['C']));// example
+			aColor c(&privateData->modern);
+			shared_ptr<AnimiatedColor>A = c.create('A');
+			shared_ptr<AnimiatedColor>C = c.create('C');
+			//add the range here with the helper
+			addbasic(ColorSet::Modern, c.create('A', 255, 'B'), c.create('C', 100), C, A);
 
-			addbasic(ColorSet::Modern, SETACOLORRANGE(privateData->modern['A'], 255, privateData->modern['B'], 255),
-				SETACOLORALPHA(privateData->modern['C'], 100), C, A);
+			//jabc, lightest:c, darkest: a, note sharing pointers is ok too, like using the pointer A in more places,
+			// but in that case it will changes across colors, something that may be wanted
+			shared_ptr<AnimiatedColor>J = c.create('J', 1);
+			shared_ptr<AnimiatedColor>B = c.create('B');
+			addfull(ColorSet::Modern, J, A, B, CREATE('C'), CREATE('C'), CREATE('A'));
 
-			//jabc, lightest:c, darkest: a
-			addfull(ColorSet::Modern, SETACOLORALPHA(privateData->modern['J'], 1), 
-				SETACOLORRANGE(privateData->modern['A'], 255, privateData->modern['B'], 255),
-				SETACOLORALPHA(privateData->modern['B'], 100), SETACOLOR(privateData->modern['C']), C, A);
+			// jobl a pointer one that will change as others change
+			addfull(ColorSet::Modern, J, CREATE('O'), B, CREATE('L'), CREATE('B'), CREATE('O'));
 		}
 		else if (group == ColorSet::White) {
-			addbasic(ColorSet::White, create(ofColor::white));//bugbug add "createColor":"white" kind of thing to json
+			aColor c(nullptr);
+			addbasic(ColorSet::White, CREATE(ofColor::white));//bugbug add "createColor":"white" kind of thing to json
 		}
 		else if (group == ColorSet::Orange) {
-			addbasic(ColorSet::Orange, create(ofColor::orange, ofColor::orangeRed));
+			aColor c(nullptr);
+			addbasic(ColorSet::Orange, c.create(ofColor::orange, ofColor::orangeRed));
 		}
 		return privateData->colorlist.begin();
 	}
@@ -205,8 +237,8 @@ namespace Software2552 {
 	{
 		shared_ptr<ColorSet> s = addbasic(group, fore, back, lightest, darkest);
 		if (s) {
-			s->addColor(color1);
-			s->addColor(color2);
+			s->addColor(ColorSet::Color1, color1);
+			s->addColor(ColorSet::Color2, color2);
 		}
 	}
 
@@ -254,37 +286,78 @@ namespace Software2552 {
 	ColorSet::ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor> back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest) : objectLifeTimeManager() {
 		group = groupIn;
 		defaultColor = ofColor::greenYellow;
-		setSetcolors(4, fore, back, lightest, darkest);
-	}
-	ofColor& ColorSet::getColor1() {
-		// assume data is propery allocated in the colors vector
-		if (colors[Color1] == nullptr) {
-			return get(Fore).getInverted();//bugbug figure out a color that is more unique, a lerp or such
+		if (fore) {
+			colors[Fore] = fore; // never set a null
 		}
-		return get(Color1);
-	}
-	ofColor& ColorSet::getColor2() {
-		// assume data is propery allocated in the colors vector
-		if (colors[Color2] == nullptr) {
-			return get(Back).getInverted();//bugbug figure out a color that is more unique, a lerp or such
+		if (back) {
+			colors[Back] = back; // never set a null
 		}
-		return get(Color2);
+		if (lightest) {
+			colors[Lightest] = lightest; // never set a null
+		}
+		if (darkest) {
+			colors[Darkest] = darkest; // never set a null
+		}
+	}
+	ofColor ColorSet::getColor1() {
+		ColorMap::iterator itr = colors.find(Color1);
+		if (itr == colors.end()) {
+			ofColor c = getBackground();// start with fore color
+			c.setSaturation(c.getSaturation() + 50);// may wrap around?
+			c.setBrightness(c.getBrightness() + 20);// may wrap around?
+			return c;
+		}
+		return itr->second->getCurrentColor();
+	}
+	ofColor ColorSet::getBackground() {
+		ColorMap::iterator itr = colors.find(Back);
+		if (itr == colors.end()) {
+			return get(Fore).getInverted();//only color we can assume is Fore, but maybe we can do more to make it unique
+		}
+		return itr->second->getCurrentColor();
 	}
 
-	ofColor& ColorSet::getLightest() {
-		// assume data is propery allocated in the colors vector
-		if (colors[Lightest] == nullptr) {
-			return get(Fore);
+	ofColor ColorSet::getColor2() {
+		ColorMap::iterator itr = colors.find(Color2);
+		if (itr == colors.end()) {
+			ofColor c = getForeground();// start with fore color
+			c.setSaturation(c.getSaturation() + 10);// may wrap around?
+			c.setBrightness(c.getBrightness() + 10);// may wrap around?
+			return c;
 		}
-		return get(Lightest);
+		return itr->second->getCurrentColor();
 	}
-	ofColor& ColorSet::getDarkest() {
+
+	ofColor ColorSet::getLightest() {
 		// assume data is propery allocated in the colors vector
-		if (colors[Darkest] == nullptr) {
-			return get(Back); // assume always at least a background
+		ColorMap::iterator itr = colors.find(Lightest);
+		if (itr == colors.end()) {
+			ofColor c = get(Fore);// start with fore color
+			c.setSaturation(c.getSaturation() - 50);// may wrap around?
+			c.setBrightness(c.getBrightness() - 20);// may wrap around?
+			return c;
 		}
-		return get(Darkest);
+		return itr->second->getCurrentColor();
 	}
+	ofColor ColorSet::getDarkest() {
+		ColorMap::iterator itr = colors.find(Darkest);
+		if (itr == colors.end()) {
+			ofColor c = getBackground();// start with fore color
+			c.setSaturation(c.getSaturation() + 50);// may wrap around?
+			c.setBrightness(c.getBrightness() + 20);// may wrap around?
+			return c;
+		}
+		return itr->second->getCurrentColor();
+	}
+	ColorSet::ColorSet() {
+		group = Modern;
+		defaultColor = ofColor::yellow;
+		shared_ptr<AnimiatedColor>c = std::make_shared<AnimiatedColor>();
+		if (c) {
+			c->setColor(defaultColor);
+			colors[Fore] = c;
+		}
+	};
 
 	ColorSet::ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore) : objectLifeTimeManager() {
 		group = groupIn;
@@ -292,12 +365,7 @@ namespace Software2552 {
 									  ///     ofColor b = ofColor::blue;
 									  ///     b.lerp(r, 0.5); // now purple
 		if (fore) {
-			shared_ptr<AnimiatedColor>inverted = std::make_shared<AnimiatedColor>();
-			if (inverted) {
-				ofColor c = fore->getCurrentColor().getInverted();
-				inverted->setColor(c);
-			}
-			setSetcolors(4, fore, inverted, fore, inverted);
+			colors[Fore] = fore; // never set a null
 		}
 	}
 

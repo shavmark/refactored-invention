@@ -2,6 +2,8 @@
 #include "2552software.h"
 #include "animation.h"
 #include <forward_list>
+#include <unordered_map>
+
 
 #include <cstdarg>
 
@@ -16,6 +18,7 @@ namespace Software2552 {
 	// colors can have a time out or a wait count via Animator
 	class ColorSet : public objectLifeTimeManager {
 	public:
+		friend class ColorList;
 		//convertStringToGroup must be updated to match ColorGroup
 		enum ColorGroup {
 			Modern, Smart, Orange, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random, lastcolor//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
@@ -26,35 +29,38 @@ namespace Software2552 {
 		//bugbug color set may need 4 or more colors once we do more with graphics
 		// something like fore/back/text/other[n], not sure, or maybe we
 		// just use multiple ColorSets, find out more as we continue on
-		ColorSet(const ColorGroup, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest=nullptr);
+		ColorSet();
 		ColorSet(const ColorGroup, shared_ptr<AnimiatedColor> basecolor);
-		ColorSet() {};
-		// will return default if requested item is not in the set
+		ColorSet(const ColorGroup, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest = nullptr);
+
+		// colors can be set or generated from the Fore color (the only color required)
 		ofColor& getForeground() { return get(Fore); }
-		ofColor& getBackground() { return get(Back); }
-		ofColor& getLightest();
-		ofColor& getDarkest();
-		ofColor& getColor1();
-		ofColor& getColor2();
-		static ColorGroup convertStringToGroup(const string&name);
-		ColorGroup getGroup() const {return group;}
-		ofColor& get(int index);
-		shared_ptr<AnimiatedColor>getAnimatedColor(int index);
+		ofColor getBackground();
+		ofColor getLightest();
+		ofColor getDarkest();
+		ofColor getColor1();
+		ofColor getColor2();
 		bool alphaEnbled(); // true if any alpha enabled
 		bool operator== (const ColorSet& rhs) {	return getGroup() == rhs.getGroup();}
 		// return true if less than, and both of the desired type or Random
-		int size() { return colors.size(); }
-		void addColor(shared_ptr<AnimiatedColor> c) { colors.push_back(c); }
-	protected:
-		// these get confused with hex values when not used correctly so protect them
+
+	private:
 		enum ColorType {
 			Fore, Back, Lightest, Darkest, Color1, Color2
 		};
-	private:
+		typedef std::unordered_map<ColorType, shared_ptr<AnimiatedColor>>ColorMap;
+		shared_ptr<AnimiatedColor>getAnimatedColor(ColorType type);
+		ColorGroup getGroup() const { return group; }
+		void addColor(ColorType type, shared_ptr<AnimiatedColor> c) { colors[type] = c; }
+		static ColorGroup convertStringToGroup(const string&name);
+		int size() { return colors.size(); }
+		ofColor get(ColorType type);
+		// these get confused with hex values when not used correctly so protect them
+
 		ofColor defaultColor;
-		void setSetcolors(int c, ...);
+		//void setSetcolors(int c, ...);
 		ColorGroup group;
-		vector<shared_ptr<AnimiatedColor>> colors; //hex values of all matching colors
+		ColorMap colors;
 	};
 	
 	shared_ptr<ColorSet> parseColor(const Json::Value &data);

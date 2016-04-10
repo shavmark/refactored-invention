@@ -198,8 +198,8 @@ namespace Software2552 {
 			pointEnd.setup(data["to"]);
 			animateTo(pointEnd);
 
-			return true;
 		}
+		return true;
 	}
 	void FloatAnimation::update() {
 		if (isAnimationEnabled()) {

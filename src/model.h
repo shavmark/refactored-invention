@@ -426,6 +426,7 @@ namespace Software2552 {
 		vector<shared_ptr<Channel>>& getList();
 	private:
 		vector<shared_ptr<Channel>> list;
+		
 	};
 
 }
