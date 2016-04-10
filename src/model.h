@@ -125,7 +125,7 @@ namespace Software2552 {
 		bool setup(const Json::Value &data);
 		ofLight worker;
 	private:
-		ColorHelper colorHelper;
+		shared_ptr<ColorSet> colorHelper=nullptr;
 		virtual bool mysetup(const Json::Value &data) { return true;}
 	};
 	class PointLight : public Light {
@@ -167,7 +167,7 @@ namespace Software2552 {
 	public:
 		void begin();
 		bool setup(const Json::Value &data);
-		ColorHelper colorHelper;
+		shared_ptr<ColorSet> colorHelper = nullptr;
 	};
 
 	

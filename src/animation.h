@@ -5,6 +5,7 @@
 #include "ofxAnimatableOfColor.h"
 #include "ofxEasing.h"
 
+
 // supports animation
 
 namespace Software2552 {
@@ -125,12 +126,10 @@ namespace Software2552 {
 		void update();
 		bool paused() { return paused_; }
 		bool setup(const Json::Value &data);
-		shared_ptr<ColorSet> getColorSet();
 		void setAlpha(float val);
 		void getNextColors();
-		void setColorSet(shared_ptr<ColorSet>p);
-		bool useAnimation() { return usingAnimation; }
-		void setAnimation(bool b = true) { usingAnimation = true; }
+		bool isAnimationEnabled() { return animating_; }
+		void setAnimationEnabled(bool b = true) { animating_ = b; }
 		// avoid long access code
 		ofFloatColor getFloatObject();
 		ofColor getColorObject();
@@ -138,26 +137,9 @@ namespace Software2552 {
 		float to = 255;
 
 	private:
-		shared_ptr<ColorSet> colorSet = nullptr; // use a pointer to the global color for dynamic color or set a fixed one
-		bool usingAnimation = false; // force  to set this to make sure its understood
 
 	};
 
-	class ColorHelper {
-	public:
-		ColorHelper();
-		bool setup(const Json::Value &data);
-		void setColor(int hex, int alpha);
-		ofColor& getForeground();
-		ofColor& getBackground();
-		ofColor& getFontColor();
-		ofColor& getLightest();
-		ofColor& getDarkest();
-		ofColor& getOther();
-		void getNextColors();
-		shared_ptr<AnimiatedColor> colorAnimation; // optional color
-	private:
-	};
 	// simple helper to read in font data from json 
 #define defaultFontSize 14
 #define defaultFontFile "fonts/Raleway-Thin.ttf"
@@ -186,7 +168,7 @@ namespace Software2552 {
 		// avoid name clashes and wrap the most used items, else access the contained object for more
 		void operator=(const ActorRole&rhs) {
 			font = rhs.font;
-			colorHelper.colorAnimation = rhs.colorHelper.colorAnimation;
+			colorHelper = rhs.colorHelper;
 		}
 		void setDefaults(const ActorRole&rhs){
 			*this = rhs;
@@ -237,7 +219,7 @@ namespace Software2552 {
 		float scale();
 	protected:
 		FontHelper  font;
-		ColorHelper colorHelper;
+		shared_ptr<ColorSet> colorHelper = nullptr;
 		
 		void applyColor();
 		string notes;// unstructured string of info, can be shown to the user

@@ -21,20 +21,20 @@ namespace Software2552 {
 			Modern, Smart, Orange, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random, lastcolor//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
 		};
 		void update();
+		void setup(const Json::Value &data);
+		void draw();
 		//bugbug color set may need 4 or more colors once we do more with graphics
 		// something like fore/back/text/other[n], not sure, or maybe we
 		// just use multiple ColorSets, find out more as we continue on
-		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest);
-		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back);
+		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest=nullptr);
 		ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> basecolor);
 
 		// will return default if requested item is not in the set
 		ofColor& getForeground() { return get(Fore); }
 		ofColor& getBackground() { return get(Back); }
-		ofColor& getLightest() { return get(Lightest); }
-		ofColor& getDarkest() { return get(Darkest); }
+		ofColor& getLightest();
+		ofColor& getDarkest();
 		ofColor& getCustom(int index) { return get(lastcolor+index); } //bugbug support later, defaults for now
-
 		static ColorGroup convertStringToGroup(const string&name);
 		ColorGroup getGroup() const {return group;}
 		ofColor& get(int index);
@@ -46,7 +46,7 @@ namespace Software2552 {
 	protected:
 		// these get confused with hex values when not used correctly so protect them
 		enum ColorType {
-			Fore, Back, Text, Other, Lightest, Darkest
+			Fore, Back, Lightest, Darkest
 		};
 	private:
 		ofColor defaultColor;
@@ -64,10 +64,24 @@ namespace Software2552 {
 
 		void update();
 		void setup();
+		bool setup(const Json::Value &data);
+		ofColor& getForeground();
+		ofColor& getBackground();
+		ofColor& getFontColor();
+		ofColor& getLightest();
+		ofColor& getDarkest();
+		ofColor& getOther();
+		void getNextColors();
+
 		class colordata {
 		public:
 			forward_list<shared_ptr<ColorSet>> colorlist; // global list of colors
-			shared_ptr<AnimiatedColor>currentColor = nullptr;  // color set in use, currentColor never changes but its content does so the pointer can be widely shared
+			shared_ptr<ColorSet>currentColorSet = nullptr;  // color set in use, currentColor never changes but its content does so the pointer can be widely shared
+			std::unordered_map<char, int> modern;
+			std::unordered_map<char, int> smart;
+			std::unordered_map<char, int> extreme;
+			std::unordered_map<char, int> earthtone;
+
 		};
 
 		// call getNext at start up and when ever colors should change
@@ -75,22 +89,20 @@ namespace Software2552 {
 		// get next color based on type and usage count
 		// example: type==cool gets the next cool type, type=Random gets any next color
 		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group, bool global);
-		static shared_ptr<AnimiatedColor> getCurrentColor();
-
-		bool setup(const Json::Value &data);
+		static shared_ptr<ColorSet> getCurrentColor();
 
 	protected:
 		template<typename T> void removeExpiredItems(forward_list<shared_ptr<T>>&v) {
 			v.remove_if(objectLifeTimeManager::OKToRemove);
 		}
 
-		void add(const ColorSet::ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back = nullptr, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest=nullptr);
-
 	private:
+		static void add(const ColorSet::ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back = nullptr, shared_ptr<AnimiatedColor> lightest = nullptr, shared_ptr<AnimiatedColor> darkest = nullptr);
+		static std::forward_list<shared_ptr<ColorSet>>::iterator load(ColorSet::ColorGroup group);
+
 		static shared_ptr<colordata> privateData;// never call directly to assure allocation
 		static void setCurrentColorSet(shared_ptr<ColorSet>c);
 	};
-
 
 	
 }

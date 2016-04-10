@@ -218,12 +218,6 @@ namespace Software2552 {
 	// we want to run w/o crashing in very low memory so we need to check all our pointers, we can chug along
 	// until memory frees up, a crash would be very bad
 	
-	ofColor& ColorHelper::getForeground() { return colorAnimation->getColorSet()->getForeground(); }
-	ofColor& ColorHelper::getBackground() { return colorAnimation->getColorSet()->getBackground(); }
-	ofColor& ColorHelper::getFontColor() { return colorAnimation->getColorSet()->getForeground(); }
-	ofColor& ColorHelper::getLightest() { return colorAnimation->getColorSet()->getLightest(); }
-	ofColor& ColorHelper::getDarkest() { return colorAnimation->getColorSet()->getDarkest(); }
-	void ColorHelper::getNextColors() { colorAnimation->getNextColors(); }
 	void ActorRole::setAnimationPosition(const ofPoint& p) { if (locationAnimation)locationAnimation->setPosition(p); }
 	void ActorRole::setAnimationPositionX(float x) { if (locationAnimation)locationAnimation->setPositionX(x); }
 	void ActorRole::setAnimationPositionY(float y) { if (locationAnimation)locationAnimation->setPositionY(y); }
@@ -267,34 +261,35 @@ namespace Software2552 {
 			locationAnimation = parseNoList<PointAnimation>(data["animation"]);
 			scaleAnimation = parseNoList<ScaleAnimation>(data["scale"]);
 			rotationAnimation = parseNoList<Rotation>(data["rotation"]);
+			colorHelper = parseNoList<ColorSet>(data["colorAnimation"]);
 		}
 
 		// let helper objects deal with empty data in their own way
 
 		// actors can have a lot of attributes, but if not no memory is used
 		font.setup(data);
-		colorHelper.setup(data);
 
 		// read derived class data
 		return mysetup(data);
 	}
 	// return current color, track its usage count
-	shared_ptr<AnimiatedColor> ColorList::getCurrentColor() {
+	shared_ptr<ColorSet> ColorList::getCurrentColor() {
 		if (privateData) {
-			if (privateData->currentColor && privateData->currentColor->colorSet) {
-				++(*(privateData->currentColor->colorSet)); // mark usage if data has been set
-				return privateData->currentColor;
+			if (privateData->currentColorSet) {
+				++(*(privateData->currentColorSet)); // mark usage if data has been set
+				return privateData->currentColorSet;
 			}
 		}
 		return nullptr;
 	}
 
-	ColorHelper::ColorHelper() { colorAnimation = ColorList::getCurrentColor(); } // default to global color
+	
 
 	void ActorRole::updateForDrawing() {
 
-		colorHelper.colorAnimation->update(); // always returns a pointer
-
+		if (colorHelper) {
+			colorHelper->update();
+		}
 		if (locationAnimation) {
 			locationAnimation->update();
 		}
@@ -313,7 +308,9 @@ namespace Software2552 {
 		z.update();
 	}
 	void ActorRole::applyColor() {
-		colorHelper.colorAnimation->draw(); // always returns a pointer
+		if (colorHelper) {
+			colorHelper->draw(); // always returns a pointer
+		}
 	}
 	string &ActorRole::getLocationPath() {
 		return locationPath;
@@ -348,14 +345,14 @@ namespace Software2552 {
 				ofNoFill();
 			}
 			bool disableEAP = false;
-			if (colorHelper.colorAnimation->from != colorHelper.colorAnimation->to && colorHelper.colorAnimation->from != 255) {
+			if (colorHelper->from != colorHelper.colorAnimation->to && colorHelper.colorAnimation->from != 255) {
 				disableEAP = true;
 				ofEnableAlphaBlending(); // only use when needed for performance
 			}
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
 			}
-			rotate();
+			//rotate();
 			myDraw();
 			if (disableEAP) {
 				ofDisableAlphaBlending(); 
@@ -449,60 +446,31 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	// always return a valid pointer
-	shared_ptr<ColorSet> AnimiatedColor::getColorSet() {
-		if (colorSet == nullptr) {
-			return ColorList::getCurrentColor()->getColorSet(); // use the global color
-		}
-		return colorSet;
-	}
-	// reset the object
-	void AnimiatedColor::setColorSet(shared_ptr<ColorSet>p) {
-		if (p) {
-			colorSet = p;
-			setColor(getColorSet()->getLightest());
-			animateTo(getColorSet()->getDarkest());
-		}
-	}
-
-	void AnimiatedColor::getNextColors() {
-		setColorSet(ColorList::getNextColors(getColorSet()->getGroup(), false));
-	}
 	void AnimiatedColor::update() {
 		float dt = 1.0f / 60.0f;//bugbug does this time to frame count? I think so
 		ofxAnimatableOfColor::update(dt);
-		if (getColorSet()) {//bugbug can we advance color if desired here? 
-		}
 	}
 	void AnimiatedColor::draw() {
-		if (useAnimation()) {
+		if (isAnimationEnabled()) {
 			applyCurrentColor();
-		}
-		else {
-			ofSetColor(getColorSet()->getForeground());
-			//background set by background manager
 		}
 	}
 	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored
 	bool AnimiatedColor::setup(const Json::Value &data) {
 		if (!data.empty()) {
-			string colorGroup;
-			READSTRING(colorGroup, data);
-			if (colorGroup.size()> 0) {
-				// must be set before alpha
-				setColorSet(ColorList::getNextColors(ColorSet::convertStringToGroup(colorGroup), false));
-			}
 			READFLOAT(from, data);
 			READFLOAT(to, data);
 			if (from != 255) {
 				setAlphaOnly(from);
 			}
 			// anmation requested
+			bool enable = false;
 			if (from != to && from != 255) {
 				animateToAlpha(to); // will not animate color
-				usingAnimation = true; // can still be turned off below
+				enable = true; // set on by default
 			}
-			READBOOL(usingAnimation, data);
+			READBOOL(enable, data);
+			setAnimationEnabled(true); 
 		}
 		setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
 		return true;

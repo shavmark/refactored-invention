@@ -355,17 +355,6 @@ namespace Software2552 {
 		ofMaterial::begin();
 	}
 
-	bool ColorHelper::setup(const Json::Value &data) {
-		if (data.size() > 0 && !data["colorAnimation"].empty()) {
-			if (!colorAnimation) {
-				colorAnimation = std::make_shared<AnimiatedColor>();
-			}
-			if (colorAnimation){
-				colorAnimation->setup(data["colorAnimation"]);
-			}
-		}
-		return true;
-	}
 	bool Material::setup(const Json::Value &data) {
 		// shininess is a value between 0 - 128, 128 being the most shiny // 
 		float shininess = 90;
@@ -382,7 +371,7 @@ namespace Software2552 {
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
 		setLoc(ofRandom(-100,100), 0, ofRandom(300,500));
-		colorHelper.setup(data);
+		colorHelper = parseNoList<ColorSet>(data["colorAnimation"]);
 		// help http://www.glprogramming.com/red/chapter05.html
 		worker.setDiffuseColor(colorHelper.getLightest());
 		worker.setSpecularColor(colorHelper.getDarkest());
