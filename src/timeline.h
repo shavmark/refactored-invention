@@ -21,7 +21,7 @@ namespace Software2552 {
 
 	private:
 		ChannelList playlist;
-		
+		ColorList colorlist;
 
 		MoreMesh mesh; // just for now bugbug, move into class hiearchey when ready
 	};

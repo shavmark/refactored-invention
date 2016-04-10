@@ -11,7 +11,11 @@ namespace Software2552 {
 	shared_ptr<ColorSet> parseColor(const Json::Value &data)
 	{
 		if (data.size() > 0) {
-			shared_ptr<ColorSet> results = std::make_shared<ColorSet>();
+			ColorList list;
+			shared_ptr<ColorSet> results = list.read(data); // get latest color set bugbug this will change global color
+			if (!results) {
+				results = std::make_shared<ColorSet>();
+			}
 			if (results) {
 				results->setup(data);
 			}
@@ -78,19 +82,18 @@ namespace Software2552 {
 				//}
 				//va_end(args);
 				//}
-	bool ColorList::setup(const Json::Value &data) {
-		if (data.size() > 0 && !data["colorAnimation"].empty()) {
+	shared_ptr<ColorSet> ColorList::read(const Json::Value &data) {
+		if (data.size() > 0) {
 			//bugbug where is this allocated
 			if (privateData) {
-				string colorGroupName;
-				READSTRING(colorGroupName, data);
-				if (colorGroupName.size() > 0) {
-					getNextColors(ColorSet::convertStringToGroup(colorGroupName), true);
+				string colorGroup;
+				READSTRING(colorGroup, data);
+				if (colorGroup.size() > 0) {
+					privateData->currentColorSet = getNextColors(ColorSet::convertStringToGroup(colorGroup), true);
 				}
-				privateData->currentColorSet = parseColor(data["colorAnimation"]); // could return null
 			}
 		}
-		return true;
+		return privateData->currentColorSet;
 	}
 	void ColorList::update() {
 		if (privateData && privateData->currentColorSet) {
@@ -277,11 +280,6 @@ namespace Software2552 {
 	}
 
 	ColorList::ColorList() {
-		// assumes static data so color info is shared across app
-		if (privateData == nullptr) {
-			privateData = std::make_shared<colordata>();
-			setup();
-		}
 	}
 	ColorSet::ColorSet(const ColorGroup groupIn, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor> back, shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest) : objectLifeTimeManager() {
 		group = groupIn;
@@ -371,6 +369,10 @@ namespace Software2552 {
 
 	//http://www.creativecolorschemes.com/resources/free-color-schemes/art-deco-color-scheme.shtml
 	void ColorList::setup() {
+		// assumes static data so color info is shared across app
+		if (privateData == nullptr) {
+			privateData = std::make_shared<colordata>();
+		}
 		if (privateData == nullptr) {
 			return;
 		}

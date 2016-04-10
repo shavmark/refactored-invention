@@ -22,6 +22,7 @@ namespace Software2552 {
 		if (playlist.getCurrent() != nullptr) {
 			playlist.getCurrent()->getStage()->resume();
 		}
+				
 	}
 	void Timeline::pause() {
 		if (playlist.getCurrent() != nullptr) {
@@ -32,7 +33,7 @@ namespace Software2552 {
 		//ofSeedRandom(); // turn of to debug if needed
 		ofSetVerticalSync(false);
 		ofSetFrameRate(frameRate);
-		ColorList colorlist; // just sets up the statics
+		colorlist.setup();
 		return;
 
 		mesh.setup();
@@ -46,6 +47,7 @@ namespace Software2552 {
 		else {
 			ofExit();
 		}
+		colorlist.update();
 	};
 
 	// keep as fast as possible

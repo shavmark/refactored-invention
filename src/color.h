@@ -73,7 +73,7 @@ namespace Software2552 {
 
 		void update();
 		void setup();
-		bool setup(const Json::Value &data);
+		static shared_ptr<ColorSet> read(const Json::Value &data);
 		void getNextColors();
 
 		class colordata {
