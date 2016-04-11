@@ -100,16 +100,12 @@ namespace Software2552 {
 		if (data.size() > 0) {
 			objectLifeTimeManager::setup(data);
 
-			setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
-
 			READFLOAT(from, data);
 			READFLOAT(to, data);
+			animateFromTo(from, to); // starts animation right now, will turn off pause, so call be fore SetAnimationValues
 
-			animateFromTo(from, to);
+			setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
 
-			bool enableAnimation = false;
-			READBOOL(enableAnimation, data);
-			setAnimationEnabled(enableAnimation);
 		}
 
 		return true;
@@ -152,6 +148,7 @@ namespace Software2552 {
 			float duration = 0.55f;
 			READFLOAT(duration, data);
 			p->setDuration(duration);
+
 		}
 	}
 	
@@ -175,11 +172,6 @@ namespace Software2552 {
 		if (data.size() > 0) {
 			objectLifeTimeManager::setup(data);
 
-			setAnimationValues(this, data, string("EASE_IN"), string("LOOP_BACK_AND_FORTH"));
-
-			bool enable = false;
-			READBOOL(enable, data);
-			setAnimationEnabled(enable);
 
 			Point3D point0; // defaults to 0,0,0
 			point0.setup(data["from"]);
@@ -187,23 +179,21 @@ namespace Software2552 {
 
 			Point3D pointEnd; // defaults to 0,0,0
 			pointEnd.setup(data["to"]);
-			animateTo(pointEnd);
+			animateTo(pointEnd); // starts animation will pause if needed setAnimationValues
+
+			setAnimationValues(this, data, string("EASE_IN"), string("LOOP_BACK_AND_FORTH"));
 
 		}
 		return true;
 	}
 	void FloatAnimation::update() {
-		if (isAnimationEnabled()) {
-			float dt = 1.0f / 60.0f;
-			ofxAnimatableFloat::update(dt);
-		}
+		float dt = 1.0f / 60.0f;
+		ofxAnimatableFloat::update(dt);
 	}
 
 	void PointAnimation::update() {
-		if (isAnimationEnabled()) {
-			float dt = 1.0f / 60.0f;
-			ofxAnimatableOfPoint::update(dt);
-		}
+		float dt = 1.0f / 60.0f;
+		ofxAnimatableOfPoint::update(dt);
 	}
 	// try to keep wrappers out of site to avoid clutter
 	// we want to run w/o crashing in very low memory so we need to check all our pointers, we can chug along
@@ -215,7 +205,6 @@ namespace Software2552 {
 	void ActorRole::setAnimationPositionZ(float z) { if (locationAnimation)locationAnimation->setPositionZ(z); }
 	void ActorRole::animateTo(const ofPoint& p) { if (locationAnimation)locationAnimation->animateTo(p); }
 	bool ActorRole::refreshAnimation() { return (locationAnimation) ? locationAnimation->refreshAnimation() : false; }
-	void ActorRole::setAnimationEnabled(bool f) { if (locationAnimation)locationAnimation->setAnimationEnabled(f); }
 	float ActorRole::getTimeBeforeStart(float t) { return (locationAnimation) ? locationAnimation->getWait() : 0; }
 	void ActorRole::pause(){ if (locationAnimation)locationAnimation->pause();}
 	void ActorRole::resume() { if (locationAnimation)locationAnimation->pause(); }
@@ -276,7 +265,12 @@ namespace Software2552 {
 		return nullptr;
 	}
 
-	
+	void ActorRole::setFullSize() {
+		fullsize = true;
+		pause(); // make sure animation is off
+				 //bugbug get this somewhere setSpeed(0.25f);
+	}
+
 
 	void ActorRole::updateForDrawing() {
 
@@ -309,11 +303,19 @@ namespace Software2552 {
 		return locationPath;
 	}
 	float ActorRole::rotate() {
+		ofTranslate(10, 10, 0);//move pivot to centre
+		ofRotate(ofGetFrameNum() * .05, 0, 0, 1);//rotate from centre
+		ofTranslate(-10 / 2, -10 / 2, 0);//move back by the centre offset
 		//bugbug use rotationAnimation and make sure w and h are set for ration
 		if (w && h) {
-			ofTranslate(w / 2, h / 2, 0);//move pivot to centre
-			ofRotate(ofGetFrameNum() * .05, 0, 0, 1);//rotate from centre
-			ofTranslate(-w / 2, -w / 2, 0);//move back by the centre offset
+			//ofTranslate(w / 2, h / 2, 0);//move pivot to centre
+			//ofRotate(ofGetFrameNum() * .05, 0, 0, 1);//rotate from centre
+			//ofTranslate(-w / 2, -w / 2, 0);//move back by the centre offset
+			//glTranslatef(xpos, ypos, zpos);
+			//glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f);
+			ofTranslate(getCurrentPosition().x, getCurrentPosition().y, getCurrentPosition().z);    // Move circle to desired location.
+			ofRotate(ofGetFrameNum() * .05, 0, 0, 1);
+
 		}
 		return 0;
 
@@ -345,7 +347,7 @@ namespace Software2552 {
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
 			}
-			//rotate();
+			rotate();
 			myDraw();
 			if (disableEAP) {
 				ofDisableAlphaBlending(); 
@@ -358,10 +360,11 @@ namespace Software2552 {
 		if (type != getType()){
 			return false;
 		}
+		// bugbug objectLifeTimeManager will handle these also
 		if (locationAnimation == nullptr) {
-			return true;
+			return true; 
 		}
-		if (locationAnimation->paused() || locationAnimation->isExpired()) {
+		if (locationAnimation && locationAnimation->isExpired()) {
 			return false;
 		}
 		// if still in wait threshold
@@ -438,40 +441,42 @@ namespace Software2552 {
 		ofxAnimatableOfColor::update(dt);
 	}
 	void AnimiatedColor::draw() {
-		if (isAnimationEnabled()) {
+		if (isAnimating()) {
 			applyCurrentColor();
 		}
 	}
 	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored by doing a set color
 	bool AnimiatedColor::setup(const Json::Value &data) {
 		if (!data.empty()) {
+
 			READFLOAT(from, data);
 			READFLOAT(to, data);
 			if (from != 255) {
 				setAlphaOnly(from);
 			}
 			// anmation requested
-			bool enable = false;
 			if (from != to && from != 255) {
 				animateToAlpha(to); // will not animate color
-				enable = true; // set on by default
 			}
-			READBOOL(enable, data);
-			setAnimationEnabled(true);
 
-			int color;//hex color
-			if (data["colorTo"].size() > 0) {
-				if (READINT(color, data["colorTo"])) {
-					animateTo(ofColor().fromHex(color, to));
-				}
-			}
+			string color;//hex color
 			if (data["colorFrom"].size() > 0) {
-				if (READINT(color, data["colorFrom"])) {
-					setColor(ofColor().fromHex(color, from));
+				if (READSTRING(color, data["colorFrom"])) {
+					setColor(ofColor().fromHex(ofHexToInt(color), from));
 				}
 			}
+			if (data["color"].size() > 0 || data["colorFrom"].size() > 0) { // let the user user either
+				if (READSTRING(color, data["color"]) || READINT(color, data["colorFrom"])) {
+					setColor(ofColor().fromHex(ofHexToInt(color), from));
+				}
+			}
+			if (data["colorTo"].size() > 0) {
+				if (READSTRING(color, data["colorTo"])) {
+					animateTo(ofColor().fromHex(ofHexToInt(color), to));
+				}
+			}
+			setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
 		}
-		setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
 		return true;
 	}
 

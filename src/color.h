@@ -21,7 +21,7 @@ namespace Software2552 {
 		friend class ColorList;
 		//convertStringToGroup must be updated to match ColorGroup
 		enum ColorGroup {
-			Modern, Smart, Orange, Extreme, EarthTone, BuiltIn, Default, Black, White, Blue, RedBlue, Random, lastcolor//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
+			Modern, ModernAnimated, UserDefined, Smart, Orange, OrangeAnimated, Blue, BlueAnimated, Extreme, EarthTone, BuiltIn, Default, Black, White,  RedBlue, Random, lastcolor//only modern so far, ArtDeco, Warm, Cool, Stark, Pastel, LightValue, DarkValue, MediumValue, Random
 		};
 		void update();
 		void setup(const Json::Value &data);
@@ -84,14 +84,16 @@ namespace Software2552 {
 		static shared_ptr<ColorSet> getCurrentColor();
 
 	protected:
+		typedef std::unordered_map<char, int>Map;
+
 		class colordata {
 		public:
 			forward_list<shared_ptr<ColorSet>> colorlist; // global list of colors
 			shared_ptr<ColorSet>currentColorSet = nullptr;  // color set in use, currentColor never changes but its content does so the pointer can be widely shared
-			std::unordered_map<char, int> modern;
-			std::unordered_map<char, int> smart;
-			std::unordered_map<char, int> extreme;
-			std::unordered_map<char, int> earthtone;
+			Map modern;
+			Map smart;
+			Map extreme;
+			Map earthtone;
 
 		};
 		template<typename T> void removeExpiredItems(forward_list<shared_ptr<T>>&v) {

@@ -27,10 +27,14 @@ namespace Software2552 {
 		shared_ptr<vector<shared_ptr<T>>>  results = nullptr;
 		if (data.size() > 0) {
 			results = std::make_shared<vector<shared_ptr<T>>>();
-			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-				shared_ptr<T> item = std::make_shared<T>();
-				item->setup(data[j]);
-				results->push_back(item);
+			if (results) {
+				for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+					shared_ptr<T> item = std::make_shared<T>();
+					if (item) {
+						item->setup(data[j]);
+						results->push_back(item);
+					}
+				}
 			}
 		}
 		return results;
@@ -75,10 +79,6 @@ namespace Software2552 {
 		FloatAnimation(float toIn = 0, float fromIn = 100);
 		void update();
 		virtual bool setup(const Json::Value &data);
-		void startAnimationAfterDelay(float delay) { ofxAnimatableFloat::startAnimationAfterDelay(delay); }
-		bool paused() { return paused_; }
-		bool isAnimationEnabled() { return animating_; }
-		void setAnimationEnabled(bool b = true) { animating_ = b; }
 	private:
 		float to;
 		float from;
@@ -109,10 +109,6 @@ namespace Software2552 {
 	public:
 		void update();
 		bool setup(const Json::Value &data);
-		void startAnimationAfterDelay(float delay) { ofxAnimatableOfPoint::startAnimationAfterDelay(delay); }
-		bool paused() {	return paused_;	}
-		bool isAnimationEnabled() { return animating_; }
-		void setAnimationEnabled(bool b= true) { animating_ =b; }
 	private:
 	};
 	// global color data
@@ -124,13 +120,10 @@ namespace Software2552 {
 		AnimiatedColor() :ofxAnimatableOfColor() { }
 		void draw();
 		void update();
-		bool paused() { return paused_; }
 		bool setup(const Json::Value &data);
 		void setAlpha(float val);
 		void getNextColors();
 		bool AlphaEnabled() { return (from != 255 && to != from); }
-		bool isAnimationEnabled() { return animating_; }
-		void setAnimationEnabled(bool b = true) { animating_ = b; }
 
 	private:
 		float from = 255;// alpha
@@ -180,8 +173,8 @@ namespace Software2552 {
 		void setAnimationPositionY(float y);
 		void setAnimationPositionZ(float z);
 		void animateTo(const ofPoint& p);
+		void setFullSize();
 		bool refreshAnimation();
-		void setAnimationEnabled(bool f);
 		void resume();
 		void pause();
 		float getObjectLifetime();
@@ -216,7 +209,7 @@ namespace Software2552 {
 		ofPoint defaultStart;
 
 		int drawOrder = 0; // sorted by value so any value is ok
-
+		bool fullsize = false;
 		FontHelper  font;
 		shared_ptr<ColorSet> colorHelper = nullptr;
 		

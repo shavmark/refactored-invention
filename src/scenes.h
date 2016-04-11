@@ -33,15 +33,20 @@ namespace Software2552 {
 		void resume();
 		string &getKeyName() { return keyname; }
 
-		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, bool inFront = false) {
-			shared_ptr<T> p = std::make_shared<T>();
-			if (p != nullptr) { // try to run in low memory as much as possible for small devices
-				if (p->setup(data)) {
-					addToAnimatable(p, inFront);
+		template<typename T> void CreateReadAndaddAnimatable(const Json::Value &data, bool inFront = false, bool fullsize=false) {
+			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+				shared_ptr<T> item = std::make_shared<T>();
+				if (item) {
+					if (item->setup(data[j])) {
+						if (fullsize) {
+							item->setFullSize();
+						}
+						addToAnimatable(item, inFront);
+					}
 				}
 			}
-			return p;
 		}
+		void addToAnimatable(shared_ptr<ActorRole>p, bool inFront = false);
 
 	protected:
 		void fixed3d(bool b = true) { drawIn3dFixed = b; }
@@ -50,8 +55,8 @@ namespace Software2552 {
 		float findMaxWait();
 		void drawlights();
 		virtual shared_ptr<Background> CreateReadAndaddBackgroundItems(const Json::Value &data);
-		shared_ptr<Camera> CreateReadAndaddCamera(const Json::Value &data, bool rotate = false);
-		template<typename T>shared_ptr<T> CreateReadAndaddLight(const Json::Value &data);
+		template<typename T> void CreateReadAndaddCamera(const Json::Value &data);
+		template<typename T> void CreateReadAndaddLight(const Json::Value &data);
 		list<shared_ptr<ActorRole>>& getAnimatables() { return animatables; }
 
 		bool drawIn3dFixed = false; 
@@ -83,7 +88,6 @@ namespace Software2552 {
 		string keyname;
 
 	private:
-		void addToAnimatable(shared_ptr<ActorRole>p, bool inFront=false);
 
 		void removeExpiredItems(list<shared_ptr<ActorRole>>&v) {
 			v.remove_if(ActorRole::OKToRemove);

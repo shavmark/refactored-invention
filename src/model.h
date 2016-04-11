@@ -105,14 +105,18 @@ namespace Software2552 {
 	// cameras (and others like it) are not actors
 	class Camera : public EquipementBaseClass {
 	public:
-		void orbit();
-		void setOrbit(bool b = true) { useOrbit = b; }
-		bool isOrbiting() const { return useOrbit; }
+		virtual void orbit() {};
+		virtual bool isOrbiting() const { return false; }
 		bool setup(const Json::Value &data);
 		ofEasyCam worker;
 	private:
-		bool useOrbit = false;
 	};
+	class MovingCamera : public Camera {
+	public:
+		virtual void orbit();
+		virtual bool isOrbiting() const { return true; }
+	};
+
 	class Light : public EquipementBaseClass {
 	public:
 		void setX(float x) { loc.x = x; }
@@ -277,10 +281,8 @@ namespace Software2552 {
 	class Visual : public ActorRole {
 	public:
 		void myUpdate();
-		void setFullSize();
 	protected:
 		bool isLoaded = false;
-		bool fullsize = false; // keep full size of screen, like for a background
 	};
 
 	class Video : public Visual {

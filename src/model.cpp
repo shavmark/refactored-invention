@@ -310,7 +310,6 @@ namespace Software2552 {
 	//, "carride.mp4"
 	bool Video::mysetup(const Json::Value &data) {
 		setType(ActorRole::draw2d);
-		setAnimationEnabled(true);
 		float speed = 0;
 		READFLOAT(speed, data);
 		if (speed != 0) {
@@ -330,19 +329,16 @@ namespace Software2552 {
 
 		return true;
 	}
-	void Camera::orbit() {
-		if (useOrbit) {
-			float time = ofGetElapsedTimef();
-			float longitude = 10 * time;
-			float latitude = 10 * sin(time*0.8);
-			float radius = 600 + 50 * sin(time*0.4);
-			worker.orbit(longitude, latitude, radius, ofPoint(0, 0, 0));
-		}
+	void MovingCamera::orbit() {
+		float time = ofGetElapsedTimef();
+		float longitude = 10 * time;
+		float latitude = 10 * sin(time*0.8);
+		float radius = 600 + 50 * sin(time*0.4);
+		worker.orbit(longitude, latitude, radius, ofPoint(0, 0, 0));
 	}
 	
 	bool Camera::setup(const Json::Value &data) {
 		//bugbug fill in
-		setOrbit(false); // not rotating
 		//player.setScale(-1, -1, 1); // showing video
 		worker.setPosition(ofRandom(-100, 200), ofRandom(60, 70), ofRandom(600, 700));
 		worker.setFov(60);
@@ -583,17 +579,11 @@ namespace Software2552 {
 		setRefreshRate(60000);// just set something different while in dev
 
 		if (!data["image"].empty()) {
-			shared_ptr<Picture> p = getStage()->CreateReadAndaddAnimatable<Picture>(data["image"], true);
-			if (p) {
-				p->setFullSize();
-			}
+			getStage()->CreateReadAndaddAnimatable<Picture>(data["image"], true, true);
 		}
 		
 		if (!data["video"].empty()) {
-			shared_ptr<Video> p = getStage()->CreateReadAndaddAnimatable<Video>(data["video"], true);
-			if (p) {
-				p->setFullSize();
-			}
+			getStage()->CreateReadAndaddAnimatable<Video>(data["video"], true, true);
 		}
 
 		if (!data["rainbow"].empty()) {
@@ -610,12 +600,6 @@ namespace Software2552 {
 			pt.y = -ofGetHeight() / 2;
 			setPosition(pt);
 		}
-	}
-	void Visual::setFullSize() {
-		fullsize = true;
-		setAnimationEnabled(false);
-		//bugbug get this somewhere setSpeed(0.25f);
-
 	}
 	void Background::myDraw() {
 		if (colorHelper) {
@@ -923,7 +907,12 @@ namespace Software2552 {
 	bool VideoSphere::mysetup(const Json::Value &data) {
 
 		setType(ActorRole::draw3dFixedCamera);
-		video = getStage()->CreateReadAndaddAnimatable<TextureVideo>(data);
+		video = std::make_shared<TextureVideo>();
+		if (video) {
+			if (video->setup(data)) {//bugbug is this data correct?
+				getStage()->addToAnimatable(video);
+			}
+		}
 		getSphere().setWireframe(false);
 		getSphere().get()->set(250, 180);// set default
 		return true;
@@ -939,11 +928,17 @@ namespace Software2552 {
 	}
 
 	bool SolarSystem::mysetup(const Json::Value &data) {
-		shared_ptr<VideoSphere> p = getStage()->CreateReadAndaddAnimatable<VideoSphere>(data);
- 		if (p) {
-			ofPoint min(p->getSphere().get()->getRadius() * 2, 0, 200);
-			addPlanets(data["Planets"], min);
-			return true;
+		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+				shared_ptr<VideoSphere> planet = std::make_shared<VideoSphere>();
+				if (planet) {
+					if (planet->setup(data[j])) {
+						ofPoint min(planet->getSphere().get()->getRadius() * 2, 0, 200);
+						addPlanets(data["Planets"], min);
+						getStage()->addToAnimatable(planet);
+					}
+				}
+			}
 		}
 		//bugbug if there are no camareas a this point add in two defaults, one fixed and the other moving
 		// do the same for VideoSphere, post a trace if this is done
@@ -952,12 +947,17 @@ namespace Software2552 {
 	void SolarSystem::addPlanets(const Json::Value &data, ofPoint& min) {
 		ofPoint point;
 		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-			shared_ptr<Planet> p = getStage()->CreateReadAndaddAnimatable<Planet>(data);
-			if (p) {
-				point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
-				point.y = ofRandom(min.y, 500);
-				point.z = ofRandom(min.z, 500);
-				p->getSphere().get()->setPosition(point); // data stored as pointer so this updates the list
+			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+				shared_ptr<Planet> planet = std::make_shared<Planet>();
+				if (planet) {
+					if (planet->setup(data[j])) {
+						point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
+						point.y = ofRandom(min.y, 500);
+						point.z = ofRandom(min.z, 500);
+						planet->getSphere().get()->setPosition(point); // data stored as pointer so this updates the list
+						getStage()->addToAnimatable(planet);
+					}
+				}
 			}
 		}
 	}

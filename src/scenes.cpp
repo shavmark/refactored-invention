@@ -78,99 +78,56 @@ namespace Software2552 {
 		return (first->getDrawOrder()  < second->getDrawOrder());
 	}
 	// samples https://sites.google.com/site/ofauckland/examples
-#define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
-#define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
+#define ADDANIMATION(name,type)	if (!data["graphics"][STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data["graphics"][STRINGIFY(name)])
+#define ADDLIGHT(name,type)	if (!data["lights"][STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data["lights"][STRINGIFY(name)])
+#define ADDCAMERA(name,type)	if (!data["cameras"][STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data["cameras"][STRINGIFY(name)])
 
 	bool Stage::setup(const Json::Value &data) {
-		//bool b = pic.loadImage("hubble1.jpg");
-		//ADDANIMATION(rainbow, Rainbow);
-		//ADDANIMATION(picture, Picture);
-		//ADDANIMATION(arrow, Arrow);
 		ADDANIMATION(ball, Ball);
-		getAnimatables().sort(compareOrder);
-		//if (!data["background"].empty()) {
-			//CreateReadAndaddBackgroundItems(data["background"]);
-		//}
 		return true;
-		//ADDANIMATION(sphere, Sphere);// need to make sure there is a camera and light (maybe do an error check)
-		//ADDLIGHT(light, Light);
-		
+		ADDANIMATION(rainbow, Rainbow);
+		ADDANIMATION(audio, Audio);
+		ADDANIMATION(videoSphere, VideoSphere);
+		ADDANIMATION(text, Text);
+		ADDANIMATION(paragraph, Paragraph);
+		ADDANIMATION(sphere, Sphere);
+		ADDANIMATION(planet, Planet);
+		ADDANIMATION(solarSystem, SolarSystem);
+		ADDANIMATION(cube, Cube);
+		ADDANIMATION(grabber, CameraGrabber);
 		ADDANIMATION(picture, Picture);
-		//ADDANIMATION(video, Video);
+		ADDANIMATION(video, Video);
+		getAnimatables().sort(compareOrder);
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
+		ADDCAMERA(cameraFixed, Camera);
+		ADDCAMERA(camera, MovingCamera);
+		ADDLIGHT(light, Light);
+		ADDLIGHT(pointLight, PointLight);
+		ADDLIGHT(directionalLight, DirectionalLight);
+		ADDLIGHT(spotLight, SpotLight);
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
-			CreateReadAndaddCamera(data["cameraFixed"]);
+			shared_ptr<Camera> camera = std::make_shared<Camera>();
+			if (camera) {
+				if (camera->setup(data)) {
+					camera->worker.setPosition(0, 0, ofRandom(100, 500));//bugbug clean up the rand stuff via data and more organized random
+					add(camera);
+				}
+			}
 		}
 		// set a default light if none exist
 		if (getLights().size() == 0) {
-			CreateReadAndaddLight<Light>(data["light"]);
+			shared_ptr<Light> light = std::make_shared<Light>();
+			if (light) {
+				if (light->setup(data)) {
+					add(light);
+				}
+			}
 		}
-		// read back ground after sort as its objects are inserted in the front of the draw list
-		//if (!data["background"].empty()) {
-			//CreateReadAndaddBackgroundItems(data["background"]);
-		//}
 		return true;
-		
-		// data must Cap first char of key words
-#define SETANIMATION(name)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<name>(data[STRINGIFY(name)])
-
-		for (Json::ArrayIndex i = 0; i < data["drawingObjects"].size(); ++i) {
-			string datastring = data["drawingObjects"][i].asString();
-			SETANIMATION(Audio);
-			if (datastring == "videoSphere") {
-				CreateReadAndaddAnimatable<VideoSphere>(data[datastring]);
-			}
-			else if (datastring == "text") {
-				CreateReadAndaddAnimatable<Text>(data[datastring]);
-			}
-			else if (datastring == "paragraph") {
-				CreateReadAndaddAnimatable<Paragraph>(data[datastring]);
-			}
-			else if (datastring == "sphere") {
-				CreateReadAndaddAnimatable<Sphere>(data[datastring]);
-			}
-			else if (datastring == "planet") {
-				CreateReadAndaddAnimatable<Planet>(data[datastring]);
-			}
-			else if (datastring == "solarSystem") {
-				CreateReadAndaddAnimatable<SolarSystem>(data[datastring]);
-			}
-			else if (datastring == "cube") {
-				CreateReadAndaddAnimatable<Cube>(data[datastring]);
-			}
-			else if (datastring == "grabber") {
-				CreateReadAndaddAnimatable<CameraGrabber>(data[datastring]);
-			}
-		}
-		for (Json::ArrayIndex i = 0; i < data["cameraObjects"].size(); ++i) {
-			string datastring = data["cameraObjects"][i].asString();
-			//bugbug maybe create things like CameraLeft, Middle, front etc
-			if (datastring == "cameraMoving") {
-				CreateReadAndaddCamera(data[datastring], true);
-			}
-			else if (datastring == "cameraFixed") {
-				CreateReadAndaddCamera(data[datastring]);
-			}
-		}
-			for (Json::ArrayIndex i = 0; i < data["lightingObjects"].size(); ++i) {
-			string datastring = data["lightingObjects"][i].asString();
-
-			if (datastring == "pointLight") {
-				CreateReadAndaddLight<PointLight>(data[datastring]);
-			}
-			else if (datastring == "directionalLight") {
-				CreateReadAndaddLight<DirectionalLight>(data[datastring]);
-			}
-			else if (datastring == "spotLight") {
-				CreateReadAndaddLight<SpotLight>(data[datastring]);
-			}
-			else if (datastring == "light") {
-				CreateReadAndaddLight<Light>(data[datastring]);
-			}
-		}
-
-		return true; 
 	};
 
 	void Stage::draw() {
@@ -369,27 +326,26 @@ namespace Software2552 {
 			a->drawIt(ActorRole::draw3dFixedCamera);
 		}
 	}
-	shared_ptr<Camera> Stage::CreateReadAndaddCamera(const Json::Value &data, bool rotate) {
-		shared_ptr<Camera> p = std::make_shared<Camera>();
-		if (p == nullptr) {
-			return nullptr;
+	template<typename T>void Stage::CreateReadAndaddCamera(const Json::Value &data) {
+		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+			shared_ptr<T> camera = std::make_shared<T>();
+			if (camera) {
+				if (camera->setup(data[j])) {
+					camera->worker.setPosition(0, 0, ofRandom(100, 500));//bugbug clean up the rand stuff via data and more organized random
+					add(camera);
+				}
+			}
 		}
-		if (p->setup(data)) {
-			p->setOrbit(rotate);
-			p->worker.setPosition(0, 0, ofRandom(100,500));//bugbug clean up the rand stuff via data and more organized random
-			add(p);
-		}
-		return p;
 	}
-	template<typename T>shared_ptr<T> Stage::CreateReadAndaddLight(const Json::Value &data) {
-		shared_ptr<T> p = std::make_shared<T>();
-		if (p == nullptr) {
-			return nullptr;
+	template<typename T>void Stage::CreateReadAndaddLight(const Json::Value &data) {
+		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+			shared_ptr<T> light = std::make_shared<T>();
+			if (light) {
+				if (light->setup(data[j])) {
+					add(light);
+				}
+			}
 		}
-		if (p->setup(data)) {
-			add(p);
-		}
-		return p;
 	}
 
 	// bugbug all items in test() to come from json or are this is done in Director

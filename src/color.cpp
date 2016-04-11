@@ -166,10 +166,18 @@ namespace Software2552 {
 		// local helper
 		class aColor {
 		public:
-			aColor(std::unordered_map<char, int> *p) { map = p; }
-			int get(char c) { if (map) return (*map)[c]; return 0; }
+			aColor(Map *p) { map = p; }
+			int get(char c) { 
+				Map::const_iterator itr = map->find(c);
+				if (itr != map->end()) {
+					return itr->second;
+				}
+				return 0; // default to black
+			}
 
-			ofColor color(char c, int alpha=255) { return ofColor::fromHex(get(c), alpha); }
+			ofColor color(char c, int alpha=255) {
+				return ofColor::fromHex(get(c), alpha); 
+			}
 
 			shared_ptr<AnimiatedColor> create(char c, int alpha, char c2, int alpha2=255) {
 				return create(color('A', 255), color('B', 255));
@@ -192,11 +200,7 @@ namespace Software2552 {
 			}
 			// no animation
 			shared_ptr<AnimiatedColor> create(char c) {
-				shared_ptr<AnimiatedColor>ac = std::make_shared<AnimiatedColor>();
-				if (ac) {
-					ac->setColor(color(c));//bugbug get from json
-				}
-				return ac;
+				return create(color(c));
 			}
 			// only alpha changes
 			shared_ptr<AnimiatedColor> create(char start, int alpha) {
@@ -208,32 +212,45 @@ namespace Software2552 {
 				return ac;
 			}
 
-			std::unordered_map<char, int> *map;
+			Map *map;
 		};
 #define CREATE(a) c.create(a)
-		if (group == ColorSet::Modern) {
+#define CREATE2(a,b) c.create(a,b)
+		// colors http://cloford.com/resources/colours/namedcol.htm list
+		// nice palettes etc http://www.color-hex.com/color-palettes/ http://www.color-hex.com/popular-colors.php
+		if (group == ColorSet::Modern || group == ColorSet::ModernAnimated) {
 			aColor c(&privateData->modern);
-			shared_ptr<AnimiatedColor>A = c.create('A');
-			shared_ptr<AnimiatedColor>C = c.create('C');
+			shared_ptr<AnimiatedColor>A = CREATE('A');
+			shared_ptr<AnimiatedColor>C = CREATE('C');
 			//add the range here with the helper
-			addbasic(ColorSet::Modern, c.create('A', 255, 'B'), c.create('C', 100), C, A);
+			addbasic(ColorSet::ModernAnimated, c.create('A', 255, 'B'), CREATE2('C', 100), C, A);
 
 			//jabc, lightest:c, darkest: a, note sharing pointers is ok too, like using the pointer A in more places,
 			// but in that case it will changes across colors, something that may be wanted
-			shared_ptr<AnimiatedColor>J = c.create('J', 1);
-			shared_ptr<AnimiatedColor>B = c.create('B');
-			addfull(ColorSet::Modern, J, A, B, CREATE('C'), CREATE('C'), CREATE('A'));
+			shared_ptr<AnimiatedColor>J = CREATE2('J', 1);
+			shared_ptr<AnimiatedColor>B = CREATE('B');
+			addfull(ColorSet::ModernAnimated, J, A, B, CREATE('C'), CREATE('C'), CREATE('A'));
 
 			// jobl a pointer one that will change as others change
-			addfull(ColorSet::Modern, J, CREATE('O'), B, CREATE('L'), CREATE('B'), CREATE('O'));
+			addfull(ColorSet::Modern, CREATE('J'), CREATE('O'), B, CREATE('L'), CREATE('B'), CREATE('O'));
+		}
+		else if (group == ColorSet::UserDefined) {
+			aColor c(nullptr);
+			addbasic(ColorSet::UserDefined, CREATE(ofColor::white));// user edits via json
 		}
 		else if (group == ColorSet::White) {
 			aColor c(nullptr);
 			addbasic(ColorSet::White, CREATE(ofColor::white));//bugbug add "createColor":"white" kind of thing to json
 		}
-		else if (group == ColorSet::Orange) {
+		else if (group == ColorSet::Orange || group == ColorSet::OrangeAnimated) {
 			aColor c(nullptr);
-			addbasic(ColorSet::Orange, c.create(ofColor::orange, ofColor::orangeRed));
+			addbasic(ColorSet::OrangeAnimated, CREATE2(ofColor::orange, ofColor::orangeRed));
+			addbasic(ColorSet::Orange, CREATE(ofColor::orange));
+		}
+		else if (group == ColorSet::Blue || group == ColorSet::BlueAnimated) {
+			aColor c(nullptr);
+			addbasic(ColorSet::BlueAnimated, CREATE2(ofColor::lightBlue, ofColor::darkBlue));
+			addbasic(ColorSet::Blue, CREATE(ofColor::blue));
 		}
 		return privateData->colorlist.begin();
 	}
@@ -295,6 +312,12 @@ namespace Software2552 {
 		if (name == "Modern") {
 			return Modern;
 		}
+		if (name == "ModernAnimated") {
+			return ModernAnimated;
+		}
+		else if (name == "UserDefined") {
+			return UserDefined;
+		}
 		else if (name == "Smart") {
 			return Smart;
 		}
@@ -307,6 +330,9 @@ namespace Software2552 {
 		else if (name == "Orange") {
 			return Orange;
 		}
+		else if (name == "OrangeAnimated") {
+			return OrangeAnimated;
+		}
 		else if (name == "Black") {
 			return Black;
 		}
@@ -315,6 +341,9 @@ namespace Software2552 {
 		}
 		else if (name == "Blue") {
 			return Blue;
+		}
+		else if (name == "BlueAnimated") {
+			return BlueAnimated;
 		}
 		else if (name == "Random") {
 			return Random;
@@ -421,12 +450,11 @@ namespace Software2552 {
 		if (privateData == nullptr) {
 			return;
 		}
-		if (privateData->currentColorSet == nullptr) {
-			privateData->currentColorSet = getNextColors(ColorSet::Modern, true);// make sure there is a current color
-		}
 		
 		//bugbug phase II read from json
-		// only needs to be setup one time since its static data
+		// colors http://cloford.com/resources/colours/namedcol.htm list
+		// nice palettes etc http://www.color-hex.com/color-palettes/ http://www.color-hex.com/popular-colors.php
+		// set some matching built in colors
 		if (privateData->modern.empty()) {
 			privateData->modern =
 			{ {'A', 0x003F53}, {'B', 0x3994B3}, {'C', 0x64B1D1 }, {'D', 0x00626D }, {'E', 0x079CBA }, {'F', 0x60CDD9 },
@@ -446,95 +474,12 @@ namespace Software2552 {
 			{ 'I',  0xDBCA69 },{ 'J',  0x404F24 },{ 'K',  0x668D3C },{ 'L',  0xBDD09F },{ 'M',  0x4E6172 },{ 'N',  0x83929F },{ 'O',  0xA3ADB8} };
 			//A C B D A C see the color doc to fill these in. use the 4 colors then pick the lightest and darkest 
 		}
+		if (privateData->currentColorSet == nullptr) {
+			privateData->currentColorSet = getNextColors(ColorSet::Modern, true);// make sure there is a current color
+		}
 
-		/* bugbug load all these once color is working etc
-		// a full color
-		add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
-
-		add(ColorSet::Modern, modern['A'], modern['C'], modern['B'], modern['D'], modern['A'], modern['C']);
-
-		add(ColorSet::White, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff);
-		add(ColorSet::Orange, ofColor::orange.getHex(), ofColor::orangeRed.getHex(), ofColor::orange.getHex(), ofColor::orangeRed.getHex(), ofColor::orange.getHex(), ofColor::orangeRed.getHex());
-
-		add(ColorSet::Modern, E, D, ofColor::black.getHex(), ofColor::white.getHex());
-
-		add(ColorSet::Modern, N, M, ofColor::white, ofColor::white);
-		add(ColorSet::Modern, G, H, ofColor::black, ofColor::white);
-		add(ColorSet::Modern, D, M, ofColor::white, ofColor::white);
-		add(ColorSet::Modern, D, B, ofColor::black, ofColor::white);
-		add(ColorSet::Modern, J, A, ofColor::white, ofColor::white);
-		add(ColorSet::Modern, M, A, ofColor::white, ofColor::white);
-		add(ColorSet::Modern, H, N, L, ofColor::white);
-		add(ColorSet::Modern, H, N, ofColor::black, ofColor::white);
-		add(ColorSet::Modern, O, C, ofColor::black, ofColor::white);
-		add(ColorSet::Modern, I, F, ofColor::black, ofColor::white);
-		add(ColorSet::Modern, K, N, ofColor::black, ofColor::white);
-
-		setupBasicColors(ColorSet::Smart, smart);
-		add(ColorSet::Smart, B, E, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, A, G, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, F, M, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, J, N, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, N, D, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, H, K, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, B, L, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, M, A, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, B, E, ofColor::blue, ofColor::white);
-		add(ColorSet::Smart, O, M, ofColor::black, ofColor::white);
-		add(ColorSet::Smart, D, J, ofColor::blue, ofColor::white);
-		add(ColorSet::Smart, E, H, ofColor::black, ofColor::white);
-
-		setupBasicColors(ColorSet::Extreme, extreme);
-		add(ColorSet::Extreme, B, K, ofColor::white, ofColor::white);
-		add(ColorSet::Extreme, E, M, ofColor::black, ofColor::white);
-		add(ColorSet::Extreme, G, D, ofColor::black, ofColor::white);
-		add(ColorSet::Extreme, D, O, ofColor::black, ofColor::white);
-		add(ColorSet::Extreme, F, I, ofColor::black, ofColor::white);
-		add(ColorSet::Extreme, H, K, ofColor::black, ofColor::white);
-		add(ColorSet::Extreme, L, C, ofColor::black, ofColor::white);
-
-		setupBasicColors(ColorSet::EarthTone, earthtone);
-		add(ColorSet::EarthTone, D, B, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, E, A, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, J, I, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, F, N, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, D, H, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, H, J, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, N, J, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, A, H, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, I, K, ofColor::black, ofColor::white);
-		add(ColorSet::EarthTone, ofColor::green, C, ofColor::black, ofColor::white); // just a demo of using the built in colors
-
-		// setup the built in colors
-		add(ColorSet::Blue, ofColor::lightBlue, ofColor::white, ofColor::blue, ofColor::white);
-		add(ColorSet::Black, ofColor::black, ofColor::white, ofColor::blue, ofColor::white);
-		add(ColorSet::White, ofColor::white, ofColor::black, ofColor::blue, ofColor::white);
-		add(ColorSet::RedBlue, ofColor::red, ofColor::lightCoral, ofColor::blue, ofColor::indianRed);
-		add(ColorSet::Default, ofColor::red, ofColor::blue, ofColor::white, ofColor::green);
-		*/
 	}
 
-#if 0
-			//http://www.creativecolorschemes.com/resources/free-color-schemes/art-deco-color-scheme.shtml
-//bugbug at some point maybe read from json
-			ColorSet cs = ColorSet(ColorSet::ArtDeco,
-				ofColor(255, 0, 0), ofColor(0, 255, 0), ofColor(0, 0, 255));
-			data.push_back(cs);
-
-			ofColor fore, back, text;
-			fore.setHsb(200, 100, 40); // just made this up for now
-			back.setHsb(100, 100, 50);
-			text.setHsb(200, 100, 100);
-			cs.set(ColorSet::ArtDeco, fore, back, text);
-			data.push_back(cs);
-			//			ColorSet cs2 = ColorSet(ColorSet::Warm,
-			//			ofColor::aliceBlue, ofColor::crimson, ofColor::antiqueWhite);
-			ColorSet cs2 = ColorSet(ColorSet::ArtDeco,
-				ofColor(0, 255, 0), ofColor(0, 0, 255), ofColor(255, 255, 255));
-			data.push_back(cs2);
-	}
-
-#endif // 0
 	
 
 }
