@@ -172,7 +172,6 @@ namespace Software2552 {
 		if (data.size() > 0) {
 			objectLifeTimeManager::setup(data);
 
-
 			Point3D point0; // defaults to 0,0,0
 			point0.setup(data["from"]);
 			setPosition(point0);
@@ -182,7 +181,6 @@ namespace Software2552 {
 			animateTo(pointEnd); // starts animation will pause if needed setAnimationValues
 
 			setAnimationValues(this, data, string("EASE_IN"), string("LOOP_BACK_AND_FORTH"));
-
 		}
 		return true;
 	}
@@ -199,10 +197,7 @@ namespace Software2552 {
 	// we want to run w/o crashing in very low memory so we need to check all our pointers, we can chug along
 	// until memory frees up
 	
-	void ActorRole::setAnimationPosition(const ofPoint& p) { if (locationAnimation)locationAnimation->setPosition(p); }
-	void ActorRole::setAnimationPositionX(float x) { if (locationAnimation)locationAnimation->setPositionX(x); }
-	void ActorRole::setAnimationPositionY(float y) { if (locationAnimation)locationAnimation->setPositionY(y); }
-	void ActorRole::setAnimationPositionZ(float z) { if (locationAnimation)locationAnimation->setPositionZ(z); }
+	bool ActorRole::isAnimating() { return (locationAnimation)?locationAnimation->isAnimating() : false; }
 	void ActorRole::animateTo(const ofPoint& p) { if (locationAnimation)locationAnimation->animateTo(p); }
 	bool ActorRole::refreshAnimation() { return (locationAnimation) ? locationAnimation->refreshAnimation() : false; }
 	float ActorRole::getTimeBeforeStart(float t) { return (locationAnimation) ? locationAnimation->getWait() : 0; }
@@ -219,7 +214,6 @@ namespace Software2552 {
 	bool ActorRole::setup(const Json::Value &data) {
 		fill = true; // set default
 		drawOrder = 0;
-		w = h = 0;
 		references = nullptr;
 		locationAnimation = nullptr;
 		scaleAnimation = nullptr;
@@ -233,9 +227,6 @@ namespace Software2552 {
 			READBOOL(fill, data);
 			READINT(drawOrder, data);
 			string s = getLocationPath();//just for debug
-			// optional sizes, locations, durations for animation etc
-			readJsonValue(w, data["width"]);
-			readJsonValue(h, data["height"]);
 			// any actor can have a reference
 			references = parseList<Reference>(data["references"]);
 			locationAnimation = parseNoList<PointAnimation>(data["animation"]);
@@ -302,28 +293,13 @@ namespace Software2552 {
 	string &ActorRole::getLocationPath() {
 		return locationPath;
 	}
-	float ActorRole::rotate() {
-		ofTranslate(10, 10, 0);//move pivot to centre
-		ofRotate(ofGetFrameNum() * .05, 0, 0, 1);//rotate from centre
-		ofTranslate(-10 / 2, -10 / 2, 0);//move back by the centre offset
-		//bugbug use rotationAnimation and make sure w and h are set for ration
-		if (w && h) {
-			//ofTranslate(w / 2, h / 2, 0);//move pivot to centre
-			//ofRotate(ofGetFrameNum() * .05, 0, 0, 1);//rotate from centre
-			//ofTranslate(-w / 2, -w / 2, 0);//move back by the centre offset
-			//glTranslatef(xpos, ypos, zpos);
-			//glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f);
-			ofTranslate(getCurrentPosition().x, getCurrentPosition().y, getCurrentPosition().z);    // Move circle to desired location.
-			ofRotate(ofGetFrameNum() * .05, 0, 0, 1);
-
-		}
-		return 0;
+	void ActorRole::rotate() {
 
 		if (rotationAnimation) {
-			//bugbug convert to a proper rotate
-			return rotationAnimation->x.getCurrentValue();//bugbug need to rotate object not screen
+			ofRotateZ((2 * ofGetFrameNum()) % ofGetWidth());  // <- rotate the circle around the z axis by some amount.   
+			ofRotateX((2 * ofGetFrameNum()) % ofGetWidth());  // <- rotate the circle around the z axis by some amount.   
+			ofRotateY((2 * ofGetFrameNum()) % ofGetWidth());  // <- rotate the circle around the z axis by some amount.   
 		}
-		return 0.0f;
 	}
 	float ActorRole::scale() {
 		if (scaleAnimation) {
@@ -347,8 +323,11 @@ namespace Software2552 {
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
 			}
+			ofPushMatrix();
+			ofTranslate(getCurrentPosition().x, getCurrentPosition().y, getCurrentPosition().z);
 			rotate();
 			myDraw();
+			ofPopMatrix();
 			if (disableEAP) {
 				ofDisableAlphaBlending(); 
 			}

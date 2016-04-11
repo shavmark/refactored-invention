@@ -8,11 +8,6 @@
 namespace Software2552 {
 
 	// simple drawing 
-	class Rectangle : public ActorRole {
-	public:
-
-		void draw();
-	};
 
 	// internal helpers
 	class RandomDots {

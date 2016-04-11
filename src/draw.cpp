@@ -288,12 +288,6 @@ namespace Software2552 {
 		line.draw();
 	}
 
-	void Rectangle::draw() {
-		ofFill();
-		ofSetRectMode(OF_RECTMODE_CENTER);	// center around the position
-		ofSetColor(255, 0, 0);
-		ofRect(getCurrentPosition().x, getCurrentPosition().y, w, h);
-	}
 
 
 	void CrazyMesh::setup() {

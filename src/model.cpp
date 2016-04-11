@@ -203,9 +203,19 @@ namespace Software2552 {
 		bc = rhs.bc;
 		assign(rhs.year(), rhs.month(), rhs.day(), rhs.hour(), rhs.minute(), rhs.second(), rhs.microsecond(), rhs.microsecond());
 	}
+	bool Rectangle::mysetup(const Json::Value &data) {
+		READINT(height, data);
+		READINT(width, data);
+		return true;
+	}
+	void Rectangle::myDraw() {
+		ofSetRectMode(OF_RECTMODE_CENTER);	// center around the position
+		ofRect(0, 0, width, height);
+	}
+
 	bool Ball::mysetup(const Json::Value &data) {
 		// can read any of these items from json here
-		readJsonValue(radius, data["radius"]);
+		READFLOAT(radius, data);
 		return true;
 	}
 	bool Channel::setup(const Json::Value &data) {
@@ -306,10 +316,15 @@ namespace Software2552 {
 
 		return true;
 	}
-
+	bool Visual::mysetup(const Json::Value &data) {
+		READINT(width, data);
+		READINT(height, data);
+		setType(ActorRole::draw2d);
+		return true;
+	}
 	//, "carride.mp4"
 	bool Video::mysetup(const Json::Value &data) {
-		setType(ActorRole::draw2d);
+		Visual::mysetup(data);
 		float speed = 0;
 		READFLOAT(speed, data);
 		if (speed != 0) {
@@ -418,11 +433,10 @@ namespace Software2552 {
 		return true;
 	}
 	void Ball::myDraw() {
-		
-		float y = getCurrentPosition().y;
-		ofCircle((2 * ofGetFrameNum()) % ofGetWidth(), y, radius*scale());
-
+		// starting position determined by caller
+		ofCircle(0,0, radius*scale());
 	}
+
 	bool Arrow::mysetup(const Json::Value &data) {
 		end.x = ofGetWidth() / 2;
 		end.z = 600;
@@ -435,8 +449,8 @@ namespace Software2552 {
 	}
 
 	void Text::myDraw() {
-		//bugbug add in some animation
-		drawText(text, getCurrentPosition().x, getCurrentPosition().y);
+		//position set by caller
+		drawText(text, 0,0);
 	}
 
 	void Text::drawText(const string &s, int x, int y) {
@@ -593,8 +607,6 @@ namespace Software2552 {
 	}
 	void Visual::myUpdate() {
 		if (fullsize) {
-			w = ofGetWidth();
-			h = ofGetHeight();
 			ofPoint pt;// upper left in a centered world
 			pt.x = -ofGetWidth() / 2;
 			pt.y = -ofGetHeight() / 2;
@@ -665,7 +677,7 @@ namespace Software2552 {
 
 	}
 	void Paragraph::myDraw() {
-		worker.setPosition(getCurrentPosition().x, getCurrentPosition().y);
+		worker.setPosition(0,0);
 		worker.draw();
 	}
 	bool ChannelList::skipChannel(const string&keyname) {
@@ -750,12 +762,11 @@ namespace Software2552 {
 
 	// add this one http://clab.concordia.ca/?page_id=944
 	void Video::myDraw() {
-		ofPoint& pt = getCurrentPosition();
-		if (w == 0 || h == 0) {
-			worker.draw(pt.x, pt.y);
+		if (width == 0 || height == 0) {
+			worker.draw(0, 0);
 		}
 		else {
-			worker.draw(pt.x, pt.y, w, h);
+			worker.draw(0, 0, width, height);
 		}
 	}
 	void Video::mySetup() {
@@ -805,12 +816,11 @@ namespace Software2552 {
 		return t;
 	}
 	void Picture::myDraw() {
-		ofPoint& pt = getCurrentPosition();
-		if (w == 0 || h == 0) {
-			worker.draw(pt.x, pt.y);
+		if (width == 0 || height == 0) {
+			worker.draw(0, 0);
 		}
 		else {
-			worker.draw(pt.x, pt.y, w, h);
+			worker.draw(0, 0, width, height);
 		}
 	}
 	void Audio::mySetup() {
@@ -846,7 +856,7 @@ namespace Software2552 {
 
 	void CameraGrabber::myDraw() {
 		if (worker.isInitialized()) {
-			worker.draw(getCurrentPosition().x, getCurrentPosition().y);
+			worker.draw(0, 0);
 		}
 	}
 	bool CameraGrabber::mysetup(const Json::Value &data) {
@@ -855,7 +865,7 @@ namespace Software2552 {
 		return true;
 	}
 	bool Picture::mysetup(const Json::Value &data) { 
-		setType(ActorRole::draw2d);
+		Visual::mysetup(data);
 		return true;
 	}
 	void TextureVideo::myDraw() {

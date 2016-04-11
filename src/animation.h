@@ -109,6 +109,7 @@ namespace Software2552 {
 	public:
 		void update();
 		bool setup(const Json::Value &data);
+		float funXMover() { (2 * ofGetFrameNum()) % ofGetWidth(); }
 	private:
 	};
 	// global color data
@@ -165,13 +166,8 @@ namespace Software2552 {
 		void setDefaults(const ActorRole&rhs){
 			*this = rhs;
 		}
-		bool operator==(const ActorRole& rhs) { return rhs.name == name; }
-
 		ofTrueTypeFont* getFont() { return font.get(); }
-		void setAnimationPosition(const ofPoint& p);
-		void setAnimationPositionX(float x);
-		void setAnimationPositionY(float y);
-		void setAnimationPositionZ(float z);
+		bool isAnimating();
 		void animateTo(const ofPoint& p);
 		void setFullSize();
 		bool refreshAnimation();
@@ -201,11 +197,9 @@ namespace Software2552 {
 		}
 		drawtype getType() { return type; }
 		bool useFill() { return fill; }
-		float rotate();//bugbug may need to go to x,y,z
+		void rotate();
 		float scale();
 		void drawIt(drawtype type);
-		int w = 0;
-		int h = 0;
 		ofPoint defaultStart;
 
 		int drawOrder = 0; // sorted by value so any value is ok

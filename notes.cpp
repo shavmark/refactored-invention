@@ -1,4 +1,5 @@
 // store notes here
+//good pi notes http://cariadinteractive.com/wp-content/uploads/2015/01/Somatopia-Guide.pdf for of
 // cool graphics http://nogoodexcuse.hubris.xyz/tag/opacity/
 //http://zmc.space/2016/kinect-v2-introduction/ good tutorial
 //https://forum.openframeworks.cc/t/interactive-mediawall-at-ipgs-nyc-headquarters/22012

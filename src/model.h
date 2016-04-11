@@ -85,6 +85,14 @@ namespace Software2552 {
 	private:
 		ofFbo fbo;
 	};
+	class Rectangle : public ActorRole {
+	public:
+		void myDraw();
+	private:
+		int width = 0;
+		int height = 0;
+		bool mysetup(const Json::Value &data);
+	};
 
 	// wrap drawing object with references and settings data
 	class Ball : public ActorRole {
@@ -256,6 +264,8 @@ namespace Software2552 {
 		void myDraw();
 	private:
 		ofImage worker;
+		int w = 0;
+		int h = 0;
 		bool mysetup(const Json::Value &data);
 	};
 	class Arrow : public ActorRole {
@@ -283,6 +293,10 @@ namespace Software2552 {
 		void myUpdate();
 	protected:
 		bool isLoaded = false;
+		int width = 0;
+		int height = 0;
+		bool mysetup(const Json::Value &data);
+
 	};
 
 	class Video : public Visual {

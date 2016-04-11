@@ -290,15 +290,13 @@ namespace Software2552 {
 	// add a full color list
 	void ColorList::addfull(const ColorSet::ColorGroup group, shared_ptr<AnimiatedColor> fore, shared_ptr<AnimiatedColor>back,
 		shared_ptr<AnimiatedColor> color1, shared_ptr<AnimiatedColor> color2,
-		shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest)
-	{
+		shared_ptr<AnimiatedColor> lightest, shared_ptr<AnimiatedColor> darkest)	{
 		shared_ptr<ColorSet> s = addbasic(group, fore, back, lightest, darkest);
 		if (s) {
 			s->addColor(ColorSet::Color1, color1);
 			s->addColor(ColorSet::Color2, color2);
 		}
 	}
-
 
 	ColorSet::ColorGroup ColorSet::convertStringToGroup(const string&name) {
 		if (name == "Modern") {
