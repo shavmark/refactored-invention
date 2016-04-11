@@ -76,6 +76,14 @@ namespace Software2552 {
 		static shared_ptr<ColorSet> read(const Json::Value &data);
 		void getNextColors();
 
+		// call getNext at start up and when ever colors should change
+		// do not break colors up or things will not match
+		// get next color based on type and usage count
+		// example: type==cool gets the next cool type, type=Random gets any next color
+		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group, bool global);
+		static shared_ptr<ColorSet> getCurrentColor();
+
+	protected:
 		class colordata {
 		public:
 			forward_list<shared_ptr<ColorSet>> colorlist; // global list of colors
@@ -86,15 +94,6 @@ namespace Software2552 {
 			std::unordered_map<char, int> earthtone;
 
 		};
-
-		// call getNext at start up and when ever colors should change
-		// do not break colors up or things will not match
-		// get next color based on type and usage count
-		// example: type==cool gets the next cool type, type=Random gets any next color
-		static shared_ptr<ColorSet> getNextColors(ColorSet::ColorGroup group, bool global);
-		static shared_ptr<ColorSet> getCurrentColor();
-
-	protected:
 		template<typename T> void removeExpiredItems(forward_list<shared_ptr<T>>&v) {
 			v.remove_if(objectLifeTimeManager::OKToRemove);
 		}

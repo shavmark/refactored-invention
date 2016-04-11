@@ -44,10 +44,10 @@ namespace Software2552 {
 		}
 		return ColorList::getCurrentColor();
 	}
-	// true if any alpha enabled
+	// true if any alpha enabled, keeping in mind with all the pointers in a ColorSet stage can change often
 	bool ColorSet::alphaEnbled() {
-		for (auto& c : colors) {
-			if (c.second->from != 255 && c.second->to != c.second->from) {
+		for (const auto& c : colors) {
+			if (c.second->AlphaEnabled()) {
 				return true;
 			}
 		}
@@ -55,7 +55,7 @@ namespace Software2552 {
 		return false;
 	}
 	shared_ptr<AnimiatedColor>ColorSet::getAnimatedColor(ColorType type) {
-		ColorMap::iterator itr = colors.find(type);
+		ColorMap::const_iterator itr = colors.find(type);
 		if (itr != colors.end())	{
 			return itr->second;
 		}
@@ -63,14 +63,14 @@ namespace Software2552 {
 	}
 
 	ofColor ColorSet::get(ColorType type) {
-		ColorMap::iterator itr = colors.find(type);
+		ColorMap::const_iterator itr = colors.find(type);
 		if (itr != colors.end()) {
 			return itr->second->getCurrentColor();
 		}
 		return defaultColor;
 	}
 	void ColorSet::draw() { 
-		ColorMap::iterator itr = colors.find(Fore);
+		ColorMap::const_iterator itr = colors.find(Fore);
 		if (itr != colors.end()) {
 			itr->second->applyCurrentColor();
 		}
@@ -343,7 +343,7 @@ namespace Software2552 {
 		}
 	}
 	ofColor ColorSet::getColor1() {
-		ColorMap::iterator itr = colors.find(Color1);
+		ColorMap::const_iterator itr = colors.find(Color1);
 		if (itr == colors.end()) {
 			ofColor c = getBackground();// start with fore color
 			c.setSaturation(c.getSaturation() + 50);// may wrap around?
@@ -353,7 +353,7 @@ namespace Software2552 {
 		return itr->second->getCurrentColor();
 	}
 	ofColor ColorSet::getBackground() {
-		ColorMap::iterator itr = colors.find(Back);
+		ColorMap::const_iterator itr = colors.find(Back);
 		if (itr == colors.end()) {
 			return get(Fore).getInverted();//only color we can assume is Fore, but maybe we can do more to make it unique
 		}
@@ -361,7 +361,7 @@ namespace Software2552 {
 	}
 
 	ofColor ColorSet::getColor2() {
-		ColorMap::iterator itr = colors.find(Color2);
+		ColorMap::const_iterator itr = colors.find(Color2);
 		if (itr == colors.end()) {
 			ofColor c = getForeground();// start with fore color
 			c.setSaturation(c.getSaturation() + 10);// may wrap around?
@@ -373,7 +373,7 @@ namespace Software2552 {
 
 	ofColor ColorSet::getLightest() {
 		// assume data is propery allocated in the colors vector
-		ColorMap::iterator itr = colors.find(Lightest);
+		ColorMap::const_iterator itr = colors.find(Lightest);
 		if (itr == colors.end()) {
 			ofColor c = get(Fore);// start with fore color
 			c.setSaturation(c.getSaturation() - 50);// may wrap around?
@@ -383,7 +383,7 @@ namespace Software2552 {
 		return itr->second->getCurrentColor();
 	}
 	ofColor ColorSet::getDarkest() {
-		ColorMap::iterator itr = colors.find(Darkest);
+		ColorMap::const_iterator itr = colors.find(Darkest);
 		if (itr == colors.end()) {
 			ofColor c = getBackground();// start with fore color
 			c.setSaturation(c.getSaturation() + 50);// may wrap around?

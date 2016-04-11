@@ -128,15 +128,13 @@ namespace Software2552 {
 		bool setup(const Json::Value &data);
 		void setAlpha(float val);
 		void getNextColors();
+		bool AlphaEnabled() { return (from != 255 && to != from); }
 		bool isAnimationEnabled() { return animating_; }
 		void setAnimationEnabled(bool b = true) { animating_ = b; }
-		// avoid long access code
-		ofFloatColor getFloatObject();
-		ofColor getColorObject();
-		float from = 255;// alpha
-		float to = 255;
 
 	private:
+		float from = 255;// alpha
+		float to = 255;
 
 	};
 

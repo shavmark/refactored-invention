@@ -8,15 +8,6 @@ namespace Software2552 {
 	void setAnimationValues(ofxAnimatable*p, const Json::Value &data, string& curveName, string& repeatType);
 	AnimRepeat getRepeatTypeFromString(const string& repeatType);
 
-	//ColorSet Animator::getFirstColor(ColorSet::ColorGroup group) {
-	//	std::vector<ColorSet>::iterator itr = std::find(data.begin(), data.end(), ColorSet(group));
-	//	if (itr != data.end()) {
-	//		++(*itr); // reflect usage
-	//		return *itr;
-	//	}
-	//	return ColorSet(group); // always do something
-	//}
-
 	objectLifeTimeManager::objectLifeTimeManager() {
 		usageCount = 0;     // number of times this animation was used
 		objectlifetime = 0; // 0=forever, how long object lives after it starts drawing
@@ -216,7 +207,7 @@ namespace Software2552 {
 	}
 	// try to keep wrappers out of site to avoid clutter
 	// we want to run w/o crashing in very low memory so we need to check all our pointers, we can chug along
-	// until memory frees up, a crash would be very bad
+	// until memory frees up
 	
 	void ActorRole::setAnimationPosition(const ofPoint& p) { if (locationAnimation)locationAnimation->setPosition(p); }
 	void ActorRole::setAnimationPositionX(float x) { if (locationAnimation)locationAnimation->setPositionX(x); }
@@ -401,12 +392,6 @@ namespace Software2552 {
 			return &font->ttf;
 		}
 		return nullptr;
-	}
-	ofFloatColor AnimiatedColor::getFloatObject() { 
-		return ofFloatColor(getCurrentColor());
-	}
-	ofColor AnimiatedColor::getColorObject() { 
-		return getCurrentColor();
 	}
 
 	shared_ptr<ofxSmartFont> FontHelper::getPointer() {
