@@ -75,7 +75,7 @@ namespace Software2552 {
 	}
 	///bigger the number the more forward
 	bool compareOrder(shared_ptr<ActorRole>first, shared_ptr<ActorRole>second)	{
-		return (first->drawOrder < second->drawOrder);
+		return (first->getDrawOrder()  < second->getDrawOrder());
 	}
 	// samples https://sites.google.com/site/ofauckland/examples
 #define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])

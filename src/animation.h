@@ -158,6 +158,7 @@ namespace Software2552 {
 	class Reference;
 	class ActorRole  {
 	public:
+		friend class Stage;
 		enum drawtype {  draw2d, draw3dFixedCamera, draw3dMovingCamera };
 		ActorRole() {  }
 		ActorRole(const string&path) { 	setLocationPath(path);	}
@@ -189,33 +190,33 @@ namespace Software2552 {
 		ofPoint getCurrentPosition();
 		void setPosition(ofPoint& p);
 		virtual float getTimeBeforeStart(float t);
-
+		int getDrawOrder() { return drawOrder; }
 		// helpers to wrap basic functions
 		void setupForDrawing() { mySetup(); };
 		void updateForDrawing();
 
-		void drawIt(drawtype type);
+		string &getLocationPath();
+		void setLocationPath(const string&s) { locationPath = s; }
 
+		void setType(drawtype typeIn) { type = typeIn; }
+		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
+		void setFill(bool b = true) { fill = b; }
+
+	protected:
+		static bool OKToRemove(shared_ptr<ActorRole> me) {
+			return objectLifeTimeManager::OKToRemove(me->locationAnimation);
+		}
+		drawtype getType() { return type; }
+		bool useFill() { return fill; }
+		float rotate();//bugbug may need to go to x,y,z
+		float scale();
+		void drawIt(drawtype type);
 		int w = 0;
 		int h = 0;
 		ofPoint defaultStart;
 
 		int drawOrder = 0; // sorted by value so any value is ok
 
-		string &getLocationPath();
-		void setLocationPath(const string&s) { locationPath = s; }
-
-		static bool OKToRemove(shared_ptr<ActorRole> me) {
-			return objectLifeTimeManager::OKToRemove(me->locationAnimation);
-		}
-		void setType(drawtype typeIn) { type = typeIn; }
-		drawtype getType() { return type; }
-		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
-		void setFill(bool b = true) { fill = b; }
-		bool useFill() { return fill; }
-		float rotate();//bugbug may need to go to x,y,z
-		float scale();
-	protected:
 		FontHelper  font;
 		shared_ptr<ColorSet> colorHelper = nullptr;
 		

@@ -27,15 +27,13 @@ namespace Software2552 {
 		void setup();
 		void update();
 		void draw();
+		bool setup(const Json::Value &data);
 		void clear(bool force=false);
 		void pause();
 		void resume();
-		float findMaxWait();
-		void drawlights();
 		string &getKeyName() { return keyname; }
-		// things to draw
 
-		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, bool inFront=false) {
+		template<typename T> shared_ptr<T> CreateReadAndaddAnimatable(const Json::Value &data, bool inFront = false) {
 			shared_ptr<T> p = std::make_shared<T>();
 			if (p != nullptr) { // try to run in low memory as much as possible for small devices
 				if (p->setup(data)) {
@@ -44,16 +42,17 @@ namespace Software2552 {
 			}
 			return p;
 		}
+
+	protected:
+		void fixed3d(bool b = true) { drawIn3dFixed = b; }
+		void moving3d(bool b = true) { drawIn3dMoving = b; }
+		void fixed2d(bool b = true) { drawIn2d = b; }
+		float findMaxWait();
+		void drawlights();
 		virtual shared_ptr<Background> CreateReadAndaddBackgroundItems(const Json::Value &data);
 		shared_ptr<Camera> CreateReadAndaddCamera(const Json::Value &data, bool rotate = false);
 		template<typename T>shared_ptr<T> CreateReadAndaddLight(const Json::Value &data);
 		list<shared_ptr<ActorRole>>& getAnimatables() { return animatables; }
-
-		void fixed3d(bool b = true) { drawIn3dFixed = b; }
-		void moving3d(bool b = true) { drawIn3dMoving = b; }
-		void fixed2d(bool b = true) { drawIn2d = b; }
-		bool setup(const Json::Value &data);
-	protected:
 
 		bool drawIn3dFixed = false; 
 		bool drawIn3dMoving = false; 
@@ -84,7 +83,6 @@ namespace Software2552 {
 		string keyname;
 
 	private:
-
 		void addToAnimatable(shared_ptr<ActorRole>p, bool inFront=false);
 
 		void removeExpiredItems(list<shared_ptr<ActorRole>>&v) {

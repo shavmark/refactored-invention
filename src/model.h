@@ -86,16 +86,14 @@ namespace Software2552 {
 		ofFbo fbo;
 	};
 
-
-
 	// wrap drawing object with references and settings data
 	class Ball : public ActorRole {
 	public:
 		// bouncy ball with nice colors is pretty nice, does not take too much really
 		void myDraw();
-		float radius = 100;
 
 	private:
+		float radius = 100;
 		bool mysetup(const Json::Value &data);
 	};
 
