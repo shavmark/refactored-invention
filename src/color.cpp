@@ -19,12 +19,13 @@ namespace Software2552 {
 	shared_ptr<ColorSet> parseColor(const Json::Value &data)
 	{
 		ColorList list;
-		shared_ptr<ColorSet> results = list.read(data); // get latest color set bugbug this will change global color
+		shared_ptr<ColorSet> results = nullptr;
 
 		// will update the global copy of the named colorset  
 		if (data["colorAnimation"].size() > 0) {
+			results = list.read(data["colorAnimation"]);
 			if (!results) {
-				results = std::make_shared<ColorSet>(); // make one only if it does not exist
+				results = std::make_shared<ColorSet>(); // try to make one only if it does not exist, we could be out of memory
 			}
 			if (results) {
 				results->setup(data["colorAnimation"]);
@@ -32,6 +33,7 @@ namespace Software2552 {
 		}
 		else if (data["newColorAnimation"].size() > 0) {
 			// create a new color set
+			results = list.read(data["newColorAnimation"]);
 			results = std::make_shared<ColorSet>(results); // make one only if it does not exist
 			if (results) {
 				results->setup(data["newColorAnimation"]);
@@ -86,20 +88,23 @@ namespace Software2552 {
 	void ColorSet::setup(const Json::Value &data) {
 		//bugbug good to read in to/from/color and other things
 		//Fore, Back, Lightest, Darkest, Color1, Color2
-		shared_ptr<AnimiatedColor> c = getOrCreate(Fore);
-		if (c) {
+		shared_ptr<AnimiatedColor> c;
+		if (data["fore"].size() > 0 && (c = getOrCreate(Fore))) {
 			c->setup(data["fore"]);
 		}
-		if (c = getOrCreate(Back)) {
+		if (data["back"].size() > 0 && (c = getOrCreate(Back))) {
 			c->setup(data["back"]);
 		}
-		if (c = getOrCreate(Back)) {
+		if (data["lightest"].size() > 0 && (c = getOrCreate(Lightest))) {
 			c->setup(data["lightest"]);
 		}
-		if (c = getOrCreate(Color1)) {
+		if (data["darkest"].size() > 0 && (c = getOrCreate(Darkest))) {
+			c->setup(data["darkest"]);
+		}
+		if (data["color1"].size() > 0 && (c = getOrCreate(Color1))) {
 			c->setup(data["color1"]);
 		}
-		if (c = getOrCreate(Color2)) {
+		if (data["color2"].size() > 0 && (c = getOrCreate(Color2))) {
 			c->setup(data["color2"]);
 		}
 	}

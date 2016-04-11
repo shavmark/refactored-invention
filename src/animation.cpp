@@ -158,9 +158,9 @@ namespace Software2552 {
 			READSTRING(repeatType, data);
 			p->setRepeatType(getRepeatTypeFromString(repeatType));
 
-			float animationDuration = 0.55f;
-			READFLOAT(animationDuration, data);
-			p->setDuration(animationDuration);
+			float duration = 0.55f;
+			READFLOAT(duration, data);
+			p->setDuration(duration);
 		}
 	}
 	
