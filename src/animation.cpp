@@ -84,7 +84,7 @@ namespace Software2552 {
 		return defaultStart;// 0,0,0 by default bugbug set on of object vs this saved one
 	}
 	bool Rotation::setup(const Json::Value &data) {
-		FloatAnimation::setup(data);
+		Json::Value::Members m = data.getMemberNames();// just to help w/ debugging
 		x.setup(data["x"]);
 		y.setup(data["y"]);
 		z.setup(data["z"]);
@@ -97,6 +97,7 @@ namespace Software2552 {
 
 	// need "scale"{}, animation etc wrapers in json
 	bool FloatAnimation::setup(const Json::Value &data) {
+		Json::Value::Members m = data.getMemberNames();// just to help w/ debugging
 		if (data.size() > 0) {
 			objectLifeTimeManager::setup(data);
 
@@ -105,6 +106,8 @@ namespace Software2552 {
 			animateFromTo(from, to); // starts animation right now, will turn off pause, so call be fore SetAnimationValues
 
 			setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
+
+			enabled = true;
 
 		}
 
@@ -218,6 +221,7 @@ namespace Software2552 {
 		locationAnimation = nullptr;
 		scaleAnimation = nullptr;
 		rotationAnimation = nullptr;
+		Json::Value::Members m = data.getMemberNames();// just to help w/ debugging
 
 		if (data.size()) {
 			READSTRING(name, data);
@@ -296,9 +300,18 @@ namespace Software2552 {
 	void ActorRole::rotate() {
 
 		if (rotationAnimation) {
-			ofRotateZ((2 * ofGetFrameNum()) % ofGetWidth());  // <- rotate the circle around the z axis by some amount.   
-			ofRotateX((2 * ofGetFrameNum()) % ofGetWidth());  // <- rotate the circle around the z axis by some amount.   
-			ofRotateY((2 * ofGetFrameNum()) % ofGetWidth());  // <- rotate the circle around the z axis by some amount.   
+			if (rotationAnimation->x.enabled)
+			{
+				ofRotateX(rotationAnimation->x.val());  // <- rotate the circle around the x axis by some amount.   
+			}
+			if (rotationAnimation->y.enabled)
+			{
+				ofRotateY(rotationAnimation->y.val());  // <- rotate the circle around the x axis by some amount.   
+			}
+			if (rotationAnimation->z.enabled)
+			{
+				ofRotateZ(rotationAnimation->z.val());  // <- rotate the circle around the z axis by some amount.   
+			}
 		}
 	}
 	float ActorRole::scale() {

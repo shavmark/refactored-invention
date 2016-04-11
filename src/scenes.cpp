@@ -84,6 +84,7 @@ namespace Software2552 {
 
 	bool Stage::setup(const Json::Value &data) {
 		ADDANIMATION(circles, Ball);
+		getAnimatables().sort(compareOrder);
 		return true;
 		ADDANIMATION(rainbow, Rainbow);
 		ADDANIMATION(audio, Audio);

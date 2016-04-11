@@ -79,18 +79,18 @@ namespace Software2552 {
 		FloatAnimation(float toIn = 0, float fromIn = 100);
 		void update();
 		virtual bool setup(const Json::Value &data);
+		bool enabled = false;
 	private:
 		float to;
 		float from;
 	};
 	class RotationAnimation : public FloatAnimation {
 	public:
-		RotationAnimation() : FloatAnimation(0.0f, 100.0f) {}
+		RotationAnimation() : FloatAnimation(0.0f, 0.0f) {}
 	private:
 	};
-	class Rotation : public FloatAnimation {
+	class Rotation  {
 	public:
-		Rotation() : FloatAnimation(0.0f, 360.0f) {}
 		bool setup(const Json::Value &data);
 		void update();
 		RotationAnimation x;
