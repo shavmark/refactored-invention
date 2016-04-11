@@ -448,6 +448,7 @@ namespace Software2552 {
 	// all drawing is done using AnimiatedColor, even if no animation is used, color info still stored by doing a set color
 	bool AnimiatedColor::setup(const Json::Value &data) {
 		if (!data.empty()) {
+			Json::Value::Members m = data.getMemberNames();// just to help w/ debugging
 
 			READFLOAT(from, data);
 			READFLOAT(to, data);
@@ -456,24 +457,16 @@ namespace Software2552 {
 			}
 			// anmation requested
 			if (from != to && from != 255) {
-				animateToAlpha(to); // will not animate color
+				animateToAlpha(to); // will not animate color, just alpha
 			}
 
 			string color;//hex color
-			if (data["colorFrom"].size() > 0) {
-				if (READSTRING(color, data["colorFrom"])) {
-					setColor(ofColor().fromHex(ofHexToInt(color), from));
-				}
+			if (READSTRING(color, data)) {
+				setColor(ofColor().fromHex(ofHexToInt(color), from));
 			}
-			if (data["color"].size() > 0 || data["colorFrom"].size() > 0) { // let the user user either
-				if (READSTRING(color, data["color"]) || READINT(color, data["colorFrom"])) {
-					setColor(ofColor().fromHex(ofHexToInt(color), from));
-				}
-			}
-			if (data["colorTo"].size() > 0) {
-				if (READSTRING(color, data["colorTo"])) {
-					animateTo(ofColor().fromHex(ofHexToInt(color), to));
-				}
+			string colorTo;
+			if (READSTRING(colorTo, data)) {
+				animateTo(ofColor().fromHex(ofHexToInt(colorTo), to));
 			}
 			setAnimationValues(this, data, string("LINEAR"), string("LOOP_BACK_AND_FORTH"));
 		}

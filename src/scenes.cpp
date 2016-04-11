@@ -78,12 +78,12 @@ namespace Software2552 {
 		return (first->getDrawOrder()  < second->getDrawOrder());
 	}
 	// samples https://sites.google.com/site/ofauckland/examples
-#define ADDANIMATION(name,type)	if (!data["graphics"][STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data["graphics"][STRINGIFY(name)])
-#define ADDLIGHT(name,type)	if (!data["lights"][STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data["lights"][STRINGIFY(name)])
-#define ADDCAMERA(name,type)	if (!data["cameras"][STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data["cameras"][STRINGIFY(name)])
+#define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
+#define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
+#define ADDCAMERA(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
 	bool Stage::setup(const Json::Value &data) {
-		ADDANIMATION(ball, Ball);
+		ADDANIMATION(circles, Ball);
 		return true;
 		ADDANIMATION(rainbow, Rainbow);
 		ADDANIMATION(audio, Audio);

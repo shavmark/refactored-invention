@@ -20,7 +20,7 @@ namespace Software2552 {
 	{
 		ColorList list;
 		shared_ptr<ColorSet> results = nullptr;
-
+		Json::Value::Members m = data.getMemberNames();// just to help w/ debugging
 		// will update the global copy of the named colorset  
 		if (data["colorAnimation"].size() > 0) {
 			results = list.read(data["colorAnimation"]);
@@ -29,14 +29,6 @@ namespace Software2552 {
 			}
 			if (results) {
 				results->setup(data["colorAnimation"]);
-			}
-		}
-		else if (data["newColorAnimation"].size() > 0) {
-			// create a new color set
-			results = list.read(data["newColorAnimation"]);
-			results = std::make_shared<ColorSet>(results); // make one only if it does not exist
-			if (results) {
-				results->setup(data["newColorAnimation"]);
 			}
 		}
 		if (results) {
