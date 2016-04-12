@@ -37,6 +37,7 @@ namespace Software2552 {
 			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 				shared_ptr<T> item = std::make_shared<T>();
 				if (item) {
+					Json::Value::Members m = data[j].getMemberNames();
 					if (item->setup(data[j])) {
 						if (fullsize) {
 							item->setFullSize();

@@ -351,7 +351,7 @@ namespace Software2552 {
 		void myDraw();
 		shared_ptr<TextureFromImage> getTexturePtr() { return texture; }
 		Sphere& getSphere() { return sphere; }
-
+		ofPoint rotateAround;// used to position relative to something else, default is center of screen
 	private:
 		shared_ptr<TextureFromImage> texture = nullptr;
 		Sphere sphere;

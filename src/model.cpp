@@ -945,35 +945,27 @@ namespace Software2552 {
 	}
 
 	bool SolarSystem::mysetup(const Json::Value &data) {
-		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-				shared_ptr<VideoSphere> planet = std::make_shared<VideoSphere>();
-				if (planet) {
-					if (planet->setup(data[j])) {
-						ofPoint min(planet->getSphere().get()->getRadius() * 2, 0, 200);
-						addPlanets(data["Planets"], min);
-						getStage()->addToAnimatable(planet);
-					}
+		Json::Value::Members m = data.getMemberNames();
+		if (data["videoSphere"].size() > 0) {
+			shared_ptr<VideoSphere> vs = std::make_shared<VideoSphere>();
+			if (vs) {
+				if (vs->setup(data["videoSphere"])) {
+					ofPoint min(vs->getSphere().get()->getRadius() * 2, 0, 200);
+					addPlanets(data["planets"], min);
+					getStage()->addToAnimatable(vs);
 				}
 			}
 		}
-		//bugbug if there are no camareas a this point add in two defaults, one fixed and the other moving
-		// do the same for VideoSphere, post a trace if this is done
-		return false;
+		return true;
 	}
 	void SolarSystem::addPlanets(const Json::Value &data, ofPoint& min) {
-		ofPoint point;
+		
 		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-				shared_ptr<Planet> planet = std::make_shared<Planet>();
-				if (planet) {
-					if (planet->setup(data[j])) {
-						point.x = ofRandom(min.x + point.x*1.2, point.x * 2.8);
-						point.y = ofRandom(min.y, 500);
-						point.z = ofRandom(min.z, 500);
-						planet->getSphere().get()->setPosition(point); // data stored as pointer so this updates the list
-						getStage()->addToAnimatable(planet);
-					}
+			shared_ptr<Planet> planet = std::make_shared<Planet>();
+			if (planet) {
+				planet->rotateAround = min;
+				if (planet->setup(data[j])) {
+					getStage()->addToAnimatable(planet);
 				}
 			}
 		}
@@ -984,7 +976,12 @@ namespace Software2552 {
 		getSphere().setWireframe(false);
 		float r = ofRandom(5, 100);
 		getSphere().get()->set(r, 40);
-		//bugbug could get sphere location here
+		//bugbug as this objet is used get data from json, right now this is more demo than production
+		Point3D point;
+		point.x = ofRandom(rotateAround.x + point.x*1.2, point.x * 2.8);
+		point.y = ofRandom(rotateAround.y, 500);
+		point.z = ofRandom(rotateAround.z, 500);
+		getSphere().get()->setPosition(point); // data stored as pointer so this updates the list
 
 		getTexturePtr()->create(getLocationPath(), r * 2, r * 2);
 
@@ -993,7 +990,7 @@ namespace Software2552 {
 	}
 	void Planet::myDraw() {
 		getTexturePtr()->bind();
-		sphere.get()->rotate(30, 0, 2.0, 0.0);
+		sphere.get()->rotate(2, 0, 1.0, 0.0);
 		sphere.myDraw();
 		getTexturePtr()->unbind();
 	}

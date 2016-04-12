@@ -83,10 +83,14 @@ namespace Software2552 {
 #define ADDCAMERA(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
 	bool Stage::setup(const Json::Value &data) {
-		ADDANIMATION(pictures, Picture);
-		ADDANIMATION(rainbows, Rainbow);
-		ADDANIMATION(circles, Ball);
-		ADDANIMATION(cubes, Cube);
+		//ADDANIMATION(pictures, Picture);
+		//ADDANIMATION(rainbows, Rainbow);
+		//ADDANIMATION(circles, Ball);
+		//ADDANIMATION(cubes, Cube);
+		//ADDANIMATION(spheres, Sphere);
+		//ADDANIMATION(videos, Video);
+		//ADDANIMATION(planets, Planet);
+		ADDANIMATION(solarSystems, SolarSystem);
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
@@ -95,6 +99,13 @@ namespace Software2552 {
 				if (camera->setup(data)) {
 					camera->worker.setPosition(0, 0, ofRandom(100, 500));//bugbug clean up the rand stuff via data and more organized random
 					add(camera);
+				}
+			}
+			shared_ptr<MovingCamera> camera2 = std::make_shared<MovingCamera>();
+			if (camera2) {
+				if (camera2->setup(data)) {
+					camera2->worker.setPosition(0, 0, ofRandom(100, 500));//bugbug clean up the rand stuff via data and more organized random
+					add(camera2);
 				}
 			}
 		}
@@ -112,12 +123,10 @@ namespace Software2552 {
 		ADDANIMATION(videoSphere, VideoSphere);
 		ADDANIMATION(text, Text);
 		ADDANIMATION(paragraph, Paragraph);
-		ADDANIMATION(sphere, Sphere);
-		ADDANIMATION(planet, Planet);
-		ADDANIMATION(solarSystem, SolarSystem);
+		
 		ADDANIMATION(grabber, CameraGrabber);
 		
-		ADDANIMATION(video, Video);
+		
 		getAnimatables().sort(compareOrder);
 		if (!data["background"].empty()) {
 			CreateReadAndaddBackgroundItems(data["background"]);
