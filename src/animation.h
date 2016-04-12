@@ -86,7 +86,7 @@ namespace Software2552 {
 	};
 	class RotationAnimation : public FloatAnimation {
 	public:
-		RotationAnimation() : FloatAnimation(0.0f, 0.0f) {}
+		RotationAnimation() : FloatAnimation(15.0f, 360.0f) {}
 	private:
 	};
 	class Rotation  {
@@ -109,7 +109,7 @@ namespace Software2552 {
 	public:
 		void update();
 		bool setup(const Json::Value &data);
-		float funXMover() { (2 * ofGetFrameNum()) % ofGetWidth(); }
+		float funXMover() { return (2 * ofGetFrameNum()) % ofGetWidth(); }
 	private:
 	};
 	// global color data

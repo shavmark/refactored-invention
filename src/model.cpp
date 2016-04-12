@@ -630,21 +630,30 @@ namespace Software2552 {
 		}
 	}
 	bool Rainbow::mysetup(const Json::Value &data) {
+		width = 500;
+		height = 500; // default
+		Visual::mysetup(data);
+		Point3D point0; // defaults to 0,0,0
+		point0.setup(data["from"]);
+		setPosition(point0);
+		sizex = 0;
+		sizey = 0;// save after first update
 		return true;
 	}
 	void Rainbow::myUpdate()	{
-		if (w != ofGetWidth() && h != ofGetHeight()) {
-			w = ofGetWidth();
-			h = ofGetHeight();
+		Visual::myUpdate();
+		if (width != sizex && height != sizey) {
+			sizex = width;
+			sizey = height;
 
-			worker.allocate(w, h, OF_IMAGE_COLOR);
+			worker.allocate(width, height, OF_IMAGE_COLOR);
 
-			for (float y = 0; y<h; y++) {
-				for (float x = 0; x<w; x++) {
+			for (float y = 0; y<height; y++) {
+				for (float x = 0; x<width; x++) {
 
-					float hue = x / w * 255;
-					float sat = ofMap(y, 0, h / 2, 0, 255, true);
-					float bri = ofMap(y, h / 2, h, 255, 0, true);
+					float hue = x / width * 255;
+					float sat = ofMap(y, 0, height / 2, 0, 255, true);
+					float bri = ofMap(y, height / 2, height, 255, 0, true);
 
 					worker.setColor(x, y, ofColor::fromHsb(hue, sat, bri));
 				}

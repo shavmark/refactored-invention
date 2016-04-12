@@ -83,31 +83,9 @@ namespace Software2552 {
 #define ADDCAMERA(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
 	bool Stage::setup(const Json::Value &data) {
-		ADDANIMATION(circles, Ball);
-		getAnimatables().sort(compareOrder);
-		return true;
-		ADDANIMATION(rainbow, Rainbow);
-		ADDANIMATION(audio, Audio);
-		ADDANIMATION(videoSphere, VideoSphere);
-		ADDANIMATION(text, Text);
-		ADDANIMATION(paragraph, Paragraph);
-		ADDANIMATION(sphere, Sphere);
-		ADDANIMATION(planet, Planet);
-		ADDANIMATION(solarSystem, SolarSystem);
-		ADDANIMATION(cube, Cube);
-		ADDANIMATION(grabber, CameraGrabber);
-		ADDANIMATION(picture, Picture);
-		ADDANIMATION(video, Video);
-		getAnimatables().sort(compareOrder);
-		if (!data["background"].empty()) {
-			CreateReadAndaddBackgroundItems(data["background"]);
-		}
-		ADDCAMERA(cameraFixed, Camera);
-		ADDCAMERA(camera, MovingCamera);
-		ADDLIGHT(light, Light);
-		ADDLIGHT(pointLight, PointLight);
-		ADDLIGHT(directionalLight, DirectionalLight);
-		ADDLIGHT(spotLight, SpotLight);
+		ADDANIMATION(rainbows, Rainbow);
+		//ADDANIMATION(circles, Ball);
+		//ADDANIMATION(cubes, Cube);
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
@@ -128,6 +106,28 @@ namespace Software2552 {
 				}
 			}
 		}
+		return true;
+		ADDANIMATION(audio, Audio);
+		ADDANIMATION(videoSphere, VideoSphere);
+		ADDANIMATION(text, Text);
+		ADDANIMATION(paragraph, Paragraph);
+		ADDANIMATION(sphere, Sphere);
+		ADDANIMATION(planet, Planet);
+		ADDANIMATION(solarSystem, SolarSystem);
+		ADDANIMATION(grabber, CameraGrabber);
+		ADDANIMATION(picture, Picture);
+		ADDANIMATION(video, Video);
+		getAnimatables().sort(compareOrder);
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
+		ADDCAMERA(cameraFixed, Camera);
+		ADDCAMERA(camera, MovingCamera);
+		ADDLIGHT(light, Light);
+		ADDLIGHT(pointLight, PointLight);
+		ADDLIGHT(directionalLight, DirectionalLight);
+		ADDLIGHT(spotLight, SpotLight);
+		getAnimatables().sort(compareOrder);
 		return true;
 	};
 

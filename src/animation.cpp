@@ -97,8 +97,8 @@ namespace Software2552 {
 
 	// need "scale"{}, animation etc wrapers in json
 	bool FloatAnimation::setup(const Json::Value &data) {
-		Json::Value::Members m = data.getMemberNames();// just to help w/ debugging
 		if (data.size() > 0) {
+			Json::Value::Members m = data.getMemberNames();// just to help w/ debugging
 			objectLifeTimeManager::setup(data);
 
 			READFLOAT(from, data);

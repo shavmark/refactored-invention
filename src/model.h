@@ -258,16 +258,6 @@ namespace Software2552 {
 		bool mysetup(const Json::Value &data);
 	};
 
-	class Rainbow : public ActorRole {
-	public:
-		void myUpdate();
-		void myDraw();
-	private:
-		ofImage worker;
-		int w = 0;
-		int h = 0;
-		bool mysetup(const Json::Value &data);
-	};
 	class Arrow : public ActorRole {
 	public:
 		void myDraw() {
@@ -297,6 +287,15 @@ namespace Software2552 {
 		int height = 0;
 		bool mysetup(const Json::Value &data);
 
+	};
+	class Rainbow : public Visual {
+	public:
+		void myDraw();
+		void myUpdate();
+	private:
+		ofImage worker;
+		int sizex, sizey;
+		bool mysetup(const Json::Value &data);
 	};
 
 	class Video : public Visual {
