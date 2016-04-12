@@ -20,8 +20,9 @@ namespace Software2552 {
 			READFLOAT(y, data);
 			READFLOAT(z, data);
 			convert(x*0.01f, y*0.01f, z*0.01f);
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	vector<shared_ptr<Channel>>& ChannelList::getList() {
@@ -633,9 +634,6 @@ namespace Software2552 {
 		width = 500;
 		height = 500; // default
 		Visual::mysetup(data);
-		Point3D point0; // defaults to 0,0,0
-		point0.setup(data["from"]);
-		setPosition(point0);
 		sizex = 0;
 		sizey = 0;// save after first update
 		return true;

@@ -83,9 +83,10 @@ namespace Software2552 {
 #define ADDCAMERA(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
 	bool Stage::setup(const Json::Value &data) {
+		ADDANIMATION(pictures, Picture);
 		ADDANIMATION(rainbows, Rainbow);
-		//ADDANIMATION(circles, Ball);
-		//ADDANIMATION(cubes, Cube);
+		ADDANIMATION(circles, Ball);
+		ADDANIMATION(cubes, Cube);
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
@@ -115,7 +116,7 @@ namespace Software2552 {
 		ADDANIMATION(planet, Planet);
 		ADDANIMATION(solarSystem, SolarSystem);
 		ADDANIMATION(grabber, CameraGrabber);
-		ADDANIMATION(picture, Picture);
+		
 		ADDANIMATION(video, Video);
 		getAnimatables().sort(compareOrder);
 		if (!data["background"].empty()) {

@@ -230,6 +230,10 @@ namespace Software2552 {
 			READSTRING(locationPath, data);
 			READBOOL(fill, data);
 			READINT(drawOrder, data);
+			Point3D point0; // defaults to 0,0,0
+			if (point0.setup(data["position"])) {
+				setPosition(point0); // set default position before any of the items below which may move it again
+			}
 			string s = getLocationPath();//just for debug
 			// any actor can have a reference
 			references = parseList<Reference>(data["references"]);
