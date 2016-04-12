@@ -13,7 +13,7 @@ namespace Software2552 {
 	class Director {
 	public:
 		// return a possibly changed and live value from the cameras vector
-		shared_ptr<Camera> pickem(vector<shared_ptr<Camera>>&cameras, bool rotating);
+		shared_ptr<FixedCamera> pickem(vector<shared_ptr<FixedCamera>>&cameras, bool rotating);
 		// owns scenes, read, run, delete when duration is over
 		//objectLifeTimeManager
 	};
@@ -64,10 +64,10 @@ namespace Software2552 {
 		bool drawIn3dMoving = false; 
 		bool drawIn2d = true; 
 
-		void add(shared_ptr<Camera> camera) { cameras.push_back(camera); };
+		void add(shared_ptr<FixedCamera> camera) { cameras.push_back(camera); };
 		void add(shared_ptr<Light> light) { lights.push_back(light); };
 
-		vector<shared_ptr<Camera>>& getCameras() { return cameras; }
+		vector<shared_ptr<FixedCamera>>& getCameras() { return cameras; }
 		vector<shared_ptr<Light>>& getLights() { return lights; }
 
 		void draw2d();
@@ -85,7 +85,7 @@ namespace Software2552 {
 		virtual void myPause() {}
 		virtual void myResume() {}
 		virtual void myClear(bool force) {}
-		virtual void installLightAndMaterialThenDraw(shared_ptr<Camera>, bool drawfixed); // derive to change where cameras are
+		virtual void installLightAndMaterialThenDraw(shared_ptr<FixedCamera>, bool drawfixed); // derive to change where cameras are
 		string keyname;
 
 	private:
@@ -98,7 +98,7 @@ namespace Software2552 {
 		}
 
 		list<shared_ptr<ActorRole>> animatables; // use list as it could be large with lots of adds/deletes over time
-		vector<shared_ptr<Camera>> cameras;  // expect list to be smaller and more fixed, also want index acess "camera 2"
+		vector<shared_ptr<FixedCamera>> cameras;  // expect list to be smaller and more fixed, also want index acess "camera 2"
 		vector<shared_ptr<Light>> lights;    // expect list to be smaller and more fixed
 
 		Director director;

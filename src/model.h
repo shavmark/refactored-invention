@@ -111,7 +111,7 @@ namespace Software2552 {
 		virtual bool setup(const Json::Value &data) = 0;
 	};
 	// cameras (and others like it) are not actors
-	class Camera : public EquipementBaseClass {
+	class FixedCamera : public EquipementBaseClass {
 	public:
 		virtual void orbit() {};
 		virtual bool isOrbiting() const { return false; }
@@ -119,7 +119,7 @@ namespace Software2552 {
 		ofEasyCam worker;
 	private:
 	};
-	class MovingCamera : public Camera {
+	class MovingCamera : public FixedCamera {
 	public:
 		virtual void orbit();
 		virtual bool isOrbiting() const { return true; }

@@ -30,7 +30,7 @@ namespace Software2552 {
 	}
 
 	// return a possibly modifed version such as camera moved
-	shared_ptr<Camera> Director::pickem(vector<shared_ptr<Camera>>&cameras, bool orbiting) {
+	shared_ptr<FixedCamera> Director::pickem(vector<shared_ptr<FixedCamera>>&cameras, bool orbiting) {
 		for (auto it = cameras.begin(); it != cameras.end(); ++it) {
 			if (orbiting) {
 				if ((*it)->isOrbiting()) {
@@ -94,17 +94,17 @@ namespace Software2552 {
 		getAnimatables().sort(compareOrder);
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
-			shared_ptr<Camera> camera = std::make_shared<Camera>();
+			shared_ptr<FixedCamera> camera = std::make_shared<FixedCamera>();
 			if (camera) {
 				if (camera->setup(data)) {
-					camera->worker.setPosition(0, 0, ofRandom(100, 500));//bugbug clean up the rand stuff via data and more organized random
+					camera->worker.setPosition(0, 0, 600);//bugbug clean up the rand stuff via data and more organized random
 					add(camera);
 				}
 			}
 			shared_ptr<MovingCamera> camera2 = std::make_shared<MovingCamera>();
 			if (camera2) {
 				if (camera2->setup(data)) {
-					camera2->worker.setPosition(0, 0, ofRandom(100, 500));//bugbug clean up the rand stuff via data and more organized random
+					camera2->worker.setPosition(0, 0, 600);//bugbug clean up the rand stuff via data and more organized random
 					add(camera2);
 				}
 			}
@@ -131,7 +131,7 @@ namespace Software2552 {
 		if (!data["background"].empty()) {
 			CreateReadAndaddBackgroundItems(data["background"]);
 		}
-		ADDCAMERA(cameraFixed, Camera);
+		ADDCAMERA(cameraFixed, FixedCamera);
 		ADDCAMERA(camera, MovingCamera);
 		ADDLIGHT(light, Light);
 		ADDLIGHT(pointLight, PointLight);
@@ -184,7 +184,7 @@ namespace Software2552 {
 		}
 		else {
 			removeExpiredItems(animatables);
-			removeExpiredItems<Camera>(cameras);
+			removeExpiredItems<FixedCamera>(cameras);
 			removeExpiredItems<Light>(lights);
 		}
 		myClear(force);
@@ -202,7 +202,7 @@ namespace Software2552 {
 
 	}
 	// setup light and material for drawing
-	void Stage::installLightAndMaterialThenDraw(shared_ptr<Camera>cam, bool drawFixed) {
+	void Stage::installLightAndMaterialThenDraw(shared_ptr<FixedCamera>cam, bool drawFixed) {
 		if (cam != nullptr) {
 			cam->worker.begin();
 			cam->orbit(); 
@@ -283,13 +283,13 @@ namespace Software2552 {
 
 		// fixed camera
 		if (drawIn3dFixed) {
-			shared_ptr<Camera> cam = director.pickem(cameras, false);
+			shared_ptr<FixedCamera> cam = director.pickem(cameras, false);
 			if (cam != nullptr) {
 				installLightAndMaterialThenDraw(cam, true);
 			}
 		}
 		if (drawIn3dMoving) {
-			shared_ptr<Camera> cam = director.pickem(cameras, true);
+			shared_ptr<FixedCamera> cam = director.pickem(cameras, true);
 			if (cam != nullptr) {
 				installLightAndMaterialThenDraw(cam, false);
 			}

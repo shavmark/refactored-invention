@@ -339,12 +339,16 @@ namespace Software2552 {
 			}
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
+				ofPushMatrix();
+				ofTranslate(getCurrentPosition().x, getCurrentPosition().y, getCurrentPosition().z);
+				rotate();
+				myDraw();
+				ofPopMatrix();
 			}
-			ofPushMatrix();
-			ofTranslate(getCurrentPosition().x, getCurrentPosition().y, getCurrentPosition().z);
-			rotate();
-			myDraw();
-			ofPopMatrix();
+			else {
+				// 3d does movement differently
+				myDraw();
+			}
 			if (disableEAP) {
 				ofDisableAlphaBlending(); 
 			}

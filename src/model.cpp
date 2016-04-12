@@ -353,7 +353,7 @@ namespace Software2552 {
 		worker.orbit(longitude, latitude, radius, ofPoint(0, 0, 0));
 	}
 	
-	bool Camera::setup(const Json::Value &data) {
+	bool FixedCamera::setup(const Json::Value &data) {
 		//bugbug fill in
 		//player.setScale(-1, -1, 1); // showing video
 		worker.setPosition(ofRandom(-100, 200), ofRandom(60, 70), ofRandom(600, 700));
@@ -365,7 +365,9 @@ namespace Software2552 {
 		if (colorHelper){
 			setSpecularColor(colorHelper->getForeground());
 		}
-		//setSpecularColor(ofColor(255, 255, 255, 255)); // does white work wonders? or what does color do?
+		else {
+			setSpecularColor(ofColor(255, 255, 255, 255)); // harsh, but default only
+		}
 		ofMaterial::begin();
 	}
 
@@ -384,7 +386,7 @@ namespace Software2552 {
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
-		setLoc(ofRandom(-100,100), 0, ofRandom(300,500));
+		setLoc(ofRandom(-100,100), 0, ofRandom(400,600));
 		// help http://www.glprogramming.com/red/chapter05.html
 		colorHelper = parseColor(data);
 		if (colorHelper) {
@@ -496,7 +498,6 @@ namespace Software2552 {
 	void DrawingPrimitive3d::basicDraw() {
 		if (get() && worker) {
 			//worker->setScale(ofRandom(100));
-			worker->rotate(180, 0, 1, 0.0);
 			if (useWireframe()) {
 				ofPushMatrix();
 				worker->setScale(1.01f);
@@ -932,6 +933,9 @@ namespace Software2552 {
 		}
 		getSphere().setWireframe(false);
 		getSphere().get()->set(250, 180);// set default
+		getSphere().get()->rotate(180, 0, 1, 0); // turn seam to the back, just one time
+		getSphere().get()->rotate(180, 1, 0, 0); // turn seam to the back, just one time
+		getSphere().mysetup(data); // do not call base class, just get specific items, baseclass items handled in Video
 		return true;
 	}
 	void TextureFromImage::create(const string& name, float w, float h) {
@@ -950,7 +954,7 @@ namespace Software2552 {
 			shared_ptr<VideoSphere> vs = std::make_shared<VideoSphere>();
 			if (vs) {
 				if (vs->setup(data["videoSphere"])) {
-					ofPoint min(vs->getSphere().get()->getRadius() * 2, 0, 200);
+					ofPoint min(vs->getSphere().get()->getRadius() * 2, 0, vs->getSphere().get()->getRadius() * 2);
 					addPlanets(data["planets"], min);
 					getStage()->addToAnimatable(vs);
 				}
@@ -973,14 +977,16 @@ namespace Software2552 {
 
 	bool Planet::mysetup(const Json::Value &data) {
 		setType(ActorRole::draw3dMovingCamera);
+		getSphere().mysetup(data); // do not call base class, just get specific items, baseclass items handled in Planet
+		//override some settings as this is a helper object vs. on json really wants to do much with
 		getSphere().setWireframe(false);
-		float r = ofRandom(5, 100);
+		float r = ofRandom(5, rotateAround.x-20);// never bigger than center planet
 		getSphere().get()->set(r, 40);
 		//bugbug as this objet is used get data from json, right now this is more demo than production
 		Point3D point;
-		point.x = ofRandom(rotateAround.x + point.x*1.2, point.x * 2.8);
-		point.y = ofRandom(rotateAround.y, 500);
-		point.z = ofRandom(rotateAround.z, 500);
+		point.x = ofRandom(rotateAround.x, rotateAround.x*1.2);
+		point.y = ofRandom(rotateAround.y, rotateAround.y*1.2);
+		point.z = ofRandom(rotateAround.z, rotateAround.z*1.2);
 		getSphere().get()->setPosition(point); // data stored as pointer so this updates the list
 
 		getTexturePtr()->create(getLocationPath(), r * 2, r * 2);

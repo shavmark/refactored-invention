@@ -9,7 +9,6 @@
 // supports animation
 
 namespace Software2552 {
-	AnimRepeat getRepeatTypeFromString();
 	// read in list of Json values
 	template<typename T> shared_ptr<T> parseNoList(const Json::Value &data)
 	{
