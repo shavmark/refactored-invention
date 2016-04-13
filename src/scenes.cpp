@@ -83,21 +83,28 @@ namespace Software2552 {
 #define ADDCAMERA(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
 	bool Stage::setup(const Json::Value &data) {
-		//ADDANIMATION(pictures, Picture);
-		//ADDANIMATION(rainbows, Rainbow);
-		//ADDANIMATION(circles, Ball);
-		//ADDANIMATION(cubes, Cube);
-		//ADDANIMATION(spheres, Sphere);
-		//ADDANIMATION(videos, Video);
+		ADDANIMATION(pictures, Picture);
+		ADDANIMATION(rainbows, Rainbow);
+		ADDANIMATION(circles, Ball);
+		ADDANIMATION(cubes, Cube);
+		ADDANIMATION(spheres, Sphere);
+		ADDANIMATION(videos, Video);
 		//ADDANIMATION(planets, Planet);
-		ADDANIMATION(solarSystems, SolarSystem);
+		//ADDANIMATION(videoSpheres, VideoSphere);
+		ADDANIMATION(solarSystems, SolarSystem);//bugbug forgot how to rotate around clyde, does not run w/ others
+		ADDANIMATION(grabbers, CameraGrabber);
+		ADDANIMATION(texts, Text);
+		ADDANIMATION(paragraphs, Paragraph);
 		getAnimatables().sort(compareOrder);
+		if (!data["background"].empty()) {
+			CreateReadAndaddBackgroundItems(data["background"]);
+		}
 		// set a default camera if none exist
 		if (getCameras().size() == 0) {
 			shared_ptr<FixedCamera> camera = std::make_shared<FixedCamera>();
 			if (camera) {
 				if (camera->setup(data)) {
-					camera->worker.setPosition(0, 0, 600);//bugbug clean up the rand stuff via data and more organized random
+					camera->worker.setPosition(0, 0, 0);//bugbug clean up the rand stuff via data and more organized random
 					add(camera);
 				}
 			}
@@ -119,25 +126,14 @@ namespace Software2552 {
 			}
 		}
 		return true;
-		ADDANIMATION(audio, Audio);
-		ADDANIMATION(videoSphere, VideoSphere);
-		ADDANIMATION(text, Text);
-		ADDANIMATION(paragraph, Paragraph);
-		
-		ADDANIMATION(grabber, CameraGrabber);
-		
-		
-		getAnimatables().sort(compareOrder);
-		if (!data["background"].empty()) {
-			CreateReadAndaddBackgroundItems(data["background"]);
-		}
+		ADDANIMATION(audio, Audio);// sound phase 1a
+								   // no cameras or lights in data, build that in when telling the story
 		ADDCAMERA(cameraFixed, FixedCamera);
 		ADDCAMERA(camera, MovingCamera);
 		ADDLIGHT(light, Light);
 		ADDLIGHT(pointLight, PointLight);
 		ADDLIGHT(directionalLight, DirectionalLight);
 		ADDLIGHT(spotLight, SpotLight);
-		getAnimatables().sort(compareOrder);
 		return true;
 	};
 

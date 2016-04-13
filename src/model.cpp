@@ -277,16 +277,16 @@ namespace Software2552 {
 	}
 	
 	bool Text::mysetup(const Json::Value &data) {
-		readStringFromJson(getText(), data["text"]["str"]);
+		READSTRING(text, data);
 		return true;
 	}
 
 	// return true if text read in
 	bool Paragraph::mysetup(const Json::Value &data) {
 
-		string str;
-		readStringFromJson(str, data["text"]["str"]);
-		worker.setText(str);
+		string text;
+		READSTRING(text, data);
+		worker.setText(text);
 
 		int indent;
 		int leading;
@@ -353,11 +353,13 @@ namespace Software2552 {
 		worker.orbit(longitude, latitude, radius, ofPoint(0, 0, 0));
 	}
 	
-	bool FixedCamera::setup(const Json::Value &data) {
-		//bugbug fill in
-		//player.setScale(-1, -1, 1); // showing video
-		worker.setPosition(ofRandom(-100, 200), ofRandom(60, 70), ofRandom(600, 700));
-		worker.setFov(60);
+	bool Camera::setup(const Json::Value &data) {
+		return mysetup(data);
+	}
+	bool MovingCamera::mysetup(const Json::Value &data) {
+		return true;
+	}
+	bool FixedCamera::mysetup(const Json::Value &data) {
 		return true;
 	}
 	void Material::begin() {
@@ -458,6 +460,7 @@ namespace Software2552 {
 
 	void Text::drawText(const string &s, int x, int y) {
 		FontHelper font;
+		font.get()->setLineHeight(444);
 		font.get()->drawString(s, x, y);
 	}
 
@@ -490,19 +493,20 @@ namespace Software2552 {
 		return derivedMysetup(data);
 	}
 	void DrawingPrimitive3d::myUpdate() {
-		if (get()) {
-			get()->setPosition(getCurrentPosition());
+		if (worker) {
+			worker->setPosition(getCurrentPosition());
 		}
 	}
 	// private draw helper
 	void DrawingPrimitive3d::basicDraw() {
-		if (get() && worker) {
-			//worker->setScale(ofRandom(100));
+		if (worker) {
 			if (useWireframe()) {
 				ofPushMatrix();
-				worker->setScale(1.01f);
+				worker->setScale(scale());
+				ofPoint scale = worker->getScale();
+				worker->setScale(scale.x+0.01f, scale.y + 0.01f, scale.z + 0.01f);
 				worker->drawWireframe();
-				worker->setScale(1.f);
+				worker->setScale(scale);
 				ofPopMatrix();
 			}
 			else {
@@ -595,15 +599,15 @@ namespace Software2552 {
 		setRefreshRate(60000);// just set something different while in dev
 
 		if (!data["image"].empty()) {
-			getStage()->CreateReadAndaddAnimatable<Picture>(data["image"], true, true);
+			add<Picture>(data["image"]);
 		}
 		
 		if (!data["video"].empty()) {
-			getStage()->CreateReadAndaddAnimatable<Video>(data["video"], true, true);
+			add<Video>(data["video"]);
 		}
 
 		if (!data["rainbow"].empty()) {
-			getStage()->CreateReadAndaddAnimatable<Rainbow>(data["rainbow"], true);
+			add<Rainbow>(data["rainbow"]);
 		}
 		return true;
 	}
@@ -612,7 +616,9 @@ namespace Software2552 {
 			ofPoint pt;// upper left in a centered world
 			pt.x = -ofGetWidth() / 2;
 			pt.y = -ofGetHeight() / 2;
-			setPosition(pt);
+			width = ofGetWidth();
+			height = ofGetHeight();
+			setActorPosition(pt);
 		}
 	}
 	void Background::myDraw() {
@@ -841,7 +847,11 @@ namespace Software2552 {
 	int CameraGrabber::find() {
 		//bugbug does Kintect show up?
 		vector<ofVideoDevice> devices = worker.listDevices();
-		for (vector<ofVideoDevice>::const_iterator it = devices.begin(); it != devices.end(); ++it) {
+		vector<ofVideoDevice>::const_iterator it = devices.begin();
+		for (; it != devices.end(); ++it) {
+			if (getLocationPath().size() == 0) {
+				return it->id;// first found unless one is named
+			}
 			if (it->deviceName == getLocationPath()) {
 				return it->id;
 			}
@@ -875,12 +885,6 @@ namespace Software2552 {
 	bool Picture::mysetup(const Json::Value &data) { 
 		Visual::mysetup(data);
 		return true;
-	}
-	void TextureVideo::myDraw() {
-		return; // not using fbo for video bugbug clean this up;
-
-	}
-	void TextureVideo::mySetup() {
 	}
 	bool TextureVideo::mybind() {
 		if (worker.isInitialized() && fbo.isUsingTexture()) {
@@ -918,6 +922,7 @@ namespace Software2552 {
 			sphere.get()->rotate(180, 0, 1, 0.0);
 			set = true;
 		}
+		
 		video->mybind();
 		getSphere().myDraw();
 		video->myunbind();
@@ -934,13 +939,16 @@ namespace Software2552 {
 		getSphere().setWireframe(false);
 		getSphere().get()->set(250, 180);// set default
 		getSphere().get()->rotate(180, 0, 1, 0); // turn seam to the back, just one time
-		getSphere().get()->rotate(180, 1, 0, 0); // turn seam to the back, just one time
+		//getSphere().get()->rotate(180, 1, 0, 0); // turn seam to the back, just one time
 		getSphere().mysetup(data); // do not call base class, just get specific items, baseclass items handled in Video
 		return true;
 	}
 	void TextureFromImage::create(const string& name, float w, float h) {
 		// create texture
 		ofLoadImage(*this, name);
+		if (w == 0 || h == 0){
+			int i = 0;
+		}
 		fbo.allocate(w, h, GL_RGB);
 		fbo.begin();//fbo does drawing
 		ofSetColor(ofColor::white); // no image color change when using white
@@ -954,20 +962,19 @@ namespace Software2552 {
 			shared_ptr<VideoSphere> vs = std::make_shared<VideoSphere>();
 			if (vs) {
 				if (vs->setup(data["videoSphere"])) {
-					ofPoint min(vs->getSphere().get()->getRadius() * 2, 0, vs->getSphere().get()->getRadius() * 2);
-					addPlanets(data["planets"], min);
+					addPlanets(data["planets"], vs->getSphere());
 					getStage()->addToAnimatable(vs);
 				}
 			}
 		}
 		return true;
 	}
-	void SolarSystem::addPlanets(const Json::Value &data, ofPoint& min) {
+	void SolarSystem::addPlanets(const Json::Value &data, Sphere &parent) {
 		
 		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 			shared_ptr<Planet> planet = std::make_shared<Planet>();
 			if (planet) {
-				planet->rotateAround = min;
+				planet->rotateAround = ofPoint(parent.get()->getRadius(), parent.get()->getRadius(), parent.get()->getRadius());
 				if (planet->setup(data[j])) {
 					getStage()->addToAnimatable(planet);
 				}
@@ -980,13 +987,23 @@ namespace Software2552 {
 		getSphere().mysetup(data); // do not call base class, just get specific items, baseclass items handled in Planet
 		//override some settings as this is a helper object vs. on json really wants to do much with
 		getSphere().setWireframe(false);
-		float r = ofRandom(5, rotateAround.x-20);// never bigger than center planet
-		getSphere().get()->set(r, 40);
+		float max = (rotateAround.x > 0) ? (rotateAround.x / 3) : ofGetWidth() / 10;
+		float r = ofRandom(5, max);// never bigger than center planet
+		getSphere().get()->set(r, 60);
 		//bugbug as this objet is used get data from json, right now this is more demo than production
-		Point3D point;
-		point.x = ofRandom(rotateAround.x, rotateAround.x*1.2);
-		point.y = ofRandom(rotateAround.y, rotateAround.y*1.2);
-		point.z = ofRandom(rotateAround.z, rotateAround.z*1.2);
+		ofPoint point;
+		if (rotateAround.x == 0) {
+			rotateAround.x = ofGetWidth() / 10;
+		}
+		if (rotateAround.y == 0) {
+			rotateAround.y = ofGetHeight() / 10;
+		}
+		if (rotateAround.z == 0) {
+			rotateAround.z = ofGetWidth() / 100;
+		}
+		point.x = ofRandom(-rotateAround.x, rotateAround.x*2);
+		point.y = ofRandom(rotateAround.y, rotateAround.y*2);
+		point.z = ofRandom(rotateAround.z, rotateAround.z*2);
 		getSphere().get()->setPosition(point); // data stored as pointer so this updates the list
 
 		getTexturePtr()->create(getLocationPath(), r * 2, r * 2);
@@ -996,7 +1013,7 @@ namespace Software2552 {
 	}
 	void Planet::myDraw() {
 		getTexturePtr()->bind();
-		sphere.get()->rotate(2, 0, 1.0, 0.0);
+		sphere.get()->rotate(30, 0, 2.0, 0.0);
 		sphere.myDraw();
 		getTexturePtr()->unbind();
 	}

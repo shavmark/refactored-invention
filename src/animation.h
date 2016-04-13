@@ -176,7 +176,7 @@ namespace Software2552 {
 		void setRefreshRate(uint64_t);
 		float getWait();
 		ofPoint getCurrentPosition();
-		void setPosition(ofPoint& p);
+		void setActorPosition(ofPoint& p);
 		virtual float getTimeBeforeStart(float t);
 		int getDrawOrder() { return drawOrder; }
 		// helpers to wrap basic functions

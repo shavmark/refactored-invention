@@ -111,18 +111,27 @@ namespace Software2552 {
 		virtual bool setup(const Json::Value &data) = 0;
 	};
 	// cameras (and others like it) are not actors
-	class FixedCamera : public EquipementBaseClass {
+	class Camera : public EquipementBaseClass {
 	public:
-		virtual void orbit() {};
 		virtual bool isOrbiting() const { return false; }
 		bool setup(const Json::Value &data);
+		virtual void orbit() {};
 		ofEasyCam worker;
+	protected:
 	private:
+		virtual bool mysetup(const Json::Value &data) { return true; }
+	};
+	class FixedCamera : public Camera {
+	public:
+	private:
+		bool mysetup(const Json::Value &data);
 	};
 	class MovingCamera : public FixedCamera {
 	public:
-		virtual void orbit();
 		virtual bool isOrbiting() const { return true; }
+	private:
+		virtual void orbit();
+		bool mysetup(const Json::Value &data);
 	};
 
 	class Light : public EquipementBaseClass {
@@ -316,8 +325,6 @@ namespace Software2552 {
 		TextureVideo() : ActorRole() { }
 		TextureVideo(const string& path) : ActorRole(path) { }
 		void myUpdate() { worker.update(); }
-		void myDraw();
-		void mySetup();
 		bool textureReady() { return  worker.isInitialized(); }
 		bool mybind();
 		bool myunbind();
@@ -333,7 +340,7 @@ namespace Software2552 {
 	public:
 		VideoSphere() : ActorRole() { }
 		VideoSphere(const string& path) : ActorRole(path) { video = std::make_shared<TextureVideo>(path); }
-
+		void myUpdate() { sphere.myUpdate(); }
 		void myDraw();
 		Sphere& getSphere() { return sphere; }
 
@@ -361,9 +368,9 @@ namespace Software2552 {
 	class SolarSystem : public ActorRole {
 	public:
 		SolarSystem() :ActorRole() {  }
-		void addPlanets(const Json::Value &data, ofPoint& min);
 
 	private:
+		void addPlanets(const Json::Value &data, Sphere &parent);
 		bool mysetup(const Json::Value &data);
 	};
 
@@ -394,7 +401,16 @@ namespace Software2552 {
 		TypeOfGradient mode = TypeOfGradient::noGradient;
 		TypeOfBackground type = ColorFixed;
 		bool mysetup(const Json::Value &data);
+		template<typename T>void add(const Json::Value &data) {
+			shared_ptr<T> item = std::make_shared<T>();
+			if (item) {
+				if (item->setup(data)) {
+					item->setFullSize();
+					getStage()->addToAnimatable(item, true);
+				}
+			}
 
+		}
 	};
 
 	// item in a play list

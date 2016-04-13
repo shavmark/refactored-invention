@@ -68,7 +68,7 @@ namespace Software2552 {
 		return false;
 	}
 
-	void ActorRole::setPosition(ofPoint& p) {
+	void ActorRole::setActorPosition(ofPoint& p) {
 		if (locationAnimation) {
 			locationAnimation->setPosition(p);
 		}
@@ -232,7 +232,7 @@ namespace Software2552 {
 			READINT(drawOrder, data);
 			Point3D point0; // defaults to 0,0,0
 			if (point0.setup(data["position"])) {
-				setPosition(point0); // set default position before any of the items below which may move it again
+				setActorPosition(point0); // set default position before any of the items below which may move it again
 			}
 			string s = getLocationPath();//just for debug
 			// any actor can have a reference
@@ -340,13 +340,14 @@ namespace Software2552 {
 			if (getType() == draw2d) {
 				applyColor(); // in 3d color comes from lights etc
 				ofPushMatrix();
-				ofTranslate(getCurrentPosition().x, getCurrentPosition().y, getCurrentPosition().z);
+				ofTranslate(getCurrentPosition());
 				rotate();
 				myDraw();
 				ofPopMatrix();
 			}
 			else {
 				// 3d does movement differently
+				
 				myDraw();
 			}
 			if (disableEAP) {
