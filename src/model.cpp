@@ -14,7 +14,7 @@ namespace Software2552 {
 		z = zpercent;//not sure how to do this yet
 	}
 	bool Point3D::setup(const Json::Value &data) {
-		float x=0.0f, y=00.0f, z=00.0f;
+		float x = 0.0f, y = 00.0f, z = 00.0f;
 		if (data.size() > 0) {
 			READFLOAT(x, data);
 			READFLOAT(y, data);
@@ -32,7 +32,7 @@ namespace Software2552 {
 	shared_ptr<Channel> ChannelList::getCurrent() {
 		// find first non skipped channel
 		for (const auto& channel : list) {
-			if (!channel->getSkip()){
+			if (!channel->getSkip()) {
 				return channel;
 			}
 		}
@@ -221,11 +221,11 @@ namespace Software2552 {
 	}
 	bool Channel::setup(const Json::Value &data) {
 		READSTRING(keyname, data);
-		float lifetime=0;
+		float lifetime = 0;
 		READFLOAT(lifetime, data);
 		setObjectLifetime(lifetime);
 		READBOOL(skip, data);
-		string type= "any";
+		string type = "any";
 		readStringFromJson(type, data["channelType"]);
 		if (type == "history") {
 			setType(History);
@@ -233,7 +233,7 @@ namespace Software2552 {
 		else if (type == "sports") {
 			setType(Sports);
 		}
-		else  {
+		else {
 			setType(Any);
 		}
 		return true;
@@ -249,7 +249,7 @@ namespace Software2552 {
 	bool Reference::setup(const Json::Value &data) {
 		Dates::setup(data["dates"]);
 		if (Dates::setup(data)) { // ignore reference as an array or w/o data at this point
-			// no base class so it repeats some data in base class ReferencedItem
+								  // no base class so it repeats some data in base class ReferencedItem
 			READSTRING(location, data[STRINGIFY(Reference)]);
 			READSTRING(locationPath, data[STRINGIFY(Reference)]);
 			READSTRING(source, data[STRINGIFY(Reference)]);
@@ -275,7 +275,7 @@ namespace Software2552 {
 
 		return true;
 	}
-	
+
 	bool Text::mysetup(const Json::Value &data) {
 		READSTRING(text, data);
 		return true;
@@ -311,7 +311,7 @@ namespace Software2552 {
 		}
 
 		worker.setFont(getFontPointer());
-		
+
 		// object holds it own color bugbug maybe just set current color right before draw?
 		worker.setColor(colorHelper->getForeground());
 
@@ -331,7 +331,7 @@ namespace Software2552 {
 		if (speed != 0) {
 			worker.setSpeed(speed);
 		}
-		float volume=1;//default
+		float volume = 1;//default
 		READFLOAT(volume, data);
 		worker.setVolume(volume);
 		return true;
@@ -352,7 +352,7 @@ namespace Software2552 {
 		float radius = 600 + 50 * sin(time*0.4);
 		worker.orbit(longitude, latitude, radius, ofPoint(0, 0, 0));
 	}
-	
+
 	bool Camera::setup(const Json::Value &data) {
 		return mysetup(data);
 	}
@@ -364,7 +364,7 @@ namespace Software2552 {
 	}
 	void Material::begin() {
 		// the light highlight of the material  
-		if (colorHelper){
+		if (colorHelper) {
 			setSpecularColor(colorHelper->getForeground());
 		}
 		else {
@@ -388,7 +388,7 @@ namespace Software2552 {
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		//could get from json? not sure yet getAnimationHelper()->setPositionX(ofGetWidth()*.2);
-		setLoc(ofRandom(-100,100), 0, ofRandom(400,600));
+		setLoc(ofRandom(-100, 100), 0, ofRandom(400, 600));
 		// help http://www.glprogramming.com/red/chapter05.html
 		colorHelper = parseColor(data);
 		if (colorHelper) {
@@ -405,7 +405,7 @@ namespace Software2552 {
 		// specular color, the highlight/shininess color //
 		//get from json player.setSpecularColor(ofColor(255.f, 0, 0));
 		// specular color, the highlight/shininess color //
-		setLoc(ofRandom(ofGetWidth()*.2, ofGetWidth()*.4), ofRandom(ofGetHeight()*.2, ofGetHeight()*.4), ofRandom(500,700));
+		setLoc(ofRandom(ofGetWidth()*.2, ofGetWidth()*.4), ofRandom(ofGetHeight()*.2, ofGetHeight()*.4), ofRandom(500, 700));
 		//could get from json? not sure yet getAnimationHelper()->setPositionY(ofGetHeight()*.2);
 		return true;
 	}
@@ -439,7 +439,7 @@ namespace Software2552 {
 	}
 	void Ball::myDraw() {
 		// starting position determined by caller
-		ofCircle(0,0, radius*scale());
+		ofCircle(0, 0, radius*scale());
 	}
 
 	bool Arrow::mysetup(const Json::Value &data) {
@@ -455,7 +455,7 @@ namespace Software2552 {
 
 	void Text::myDraw() {
 		//position set by caller
-		drawText(text, 0,0);
+		drawText(text, 0, 0);
 	}
 
 	void Text::drawText(const string &s, int x, int y) {
@@ -467,7 +467,7 @@ namespace Software2552 {
 	bool Plane::derivedMysetup(const Json::Value &data) {
 		return true;
 	}
-	DrawingPrimitive3d::~DrawingPrimitive3d() { 
+	DrawingPrimitive3d::~DrawingPrimitive3d() {
 		if (worker) {
 			delete worker;
 			worker = nullptr;
@@ -476,12 +476,12 @@ namespace Software2552 {
 
 	DrawingPrimitive3d::DrawingPrimitive3d(of3dPrimitive *p, drawtype type) : ActorRole() {
 		worker = p;
-		setType(type); 
+		setType(type);
 		if (worker) {
 			worker->enableColors();
 		}
 	}
-	
+
 	bool DrawingPrimitive3d::mysetup(const Json::Value &data) {
 		///ofPolyRenderMode renderType = OF_MESH_WIREFRAME; //bugbug enable phase II
 		bool wireFrame = true;
@@ -504,7 +504,7 @@ namespace Software2552 {
 				ofPushMatrix();
 				worker->setScale(scale());
 				ofPoint scale = worker->getScale();
-				worker->setScale(scale.x+0.01f, scale.y + 0.01f, scale.z + 0.01f);
+				worker->setScale(scale.x + 0.01f, scale.y + 0.01f, scale.z + 0.01f);
 				worker->drawWireframe();
 				worker->setScale(scale);
 				ofPopMatrix();
@@ -594,14 +594,14 @@ namespace Software2552 {
 		else {
 			setGradientMode(noGradient);
 		}
-		
+
 		//bugbug finish this 
 		setRefreshRate(60000);// just set something different while in dev
 
 		if (!data["image"].empty()) {
 			add<Picture>(data["image"]);
 		}
-		
+
 		if (!data["video"].empty()) {
 			add<Video>(data["video"]);
 		}
@@ -645,7 +645,7 @@ namespace Software2552 {
 		sizey = 0;// save after first update
 		return true;
 	}
-	void Rainbow::myUpdate()	{
+	void Rainbow::myUpdate() {
 		Visual::myUpdate();
 		if (width != sizex && height != sizey) {
 			sizex = width;
@@ -691,7 +691,7 @@ namespace Software2552 {
 
 	}
 	void Paragraph::myDraw() {
-		worker.setPosition(0,0);
+		worker.setPosition(0, 0);
 		worker.draw();
 	}
 	bool ChannelList::skipChannel(const string&keyname) {
@@ -716,7 +716,7 @@ namespace Software2552 {
 	}
 	bool ChannelList::read(const string&path) {
 		ofxJSON json;
-		
+
 		logTrace("parse " + path);
 
 		if (!json.open(path)) {
@@ -757,7 +757,7 @@ namespace Software2552 {
 			}
 			// remove unattached stages, user forgot them in the input file
 			std::vector<shared_ptr<Channel>>::const_iterator iter = list.begin();
-			while (iter != list.end())	{
+			while (iter != list.end()) {
 				if ((*iter)->getStage() == nullptr) {
 					iter = list.erase(iter);
 					logTrace("item in playlist not found in json (ignored) " + (*iter)->getKeyName());
@@ -776,6 +776,7 @@ namespace Software2552 {
 
 	// add this one http://clab.concordia.ca/?page_id=944
 	void Video::myDraw() {
+
 		if (width == 0 || height == 0) {
 			worker.draw(0, 0);
 		}
@@ -787,7 +788,7 @@ namespace Software2552 {
 		string debug = getLocationPath();
 		if (!isLoaded) {
 			if (!worker.load(getLocationPath())) {
-				logErrorString("setup video Player");
+				logErrorString("setup video Player " + getLocationPath());
 			}
 			isLoaded = true; // avoid keep on trying
 		}
@@ -804,10 +805,10 @@ namespace Software2552 {
 		worker.update();
 	}
 
-	void Picture::mySetup() { 
+	void Picture::mySetup() {
 		if (!isLoaded) {
 			if (!ofLoadImage(worker, getLocationPath())) {
-				logErrorString("setup Picture Player");
+				logErrorString("setup Picture Player " + getLocationPath());
 			}
 			isLoaded = true; // avoid keep on trying
 		}
@@ -830,11 +831,13 @@ namespace Software2552 {
 		return t;
 	}
 	void Picture::myDraw() {
-		if (width == 0 || height == 0) {
-			worker.draw(0, 0);
-		}
-		else {
-			worker.draw(0, 0, width, height);
+		if (worker.isAllocated()) {
+			if (width == 0 || height == 0) {
+				worker.draw(0, 0);
+			}
+			else {
+				worker.draw(0, 0, width, height);
+			}
 		}
 	}
 	void Audio::mySetup() {
@@ -858,7 +861,7 @@ namespace Software2552 {
 		}
 		return 0;// try first found as a default
 	}
-	void CameraGrabber::myUpdate() { 
+	void CameraGrabber::myUpdate() {
 		if (worker.isInitialized()) {
 			worker.update();
 		}
@@ -882,7 +885,7 @@ namespace Software2552 {
 
 		return true;
 	}
-	bool Picture::mysetup(const Json::Value &data) { 
+	bool Picture::mysetup(const Json::Value &data) {
 		Visual::mysetup(data);
 		return true;
 	}
@@ -911,18 +914,18 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	ofTexture& TextureVideo::getTexture() { 
+	ofTexture& TextureVideo::getVideoTexture() {
 		return worker.getTexture();
 	}
 
 	void VideoSphere::myDraw() {
 		//bugbug just need to do this one time, maybe set a flag
-		if (video->getTexture().isAllocated() && !set) {
-			sphere.get()->mapTexCoordsFromTexture(video->getTexture());
+		if (video->getVideoTexture().isAllocated() && !set) {
+			sphere.get()->mapTexCoordsFromTexture(video->getVideoTexture());
 			sphere.get()->rotate(180, 0, 1, 0.0);
 			set = true;
 		}
-		
+
 		video->mybind();
 		getSphere().myDraw();
 		video->myunbind();
@@ -939,14 +942,14 @@ namespace Software2552 {
 		getSphere().setWireframe(false);
 		getSphere().get()->set(250, 180);// set default
 		getSphere().get()->rotate(180, 0, 1, 0); // turn seam to the back, just one time
-		//getSphere().get()->rotate(180, 1, 0, 0); // turn seam to the back, just one time
+		getSphere().get()->rotate(180, 1, 0, 0); // flip right side up
 		getSphere().mysetup(data); // do not call base class, just get specific items, baseclass items handled in Video
 		return true;
 	}
 	void TextureFromImage::create(const string& name, float w, float h) {
 		// create texture
 		ofLoadImage(*this, name);
-		if (w == 0 || h == 0){
+		if (w == 0 || h == 0) {
 			int i = 0;
 		}
 		fbo.allocate(w, h, GL_RGB);
@@ -970,7 +973,7 @@ namespace Software2552 {
 		return true;
 	}
 	void SolarSystem::addPlanets(const Json::Value &data, Sphere &parent) {
-		
+
 		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 			shared_ptr<Planet> planet = std::make_shared<Planet>();
 			if (planet) {
@@ -985,7 +988,7 @@ namespace Software2552 {
 	bool Planet::mysetup(const Json::Value &data) {
 		setType(ActorRole::draw3dMovingCamera);
 		getSphere().mysetup(data); // do not call base class, just get specific items, baseclass items handled in Planet
-		//override some settings as this is a helper object vs. on json really wants to do much with
+								   //override some settings as this is a helper object vs. on json really wants to do much with
 		getSphere().setWireframe(false);
 		float max = (rotateAround.x > 0) ? (rotateAround.x / 3) : ofGetWidth() / 10;
 		float r = ofRandom(5, max);// never bigger than center planet
@@ -1001,19 +1004,20 @@ namespace Software2552 {
 		if (rotateAround.z == 0) {
 			rotateAround.z = ofGetWidth() / 100;
 		}
-		point.x = ofRandom(-rotateAround.x, rotateAround.x*2);
-		point.y = ofRandom(rotateAround.y, rotateAround.y*2);
-		point.z = ofRandom(rotateAround.z, rotateAround.z*2);
+		point.x = ofRandom(-rotateAround.x, rotateAround.x * 2);
+		point.y = ofRandom(rotateAround.y, rotateAround.y * 2);
+		point.z = ofRandom(rotateAround.z, rotateAround.z * 2);
 		getSphere().get()->setPosition(point); // data stored as pointer so this updates the list
 
 		getTexturePtr()->create(getLocationPath(), r * 2, r * 2);
 
-		getSphere().get()->mapTexCoordsFromTexture(getTexturePtr()->getTexture());
+		getSphere().get()->mapTexCoordsFromTexture(getTexturePtr()->getImageTexture());
+		getSphere().get()->rotate(180, 1, 0, 0);
 		return true;
 	}
 	void Planet::myDraw() {
 		getTexturePtr()->bind();
-		sphere.get()->rotate(30, 0, 2.0, 0.0);
+		sphere.get()->rotate(45, 0, 1.0, 0.0);
 		sphere.myDraw();
 		getTexturePtr()->unbind();
 	}

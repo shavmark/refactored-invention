@@ -53,7 +53,7 @@ namespace Software2552 {
 		int timeZoneDifferential;
 		int bc; // non zero if its a bc date
 	};
-	
+
 	class Dates {
 	public:
 		bool setup(const Json::Value &data);
@@ -81,7 +81,7 @@ namespace Software2552 {
 		float getHeight() { return fbo.getHeight(); }
 		void bind() { fbo.getTexture().bind(); }
 		void unbind() { fbo.getTexture().unbind(); }
-		ofTexture& getTexture() { return fbo.getTexture(); }
+		ofTexture& getImageTexture() { return fbo.getTexture(); }
 	private:
 		ofFbo fbo;
 	};
@@ -144,8 +144,8 @@ namespace Software2552 {
 		bool setup(const Json::Value &data);
 		ofLight worker;
 	private:
-		shared_ptr<ColorSet> colorHelper=nullptr;
-		virtual bool mysetup(const Json::Value &data) { return true;}
+		shared_ptr<ColorSet> colorHelper = nullptr;
+		virtual bool mysetup(const Json::Value &data) { return true; }
 	};
 	class PointLight : public Light {
 	public:
@@ -189,7 +189,7 @@ namespace Software2552 {
 		shared_ptr<ColorSet> colorHelper = nullptr;
 	};
 
-	
+
 	class DrawingPrimitive3d : public ActorRole {
 	public:
 		DrawingPrimitive3d(of3dPrimitive *p, drawtype type = draw3dFixedCamera);
@@ -202,7 +202,7 @@ namespace Software2552 {
 		of3dPrimitive* get() { return worker; }
 		Material  material;
 	private:
-		virtual bool derivedMysetup(const Json::Value &data)=0;
+		virtual bool derivedMysetup(const Json::Value &data) = 0;
 		of3dPrimitive *worker = nullptr; // allow derived pointers and polymorphism
 		bool wireFrame = true;
 		void basicDraw();
@@ -225,7 +225,7 @@ namespace Software2552 {
 	class Sphere : public DrawingPrimitive3d {
 	public:
 		Sphere() : DrawingPrimitive3d(new ofSpherePrimitive()) {		}
-		
+
 		ofSpherePrimitive* get() { return (ofSpherePrimitive*)DrawingPrimitive3d::get(); }
 	private:
 		bool derivedMysetup(const Json::Value &data);
@@ -328,7 +328,7 @@ namespace Software2552 {
 		bool textureReady() { return  worker.isInitialized(); }
 		bool mybind();
 		bool myunbind();
-		ofTexture& getTexture();
+		ofTexture& getVideoTexture();
 	private:
 		ofFbo fbo;
 		ofTexture defaulttexture;
@@ -354,7 +354,7 @@ namespace Software2552 {
 	class Planet : public ActorRole {
 	public:
 		Planet() : ActorRole() { texture = std::make_shared<TextureFromImage>(); }
-		
+
 		void myDraw();
 		shared_ptr<TextureFromImage> getTexturePtr() { return texture; }
 		Sphere& getSphere() { return sphere; }
@@ -384,12 +384,14 @@ namespace Software2552 {
 		ofImage worker;
 		bool mysetup(const Json::Value &data);
 	};
-	
+
 	class Background : public Visual {
 	public:
-		enum TypeOfBackground { ColorFixed, ColorChanging,  none };
-		enum TypeOfGradient {	linear = ofGradientMode::OF_GRADIENT_LINEAR,	circular = ofGradientMode::OF_GRADIENT_CIRCULAR,
-			bar = ofGradientMode::OF_GRADIENT_BAR,	flat, noGradient	};
+		enum TypeOfBackground { ColorFixed, ColorChanging, none };
+		enum TypeOfGradient {
+			linear = ofGradientMode::OF_GRADIENT_LINEAR, circular = ofGradientMode::OF_GRADIENT_CIRCULAR,
+			bar = ofGradientMode::OF_GRADIENT_BAR, flat, noGradient
+		};
 
 		void myDraw();
 		void myUpdate();// make image a vector then rotate via animation
@@ -419,9 +421,9 @@ namespace Software2552 {
 	class Channel : public objectLifeTimeManager {
 	public:
 		Channel() :objectLifeTimeManager() {  }
-		Channel(const string&keynameIn) { keyname = keynameIn;  }
-		enum ChannelType{History, Art, Sports, Any};
-		
+		Channel(const string&keynameIn) { keyname = keynameIn; }
+		enum ChannelType { History, Art, Sports, Any };
+
 		bool setup(const Json::Value &data);
 		bool operator==(const Channel rhs) { return rhs.keyname == keyname; }
 		string &getKeyName() { return keyname; }
@@ -431,7 +433,7 @@ namespace Software2552 {
 		void setSkip(bool b = true) { skip = b; }
 
 		ChannelType getType() { return channeltype; }
-		void setType(ChannelType typeIn) { channeltype =typeIn; }
+		void setType(ChannelType typeIn) { channeltype = typeIn; }
 	private:
 		shared_ptr<Stage> stage = nullptr;
 		string keyname;
@@ -455,7 +457,7 @@ namespace Software2552 {
 		vector<shared_ptr<Channel>>& getList();
 	private:
 		vector<shared_ptr<Channel>> list;
-		
+
 	};
 
 }
