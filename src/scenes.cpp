@@ -83,18 +83,21 @@ namespace Software2552 {
 #define ADDCAMERA(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
 	bool Stage::setup(const Json::Value &data) {
+#if 0
 		ADDANIMATION(pictures, Picture);
 		ADDANIMATION(rainbows, Rainbow);
 		ADDANIMATION(circles, Ball);
 		ADDANIMATION(cubes, Cube);
 		ADDANIMATION(spheres, Sphere);
 		ADDANIMATION(videos, Video);
-		//ADDANIMATION(planets, Planet);
-		//ADDANIMATION(videoSpheres, VideoSphere);
-		ADDANIMATION(solarSystems, SolarSystem);//bugbug forgot how to rotate around clyde, does not run w/ others
 		ADDANIMATION(grabbers, CameraGrabber);
 		ADDANIMATION(texts, Text);
 		ADDANIMATION(paragraphs, Paragraph);
+
+#endif // 0
+		//ADDANIMATION(planets, Planet);
+		//ADDANIMATION(videoSpheres, VideoSphere);
+		ADDANIMATION(solarSystems, SolarSystem);//bugbug forgot how to rotate around clyde, does not run w/ others
 		getAnimatables().sort(compareOrder);
 		if (!data["background"].empty()) {
 			CreateReadAndaddBackgroundItems(data["background"]);
