@@ -31,6 +31,7 @@ namespace Software2552 {
 	}
 	void Timeline::setup() {
 		//ofSeedRandom(); // turn of to debug if needed
+		
 		ofSetVerticalSync(false);
 		ofSetFrameRate(frameRate);
 		colorlist.setup();

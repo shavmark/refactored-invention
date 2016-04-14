@@ -205,6 +205,8 @@ namespace Software2552 {
 		assign(rhs.year(), rhs.month(), rhs.day(), rhs.hour(), rhs.minute(), rhs.second(), rhs.microsecond(), rhs.microsecond());
 	}
 	bool Rectangle::mysetup(const Json::Value &data) {
+		width = 0;
+		height = 0;
 		READINT(height, data);
 		READINT(width, data);
 		return true;
@@ -939,11 +941,11 @@ namespace Software2552 {
 				getStage()->addToAnimatable(video);
 			}
 		}
-		getSphere().setWireframe(false);
 		getSphere().get()->set(250, 180);// set default
-		getSphere().get()->rotate(180, 0, 1, 0); // turn seam to the back, just one time
 		getSphere().get()->rotate(180, 1, 0, 0); // flip right side up
+		getSphere().get()->rotate(180, 0, 1, 0); // turn seam to the back, just one time
 		getSphere().mysetup(data); // do not call base class, just get specific items, baseclass items handled in Video
+		getSphere().setWireframe(true); // looks much cooler
 		return true;
 	}
 	void TextureFromImage::create(const string& name, float w, float h) {

@@ -89,8 +89,8 @@ namespace Software2552 {
 	public:
 		void myDraw();
 	private:
-		int width = 0;
-		int height = 0;
+		int width;
+		int height;
 		bool mysetup(const Json::Value &data);
 	};
 

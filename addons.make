@@ -1,3 +1,4 @@
+ofxOsc
 ofxAnimatable
 ofxJson
 ofxParagraph

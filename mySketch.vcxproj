@@ -43,8 +43,9 @@
     <TargetName>$(ProjectName)_debug</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <IncludePath>$(KINECTSDK20_DIR)inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(KINECTSDK20_DIR)inc;$(IncludePath);</IncludePath>
     <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(VC_ReferencesPath_x64);$(WindowsSDK_IncludePath);</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>bin\</OutDir>
@@ -58,8 +59,13 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>"$(INHERIT)" assimp.lib Kinect20.lib Kinect20.Face.lib;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;
-C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"$(INHERIT)"  Kinect20.lib Kinect20.Face.lib;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;
+C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;
+C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;
+C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;
+C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;
+C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;
+C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4267</DisableSpecificWarnings>
@@ -79,8 +85,7 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;%(Additiona
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAssimpModelLoader\libs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\emscripten;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\Win32;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\license;..\..\..\addons\ofxAssimpModelLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxGui\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision\Shapes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Common;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\API-Ref;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Building;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Programmers-Guide;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Readme;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\ReleaseNotes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\SWIG;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Contacts;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Joints;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Particle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Rope;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\triangle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxsmartfont\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxThreadedImageLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\libs;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;
-C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxsmartfont\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -102,12 +107,27 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src</Additional
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.cpp" />
     <ClCompile Include="..\..\..\addons\ofxJson\libs\jsoncpp\src\jsoncpp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxJson\src\ofxJSONElement.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix\NetworkingUtils.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix\UdpSocket.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtils.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32\UdpSocket.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscParameterSync.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.cpp" />
     <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp" />
     <ClCompile Include="notes.cpp" />
     <ClCompile Include="src\2552software.cpp" />
     <ClCompile Include="src\animation.cpp" />
     <ClCompile Include="src\color.cpp" />
+    <ClCompile Include="src\networking.cpp" />
     <ClCompile Include="src\scenes.cpp" />
     <ClCompile Include="src\timeline.cpp" />
     <ClCompile Include="src\draw.cpp" />
@@ -126,11 +146,32 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src</Additional
     <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json.h" />
     <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSON.h" />
     <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSONElement.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\PacketListener.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\TimerListener.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\UdpSocket.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\MessageMappingOscPacketListener.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscException.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscHostEndianness.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPacketListener.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscArg.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscParameterSync.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.h" />
+    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscSender.h" />
     <ClInclude Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.h" />
     <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h" />
     <ClInclude Include="src\2552software.h" />
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\color.h" />
+    <ClInclude Include="src\networking.h" />
     <ClInclude Include="src\scenes.h" />
     <ClInclude Include="src\timeline.h" />
     <ClInclude Include="src\draw.h" />

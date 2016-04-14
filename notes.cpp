@@ -1,4 +1,5 @@
 // store notes here
+//http://jpbellona.com/kinect/ cool notes
 //http://kepler.nasa.gov/multimedia/photos/imagesbykepler/?ImageID=14
 //good pi notes http://cariadinteractive.com/wp-content/uploads/2015/01/Somatopia-Guide.pdf for of
 // cool graphics http://nogoodexcuse.hubris.xyz/tag/opacity/
