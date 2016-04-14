@@ -18,7 +18,6 @@
 // !!keep all MS files above ofmain.h https://forum.openframeworks.cc/t/how-to-include-atl-in-vs2012-project/14672/2
 #include "ofMain.h"
 
-#include "ofxAssimpModelLoader.h"
 #include "ofxSmartFont.h"
 #include "ofxJSON.h"
 #include "ofxParagraph.h"
@@ -93,85 +92,4 @@ namespace Software2552 {
 		}
 	}
 
-	
-	// 3d model
-	class Model3D : public ofxAssimpModelLoader, public Trace {
-	public: 
-		void setup(const string& name) {
-			loadModel(name, false);
-			setPosition(0, 0, 0); // assumes camera and this is the middle
-			createLightsFromAiModel();
-			setLoopStateForAllAnimations(OF_LOOP_NORMAL);
-		}
-		
-		void setup(const string& name, ofPoint point) {
-			loadModel(name, true);
-			setPosition(point.x, point.y, point.z);
-			setLoopStateForAllAnimations(OF_LOOP_NORMAL);
-		}
-		
-		void update() {
-			if (modelMeshes.size() > 0) {
-				mesh = getCurrentAnimatedMesh(0);
-			}
-			ofxAssimpModelLoader::update();
-		}
-		// low level readJsonValue of annimation from another model, called before Load time
-		void setAnimations(const Model3D& model)	{
-			//bugbug clear existing animations
-			for (int i = 0; i<model.scene->mNumAnimations; i++) {
-				aiAnimation * animation = model.scene->mAnimations[i];
-				animations.push_back(ofxAssimpAnimation(scene, animation));
-			}
-		}
-		void moveRight() {
-			setPosition(ofGetWidth(), (float)ofGetHeight() * 0.5, 0);
-		}
-		void setPlay(const aiString& myname) {
-			for (unsigned int i = 0; i< getAnimationCount(); i++) {
-				ofxAssimpAnimation &a = getAnimation(i);
-				aiString s = a.getAnimation()->mName;
-				if (a.getAnimation()->mName == myname) {
-					a.play();
-				}
-			}
-		}
-		void draw() {
-			//ofPushMatrix();
-			//ofTranslate(getPosition().x + 100, getPosition().y, 0);
-			//ofRotate(180, 1, 0, 0);
-			//ofTranslate(-getPosition().x, -getPosition().y, 0);
-			//ofRotate(90, 1, 0, 0);
-			drawFaces();
-			//ofPopMatrix();
-		}
-		void drawMesh() {
-			
-			//ofPushMatrix();
-			//ofTranslate(getPosition().x + 100, getPosition().y, 0);
-			//ofRotate(180, 1, 0, 0);
-			//ofTranslate(-getPosition().x, -getPosition().y, 0);
-
-			ofxAssimpMeshHelper & meshHelper = getMeshHelper(0);
-
-			ofMultMatrix(getModelMatrix());
-			ofMultMatrix(meshHelper.matrix);
-
-			ofMaterial & material = meshHelper.material;
-			if (meshHelper.hasTexture()) {
-				meshHelper.getTextureRef().bind();
-			}
-			material.begin();
-			//ofRotate(90, 1, 0, 0);
-			mesh.drawFaces();
-			material.end();
-			if (meshHelper.hasTexture()) {
-				meshHelper.getTextureRef().unbind();
-			}
-			//ofPopMatrix();
-		}
-	private:
-		ofMesh mesh;
-	};
 }
-

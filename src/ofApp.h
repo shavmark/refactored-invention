@@ -7,8 +7,6 @@
 #include <cctype>
 #include <locale>
 
-#include "ofxGui.h"
-
 #include "2552software.h"
 #include "kinect2552.h"
 #include "timeline.h"
@@ -129,17 +127,8 @@ class ofApp : public ofBaseApp{
 		void circleResolutionChanged(int & circleResolution);
 		void ringButtonPressed();
 		bool bHide;
-		ofxFloatSlider radius;
-		ofxColorSlider color;
-		ofxVec2Slider center;
-		ofxIntSlider circleResolution;
-		ofxToggle filled;
-		ofxButton twoCircles;
-		ofxButton ringButton;
-		ofxLabel screenSize;
 		
 		int years;
-		ofxPanel gui;
 
 		ofSoundPlayer ring;
 		ofImage backgroundImage;

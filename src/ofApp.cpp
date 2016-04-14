@@ -148,7 +148,7 @@ void ofApp::update(){
 	Software2552::SoundOut::update();// move to timeline or scene
 	Software2552::SoundIn::update();// move to timeline or scene
 	return;
-	ofSetCircleResolution(circleResolution);
+	
 	return;
 //	myPlayer.update(); // get all the new frames
 	//robot.update();
@@ -457,7 +457,7 @@ void ofApp::mouseDragged(int x, int y, int button) {
 }
 
 void ofApp::exit() {
-	ringButton.removeListener(this, &ofApp::ringButtonPressed);
+	
 }
 
 //--------------------------------------------------------------
@@ -467,7 +467,7 @@ void ofApp::circleResolutionChanged(int &circleResolution) {
 
 //--------------------------------------------------------------
 void ofApp::ringButtonPressed() {
-	ring.play();
+	
 }
 
 //--------------------------------------------------------------

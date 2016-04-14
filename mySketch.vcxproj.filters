@@ -7,18 +7,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.cpp">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.cpp">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpTexture.cpp">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClCompile>
     <ClCompile Include="src\2552software.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -26,90 +14,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="notes.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxButton.cpp">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.cpp">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxLabel.cpp">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxPanel.cpp">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSlider.cpp">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.cpp">
-      <Filter>addons\ofxParagraph\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxsmartfont\src\ofxSmartFont.cpp">
-      <Filter>addons\ofxsmartfont\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscParameterSync.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscSender.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtils.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32\UdpSocket.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxJson\src\ofxJSONElement.cpp">
-      <Filter>addons\ofxJson\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxJson\libs\jsoncpp\src\jsoncpp.cpp">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </ClCompile>
     <ClCompile Include="src\model.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -131,15 +35,6 @@
     <ClCompile Include="src\animation.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.cpp">
-      <Filter>addons\ofxThreadedImageLoader\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.cpp">
-      <Filter>addons\ofxVectorGraphics\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.cpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.cpp">
       <Filter>addons\ofxAnimatable\src</Filter>
     </ClCompile>
@@ -152,387 +47,75 @@
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.cpp">
       <Filter>addons\ofxAnimatable\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxJson\src\ofxJSONElement.cpp">
+      <Filter>addons\ofxJson\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxJson\libs\jsoncpp\src\jsoncpp.cpp">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.cpp">
+      <Filter>addons\ofxParagraph\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp">
+      <Filter>addons\ofxSmartFont\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons">
-      <UniqueIdentifier>{71834F65-F3A9-211E-73B8-DC85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader">
-      <UniqueIdentifier>{DE65D9F7-840A-CD0A-A555-EA3B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\src">
-      <UniqueIdentifier>{B84008DC-4B5E-271B-05DA-D8C8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs">
-      <UniqueIdentifier>{3D854F79-FA4A-75FA-FC0A-2B25}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp">
-      <UniqueIdentifier>{FE8B5295-D3A7-B9CD-89C9-2613}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include">
-      <UniqueIdentifier>{EDC34C4F-5D44-FB76-337E-EE48}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp">
-      <UniqueIdentifier>{E66BABFA-76A1-EB8D-40FF-B940}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler">
-      <UniqueIdentifier>{A0C31C2E-6C01-8850-3B72-C818}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxGui">
-      <UniqueIdentifier>{31867baf-e156-4988-83f0-1f28e4b46468}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxGui\src">
-      <UniqueIdentifier>{302e532e-cc12-47f1-bbc5-f63a4b1e0ab5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxParagraph">
-      <UniqueIdentifier>{f90c7d32-0115-4604-abce-43454fc72aa1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxParagraph\src">
-      <UniqueIdentifier>{85260ac4-de36-4dbf-9fba-eab33caa9eaf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxsmartfont">
-      <UniqueIdentifier>{d17994ca-1050-4266-a569-5bed13cf9352}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxsmartfont\src">
-      <UniqueIdentifier>{aa5e4e50-df4d-469e-a0c7-c7b33c7fde73}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc">
-      <UniqueIdentifier>{0767dbc7-277a-4536-ad94-726591522223}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\src">
-      <UniqueIdentifier>{d58474ed-7381-44e0-a248-0da19df37d98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs">
-      <UniqueIdentifier>{7cc08378-1386-438b-bc3a-1296abf9f976}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack">
-      <UniqueIdentifier>{546191e3-41f9-4913-bd32-5b8790b179a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src">
-      <UniqueIdentifier>{2050f201-b7c3-4b7c-b4d6-20fccaf43484}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip">
-      <UniqueIdentifier>{d0a62503-5c6e-4a61-8cfc-ac327f16d71c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\win32">
-      <UniqueIdentifier>{aadc2e40-af5b-4bff-8fcc-d52f8d83da40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
-      <UniqueIdentifier>{dcea8392-dad0-49b3-b2bb-e7c2a05fd674}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxNetwork">
-      <UniqueIdentifier>{90ac842a-c5a1-460b-a854-701f982fd80a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxNetwork\src">
-      <UniqueIdentifier>{6e2e0506-c6e6-4006-a1ed-9a0c14d3aed2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson">
-      <UniqueIdentifier>{cc5152e1-9131-45b3-bb91-0615cd5b331b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\src">
-      <UniqueIdentifier>{f3faca38-233e-4f75-b2e0-8ea3af79f5c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs">
-      <UniqueIdentifier>{e21a225e-ff94-4636-83fd-b170d564933c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp">
-      <UniqueIdentifier>{fffb8073-c9ea-49d7-896a-75f138a47806}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\include">
-      <UniqueIdentifier>{6526e113-f5fb-4906-8bea-30e69eee5311}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
-      <UniqueIdentifier>{e029f2ae-9d84-4a46-b1a2-349a59aa91df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\src">
-      <UniqueIdentifier>{fd529a60-b24f-4eca-9c3f-133c0d4b9326}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxThreadedImageLoader">
-      <UniqueIdentifier>{c77b60b5-3ca5-47ae-811a-312229289d14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxThreadedImageLoader\src">
-      <UniqueIdentifier>{f4598ac7-8c17-463d-8ec5-3e3466dc26c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics">
-      <UniqueIdentifier>{91561818-b1a0-4ef5-8473-4c344f8a95f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics\src">
-      <UniqueIdentifier>{f27b637e-2a7b-4833-94c1-88395ebbe57e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics\libs">
-      <UniqueIdentifier>{2c800d65-ff51-4be5-82e6-c98c0f27fdc4}</UniqueIdentifier>
+      <UniqueIdentifier>{44236aad-6673-4333-871e-2acd26176387}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAnimatable">
-      <UniqueIdentifier>{fe668d0e-c9da-4b48-bccc-20897493bfd7}</UniqueIdentifier>
+      <UniqueIdentifier>{299062ce-800b-43d4-8aea-b18fb788a8b4}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAnimatable\src">
-      <UniqueIdentifier>{7c349c2d-ab1a-49e7-9e29-5113e493e83c}</UniqueIdentifier>
+      <UniqueIdentifier>{604a0d5d-2981-4356-a356-333d3b4b4fa2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEasing">
-      <UniqueIdentifier>{37e11cf9-0d2f-4a64-9036-0289ae971e23}</UniqueIdentifier>
+    <Filter Include="addons\ofxJson">
+      <UniqueIdentifier>{5013f6b1-941a-4573-9ab9-eb75914ee9c2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEasing\src">
-      <UniqueIdentifier>{0bd0ba8f-5bdc-4a2e-bc4e-4a59098e7956}</UniqueIdentifier>
+    <Filter Include="addons\ofxJson\src">
+      <UniqueIdentifier>{282fec84-6cb7-40f2-8792-b7025255f799}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs">
+      <UniqueIdentifier>{35f7dfc6-04c6-4d1e-8e10-83741e82b695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp">
+      <UniqueIdentifier>{eda5d8ba-8664-4bb9-a65a-dc14f288a406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\include">
+      <UniqueIdentifier>{61907ccc-ac14-4715-a89b-d87d40ae2071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
+      <UniqueIdentifier>{77bdb71c-3cec-4b94-925d-9ed196342fd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\src">
+      <UniqueIdentifier>{ad84ccef-75dd-4649-b624-ea94d0483c9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxParagraph">
+      <UniqueIdentifier>{373a3109-c38c-4891-a48a-5d5c942c2fe7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxParagraph\src">
+      <UniqueIdentifier>{0cccd6e9-cd86-4ba8-be07-67ddc138618d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSmartFont">
+      <UniqueIdentifier>{65cad884-8a0c-4088-93ff-bbd4680f3f9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSmartFont\src">
+      <UniqueIdentifier>{51559ce4-e515-4f74-a026-0c10c939e985}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.h">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.h">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpTexture.h">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpUtils.h">
-      <Filter>addons\ofxAssimpModelLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\ai_assert.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\anim.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\camera.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\cexport.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\cfileio.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\cimport.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\color4.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler\poppack1.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler\pstdint.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler\pushpack1.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\config.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\DefaultLogger.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\defs.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Exporter.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Importer.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\importerdesc.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\IOStream.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\IOSystem.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\light.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Logger.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\LogStream.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\material.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\matrix3x3.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\matrix4x4.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\mesh.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\metadata.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\NullLogger.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\postprocess.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\ProgressHandler.hpp">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\quaternion.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\scene.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\texture.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\types.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\vector2.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\vector3.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\version.h">
-      <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\assimp</Filter>
-    </ClInclude>
     <ClInclude Include="src\2552software.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\kinect2552.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxButton.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGui.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxLabel.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxPanel.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSlider.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h">
-      <Filter>addons\ofxGui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.h">
-      <Filter>addons\ofxParagraph\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxsmartfont\src\ofxSmartFont.h">
-      <Filter>addons\ofxsmartfont\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscArg.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscParameterSync.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscSender.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\PacketListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\TimerListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\UdpSocket.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\MessageMappingOscPacketListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscException.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscHostEndianness.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPacketListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSON.h">
-      <Filter>addons\ofxJson\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSONElement.h">
-      <Filter>addons\ofxJson\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json-forwards.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
     </ClInclude>
     <ClInclude Include="src\model.h">
       <Filter>src</Filter>
@@ -552,18 +135,6 @@
     <ClInclude Include="src\animation.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.h">
-      <Filter>addons\ofxThreadedImageLoader\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.h">
-      <Filter>addons\ofxVectorGraphics\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.hpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS_Types.hpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.h">
       <Filter>addons\ofxAnimatable\src</Filter>
     </ClInclude>
@@ -576,8 +147,23 @@
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.h">
       <Filter>addons\ofxAnimatable\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxEasing\src\ofxEasing.h">
-      <Filter>addons\ofxEasing\src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSON.h">
+      <Filter>addons\ofxJson\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSONElement.h">
+      <Filter>addons\ofxJson\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json-forwards.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.h">
+      <Filter>addons\ofxParagraph\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h">
+      <Filter>addons\ofxSmartFont\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

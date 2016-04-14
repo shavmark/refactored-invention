@@ -3,7 +3,6 @@
 #include "ofxAnimatableFloat.h"
 #include "ofxAnimatableOfPoint.h"
 #include "ofxAnimatableOfColor.h"
-#include "ofxEasing.h"
 
 
 // supports animation

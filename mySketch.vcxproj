@@ -1,17 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -24,20 +16,9 @@
     <RootNamespace>mySketch</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -47,69 +28,29 @@
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>bin\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_debug</TargetName>
-    <LinkIncremental>true</LinkIncremental>
-    <GenerateManifest>true</GenerateManifest>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>bin\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_debug</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <IncludePath>C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxGui\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAssimpModelLoader\libs\assimp\include;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAssimpModelLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs;$(KINECTSDK20_DIR)inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(KINECTSDK20_DIR)inc;$(IncludePath)</IncludePath>
     <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>bin\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>bin\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAssimpModelLoader\libs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\emscripten;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\Win32;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\license;..\..\..\addons\ofxAssimpModelLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxGui\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision\Shapes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Common;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\API-Ref;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Building;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Programmers-Guide;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Readme;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\ReleaseNotes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\SWIG;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Contacts;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Joints;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Particle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Rope;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\triangle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxsmartfont\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxThreadedImageLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\libs;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAnimatable\src;
-C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalIncludeDirectories>
-      <CompileAs>CompileAsCpp</CompileAs>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);assimp.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\Win32</AdditionalLibraryDirectories>
-    </Link>
-    <PostBuildEvent />
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -117,7 +58,8 @@ C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalInc
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(INHERIT); assimp.lib Kinect20.lib Kinect20.Face.lib;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxsmartfont\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxThreadedImageLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\libs;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"$(INHERIT)" assimp.lib Kinect20.lib Kinect20.Face.lib;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;
+C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4267</DisableSpecificWarnings>
@@ -131,37 +73,14 @@ C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalInc
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAssimpModelLoader\libs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\emscripten;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\Win32;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\license;..\..\..\addons\ofxAssimpModelLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxGui\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision\Shapes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Common;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\API-Ref;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Building;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Programmers-Guide;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Readme;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\ReleaseNotes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\SWIG;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Contacts;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Joints;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Particle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Rope;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\triangle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxsmartfont\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxThreadedImageLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\libs;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAnimatable\src;
-C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalIncludeDirectories>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);assimp.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\Win32</AdditionalLibraryDirectories>
-    </Link>
-    <PostBuildEvent />
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAssimpModelLoader\libs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\emscripten;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\Win32;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\license;..\..\..\addons\ofxAssimpModelLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxGui\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision\Shapes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Common;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\API-Ref;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Building;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Programmers-Guide;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Readme;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\ReleaseNotes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\SWIG;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Contacts;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Joints;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Particle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Rope;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\triangle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxsmartfont\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxThreadedImageLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\libs;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAnimatable\src;
-C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxAssimpModelLoader\libs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\emscripten;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\Win32;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\license;..\..\..\addons\ofxAssimpModelLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxGui\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Collision\Shapes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Common;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\API-Ref;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Building;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Programmers-Guide;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\Readme;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\ReleaseNotes;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Documentation\SWIG;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Contacts;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Dynamics\Joints;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Particle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\Box2D\Rope;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxBox2d\libs\triangle;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxsmartfont\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxThreadedImageLoader\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxVectorGraphics\libs;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;
+C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -181,37 +100,10 @@ C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalInc
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableFloat.cpp" />
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfColor.cpp" />
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxButton.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxLabel.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxPanel.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSlider.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
     <ClCompile Include="..\..\..\addons\ofxJson\libs\jsoncpp\src\jsoncpp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxJson\src\ofxJSONElement.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtils.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32\UdpSocket.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscParameterSync.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxsmartfont\src\ofxSmartFont.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp" />
     <ClCompile Include="notes.cpp" />
     <ClCompile Include="src\2552software.cpp" />
     <ClCompile Include="src\animation.cpp" />
@@ -222,10 +114,6 @@ C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalInc
     <ClCompile Include="src\kinect2552.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpTexture.cpp" />
     <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\trialcode.cpp" />
   </ItemGroup>
@@ -234,52 +122,12 @@ C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalInc
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableFloat.h" />
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfColor.h" />
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.h" />
-    <ClInclude Include="..\..\..\addons\ofxEasing\src\ofxEasing.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxButton.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGui.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxLabel.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxPanel.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSlider.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h" />
     <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json-forwards.h" />
     <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json.h" />
     <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSON.h" />
     <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSONElement.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h" />
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\PacketListener.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\TimerListener.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\UdpSocket.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\MessageMappingOscPacketListener.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscException.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscHostEndianness.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPacketListener.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscArg.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscParameterSync.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscReceiver.h" />
-    <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscSender.h" />
     <ClInclude Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.h" />
-    <ClInclude Include="..\..\..\addons\ofxsmartfont\src\ofxSmartFont.h" />
-    <ClInclude Include="..\..\..\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS_Types.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.h" />
+    <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h" />
     <ClInclude Include="src\2552software.h" />
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\color.h" />
@@ -288,47 +136,6 @@ C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalInc
     <ClInclude Include="src\draw.h" />
     <ClInclude Include="src\kinect2552.h" />
     <ClInclude Include="src\ofApp.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpTexture.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpUtils.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\ai_assert.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\anim.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\camera.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\cexport.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\cfileio.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\cimport.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\color4.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler\poppack1.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler\pstdint.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler\pushpack1.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\config.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\DefaultLogger.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\defs.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Exporter.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Importer.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\importerdesc.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\IOStream.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\IOSystem.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\light.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Logger.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\LogStream.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\material.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\matrix3x3.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\matrix4x4.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\mesh.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\metadata.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\NullLogger.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\postprocess.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\ProgressHandler.hpp" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\quaternion.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\scene.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\texture.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\types.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\vector2.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\vector3.h" />
-    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp\version.h" />
     <ClInclude Include="src\model.h" />
   </ItemGroup>
   <ItemGroup>
@@ -338,7 +145,6 @@ C:\Users\mark\Documents\of_v0.9.1_vs_release\addons\ofxEasing\src</AdditionalInc
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
     </ResourceCompile>
