@@ -470,17 +470,16 @@ namespace Software2552 {
 		return true;
 	}
 	DrawingPrimitive3d::~DrawingPrimitive3d() {
-		if (worker) {
-			delete worker;
-			worker = nullptr;
+		if (get()) {
+			delete get();
 		}
 	}
 
 	DrawingPrimitive3d::DrawingPrimitive3d(of3dPrimitive *p, drawtype type) : ActorRole() {
-		worker = p;
+		node = p;
 		setType(type);
-		if (worker) {
-			worker->enableColors();
+		if (get()) {
+			get()->enableColors();
 		}
 	}
 
@@ -495,24 +494,24 @@ namespace Software2552 {
 		return derivedMysetup(data);
 	}
 	void DrawingPrimitive3d::myUpdate() {
-		if (worker) {
-			worker->setPosition(getCurrentPosition());
+		if (get()) {
+			get()->setPosition(getCurrentPosition());
 		}
 	}
 	// private draw helper
 	void DrawingPrimitive3d::basicDraw() {
-		if (worker) {
+		if (get()) {
 			if (useWireframe()) {
 				ofPushMatrix();
-				worker->setScale(scale());
-				ofPoint scale = worker->getScale();
-				worker->setScale(scale.x + 0.01f, scale.y + 0.01f, scale.z + 0.01f);
-				worker->drawWireframe();
-				worker->setScale(scale);
+				get()->setScale(scale());
+				ofPoint scale = get()->getScale();
+				get()->setScale(scale.x + 0.01f, scale.y + 0.01f, scale.z + 0.01f);
+				get()->drawWireframe();
+				get()->setScale(scale);
 				ofPopMatrix();
 			}
 			else {
-				worker->draw();
+				get()->draw();
 			}
 		}
 	}

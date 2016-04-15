@@ -199,11 +199,10 @@ namespace Software2552 {
 		bool useWireframe() { return wireFrame; }
 		void myUpdate();
 		void myDraw();
-		of3dPrimitive* get() { return worker; }
+		of3dPrimitive* get() { return (of3dPrimitive*)node; }
 		Material  material;
 	private:
 		virtual bool derivedMysetup(const Json::Value &data) = 0;
-		of3dPrimitive *worker = nullptr; // allow derived pointers and polymorphism
 		bool wireFrame = true;
 		void basicDraw();
 	};

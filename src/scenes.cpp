@@ -78,11 +78,17 @@ namespace Software2552 {
 		return (first->getDrawOrder()  < second->getDrawOrder());
 	}
 	// samples https://sites.google.com/site/ofauckland/examples
-#define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)])
+#define ADDANIMATION(name,type,parent)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)], parent)
 #define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
 #define ADDCAMERA(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
-	bool Stage::setup(const Json::Value &data) {
+
+	//recursive reader
+	void Stage::read(const Json::Value &data, shared_ptr<ActorRole> parent) {
+		if (!data.empty()) {
+			ADDANIMATION(cubes, Cube, parent);
+		}
+		return;
 #if 0
 		ADDANIMATION(pictures, Picture);
 		ADDANIMATION(rainbows, Rainbow);
@@ -93,11 +99,16 @@ namespace Software2552 {
 		ADDANIMATION(grabbers, CameraGrabber);
 		ADDANIMATION(texts, Text);
 		ADDANIMATION(paragraphs, Paragraph);
-
-#endif // 0
-		//ADDANIMATION(planets, Planet);
-		//ADDANIMATION(videoSpheres, VideoSphere);
+		ADDANIMATION(planets, Planet);
+		ADDANIMATION(videoSpheres, VideoSphere);
 		ADDANIMATION(solarSystems, SolarSystem);//bugbug forgot how to rotate around clyde, does not run w/ others
+		ADDANIMATION(audio, Audio);// sound phase 1a
+#endif // 0
+	}
+
+	bool Stage::setup(const Json::Value &data) {
+		read(data, nullptr);
+		///ADDANIMATION(cubes, Cube);
 		getAnimatables().sort(compareOrder);
 		if (!data["background"].empty()) {
 			CreateReadAndaddBackgroundItems(data["background"]);
@@ -129,7 +140,6 @@ namespace Software2552 {
 			}
 		}
 		return true;
-		ADDANIMATION(audio, Audio);// sound phase 1a
 								   // no cameras or lights in data, build that in when telling the story
 		ADDCAMERA(cameraFixed, FixedCamera);
 		ADDCAMERA(camera, MovingCamera);

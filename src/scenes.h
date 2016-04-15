@@ -28,20 +28,28 @@ namespace Software2552 {
 		void update();
 		void draw();
 		bool setup(const Json::Value &data);
+		void read(const Json::Value &data, shared_ptr<ActorRole> parent);
 		void clear(bool force=false);
 		void pause();
 		void resume();
 		string &getKeyName() { return keyname; }
 
-		template<typename T> void CreateReadAndaddAnimatable(const Json::Value &data, bool inFront = false, bool fullsize=false) {
+		template<typename T> void CreateReadAndaddAnimatable(const Json::Value &data, shared_ptr<ActorRole> parent, bool inFront = false, bool fullsize=false) {
 			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 				shared_ptr<T> item = std::make_shared<T>();
 				if (item) {
-					Json::Value::Members m = data[j].getMemberNames();
+					Json::Value::Members m = data[j].getMemberNames();//here for debug
 					if (item->setup(data[j])) {
 						if (fullsize) {
 							item->setFullSize();
 						}
+						//bugbug in drawing code parent position/color/font etc used unless child has its own
+						// so child moves w/ parent in 2d like node does in 3d
+						item->parent = parent;
+						if (item->node && parent->node) {
+							item->node->setParent(*parent->node);//bugbug not sure what to do here but we need to tie things together somehow
+						}
+						read(data["scenes"], item);// see if there are child data
 						addToAnimatable(item, inFront);
 					}
 				}

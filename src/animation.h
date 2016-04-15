@@ -154,7 +154,8 @@ namespace Software2552 {
 		enum drawtype {  draw2d, draw3dFixedCamera, draw3dMovingCamera };
 		ActorRole() {  }
 		ActorRole(const string&path) { 	setLocationPath(path);	}
-		
+		shared_ptr<ActorRole> parent = nullptr;
+		ofNode *node = nullptr; // for 3d
 		bool setup(const Json::Value &data);
 		// avoid name clashes and wrap the most used items, else access the contained object for more
 		void operator=(const ActorRole&rhs) {
