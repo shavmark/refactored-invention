@@ -5,68 +5,117 @@
 	//- float : positionY
 	//- float : positionZ
 	//- string : trackingState(Tracked, NotTracked or Inferred)
+
 #include "2552software.h"
 #include "ofxOsc.h"
+#include <algorithm>
 
 namespace Software2552 {
-	class Comms {
+	class Message {
 	public:
-		Comms() { sender.setup("192.168.1.255", 2552); receiver.setup(2552);
+		static shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage>) {
+			// bugbug data comes from one of http/s, string or local file but for now just a string
+			shared_ptr<ofxJSON> p = std::make_shared<ofxJSON>();
+			if (p) {
+				//bugbug hard code for now
+				(*p)["scenes"][0]["code"] = "44";
+			}
+			return p;
 		}
-		class Message {
-		public:
-			int32_t destination = 0;
-			int32_t source = 0;
-			int32_t priority = 0;
-			int32_t weight = 0;
-			int32_t expires = 0;
-			string message;
-		};
+		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data) {
+			shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
+			if (p) {
+				p->setAddress("/json"); // use 32 bits so we can talk to everyone easiy
+										 //bugbug if these are used find a way to parameterize
+				//bugbug put all these items in json? or instead use them
+				// to ignore messages, delete old ones?
+				p->addInt32Arg(1); // destination ID
+				p->addInt32Arg(2); // source ID
+				p->addInt32Arg(0); // priority
+				p->addInt32Arg(0); // weight 
+				unsigned int t = ofGetUnixTime();
+				p->addInt32Arg(t); // send time, gmt
+				p->addInt32Arg(0); // expires, 0 is never
+				p->addStringArg(data.getRawString(false));
+			}
+		}
+	};
 
-		void update() {
+	class WriteComms : public ofThread {
+	public:
+		WriteComms() { sender.setup("192.168.1.255", 2552); startThread();
+		}
+
+		void threadedFunction() {
+			lock();
+			shared_ptr<ofxOscMessage> m = q.front();
+			q.pop();
+			unlock();
+			if (m) {
+				sender.sendMessage(*m, false);
+				unlock();
+				ofSleepMillis(500);
+			}
+		}
+
+		void send(ofxJSON &data) {
+			shared_ptr<ofxOscMessage> p = Message::fromJson(data);
+			if (p) {
+				lock();
+				q.push(p);
+				unlock();
+			}
+		}
+
+	private:
+		ofxOscSender sender;
+		queue<shared_ptr<ofxOscMessage>> q;
+	};
+
+	class ReadComms : public ofThread {
+	public:
+		ReadComms() {
+			receiver.setup(2552);
+		}
+
+		void threadedFunction() {
 			// check for waiting messages
 			while (receiver.hasWaitingMessages()) {
-				shared_ptr<Message> p = std::make_shared<Message>();
+				shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
 				if (p) {
-					ofxOscMessage m;
-					receiver.getNextMessage(m);
+					receiver.getNextMessage(*p);
 					// check for json
-					if (m.getAddress() == "/json") {
-						// both the arguments are int32's
+					if (p->getAddress() == "/json") {
+						lock();
+						q.push(p); 
+						unlock();
+						// figure out priority and removing old data bugbug
+								   // both the arguments are int32's
+#if 0
 						p->destination = m.getArgAsInt32(0);
 						p->source = m.getArgAsInt32(1);
 						p->priority = m.getArgAsInt32(2);
 						p->weight = m.getArgAsInt32(3);
 						p->expires = m.getArgAsInt32(4);
-						p->message = m.getArgAsString(5);
-						q.push(p);
+
+#endif // 0						
 					}
 				}
 			}
 		}
-		shared_ptr<Message> get() { 
-			shared_ptr<Message> p = q.front();
+		shared_ptr<ofxJSON> get() {
+			lock();
+			shared_ptr<ofxOscMessage> p = q.front();
 			q.pop();
-			return p;
-		}
-		void send(const Json::Value &data) {
-			ofxOscMessage m;
-			m.setAddress("/json"); // use 32 bits so we can talk to everyone easiy
-			//bugbug if these are used find a way to parameterize
-			m.addInt32Arg(1); // destination ID
-			m.addInt32Arg(2); // source ID
-			m.addInt32Arg(0); // priority
-			m.addInt32Arg(0); // weight 
-			unsigned int t = ofGetUnixTime();
-			m.addInt32Arg(t); // send time, gmt
-			m.addInt32Arg(0); // expires, 0 is never
-			m.addStringArg(data.asString());
-			sender.sendMessage(m, false);
+			unlock();
+			if (p){
+				return Message::toJson(p);
+			}
+			return nullptr;
 		}
 
 	private:
-		ofxOscSender sender;
 		ofxOscReceiver receiver;
-		queue<shared_ptr<Message>> q;
+		queue<shared_ptr<ofxOscMessage>> q;
 	};
 }

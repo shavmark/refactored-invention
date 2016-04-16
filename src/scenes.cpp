@@ -85,6 +85,7 @@ namespace Software2552 {
 
 	//recursive reader
 	void Stage::read(const Json::Value &data, shared_ptr<ActorRole> parent) {
+		// read from input (web, osc etc and queue input, resort by priroity post each read and remove timed out data
 		if (!data.empty()) {
 			ADDANIMATION(cubes, Cube, parent);
 		}
@@ -107,7 +108,7 @@ namespace Software2552 {
 	}
 
 	bool Stage::setup(const Json::Value &data) {
-		read(data, nullptr);
+		read(data["graphics"], nullptr);
 		///ADDANIMATION(cubes, Cube);
 		getAnimatables().sort(compareOrder);
 		if (!data["background"].empty()) {

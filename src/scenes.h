@@ -49,7 +49,7 @@ namespace Software2552 {
 						if (item->node && parent->node) {
 							item->node->setParent(*parent->node);//bugbug not sure what to do here but we need to tie things together somehow
 						}
-						read(data["scenes"], item);// see if there are child data
+						read(data["graphics"], item);// see if there are child data
 						addToAnimatable(item, inFront);
 					}
 				}

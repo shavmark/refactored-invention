@@ -717,6 +717,16 @@ namespace Software2552 {
 	}
 	bool ChannelList::read(const string&path) {
 		ofxJSON json;
+		ofxJSON data;
+		data["scenes"][0]["code"] = "44";
+		data["scenes"][1]["code"] = "88";
+		data["scenes"][3]["dog"] = "99";
+		string s;
+		s = data.getRawString(false);// send this
+		json.parse(s);
+
+		readStringFromJson(s, data["United Kingdom"]["code"]);
+
 
 		logTrace("parse " + path);
 
