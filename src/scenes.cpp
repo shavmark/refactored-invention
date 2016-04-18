@@ -89,6 +89,11 @@ namespace Software2552 {
 
 	void Stage::readCameras(const Json::Value &data) {
 		if (!data.empty()) {
+			bool deleteExisting = false;// delete existing
+			READBOOL(deleteExisting, data);
+			if (deleteExisting) {
+				getCameras().clear();
+			}
 			ADDCAMERAS(cameraFixed, FixedCamera);
 			ADDCAMERAS(camera, MovingCamera);
 		}
@@ -113,6 +118,11 @@ namespace Software2552 {
 	}
 	void Stage::readLights(const Json::Value &data) {
 		if (!data.empty()) {
+			bool deleteExisting = false;// delete existing
+			READBOOL(deleteExisting, data);
+			if (deleteExisting) {
+				getLights().clear();
+			}
 			ADDLIGHTS(light, Light);
 			ADDLIGHTS(pointLight, PointLight);
 			ADDLIGHTS(directionalLight, DirectionalLight);
@@ -134,6 +144,11 @@ namespace Software2552 {
 	void Stage::readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent) {
 		// read from input (web, osc etc and queue input, resort by priority post each read and remove timed out data
 		if (!data.empty()) {
+			bool deleteExisting = false;// delete existing
+			READBOOL(deleteExisting, data);
+			if (deleteExisting) {
+				getAnimatables().clear();
+			}
 			ADDANIMATION(videos, Video, parent);
 			getAnimatables().sort(compareOrder);
 		}
