@@ -10,9 +10,6 @@
     <ClCompile Include="src\2552software.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\kinect2552.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="notes.cpp" />
     <ClCompile Include="src\model.cpp">
       <Filter>src</Filter>
@@ -184,9 +181,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\2552software.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\kinect2552.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\model.h">

@@ -402,11 +402,12 @@ namespace Software2552 {
 		TypeOfGradient mode = TypeOfGradient::noGradient;
 		TypeOfBackground type = ColorFixed;
 		bool mysetup(const Json::Value &data);
-		template<typename T>void add(const Json::Value &data) {
+		template<typename T>void add(const Json::Value &data, int draworder) {
 			shared_ptr<T> item = std::make_shared<T>();
 			if (item) {
 				if (item->setup(data)) {
 					item->setFullSize();
+					item->setDrawOrder(draworder);
 					getStage()->addToAnimatable(item, true);
 				}
 			}

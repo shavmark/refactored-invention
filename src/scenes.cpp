@@ -64,14 +64,19 @@ namespace Software2552 {
 	}
 	// set background object at location 0 every time
 	shared_ptr<Background> Stage::CreateReadAndaddBackgroundItems(const Json::Value &data) {
-		shared_ptr<Background> b = std::make_shared<Background>();
-		if (b != nullptr) {
-			if (b->setup(data)) {
-				// only save if data was read in 
-				addToAnimatable(b, true);
+		if (!data.empty()) {
+			shared_ptr<Background> b = std::make_shared<Background>();
+			if (b != nullptr) {
+				if (b->setup(data)) {
+					// only save if data was read in 
+					addToAnimatable(b, true);
+				}
 			}
+			return b;
 		}
-		return b;
+		else {
+			return nullptr;
+		}
 	}
 	///bigger the number the more forward
 	bool compareOrder(shared_ptr<ActorRole>first, shared_ptr<ActorRole>second)	{
@@ -79,15 +84,58 @@ namespace Software2552 {
 	}
 	// samples https://sites.google.com/site/ofauckland/examples
 #define ADDANIMATION(name,type,parent)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)], parent)
-#define ADDLIGHT(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
-#define ADDCAMERA(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
+#define ADDLIGHTS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
+#define ADDCAMERAS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
-
-	//recursive reader
-	void Stage::read(const Json::Value &data, shared_ptr<ActorRole> parent) {
-		// read from input (web, osc etc and queue input, resort by priroity post each read and remove timed out data
+	void Stage::readCameras(const Json::Value &data) {
 		if (!data.empty()) {
-			ADDANIMATION(cubes, Cube, parent);
+			ADDCAMERAS(cameraFixed, FixedCamera);
+			ADDCAMERAS(camera, MovingCamera);
+		}
+		// set a default camera if none exist
+		if (getCameras().size() == 0) {
+			shared_ptr<FixedCamera> camera = std::make_shared<FixedCamera>();
+			if (camera) {
+				if (camera->setup(data)) {
+					camera->worker.setPosition(0, 0, 0);//bugbug clean up the rand stuff via data and more organized random
+					add(camera);
+				}
+			}
+			shared_ptr<MovingCamera> camera2 = std::make_shared<MovingCamera>();
+			if (camera2) {
+				if (camera2->setup(data)) {
+					camera2->worker.setPosition(0, 0, 600);//bugbug clean up the rand stuff via data and more organized random
+					add(camera2);
+				}
+			}
+		}
+
+	}
+	void Stage::readLights(const Json::Value &data) {
+		if (!data.empty()) {
+			ADDLIGHTS(light, Light);
+			ADDLIGHTS(pointLight, PointLight);
+			ADDLIGHTS(directionalLight, DirectionalLight);
+			ADDLIGHTS(spotLight, SpotLight);
+		}
+
+		// set a default light if none exist
+		if (getLights().size() == 0) {
+			shared_ptr<Light> light = std::make_shared<Light>();
+			if (light) {
+				if (light->setup(data)) {
+					add(light);
+				}
+			}
+		}
+
+	}
+	//recursive reader
+	void Stage::readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent) {
+		// read from input (web, osc etc and queue input, resort by priority post each read and remove timed out data
+		if (!data.empty()) {
+			ADDANIMATION(videos, Video, parent);
+			getAnimatables().sort(compareOrder);
 		}
 		return;
 #if 0
@@ -107,47 +155,15 @@ namespace Software2552 {
 #endif // 0
 	}
 
-	bool Stage::setup(const Json::Value &data) {
-		read(data["graphics"], nullptr);
-		///ADDANIMATION(cubes, Cube);
-		getAnimatables().sort(compareOrder);
-		if (!data["background"].empty()) {
-			CreateReadAndaddBackgroundItems(data["background"]);
+	bool Stage::updateData(shared_ptr<ofxJSON> data) {
+		if (data) {
+			Json::Value::Members m = data->getMemberNames();
+			readGraphics((*data)["graphics"], nullptr);
+			CreateReadAndaddBackgroundItems((*data)["background"]);
+			readLights((*data)["lights"]);
+			readCameras((*data)["cameras"]);
 		}
-		// set a default camera if none exist
-		if (getCameras().size() == 0) {
-			shared_ptr<FixedCamera> camera = std::make_shared<FixedCamera>();
-			if (camera) {
-				if (camera->setup(data)) {
-					camera->worker.setPosition(0, 0, 0);//bugbug clean up the rand stuff via data and more organized random
-					add(camera);
-				}
-			}
-			shared_ptr<MovingCamera> camera2 = std::make_shared<MovingCamera>();
-			if (camera2) {
-				if (camera2->setup(data)) {
-					camera2->worker.setPosition(0, 0, 600);//bugbug clean up the rand stuff via data and more organized random
-					add(camera2);
-				}
-			}
-		}
-		// set a default light if none exist
-		if (getLights().size() == 0) {
-			shared_ptr<Light> light = std::make_shared<Light>();
-			if (light) {
-				if (light->setup(data)) {
-					add(light);
-				}
-			}
-		}
-		return true;
-								   // no cameras or lights in data, build that in when telling the story
-		ADDCAMERA(cameraFixed, FixedCamera);
-		ADDCAMERA(camera, MovingCamera);
-		ADDLIGHT(light, Light);
-		ADDLIGHT(pointLight, PointLight);
-		ADDLIGHT(directionalLight, DirectionalLight);
-		ADDLIGHT(spotLight, SpotLight);
+
 		return true;
 	};
 
@@ -359,6 +375,7 @@ namespace Software2552 {
 		}
 	}
 	template<typename T>void Stage::CreateReadAndaddLight(const Json::Value &data) {
+
 		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 			shared_ptr<T> light = std::make_shared<T>();
 			if (light) {

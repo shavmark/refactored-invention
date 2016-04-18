@@ -8,7 +8,6 @@
 #include <locale>
 
 #include "2552software.h"
-#include "kinect2552.h"
 #include "timeline.h"
 
 class ofApp : public ofBaseApp{
@@ -36,12 +35,6 @@ class ofApp : public ofBaseApp{
 		//in
 		void audioIn(float * input, int bufferSize, int nChannels);
 		// audio
-
-		// these items need to go some where else, maybe the App
-		Software2552::KinectBodies bodies;
-		Software2552::KinectFaces faces;
-		Software2552::KinectAudio audio;
-		Software2552::Kinect2552 myKinect;
 
 		Software2552::Timeline timeline;
 

@@ -27,8 +27,10 @@ namespace Software2552 {
 		void setup();
 		void update();
 		void draw();
-		bool setup(const Json::Value &data);
-		void read(const Json::Value &data, shared_ptr<ActorRole> parent);
+		bool updateData(shared_ptr<ofxJSON>);
+		void readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent);
+		void readLights(const Json::Value &data);
+		void readCameras(const Json::Value &data);
 		void clear(bool force=false);
 		void pause();
 		void resume();
@@ -49,7 +51,6 @@ namespace Software2552 {
 						if (item->node && parent->node) {
 							item->node->setParent(*parent->node);//bugbug not sure what to do here but we need to tie things together somehow
 						}
-						read(data["graphics"], item);// see if there are child data
 						addToAnimatable(item, inFront);
 					}
 				}

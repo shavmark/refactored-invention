@@ -72,5 +72,29 @@ namespace Software2552 {
 		return strTo;
 	}
 
+	void init() {
+		ofGLWindowSettings settings;
+		settings.setGLVersion(4, 0); // for now use 4 (vs 4.5) until I can figure out how to do this at run time bugbug
+		do {
+			settings.width = 800;
+			settings.height = 800;
+			settings.windowMode = ofWindowMode::OF_WINDOW;
+			// this kicks off the running of my app    
+			if (ofCreateWindow(settings)) {
+				break;
+			}
+			if (settings.glVersionMinor > 0) {
+				settings.glVersionMinor = 0;
+				continue;
+			}
+			if (settings.glVersionMinor > 3) {
+				settings.glVersionMajor = 3;
+				continue;//bugbug keep trying on low end devices to see how low things need to go
+			}
+		} while (settings.glVersionMajor < 3);
+		string s = "ver " + ofToString(settings.glVersionMajor) + "." + ofToString(settings.glVersionMinor);
+		ofLog(OF_LOG_NOTICE, s);
+
+	}
 
 }

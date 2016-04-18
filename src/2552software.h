@@ -18,9 +18,7 @@
 // !!keep all MS files above ofmain.h https://forum.openframeworks.cc/t/how-to-include-atl-in-vs2012-project/14672/2
 #include "ofMain.h"
 
-#include "ofxSmartFont.h"
 #include "ofxJSON.h"
-#include "ofxParagraph.h"
 #include "Poco/Foundation.h"
 #include "Poco/DateTime.h"
 #include "Poco/LocalDateTime.h"
@@ -31,6 +29,7 @@
 #define STRINGIFY(p) #p
 
 namespace Software2552 {
+	void init(); 
 	typedef uint64_t GraphicID;
 	template<typename T>void setIfGreater(T& f1, T f2) {
 		if (f2 > f1) {
@@ -44,6 +43,17 @@ namespace Software2552 {
 	private:
 	};
 
+	// drawing related items start here
+	class BaseClass2552WithDrawing : public BaseClass {
+	public:
+		BaseClass2552WithDrawing() { valid = false; }
+
+		bool objectValid() { return valid; } // data is in a good state
+		void setValid(bool b = true) { valid = b; };
+
+	private:
+		bool valid; // true when data is valid and ready to draw
+	};
 
 	// can be, but does not need to be, a base class as its all static and can just be called, could not even be a class I suppose
 	class Trace : public BaseClass {

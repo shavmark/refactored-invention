@@ -3,6 +3,8 @@
 #include "ofxAnimatableFloat.h"
 #include "ofxAnimatableOfPoint.h"
 #include "ofxAnimatableOfColor.h"
+#include "ofxSmartFont.h"
+#include "ofxParagraph.h"
 
 
 // supports animation
@@ -179,6 +181,7 @@ namespace Software2552 {
 		void setActorPosition(ofPoint& p);
 		virtual float getTimeBeforeStart(float t);
 		int getDrawOrder() { return drawOrder; }
+		void setDrawOrder(int order) { drawOrder = order; }
 		// helpers to wrap basic functions
 		void setupForDrawing() { mySetup(); };
 		void updateForDrawing();

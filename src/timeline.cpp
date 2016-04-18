@@ -10,7 +10,8 @@ namespace Software2552 {
 	// read one act and save it to the list of acts (ie a story)
 	bool Timeline::readScript(const string& path) {
 
-		return playlist.read(path);
+		//return playlist.read(path);
+		return true;
 	}
 	void Timeline::start() {
 		if (playlist.getCurrent() != nullptr) {
@@ -35,12 +36,23 @@ namespace Software2552 {
 		ofSetVerticalSync(false);
 		ofSetFrameRate(frameRate);
 		colorlist.setup();
+		stage.setup();
+		read.setup();
+		write.setup("127.0.0.1");
+		ofxJSON data;
+		data.open("json4.json");// use json editor vs. coding it up
+		write.send(data);
 		return;
 
 		mesh.setup();
 	}
 	// keep this super fast
 	void Timeline::update() { 
+
+		stage.updateData(read.get()); // data can come from files, http/s, osc ++
+		stage.update();
+		return;
+
 		playlist.removeExpiredItems();
 		if (playlist.getCurrent() != nullptr) {
 			playlist.getCurrent()->getStage()->update();
@@ -53,6 +65,7 @@ namespace Software2552 {
 
 	// keep as fast as possible
 	void Timeline::draw() {
+		stage.draw();
 		//mesh.draw();
 		if (playlist.getCurrent() != nullptr) {
 			playlist.getCurrent()->getStage()->draw();

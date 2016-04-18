@@ -598,17 +598,18 @@ namespace Software2552 {
 
 		//bugbug finish this 
 		setRefreshRate(60000);// just set something different while in dev
+		drawOrder = 100000; // always draw first, if someone really wants to draw behind the background they just need to exced this number which is fine
 
 		if (!data["image"].empty()) {
-			add<Picture>(data["image"]);
+			add<Picture>(data["image"], drawOrder+1);
 		}
 
 		if (!data["video"].empty()) {
-			add<Video>(data["video"]);
+			add<Video>(data["video"], drawOrder + 2);
 		}
 
 		if (!data["rainbow"].empty()) {
-			add<Rainbow>(data["rainbow"]);
+			add<Rainbow>(data["rainbow"], drawOrder + 3);
 		}
 		return true;
 	}
@@ -758,12 +759,12 @@ namespace Software2552 {
 						int i = 1; // just for debugging
 					}
 					// save with right playitem
-					if (p->setup(json["scenes"][i])) {
+					//if (p->setup(json["scenes"][i])) {
 						// find stage and set it
 						if (!setStage(p)) {
 							logTrace("scene not in playlist (ignored) " + p->getKeyName());
 						}
-					}
+					//}
 				}
 			}
 			// remove unattached stages, user forgot them in the input file
