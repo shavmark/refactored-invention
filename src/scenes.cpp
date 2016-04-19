@@ -89,9 +89,7 @@ namespace Software2552 {
 
 	void Stage::readCameras(const Json::Value &data) {
 		if (!data.empty()) {
-			bool deleteExisting = false;// delete existing
-			READBOOL(deleteExisting, data);
-			if (deleteExisting) {
+			if (deleteExisting(data)) {
 				getCameras().clear();
 			}
 			ADDCAMERAS(cameraFixed, FixedCamera);
@@ -118,9 +116,7 @@ namespace Software2552 {
 	}
 	void Stage::readLights(const Json::Value &data) {
 		if (!data.empty()) {
-			bool deleteExisting = false;// delete existing
-			READBOOL(deleteExisting, data);
-			if (deleteExisting) {
+			if (deleteExisting(data)) {
 				getLights().clear();
 			}
 			ADDLIGHTS(light, Light);
@@ -140,34 +136,38 @@ namespace Software2552 {
 		}
 
 	}
+	// delete existing data
+	bool Stage::deleteExisting(const Json::Value &data) {
+		bool deleteExisting = false;// delete existing
+		READBOOL(deleteExisting, data);
+		return deleteExisting;
+
+	}
 	//recursive reader
 	void Stage::readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent) {
 		// read from input (web, osc etc and queue input, resort by priority post each read and remove timed out data
 		if (!data.empty()) {
-			bool deleteExisting = false;// delete existing
-			READBOOL(deleteExisting, data);
-			if (deleteExisting) {
+			if (deleteExisting(data)) {
 				getAnimatables().clear();
 			}
 			ADDANIMATION(videos, Video, parent);
+			ADDANIMATION(pictures, Picture, parent);
+			ADDANIMATION(rainbows, Rainbow, parent);
+			ADDANIMATION(circles, Ball, parent);
+			ADDANIMATION(cubes, Cube, parent);
+			ADDANIMATION(spheres, Sphere, parent);
+			ADDANIMATION(videos, Video, parent);
+			ADDANIMATION(grabbers, CameraGrabber, parent);
+			ADDANIMATION(texts, Text, parent);
+			ADDANIMATION(paragraphs, Paragraph, parent);
+			ADDANIMATION(planets, Planet, parent);
+			ADDANIMATION(videoSpheres, VideoSphere, parent);
+			ADDANIMATION(solarSystems, SolarSystem, parent);//bugbug forgot how to rotate around clyde, does not run w/ others
+			ADDANIMATION(audio, Audio, parent);// sound phase 1a
 			getAnimatables().sort(compareOrder);
+
 		}
 		return;
-#if 0
-		ADDANIMATION(pictures, Picture);
-		ADDANIMATION(rainbows, Rainbow);
-		ADDANIMATION(circles, Ball);
-		ADDANIMATION(cubes, Cube);
-		ADDANIMATION(spheres, Sphere);
-		ADDANIMATION(videos, Video);
-		ADDANIMATION(grabbers, CameraGrabber);
-		ADDANIMATION(texts, Text);
-		ADDANIMATION(paragraphs, Paragraph);
-		ADDANIMATION(planets, Planet);
-		ADDANIMATION(videoSpheres, VideoSphere);
-		ADDANIMATION(solarSystems, SolarSystem);//bugbug forgot how to rotate around clyde, does not run w/ others
-		ADDANIMATION(audio, Audio);// sound phase 1a
-#endif // 0
 	}
 
 	bool Stage::updateData(shared_ptr<ofxJSON> data) {

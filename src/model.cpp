@@ -796,6 +796,11 @@ namespace Software2552 {
 			worker.draw(0, 0, width, height);
 		}
 	}
+	Video::~Video() {
+		if (isLoaded) {
+			worker.stop();
+		}
+	}
 	void Video::mySetup() {
 		string debug = getLocationPath();
 		if (!isLoaded) {

@@ -308,6 +308,7 @@ namespace Software2552 {
 
 	class Video : public Visual {
 	public:
+		~Video();
 		friend class VideoTexture;
 		// put advanced drawing in these objects
 		void myUpdate();

@@ -47,8 +47,8 @@ namespace Software2552 {
 						}
 						//bugbug in drawing code parent position/color/font etc used unless child has its own
 						// so child moves w/ parent in 2d like node does in 3d
-						item->parent = parent;
-						if (item->node && parent->node) {
+						if (item->node && parent && parent->node) {
+							item->parent = parent;
 							item->node->setParent(*parent->node);//bugbug not sure what to do here but we need to tie things together somehow
 						}
 						addToAnimatable(item, inFront);
@@ -98,7 +98,7 @@ namespace Software2552 {
 		string keyname;
 
 	private:
-
+		bool deleteExisting(const Json::Value &data);
 		void removeExpiredItems(list<shared_ptr<ActorRole>>&v) {
 			v.remove_if(ActorRole::OKToRemove);
 		}

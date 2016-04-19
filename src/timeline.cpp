@@ -38,7 +38,7 @@ namespace Software2552 {
 		colorlist.setup();
 		stage.setup();
 		read.setup();
-		write.setup("127.0.0.1");
+		write.setup("192.168.1.255");
 		ofxJSON data;
 		data.open("json4.json");// use json editor vs. coding it up
 		write.send(data);

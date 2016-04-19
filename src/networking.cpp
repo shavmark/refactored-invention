@@ -41,7 +41,7 @@ namespace Software2552 {
 					sender.sendMessage(*m, false);
 				}
 			}
-			ofSleepMillis(0);
+			ofSleepMillis(10);
 		}
 	}
 	// add a message to be sent
@@ -85,7 +85,7 @@ namespace Software2552 {
 					}
 				}
 			}
-			ofSleepMillis(0);
+			ofSleepMillis(10);
 		}
 	}
 	shared_ptr<ofxJSON> ReadComms::get() {
