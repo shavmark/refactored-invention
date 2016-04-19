@@ -8,7 +8,6 @@
 
 #include "ofxOsc.h"
 #include "ofxJSON.h"
-#include <algorithm>
 
 	// phase II go to something like IoTivity or AllJoyn, let the dust settle.  
 
@@ -17,7 +16,7 @@ namespace Software2552 {
 	class Message {
 	public:
 		static shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage>);
-		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data);
+		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&name);
 	};
 
 	class WriteComms : public ofThread {
@@ -28,7 +27,7 @@ namespace Software2552 {
 		void threadedFunction();
 		
 		// add a message to be sent
-		void send(ofxJSON &data);
+		void send(ofxJSON &data, const string&name);
 
 	private:
 		ofxOscSender sender;
@@ -42,7 +41,7 @@ namespace Software2552 {
 
 		void threadedFunction();
 
-		shared_ptr<ofxJSON> get();
+		shared_ptr<ofxJSON> get(const string&name);
 
 	private:
 		ofxOscReceiver receiver;

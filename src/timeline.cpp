@@ -41,15 +41,15 @@ namespace Software2552 {
 		write.setup("192.168.1.255");
 		ofxJSON data;
 		data.open("json4.json");// use json editor vs. coding it up
-		write.send(data);
+		write.send(data, "graphics");
 		return;
 
 		mesh.setup();
 	}
 	// keep this super fast
 	void Timeline::update() { 
-
-		stage.updateData(read.get()); // data can come from files, http/s, osc ++
+		read.get("kinect");
+		stage.updateData(read.get("graphics")); // data can come from files, http/s, osc ++
 		stage.update();
 		return;
 

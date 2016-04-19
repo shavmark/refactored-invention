@@ -13,10 +13,10 @@ namespace Software2552 {
 		}
 		return nullptr;
 	}
-	shared_ptr<ofxOscMessage> Message::fromJson(ofxJSON &data) {
+	shared_ptr<ofxOscMessage> Message::fromJson(ofxJSON &data, const string&name) {
 		shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
 		if (p) {
-			p->setAddress("/json"); // use 32 bits so we can talk to everyone easiy
+			p->setAddress("/"+ name); // use 32 bits so we can talk to everyone easiy
 									//bugbug if these are used find a way to parameterize
 									//bugbug put all these items in json? or instead use them
 									// to ignore messages, delete old ones?
@@ -45,12 +45,14 @@ namespace Software2552 {
 		}
 	}
 	// add a message to be sent
-	void WriteComms::send(ofxJSON &data) {
-		shared_ptr<ofxOscMessage> p = Message::fromJson(data);
-		if (p) {
-			lock();
-			q.push(p);
-			unlock();
+	void WriteComms::send(ofxJSON &data, const string&name) {
+		if (data.size() > 0) {
+			shared_ptr<ofxOscMessage> p = Message::fromJson(data, name);
+			if (p) {
+				lock();
+				q.push(p);
+				unlock();
+			}
 		}
 	}
 	ReadComms::ReadComms() {
@@ -67,13 +69,9 @@ namespace Software2552 {
 				shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
 				if (p) {
 					receiver.getNextMessage(*p);
-					// check for json
-					if (p->getAddress() == "/json") {
-						lock();
-						q.push(p);
-						unlock();
-						// figure out priority and removing old data bugbug
-						// both the arguments are int32's
+					lock();
+					q.push(p);
+					unlock();
 #if 0
 						p->destination = m.getArgAsInt32(0);
 						p->source = m.getArgAsInt32(1);
@@ -82,16 +80,19 @@ namespace Software2552 {
 						p->expires = m.getArgAsInt32(4);
 
 #endif // 0						
-					}
 				}
 			}
 			ofSleepMillis(10);
 		}
 	}
-	shared_ptr<ofxJSON> ReadComms::get() {
+	shared_ptr<ofxJSON> ReadComms::get(const string&name) {
 		if (q.size() > 0) {
 			lock();
 			shared_ptr<ofxOscMessage> p = q.front();
+			if (p->getAddress() != "/"+name) {
+				unlock();
+				return nullptr; // skip it if its not for us
+			}
 			q.pop();
 			unlock();
 			if (p) {

@@ -11,7 +11,6 @@
 #include <intsafe.h>
 #include <Synchapi.h>
 // keep all MS files above ofmain.h
-#include "ofMain.h"
 #include "ofFileUtils.h"
 #include "ole2.h"
 
