@@ -1,4 +1,5 @@
 // store notes here
+//http://www.jamesalliban.com/#jahome good site for learning the industry
 //http://jpbellona.com/kinect/ cool notes
 // make our own web server https://msdn.microsoft.com/en-us/library/windows/desktop/aa364640(v=vs.85).aspx
 //http://kepler.nasa.gov/multimedia/photos/imagesbykepler/?ImageID=14

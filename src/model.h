@@ -10,15 +10,6 @@
 namespace Software2552 {
 	// model helpers
 
-	void echoValue(const Json::Value &data, bool isError = false);
-	bool echoJSONTree(const string& functionname, const Json::Value &root, bool isError = false);
-#define ECHOAll(data) echoJSONTree(__FUNCTION__, data);
-#define ERROR_ECHOAll(data) echoJSONTree(__FUNCTION__, data, true);
-
-#if _DEBUG
-	template<typename T> void traceVector(T& vec);
-#endif // _DEBUG
-
 	// readJsonValue only if value in json, readJsonValue does not support string due to templatle issues
 	template<typename T> bool readJsonValue(T &value, const Json::Value& data);
 	bool readStringFromJson(string &value, const Json::Value& data);

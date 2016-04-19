@@ -83,70 +83,6 @@ namespace Software2552 {
 
 
 
-	//bugbug todo weave into errors, even on release mode as anyone can break a json file
-	void echoValue(const Json::Value &data, bool isError) {
-		//Json::Value::Members m = data.getMemberNames();
-		try {
-			if (data.isString()) {
-				tracer("type=string, value=\"" + data.asString() + "\">", isError);
-			}
-			else if (data.isBool()) {
-				tracer("type=bool, value=" + ofToString(data.asBool()) + ">", isError);
-			}
-			else if (data.isInt()) {
-				tracer("type=int, value=" + ofToString(data.asInt()) + ">", isError);
-			}
-			else if (data.isDouble()) {
-				tracer("type=float, value=" + ofToString(data.asDouble()) + ">", isError);
-			}
-			else if (data.isArray()) {
-				tracer("type=array>", isError);
-			}
-			else if (data.isObject()) {
-				tracer("type=objectvalue(name/value pair), value=" + ofToString(data.asString()) + ">", isError);
-			}
-			else if (data.isNull()) {
-				tracer("type=null>", isError);
-			}
-			else {
-				tracer("type=unsupported, type is " + ofToString(data.type()) + ">", isError);
-			}
-		}
-		catch (std::exception e) {
-			logErrorString(e.what());
-		}
-
-
-	}
-	bool echoJSONTree(const string& functionname, const Json::Value &root, bool isError)
-	{
-		tracer("<Parse name=\"" + functionname + "\">", isError); // kick it back as xml, easier to read by a human? 
-
-		if (root.size() > 0) {
-
-			for (Json::ValueIterator itr = root.begin(); itr != root.end(); itr++) {
-				string member = itr.memberName();
-				tracer("<subvalue name=\"" + member + "\">", isError);
-				echoValue(itr.key());
-				tracer("</subvalue>", isError);
-				echoJSONTree(functionname, *itr, isError);
-			}
-			return true;
-		}
-		else {
-			echoValue(root);
-		}
-		tracer("</Parse>", isError);
-		return true;
-	}
-
-#if _DEBUG
-	template<typename T> void traceVector(T& vec) {
-		for (auto a : vec) {
-			a->trace();
-		}
-	}
-#endif // _DEBUG
 
 	// get a string from json
 	bool readStringFromJson(string &value, const Json::Value& data) {
@@ -190,7 +126,6 @@ namespace Software2552 {
 			}
 		}
 		catch (std::exception e) {
-			echoJSONTree(__FUNCTION__, data, true);
 			logErrorString(e.what());
 		}
 		return false;
