@@ -7,7 +7,6 @@
 	//- string : trackingState(Tracked, NotTracked or Inferred)
 
 #include "ofxOsc.h"
-#include "ofxJSON.h"
 
 	// phase II go to something like IoTivity or AllJoyn, let the dust settle.  
 

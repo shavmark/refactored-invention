@@ -3,6 +3,7 @@
 #include "2552software.h"
 #include "animation.h"
 #include "draw.h"
+#include "kinect.h"
 #include <forward_list>
 
 // json driven model
@@ -180,6 +181,14 @@ namespace Software2552 {
 		shared_ptr<ColorSet> colorHelper = nullptr;
 	};
 
+	class KinectPerson {
+	public:
+		Joint joints[JointType::JointType_Count];
+		HandState leftHandState;
+		HandState rightHandState;
+		ofPoint leanAmount;
+
+	};
 
 	class DrawingPrimitive3d : public ActorRole {
 	public:

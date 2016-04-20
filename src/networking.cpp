@@ -1,3 +1,4 @@
+#include "ofxJSON.h"
 #include "networking.h"
 
 namespace Software2552 {
@@ -74,17 +75,6 @@ namespace Software2552 {
 					q[p->getAddress()].push(p);
 					unlock();
 					return;
-					// I do not think the items below are needed
-					MessageMap::iterator m = q.find(p->getAddress());
-					if (m != q.end()) {
-						// found one
-						m->second.push(p);
-					}
-					else {
-						// add new one if not there
-						q[p->getAddress()].push(p);
-					}
-					unlock();
 #if 0
 						p->destination = m.getArgAsInt32(0);
 						p->source = m.getArgAsInt32(1);
@@ -103,7 +93,7 @@ namespace Software2552 {
 		if (q.size() > 0) {
 			lock();
 			MessageMap::iterator m = q.find(name);
-			if (m != q.end()) {
+			if (m != q.end() && m->second.size() > 0) {
 				j = Message::toJson((m->second).front());
 				m->second.pop();
 			}
