@@ -19,6 +19,8 @@ namespace Software2552 {
 		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&name);
 	};
 
+	typedef std::unordered_map<string, queue<shared_ptr<ofxOscMessage>>>MessageMap;
+
 	class WriteComms : public ofThread {
 	public:
 		WriteComms();
@@ -45,6 +47,6 @@ namespace Software2552 {
 
 	private:
 		ofxOscReceiver receiver;
-		queue<shared_ptr<ofxOscMessage>> q;
+		MessageMap q;
 	};
 }

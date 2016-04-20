@@ -16,7 +16,7 @@ namespace Software2552 {
 	shared_ptr<ofxOscMessage> Message::fromJson(ofxJSON &data, const string&name) {
 		shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
 		if (p) {
-			p->setAddress("/"+ name); // use 32 bits so we can talk to everyone easiy
+			p->setAddress(name); // use 32 bits so we can talk to everyone easiy
 									//bugbug if these are used find a way to parameterize
 									//bugbug put all these items in json? or instead use them
 									// to ignore messages, delete old ones?
@@ -70,7 +70,20 @@ namespace Software2552 {
 				if (p) {
 					receiver.getNextMessage(*p);
 					lock();
-					q.push(p);
+					// add new one if not there
+					q[p->getAddress()].push(p);
+					unlock();
+					return;
+					// I do not think the items below are needed
+					MessageMap::iterator m = q.find(p->getAddress());
+					if (m != q.end()) {
+						// found one
+						m->second.push(p);
+					}
+					else {
+						// add new one if not there
+						q[p->getAddress()].push(p);
+					}
 					unlock();
 #if 0
 						p->destination = m.getArgAsInt32(0);
@@ -86,20 +99,17 @@ namespace Software2552 {
 		}
 	}
 	shared_ptr<ofxJSON> ReadComms::get(const string&name) {
+		shared_ptr<ofxJSON> j = nullptr;
 		if (q.size() > 0) {
 			lock();
-			shared_ptr<ofxOscMessage> p = q.front();
-			if (p->getAddress() != "/"+name) {
-				unlock();
-				return nullptr; // skip it if its not for us
+			MessageMap::iterator m = q.find(name);
+			if (m != q.end()) {
+				j = Message::toJson((m->second).front());
+				m->second.pop();
 			}
-			q.pop();
 			unlock();
-			if (p) {
-				return Message::toJson(p);
-			}
 		}
-		return nullptr;
+		return j;
 	}
 
 

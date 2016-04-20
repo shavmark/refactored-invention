@@ -38,18 +38,33 @@ namespace Software2552 {
 		colorlist.setup();
 		stage.setup();
 		read.setup();
-		write.setup("192.168.1.255");
+		//write.setup();
 		ofxJSON data;
 		data.open("json4.json");// use json editor vs. coding it up
-		write.send(data, "graphics");
+		//write.send(data, "graphics");
 		return;
 
 		mesh.setup();
 	}
 	// keep this super fast
 	void Timeline::update() { 
-		read.get("kinect");
-		stage.updateData(read.get("graphics")); // data can come from files, http/s, osc ++
+		shared_ptr<ofxJSON> p = read.get("kinect");
+		if (p) {
+			for (Json::ArrayIndex j = 0; j < p->size(); ++j) {
+				int type = (*p)["joints"][j]["type"].asInt();
+				x = (*p)["joints"][j]["depth"]["x"].asFloat();
+				y = (*p)["joints"][j]["depth"]["y"].asFloat();
+				x2 = (*p)["joints"][j]["color"]["x"].asFloat();
+				y2 = (*p)["joints"][j]["color"]["y"].asFloat();
+				x3 = (*p)["joints"][j]["cam"]["x"].asFloat();
+				y3 = (*p)["joints"][j]["cam"]["y"].asFloat();
+				z3 = (*p)["joints"][j]["cam"]["z"].asFloat();
+				ofxJSON data;
+
+			}
+		}
+
+		//stage.updateData(read.get("graphics")); // data can come from files, http/s, osc ++
 		stage.update();
 		return;
 

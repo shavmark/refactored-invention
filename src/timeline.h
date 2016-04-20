@@ -20,6 +20,14 @@ namespace Software2552 {
 		bool readScript(const string& path);
 
 	private:
+		float x =0;
+		float y = 0;
+		float x2 = 0;
+		float y2 = 0;
+		float x3 = 0;
+		float y3 = 0;
+		float z3 = 0;
+
 		ChannelList playlist;
 		ColorList colorlist;
 		Stage stage;
