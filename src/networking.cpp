@@ -74,9 +74,9 @@ namespace Software2552 {
 					// add new one if not there
 					q[p->getAddress()].push(p);
 					unlock();
-					return;
+				
 #if 0
-						p->destination = m.getArgAsInt32(0);
+						p->destination = m.getArgAsInt32(0);//bugbug code in time out, priority etc
 						p->source = m.getArgAsInt32(1);
 						p->priority = m.getArgAsInt32(2);
 						p->weight = m.getArgAsInt32(3);

@@ -48,20 +48,36 @@ namespace Software2552 {
 	}
 	// keep this super fast
 	void Timeline::update() { 
-		shared_ptr<ofxJSON> p = read.get("kinect");
-		if (p) {
-			for (Json::ArrayIndex j = 0; j < p->size(); ++j) {
-				int type = (*p)["joints"][j]["type"].asInt();
-				x = (*p)["joints"][j]["depth"]["x"].asFloat();
-				y = (*p)["joints"][j]["depth"]["y"].asFloat();
-				x2 = (*p)["joints"][j]["color"]["x"].asFloat();
-				y2 = (*p)["joints"][j]["color"]["y"].asFloat();
-				x3 = (*p)["joints"][j]["cam"]["x"].asFloat();
-				y3 = (*p)["joints"][j]["cam"]["y"].asFloat();
-				z3 = (*p)["joints"][j]["cam"]["z"].asFloat();
-				ofxJSON data;
+		//kinect/joints kinect/face kinect/audio kinect/body kinect/audioCommand
+		shared_ptr<ofxJSON> joints = read.get("kinect/joints");
+		string s;
+		if (joints) {
+			s = joints->getRawString();
+			int type = (*joints)["jointType"].asInt();
+			x = (*joints)["depth"]["x"].asFloat();
+			y = (*joints)["depth"]["y"].asFloat();
+			x2 = (*joints)["color"]["x"].asFloat();
+			y2 = (*joints)["color"]["y"].asFloat();
+			x3 = (*joints)["cam"]["x"].asFloat();
+			y3 = (*joints)["cam"]["y"].asFloat();
+			z3 = (*joints)["cam"]["z"].asFloat();
 
-			}
+		}
+		shared_ptr<ofxJSON> face = read.get("kinect/face");
+		if (face) {
+			s = face->getRawString();
+		}
+		shared_ptr<ofxJSON> body = read.get("kinect/body");
+		if (body) {
+			s = body->getRawString();
+		}
+		shared_ptr<ofxJSON> audio = read.get("kinect/audio");
+		if (audio) {
+			s = audio->getRawString();
+		}
+		shared_ptr<ofxJSON> audioCommand = read.get("kinect/audioCommand");
+		if (audioCommand) {
+			s = audioCommand->getRawString();
 		}
 
 		//stage.updateData(read.get("graphics")); // data can come from files, http/s, osc ++
