@@ -15,10 +15,11 @@ namespace Software2552 {
 	class Message {
 	public:
 		static shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage>);
-		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&name);
+		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&address);
 	};
 
-	typedef std::unordered_map<string, queue<shared_ptr<ofxOscMessage>>>MessageMap;
+	// deque allows push front and back and enumration so we do priorities and remove old data
+	typedef std::unordered_map<string, deque<shared_ptr<ofxOscMessage>>>MessageMap;
 
 	class WriteComms : public ofThread {
 	public:
@@ -28,11 +29,12 @@ namespace Software2552 {
 		void threadedFunction();
 		
 		// add a message to be sent
-		void send(ofxJSON &data, const string&name);
+		void send(ofxJSON &data, const string&address);
 
 	private:
 		ofxOscSender sender;
-		queue<shared_ptr<ofxOscMessage>> q;
+		deque<shared_ptr<ofxOscMessage>> q;
+		deque<shared_ptr<ofxOscMessage>> memory; // used to avoid dups, saves last 200 messages bugbug check this number
 	};
 
 	class ReadComms : public ofThread {
@@ -42,7 +44,7 @@ namespace Software2552 {
 
 		void threadedFunction();
 
-		shared_ptr<ofxJSON> get(const string&name);
+		shared_ptr<ofxJSON> get(const string&address);
 
 	private:
 		ofxOscReceiver receiver;

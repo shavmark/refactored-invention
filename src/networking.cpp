@@ -14,10 +14,10 @@ namespace Software2552 {
 		}
 		return nullptr;
 	}
-	shared_ptr<ofxOscMessage> Message::fromJson(ofxJSON &data, const string&name) {
+	shared_ptr<ofxOscMessage> Message::fromJson(ofxJSON &data, const string&address) {
 		shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
 		if (p) {
-			p->setAddress(name); // use 32 bits so we can talk to everyone easiy
+			p->setAddress(address); // use 32 bits so we can talk to everyone easiy
 									//bugbug if these are used find a way to parameterize
 									//bugbug put all these items in json? or instead use them
 									// to ignore messages, delete old ones?
@@ -36,7 +36,7 @@ namespace Software2552 {
 			if (q.size() > 0) {
 				lock();
 				shared_ptr<ofxOscMessage> m = q.front();
-				q.pop();
+				q.pop_front();
 				unlock();
 				if (m) {
 					sender.sendMessage(*m, false);
@@ -46,12 +46,25 @@ namespace Software2552 {
 		}
 	}
 	// add a message to be sent
-	void WriteComms::send(ofxJSON &data, const string&name) {
+	void WriteComms::send(ofxJSON &data, const string&address) {
 		if (data.size() > 0) {
-			shared_ptr<ofxOscMessage> p = Message::fromJson(data, name);
+			shared_ptr<ofxOscMessage> p = Message::fromJson(data, address);
 			if (p) {
+				// only add if its not in the list already
+				for (int i = 0; i < memory.size();++i) {
+					string s = memory[i]->getArgAsString(0);
+					string s2 = data.getRawString();
+					string s3 = memory[i]->getAddress();
+					if (memory[i]->getAddress() == address && memory[i]->getArgAsString(0) == data.getRawString()) {
+						return; // ignore dups
+					}
+				}
+				memory.push_front(p);
+				if (memory.size() > 1000) {
+					memory.erase(memory.end() - 200, memory.end());// find to the 1000 and 50 magic numbers bugbug
+				}
 				lock();
-				q.push(p);
+				q.push_front(p); //bugbub do we want to add a priority? front & back? not sure
 				unlock();
 			}
 		}
@@ -72,7 +85,8 @@ namespace Software2552 {
 					receiver.getNextMessage(*p);
 					lock();
 					// add new one if not there
-					q[p->getAddress()].push(p);
+					string s = p->getAddress();
+					q[p->getAddress()].push_front(p);
 					unlock();
 				
 #if 0
@@ -88,14 +102,14 @@ namespace Software2552 {
 			ofSleepMillis(10);
 		}
 	}
-	shared_ptr<ofxJSON> ReadComms::get(const string&name) {
+	shared_ptr<ofxJSON> ReadComms::get(const string&address) {
 		shared_ptr<ofxJSON> j = nullptr;
 		if (q.size() > 0) {
 			lock();
-			MessageMap::iterator m = q.find(name);
+			MessageMap::iterator m = q.find(address);
 			if (m != q.end() && m->second.size() > 0) {
 				j = Message::toJson((m->second).front());
-				m->second.pop();
+				m->second.pop_front();
 			}
 			unlock();
 		}
