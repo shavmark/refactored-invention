@@ -32,6 +32,8 @@ namespace Software2552 {
 		void send(ofxJSON &data, const string&address);
 
 	private:
+		bool ignoreDups(shared_ptr<ofxOscMessage> p, ofxJSON &data, const string&address);
+		bool checkForDups = false;
 		ofxOscSender sender;
 		deque<shared_ptr<ofxOscMessage>> q;
 		deque<shared_ptr<ofxOscMessage>> memory; // used to avoid dups, saves last 200 messages bugbug check this number

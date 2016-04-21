@@ -45,23 +45,27 @@ namespace Software2552 {
 			ofSleepMillis(10);
 		}
 	}
+	// return true to ignore messages that have been added recently
+	bool WriteComms::ignoreDups(shared_ptr<ofxOscMessage> p, ofxJSON &data, const string&address) {
+		// only add if its not in the list already 
+		for (int i = 0; i < memory.size(); ++i) {
+			if (memory[i]->getAddress() == address && memory[i]->getArgAsString(0) == data.getRawString()) {
+				return true; // ignore dup
+			}
+		}
+		memory.push_front(p);
+		if (memory.size() > 1000) {
+			memory.erase(memory.end() - 200, memory.end());// find to the 1000 and 200 magic numbers bugbug
+		}
+		return false;
+	}
 	// add a message to be sent
 	void WriteComms::send(ofxJSON &data, const string&address) {
 		if (data.size() > 0) {
 			shared_ptr<ofxOscMessage> p = Message::fromJson(data, address);
 			if (p) {
-				// only add if its not in the list already
-				for (int i = 0; i < memory.size();++i) {
-					string s = memory[i]->getArgAsString(0);
-					string s2 = data.getRawString();
-					string s3 = memory[i]->getAddress();
-					if (memory[i]->getAddress() == address && memory[i]->getArgAsString(0) == data.getRawString()) {
-						return; // ignore dups
-					}
-				}
-				memory.push_front(p);
-				if (memory.size() > 1000) {
-					memory.erase(memory.end() - 200, memory.end());// find to the 1000 and 50 magic numbers bugbug
+				if (checkForDups && ignoreDups(p, data, address)) {
+					return;
 				}
 				lock();
 				q.push_front(p); //bugbub do we want to add a priority? front & back? not sure
@@ -84,19 +88,8 @@ namespace Software2552 {
 				if (p) {
 					receiver.getNextMessage(*p);
 					lock();
-					// add new one if not there
-					string s = p->getAddress();
 					q[p->getAddress()].push_front(p);
 					unlock();
-				
-#if 0
-						p->destination = m.getArgAsInt32(0);//bugbug code in time out, priority etc
-						p->source = m.getArgAsInt32(1);
-						p->priority = m.getArgAsInt32(2);
-						p->weight = m.getArgAsInt32(3);
-						p->expires = m.getArgAsInt32(4);
-
-#endif // 0						
 				}
 			}
 			ofSleepMillis(10);
