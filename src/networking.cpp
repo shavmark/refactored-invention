@@ -88,7 +88,7 @@ namespace Software2552 {
 				if (p) {
 					receiver.getNextMessage(*p);
 					lock();
-					q[p->getAddress()].push_front(p);
+					q[p->getAddress()].push_front(p); // will create a new queue if needed
 					unlock();
 				}
 			}

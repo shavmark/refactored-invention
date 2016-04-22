@@ -80,6 +80,8 @@ namespace Software2552 {
 		ofDrawEllipse(mouthCornerLeft().X - 5, mouthCornerLeft().Y + offset, width + 5, height);
 	}
 	}
+void ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* pPitch, int* pYaw, int* pRoll);
+
 void KinectFaces::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* pPitch, int* pYaw, int* pRoll)
 {
 	double x = pQuaternion->x;
@@ -114,7 +116,7 @@ void KinectFaces::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* 
 	}
 	// keep this super fast
 	void Timeline::update() { 
-		//kinect/joints kinect/face kinect/audio kinect/body kinect/audioCommand
+		//kinect/joints kinect/face kinect/audio kinect/body kinect/audioCommand kinect/install
 		shared_ptr<ofxJSON> joints = read.get("kinect/joints");
 		string s;
 		if (joints) {
@@ -127,11 +129,14 @@ void KinectFaces::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* 
 			x3 = (*joints)["cam"]["x"].asFloat();
 			y3 = (*joints)["cam"]["y"].asFloat();
 			z3 = (*joints)["cam"]["z"].asFloat();
-
 		}
 		shared_ptr<ofxJSON> face = read.get("kinect/face");
 		if (face) {
 			s = face->getRawString();
+		}
+		shared_ptr<ofxJSON> install = read.get("kinect/install");
+		if (install) {
+			s = install->getRawString();
 		}
 		shared_ptr<ofxJSON> body = read.get("kinect/body");
 		if (body) {

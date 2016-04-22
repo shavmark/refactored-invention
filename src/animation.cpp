@@ -25,7 +25,7 @@ namespace Software2552 {
 		if (me == nullptr) {
 			return false;
 		}
-		if (me->isExpired()) {
+		if (me->isExpired() || me->getFrameCountMaxHit()) {
 			return true;
 		}
 		// duration == 0 means never go away, and start == 0 means we have not started yet

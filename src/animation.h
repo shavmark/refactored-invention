@@ -64,7 +64,17 @@ namespace Software2552 {
 		void removeExpiredItems(vector<shared_ptr<objectLifeTimeManager>>&v) {
 			v.erase(std::remove_if(v.begin(), v.end(), OKToRemove), v.end());
 		}
+		void setFrameCount(int c) {
+			frameMax = new int(c);
+		}
+		bool getAndDecFrameCount() {
+			return (frameMax != nullptr && --(*frameMax) < 0);
+		}
+		bool getFrameCountMaxHit() {
+			return (frameMax != nullptr && (*frameMax) < 0);
+		}
 
+		int *frameMax = nullptr; // number of frames to show this item, null means always show
 	private:
 		int	    usageCount;     // number of times this animation was used
 		float   objectlifetime; // 0=forever, how long object lives after it starts drawing
@@ -192,7 +202,6 @@ namespace Software2552 {
 		void setType(drawtype typeIn) { type = typeIn; }
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
 		void setFill(bool b = true) { fill = b; }
-
 	protected:
 		static bool OKToRemove(shared_ptr<ActorRole> me) {
 			return objectLifeTimeManager::OKToRemove(me->locationAnimation);
@@ -229,9 +238,6 @@ namespace Software2552 {
 		shared_ptr<PointAnimation> locationAnimation = nullptr; // optional movement
 		shared_ptr<ScaleAnimation> scaleAnimation = nullptr; // 2d scale multply x,y by scale, 1 by default bugbug 
 		shared_ptr<vector<shared_ptr<Reference>>> references = nullptr; // research reference to show where actor came from
-		
 	};
-
-
 
 }
