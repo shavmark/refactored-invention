@@ -150,7 +150,8 @@ void KinectFaces::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* 
 		if (audioCommand) {
 			s = audioCommand->getRawString();
 		}
-
+		// add a drawing object like a small square that will only draw 5 frames or such using
+		// the new frame count code
 		//stage.updateData(read.get("graphics")); // data can come from files, http/s, osc ++
 		stage.update();
 		return;

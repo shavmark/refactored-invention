@@ -101,8 +101,8 @@ namespace Software2552 {
 			lock();
 			MessageMap::iterator m = q.find(address);
 			if (m != q.end() && m->second.size() > 0) {
-				j = Message::toJson((m->second).front());
-				m->second.pop_front();
+				j = Message::toJson((m->second).back());
+				m->second.pop_back();// first in first out
 			}
 			unlock();
 		}
