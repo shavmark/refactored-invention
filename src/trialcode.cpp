@@ -1,10 +1,4 @@
-#include "2552software.h"
-#include <istream>
-#pragma comment( lib, "sapi.lib" )
-
-// test, learning etc code
-
-
+#if 0
 namespace Software2552 {
 	class Sound {
 	public:
@@ -457,3 +451,4 @@ namespace Software2552 {
 		::CoUninitialize();
 	}
 }
+#endif

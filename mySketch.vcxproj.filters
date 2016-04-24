@@ -50,9 +50,6 @@
     <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp">
       <Filter>addons\ofxSmartFont\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\networking.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp">
       <Filter>addons\ofxOsc\src</Filter>
     </ClCompile>
@@ -110,6 +107,7 @@
     <ClCompile Include="src\tp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\CommonCode\networking.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -240,9 +238,6 @@
     <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h">
       <Filter>addons\ofxSmartFont\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\networking.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h">
       <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
@@ -324,6 +319,7 @@
     <ClInclude Include="src\tcp.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\CommonCode\networking.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

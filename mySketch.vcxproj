@@ -71,7 +71,7 @@
     <TargetName>$(ProjectName)_debug</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <IncludePath>$(KINECTSDK20_DIR)inc;$(IncludePath);</IncludePath>
+    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath)</IncludePath>
     <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);$(WindowsSDK_IncludePath);</ReferencePath>
   </PropertyGroup>
@@ -79,7 +79,7 @@
     <TargetName>$(ProjectName)_debug</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <IncludePath>$(KINECTSDK20_DIR)inc;$(IncludePath);</IncludePath>
+    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath)</IncludePath>
     <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);$(WindowsSDK_IncludePath);</ReferencePath>
   </PropertyGroup>
@@ -88,9 +88,11 @@
     <IntDir>obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(KINECTSDK20_DIR)lib\x64;</LibraryPath>
+    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -206,10 +208,10 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src</AdditionalIn
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.cpp" />
     <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp" />
+    <ClCompile Include="..\CommonCode\networking.cpp" />
     <ClCompile Include="notes.cpp" />
     <ClCompile Include="src\animation.cpp" />
     <ClCompile Include="src\color.cpp" />
-    <ClCompile Include="src\networking.cpp" />
     <ClCompile Include="src\scenes.cpp" />
     <ClCompile Include="src\timeline.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -255,9 +257,9 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src</AdditionalIn
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscSender.h" />
     <ClInclude Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.h" />
     <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h" />
+    <ClInclude Include="..\CommonCode\networking.h" />
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\color.h" />
-    <ClInclude Include="src\networking.h" />
     <ClInclude Include="src\scenes.h" />
     <ClInclude Include="src\tcp.h" />
     <ClInclude Include="src\timeline.h" />
