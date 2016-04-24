@@ -23,10 +23,10 @@
 #include <unordered_map>
 #include "ole2.h"
 #include <istream>
+
 #pragma comment( lib, "sapi.lib" )
 // keep all MS files above ofmain.h
 #include "ofMain.h"
-
 #include "ofxJSON.h"
 #include "Poco/Foundation.h"
 #include "Poco/DateTime.h"
@@ -41,7 +41,6 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 		f1 = f2;
 	}
 }
-#include "ofxOsc.h"
 #include "ofxJSON.h"
 #include "animation.h"
 #include "color.h"
