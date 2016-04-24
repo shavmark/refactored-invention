@@ -1,4 +1,5 @@
 // store notes here
+// https://github.com/CNMAT/OSC arduino osc, good stuff to get that thing going
 //http://www.jamesalliban.com/#jahome good site for learning the industry
 //http://jpbellona.com/kinect/ cool notes
 // make our own web server https://msdn.microsoft.com/en-us/library/windows/desktop/aa364640(v=vs.85).aspx

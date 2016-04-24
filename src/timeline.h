@@ -31,8 +31,8 @@ namespace Software2552 {
 		ChannelList playlist;
 		ColorList colorlist;
 		Stage stage;
-		ReadComms read;
-		WriteComms write;
+		ReadOsc read;
+		WriteOsc write;
 		MoreMesh mesh; // just for now bugbug, move into class hiearchey when ready
 	};
 

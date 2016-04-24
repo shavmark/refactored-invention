@@ -12,7 +12,7 @@
 
 // notes: remote files can use ofImage.loadImage("http://some.com/url.png")
 namespace Software2552 {
-	class Message {
+	class OSCMessage {
 	public:
 		static shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage>);
 		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&address);
@@ -21,17 +21,16 @@ namespace Software2552 {
 	// deque allows push front and back and enumration so we do priorities and remove old data
 	typedef std::unordered_map<string, deque<shared_ptr<ofxOscMessage>>>MessageMap;
 
-	class WriteComms : public ofThread {
+	class WriteOsc : public ofThread {
 	public:
-		WriteComms();
+		WriteOsc();
 		void setup(const string &hostname = "192.168.1.255", int port = 2552);
 
-		void threadedFunction();
-		
 		// add a message to be sent
 		void send(ofxJSON &data, const string&address);
 
 	private:
+		void threadedFunction();
 		bool ignoreDups(shared_ptr<ofxOscMessage> p, ofxJSON &data, const string&address);
 		bool checkForDups = false;
 		ofxOscSender sender;
@@ -39,16 +38,15 @@ namespace Software2552 {
 		deque<shared_ptr<ofxOscMessage>> memory; // used to avoid dups, saves last 200 messages bugbug check this number
 	};
 
-	class ReadComms : public ofThread {
+	class ReadOsc : public ofThread {
 	public:
-		ReadComms();
+		ReadOsc();
 		void setup(int port = 2552);
-
-		void threadedFunction();
 
 		shared_ptr<ofxJSON> get(const string&address);
 
 	private:
+		void threadedFunction();
 		ofxOscReceiver receiver;
 		MessageMap q;
 	};

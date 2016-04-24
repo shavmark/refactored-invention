@@ -3,7 +3,7 @@
 
 namespace Software2552 {
 
-	shared_ptr<ofxJSON> Message::toJson(shared_ptr<ofxOscMessage> m) {
+	shared_ptr<ofxJSON> OSCMessage::toJson(shared_ptr<ofxOscMessage> m) {
 		if (m) {
 			// bugbug data comes from one of http/s, string or local file but for now just a string
 			shared_ptr<ofxJSON> p = std::make_shared<ofxJSON>();
@@ -14,7 +14,7 @@ namespace Software2552 {
 		}
 		return nullptr;
 	}
-	shared_ptr<ofxOscMessage> Message::fromJson(ofxJSON &data, const string&address) {
+	shared_ptr<ofxOscMessage> OSCMessage::fromJson(ofxJSON &data, const string&address) {
 		shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
 		if (p) {
 			p->setAddress(address); // use 32 bits so we can talk to everyone easiy
@@ -25,13 +25,13 @@ namespace Software2552 {
 		}
 		return p;
 	}
-	WriteComms::WriteComms() {
+	WriteOsc::WriteOsc() {
 	}
-	void WriteComms::setup(const string &hostname, int port) {
+	void WriteOsc::setup(const string &hostname, int port) {
 		sender.setup(hostname, port);
 		startThread();
 	}
-	void WriteComms::threadedFunction() {
+	void WriteOsc::threadedFunction() {
 		while (1) {
 			if (q.size() > 0) {
 				lock();
@@ -46,7 +46,7 @@ namespace Software2552 {
 		}
 	}
 	// return true to ignore messages that have been added recently
-	bool WriteComms::ignoreDups(shared_ptr<ofxOscMessage> p, ofxJSON &data, const string&address) {
+	bool WriteOsc::ignoreDups(shared_ptr<ofxOscMessage> p, ofxJSON &data, const string&address) {
 		// only add if its not in the list already 
 		for (int i = 0; i < memory.size(); ++i) {
 			if (memory[i]->getAddress() == address && memory[i]->getArgAsString(0) == data.getRawString()) {
@@ -60,9 +60,9 @@ namespace Software2552 {
 		return false;
 	}
 	// add a message to be sent
-	void WriteComms::send(ofxJSON &data, const string&address) {
+	void WriteOsc::send(ofxJSON &data, const string&address) {
 		if (data.size() > 0) {
-			shared_ptr<ofxOscMessage> p = Message::fromJson(data, address);
+			shared_ptr<ofxOscMessage> p = OSCMessage::fromJson(data, address);
 			if (p) {
 				if (checkForDups && ignoreDups(p, data, address)) {
 					return;
@@ -73,14 +73,14 @@ namespace Software2552 {
 			}
 		}
 	}
-	ReadComms::ReadComms() {
+	ReadOsc::ReadOsc() {
 	}
-	void ReadComms::setup(int port) {
+	void ReadOsc::setup(int port) {
 		receiver.setup(port);
 		startThread();
 	}
 
-	void ReadComms::threadedFunction() {
+	void ReadOsc::threadedFunction() {
 		while (1) {
 			// check for waiting messages
 			while (receiver.hasWaitingMessages()) {
@@ -95,13 +95,13 @@ namespace Software2552 {
 			ofSleepMillis(10);
 		}
 	}
-	shared_ptr<ofxJSON> ReadComms::get(const string&address) {
+	shared_ptr<ofxJSON> ReadOsc::get(const string&address) {
 		shared_ptr<ofxJSON> j = nullptr;
 		if (q.size() > 0) {
 			lock();
 			MessageMap::iterator m = q.find(address);
 			if (m != q.end() && m->second.size() > 0) {
-				j = Message::toJson((m->second).back());
+				j = OSCMessage::toJson((m->second).back());
 				m->second.pop_back();// first in first out
 			}
 			unlock();
