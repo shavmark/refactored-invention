@@ -1,7 +1,5 @@
 #pragma once
-#include "2552software.h"
-#include "color.h"
-#include "animation.h"
+#include "ofApp.h"
 #include "ofSoundPlayer.h"
 // home of custom drawing
 
@@ -128,13 +126,6 @@ namespace Software2552 {
 
 
 
-	class VectorPattern : public ActorRole {
-	public:
-		void matrix(int twistx, int shifty);
-		void stripe(bool rotate = false);
-		void triangle(bool rotate = false);
-		void shape(int twistx, int shifty, bool rect, bool fill, int rotate, int alpha = 100);
-	};
 
 
 }

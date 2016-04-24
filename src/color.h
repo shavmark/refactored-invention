@@ -1,11 +1,5 @@
 #pragma once
-#include "2552software.h"
-#include "animation.h"
-#include <forward_list>
-#include <unordered_map>
-
-
-#include <cstdarg>
+#include "ofApp.h"
 
 namespace Software2552 {
 	// matching colors, this class controls colors, no data or others selected colors

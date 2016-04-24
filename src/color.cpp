@@ -1,9 +1,4 @@
-#include "2552software.h"
-#include "animation.h"
-#include "model.h"
-#include "color.h"
-#include <map>
-#include <unordered_map>
+#include "ofApp.h"
 
 namespace Software2552 {
 	shared_ptr<ColorList::colordata> ColorList::privateData = nullptr; // declare static data

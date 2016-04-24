@@ -1,5 +1,5 @@
-#include "timeline.h"
-#include "model.h"
+#include "ofapp.h"
+
 namespace Software2552 {
 
 	Timeline::Timeline(){
@@ -112,7 +112,6 @@ void KinectFaces::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* 
 		//write.send(data, "graphics");
 		return;
 
-		mesh.setup();
 	}
 	// keep this super fast
 	void Timeline::update() { 

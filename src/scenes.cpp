@@ -1,7 +1,4 @@
-#include "2552software.h"
-#include "model.h"
-#include "scenes.h"
-#include "animation.h"
+#include "ofApp.h"
 
 //By default, the screen is cleared with every draw() call.We can change that with 
 //  ofSetBackgroundAuto(...).Passing in a value of false turns off the automatic background clearing.

@@ -1,7 +1,4 @@
-#include "2552software.h"
-#include "animation.h"
-#include "model.h"
-#include "scenes.h"
+#include "ofApp.h"
 
 namespace Software2552 {
 

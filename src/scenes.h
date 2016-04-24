@@ -1,9 +1,5 @@
 #pragma once
-
-#include "model.h"
-#include "draw.h"
-#include <forward_list>
-
+#include "ofApp.h"
 // home of custom scenes
 
 namespace Software2552 {

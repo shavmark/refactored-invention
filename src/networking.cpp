@@ -1,5 +1,4 @@
-#include "ofxJSON.h"
-#include "networking.h"
+#include "ofApp.h"
 
 namespace Software2552 {
 

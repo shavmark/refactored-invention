@@ -1,5 +1,5 @@
 #pragma once
-#include "2552software.h"
+#include "ofApp.h"
 #include "ofxAnimatableFloat.h"
 #include "ofxAnimatableOfPoint.h"
 #include "ofxAnimatableOfColor.h"
