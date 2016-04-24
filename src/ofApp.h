@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _WINSOCK2API_
+#include <winsock2.h>
+#endif
 #include <sapi.h>  
 #include <sphelper.h> 
 #include <Synchapi.h>
@@ -23,7 +26,6 @@
 #include <unordered_map>
 #include "ole2.h"
 #include <istream>
-
 #pragma comment( lib, "sapi.lib" )
 // keep all MS files above ofmain.h
 #include "ofMain.h"
