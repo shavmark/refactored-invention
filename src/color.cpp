@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "color.h"
 
 namespace Software2552 {
 	shared_ptr<ColorList::colordata> ColorList::privateData = nullptr; // declare static data

@@ -1,5 +1,6 @@
 #include "ofApp.h"
-
+#include "color.h"
+#include "model.h"
 // maps json to drawing and animation tools
 
 namespace Software2552 {
@@ -96,7 +97,6 @@ namespace Software2552 {
 			if (!data.empty()) {
 				switch (data.type()) {
 				case Json::nullValue:
-					logTrace("nullValue");
 					break;
 				case Json::booleanValue:
 					value = data.asBool();
@@ -111,21 +111,21 @@ namespace Software2552 {
 					value = data.asFloat();
 					break;
 				case Json::objectValue:
-					logErrorString("objectValue called at wrong time");
+					ofLogError("readJsonValue") << "objectValue called at wrong time";
 					break;
 				case Json::arrayValue:
-					logErrorString("arrayValue called at wrong time");
+					ofLogError("readJsonValue") << "arrayValue called at wrong time";
 					break;
 				default:
 					// ignore?
-					logErrorString("value not found");
+					ofLogError("readJsonValue") << "value not found";
 					break;
 				}
 				return true;
 			}
 		}
 		catch (std::exception e) {
-			logErrorString(e.what());
+			ofLogError("readJsonValue") << e.what();
 		}
 		return false;
 	}
@@ -203,7 +203,7 @@ namespace Software2552 {
 		string str; // scratch varible, enables either string or ints to pull a date
 		if (READSTRING(str, data)) {
 			if (!Poco::DateTimeParser::tryParse(str, *this, timeZoneDifferential)) {
-				logErrorString("invalid AD date " + str);
+				ofLogError("DateAndTime", str) << "invalid AD date";
 				return false;
 			}
 			makeUTC(timeZoneDifferential);
@@ -662,24 +662,20 @@ namespace Software2552 {
 
 		readStringFromJson(s, data["United Kingdom"]["code"]);
 
-
-		logTrace("parse " + path);
-
 		if (!json.open(path)) {
-			logErrorString("Failed to parse JSON " + path);
+			ofLogError("ChannelList::read", path) << "open failed";
 			return false;
 		}
 		try {
 
 			setup(json["channelList"]);
 			if (getList().size() == 0) {
-				logErrorString("missing channelList");
+				ofLogError("ChannelList::read") << "missing channelList";
 				return false;
 			}
 
 			// read all the scenes
 			for (Json::ArrayIndex i = 0; i < json["scenes"].size(); ++i) {
-				logTrace("create look json[scenes][" + ofToString(i) + "][keyname]");
 				string sceneType;
 				if (readStringFromJson(sceneType, json["scenes"][i]["sceneType"])) {
 					shared_ptr<Stage> p = getScene(sceneType);
@@ -696,7 +692,7 @@ namespace Software2552 {
 					//if (p->setup(json["scenes"][i])) {
 						// find stage and set it
 						if (!setStage(p)) {
-							logTrace("scene not in playlist (ignored) " + p->getKeyName());
+							ofLogNotice("ChannelList::read") << "scene not in playlist (ignored) " << p->getKeyName();
 						}
 					//}
 				}
@@ -706,7 +702,7 @@ namespace Software2552 {
 			while (iter != list.end()) {
 				if ((*iter)->getStage() == nullptr) {
 					iter = list.erase(iter);
-					logTrace("item in playlist not found in json (ignored) " + (*iter)->getKeyName());
+					ofLogNotice("ChannelList::read") << "item in playlist not found in json (ignored) " << (*iter)->getKeyName();
 				}
 				else {
 					++iter;
@@ -714,7 +710,7 @@ namespace Software2552 {
 			}
 		}
 		catch (std::exception e) {
-			logErrorString(e.what());
+			ofLogError("ChannelList::read") << "exception " << e.what();
 			return false;
 		}
 		return true;
@@ -739,7 +735,7 @@ namespace Software2552 {
 		string debug = getLocationPath();
 		if (!isLoaded) {
 			if (!worker.load(getLocationPath())) {
-				logErrorString("setup video Player " + getLocationPath());
+				ofLogError("Video") << "setup video Player " << getLocationPath();
 			}
 			isLoaded = true; // avoid keep on trying
 		}
@@ -759,7 +755,7 @@ namespace Software2552 {
 	void Picture::mySetup() {
 		if (!isLoaded) {
 			if (!ofLoadImage(worker, getLocationPath())) {
-				logErrorString("setup Picture Player " + getLocationPath());
+				ofLogError("Picture") << "setup Picture Player " << getLocationPath();
 			}
 			isLoaded = true; // avoid keep on trying
 		}
@@ -793,7 +789,7 @@ namespace Software2552 {
 	}
 	void Audio::mySetup() {
 		if (!worker.load(getLocationPath())) {
-			logErrorString("setup audio Player");
+			ofLogError("Audio") << "setup audio Player " << getLocationPath();
 		}
 		// some of this data could come from data in the future
 		worker.play();
@@ -858,7 +854,7 @@ namespace Software2552 {
 		//bugbug fill this in with json reads as needed
 		if (!worker.isLoaded()) {
 			if (!worker.load(getLocationPath())) {
-				logErrorString("setup TextureVideo Player");
+				ofLogError("TextureVideo") << "setup TextureVideo Player " << getLocationPath();
 				return false;
 			}
 			worker.play();
@@ -1035,8 +1031,6 @@ namespace Software2552 {
 		}
 
 		soundDataOut.rms = soundDataOut.lastBuffer.getRMSAmplitude();
-
-
 	}
 	void SoundIn::audioIn(float * input, int bufferSize, int nChannels) {
 
@@ -1376,7 +1370,6 @@ namespace Software2552 {
 		ofVec3f axis(0, 0, 1);
 		rotation.makeRotate(axis, normal);
 		rotation.getRotate(rotationAmount, rotationAngle);
-		logVerbose("ofRotate " + ofToString(rotationAmount));
 		ofRotate(rotationAmount, rotationAngle.x, rotationAngle.y, rotationAngle.z);
 	}
 

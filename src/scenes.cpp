@@ -22,7 +22,7 @@ namespace Software2552 {
 		if (name == "Generic") {
 			return stage = std::make_shared<GenericScene>();
 		}
-		logTrace("name not known (ignored) using default scene " + name);
+		ofLogError("Stage") << "name not known (ignored) using default scene " << name;
 		return stage = std::make_shared<GenericScene>();
 	}
 
@@ -56,7 +56,7 @@ namespace Software2552 {
 
 			}
 		}
-		logErrorString("no camera");
+		ofLogError("Director") << "no camera";
 		return nullptr;
 	}
 	// set background object at location 0 every time

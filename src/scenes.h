@@ -1,5 +1,8 @@
 #pragma once
 #include "ofApp.h"
+#include "color.h"
+#include "model.h"
+
 // home of custom scenes
 
 namespace Software2552 {

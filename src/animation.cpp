@@ -1,4 +1,6 @@
 #include "ofApp.h"
+#include "color.h"
+#include "model.h"
 
 namespace Software2552 {
 
@@ -130,7 +132,6 @@ namespace Software2552 {
 		else if (repeatType == "LOOP_BACK_AND_FORTH_N_TIMES") {
 			return LOOP_BACK_AND_FORTH_N_TIMES;
 		}
-		logTrace("using default loop");
 		return LOOP; // default
 	}
 	void setAnimationValues(ofxAnimatable*p, const Json::Value &data, string& curveName, string& repeatType) {
@@ -404,7 +405,7 @@ namespace Software2552 {
 			}
 		}
 		if (font == nullptr) {
-			logErrorString("font is null");
+			ofLogError("FontHelper") << "font is null";
 		}
 		return font;
 	}
@@ -427,7 +428,7 @@ namespace Software2552 {
 					font = ofxSmartFont::add(filename, size, name);
 				}
 				if (font == nullptr) {
-					logErrorString("font file issue");
+					ofLogError("FontHelper") << "font file issue";
 					return false;
 				}
 			}
