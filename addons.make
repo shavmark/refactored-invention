@@ -4,3 +4,4 @@ ofxAnimatable
 ofxJson
 ofxParagraph
 ofxSmartFont
+ofxSnappy
