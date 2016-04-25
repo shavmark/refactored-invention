@@ -208,6 +208,7 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src</AdditionalIn
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.cpp" />
     <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp" />
+    <ClCompile Include="..\CommonCode\control.cpp" />
     <ClCompile Include="..\CommonCode\networking.cpp" />
     <ClCompile Include="notes.cpp" />
     <ClCompile Include="src\animation.cpp" />
@@ -256,6 +257,7 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src</AdditionalIn
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscSender.h" />
     <ClInclude Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.h" />
     <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h" />
+    <ClInclude Include="..\CommonCode\control.h" />
     <ClInclude Include="..\CommonCode\networking.h" />
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\color.h" />
