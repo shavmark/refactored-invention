@@ -79,7 +79,7 @@
     <TargetName>$(ProjectName)_debug</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath)</IncludePath>
+    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath);$(KinectSDK20_DIR)</IncludePath>
     <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);$(WindowsSDK_IncludePath);</ReferencePath>
   </PropertyGroup>
@@ -92,7 +92,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath)</IncludePath>
+    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath);$(KinectSDK20_DIR)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
