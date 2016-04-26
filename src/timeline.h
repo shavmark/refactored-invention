@@ -1,5 +1,6 @@
 #pragma once
 #include "ofApp.h"
+#include "control.h"
 // join data and view, this class knows about both the data and how its shown
 
 namespace Software2552 {
@@ -24,7 +25,7 @@ namespace Software2552 {
 		float x3 = 0;
 		float y3 = 0;
 		float z3 = 0;
-
+		Software2552::TCPReader reader;
 		ChannelList playlist;
 		ColorList colorlist;
 		Stage stage;

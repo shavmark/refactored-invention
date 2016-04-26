@@ -102,7 +102,7 @@ void KinectFaces::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* 
 
 	void Timeline::setup() {
 		//ofSeedRandom(); // turn of to debug if needed
-		
+		reader.setup(); // uses a thread to read
 		ofSetVerticalSync(false);
 		ofSetFrameRate(frameRate);
 		colorlist.setup();
@@ -117,6 +117,7 @@ void KinectFaces::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* 
 	}
 	// keep this super fast
 	void Timeline::update() { 
+		return;
 		//kinect/joints kinect/face kinect/audio kinect/body kinect/audioCommand kinect/install
 		shared_ptr<ofxJSON> joints = read.get("kinect/joints");
 		string s;
