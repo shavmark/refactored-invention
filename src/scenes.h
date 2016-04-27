@@ -90,7 +90,7 @@ namespace Software2552 {
 		virtual void postDraw();
 		virtual void mySetup() {}
 		virtual void myUpdate() {}
-		virtual void myPause() {}
+		virtual void myPause() {}	
 		virtual void myResume() {}
 		virtual void myClear(bool force) {}
 		virtual void installLightAndMaterialThenDraw(shared_ptr<FixedCamera>, bool drawfixed); // derive to change where cameras are

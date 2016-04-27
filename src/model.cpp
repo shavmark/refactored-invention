@@ -6,11 +6,14 @@
 namespace Software2552 {
 	SoundIn::dataIn SoundIn::soundDataIn; // only one sound per app instance
 	SoundOut::dataOut SoundOut::soundDataOut;// only one sound per app instance
+	float scaleIt(float val, float scale) {
+		return val*scale;
+	}
 
 	// data read in as a % of screen x,y; z is not converted
 	void Point3D::convert(float xpercent, float ypercent, float zpercent) {
-		x = (float)ofGetWidth() * xpercent;
-		y = (float)ofGetWidth() * ypercent;
+		x = scaleIt(ofGetWidth(), xpercent);
+		y = scaleIt(ofGetWidth(), ypercent;
 		z = zpercent;//not sure how to do this yet
 	}
 	bool Point3D::setup(const Json::Value &data) {
