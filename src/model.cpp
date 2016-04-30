@@ -13,7 +13,7 @@ namespace Software2552 {
 	// data read in as a % of screen x,y; z is not converted
 	void Point3D::convert(float xpercent, float ypercent, float zpercent) {
 		x = scaleIt(ofGetWidth(), xpercent);
-		y = scaleIt(ofGetWidth(), ypercent;
+		y = scaleIt(ofGetWidth(), ypercent);
 		z = zpercent;//not sure how to do this yet
 	}
 	bool Point3D::setup(const Json::Value &data) {
