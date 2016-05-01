@@ -148,7 +148,7 @@ namespace Software2552 {
 				getAnimatables().clear();
 			}
 			ADDANIMATION(videos, Video, parent);
-			ADDANIMATION(pictures, Picture, parent);
+			ADDANIMATION(pictures, Image, parent);
 			ADDANIMATION(rainbows, Rainbow, parent);
 			ADDANIMATION(circles, Ball, parent);
 			ADDANIMATION(cubes, Cube, parent);

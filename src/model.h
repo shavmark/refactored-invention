@@ -61,6 +61,36 @@ namespace Software2552 {
 		string source;
 	};
 
+	class Face {
+	public:
+		void draw();
+		void update(const Json::Value &data);
+		void setup();
+	private:
+		vector <ofPoint> points;
+		vector <ofVec4f> elipses;
+		ofRectangle rectangle;
+		float pitch = 0;
+		float yaw = 0;
+		float roll = 0;
+
+	};
+	class Kinect {
+	public:
+		void draw();
+		void update(ofxJSON& data);
+		void setup();
+		Face face;
+		void bodyFromTCP(const char * bytes, const size_t numBytes);
+
+	private:
+
+		void setHand(const Json::Value &data, float x, float y, float size);
+		void setFace(const Json::Value &data);
+		vector <ofPoint> points; // z is radius
+	};
+
+
 	class TextureFromImage : public ofTexture {
 	public:
 		void create(const string& name, float w, float h);
@@ -361,15 +391,29 @@ namespace Software2552 {
 	};
 
 
-	class Picture : public Visual {
+	class Image : public Visual {
 	public:
 		void myUpdate();
 		void mySetup();
 		void myDraw();
-	private:
+	protected:
 		ofImage worker;
+	private:
 		bool mysetup(const Json::Value &data);
 	};
+
+	class IRImage : public Image {
+	public:
+		// size is fixed
+		void IRFromTCP(const UINT16 * bytes);
+	private:
+	};
+	class BodyIndexImage : public Image {
+	public:
+		void bodyIndexFromTCP(const char * bytes, const size_t len);
+	private:
+	};
+
 
 	class Background : public Visual {
 	public:

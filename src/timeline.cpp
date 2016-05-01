@@ -103,6 +103,10 @@ void KinectFaces::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, int* 
 	void Timeline::setup() {
 		//ofSeedRandom(); // turn of to debug if needed
 		reader.setup(); // uses a thread to read
+		reader.add(defaultServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such
+		reader.add(defaultServerIP, TCPKinectBody, true);
+		reader.add(defaultServerIP, TCPKinectBodyIndex, true);
+
 		ofSetVerticalSync(false);
 		ofSetFrameRate(frameRate);
 		colorlist.setup();

@@ -25,7 +25,7 @@ namespace Software2552 {
 		float x3 = 0;
 		float y3 = 0;
 		float z3 = 0;
-		Software2552::TCPReader reader;
+		Software2552::Client reader;
 		ChannelList playlist;
 		ColorList colorlist;
 		Stage stage;
