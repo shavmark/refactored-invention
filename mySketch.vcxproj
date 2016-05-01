@@ -71,8 +71,8 @@
     <TargetName>$(ProjectName)_debug</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath)</IncludePath>
-    <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath);$(KinectSDK20_DIR)</IncludePath>
+    <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath));$(KinectSDK20_DIR)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);$(WindowsSDK_IncludePath);</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -80,19 +80,20 @@
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
     <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath);$(KinectSDK20_DIR)</IncludePath>
-    <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath));$(KinectSDK20_DIR)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);$(WindowsSDK_IncludePath);</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>bin\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(KINECTSDK20_DIR)lib\x64;</LibraryPath>
-    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(KINECTSDK20_DIR)lib\x64;);$(KinectSDK20_DIR)</LibraryPath>
+    <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath);$(KinectSDK20_DIR)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\storyteller\src;..\commoncode;$(IncludePath);$(KinectSDK20_DIR)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86);$(KinectSDK20_DIR)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -220,6 +221,9 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSnappy\libs\snappy\src</A
     <ClCompile Include="notes.cpp" />
     <ClCompile Include="src\animation.cpp" />
     <ClCompile Include="src\color.cpp" />
+    <ClCompile Include="src\kinect2552.cpp" />
+    <ClCompile Include="src\kinectSound.cpp" />
+    <ClCompile Include="src\kinectUtils.cpp" />
     <ClCompile Include="src\scenes.cpp" />
     <ClCompile Include="src\timeline.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -273,6 +277,7 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSnappy\libs\snappy\src</A
     <ClInclude Include="..\CommonCode\networking.h" />
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\color.h" />
+    <ClInclude Include="src\kinect2552.h" />
     <ClInclude Include="src\scenes.h" />
     <ClInclude Include="src\timeline.h" />
     <ClInclude Include="src\ofApp.h" />
