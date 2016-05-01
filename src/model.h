@@ -61,12 +61,13 @@ namespace Software2552 {
 		string source;
 	};
 
-	class Face {
+	class Face : public ActorRole {
 	public:
+		friend class Kinect;
 		void draw();
-		void update(const Json::Value &data);
 		void setup();
 	private:
+		void update(const Json::Value &data);
 		vector <ofPoint> points;
 		vector <ofVec4f> elipses;
 		ofRectangle rectangle;
@@ -75,16 +76,16 @@ namespace Software2552 {
 		float roll = 0;
 
 	};
-	class Kinect {
+	class Kinect : public ActorRole {
 	public:
 		void draw();
-		void update(ofxJSON& data);
 		void setup();
 		Face face;
+		//bugbug add in sound when we do sound overall
 		void bodyFromTCP(const char * bytes, const size_t numBytes);
 
 	private:
-
+		void update(ofxJSON& data);
 		void setHand(const Json::Value &data, float x, float y, float size);
 		void setFace(const Json::Value &data);
 		vector <ofPoint> points; // z is radius

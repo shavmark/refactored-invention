@@ -1,6 +1,4 @@
 #include "ofApp.h"
-#include "color.h"
-#include "model.h"
 
 namespace Software2552 {
 

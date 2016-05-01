@@ -32,12 +32,10 @@ namespace Software2552 {
 		float x3 = 0;
 		float y3 = 0;
 		float z3 = 0;
-		Client client; 
 		ChannelList playlist;
 		ColorList colorlist;
 		Stage stage;
-		ReadOsc read;
-		WriteOsc write;
+		shared_ptr<Client>client; // everyone can talk to everyone
 		shared_ptr<Sender>router; // everyone can talk to everyone
 #ifdef _WIN64
 		// every 64 bit windows with a 3.0 usb can talk to everyone else

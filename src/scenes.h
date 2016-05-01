@@ -23,11 +23,12 @@ namespace Software2552 {
 	// contains  elements of a stage
 	class Stage {
 	public:
-		void setup();
+		void setup(shared_ptr<Client>client);
 		void update();
 		void draw();
 		bool updateData(shared_ptr<ofxJSON>);
 		void readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent);
+		void readNextwork();
 		void readLights(const Json::Value &data);
 		void readCameras(const Json::Value &data);
 		void clear(bool force=false);
@@ -58,6 +59,7 @@ namespace Software2552 {
 		void addToAnimatable(shared_ptr<ActorRole>p, bool inFront = false);
 
 	protected:
+		shared_ptr<Client>client = nullptr;
 		void fixed3d(bool b = true) { drawIn3dFixed = b; }
 		void moving3d(bool b = true) { drawIn3dMoving = b; }
 		void fixed2d(bool b = true) { drawIn2d = b; }

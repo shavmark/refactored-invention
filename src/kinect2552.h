@@ -62,6 +62,8 @@ namespace Software2552 {
 
 		static int getDepthFrameWidth() { return 512; }
 		static int getDepthFrameHeight() { return 424; }
+		static int getIRFrameWidth() { return 512; }
+		static int getIRFrameHeight() { return 424; }
 		static int getColorFrameWidth() { return 1920; }
 		static int getColorFrameHeight() { return 1080; }
 

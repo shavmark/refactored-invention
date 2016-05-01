@@ -2,6 +2,7 @@
 #include "color.h"
 #include "inc\Kinect.h" // needed for enums
 #include "model.h"
+#include "scenes.h"
 // maps json to drawing and animation tools
 
 namespace Software2552 {
@@ -272,10 +273,9 @@ namespace Software2552 {
 		if (m.size() < 3) {
 			return; // not enough data to matter
 		}
-		float sw = ofGetScreenWidth();
-		float ratioX = (sw / kinectWidthForColor);
-		float sh = ofGetScreenHeight();
-		float ratioY = (sh / kinectHeightForColor);
+
+		float ratioX = ((float)ofGetScreenWidth() / Kinect2552::getColorFrameWidth());
+		float ratioY = ((float)ofGetScreenHeight() / Kinect2552::getColorFrameHeight());
 
 		// setup upper left
 		rectangle.set(data["boundingBox"]["left"].asFloat()*ratioX, data["boundingBox"]["top"].asFloat()*ratioY,
@@ -396,8 +396,9 @@ namespace Software2552 {
 	}
 	void Kinect::update(ofxJSON& data) {
 		points.clear();
-		float ratioX = ((float)ofGetScreenWidth() / kinectWidthForDepth);
-		float ratioY = ((float)ofGetScreenHeight() / kinectHeightForDepth);
+
+		float ratioX = ((float)ofGetScreenWidth() / Kinect2552::getDepthFrameWidth());
+		float ratioY = ((float)ofGetScreenHeight() / Kinect2552::getDepthFrameHeight());
 
 		for (Json::ArrayIndex i = 0; i < data["body"].size(); ++i) {
 			face.update(data["body"][i]["face"]);
@@ -425,10 +426,11 @@ namespace Software2552 {
 	}
 	void IRImage::IRFromTCP(const UINT16 * bytes) {
 		worker.clear();
-		worker.allocate(kinectWidthForIR, kinectHeightForIR, OF_IMAGE_COLOR);
-		for (float y = 0; y < kinectHeightForIR; y++) {
-			for (float x = 0; x < kinectWidthForIR; x++) {
-				unsigned int index = y * kinectWidthForIR + x;
+
+		worker.allocate(Kinect2552::getIRFrameWidth(), Kinect2552::getIRFrameHeight(), OF_IMAGE_COLOR);
+		for (float y = 0; y < Kinect2552::getIRFrameHeight(); y++) {
+			for (float x = 0; x < Kinect2552::getIRFrameWidth(); x++) {
+				unsigned int index = y * Kinect2552::getIRFrameWidth() + x;
 				worker.setColor(x, y, ofColor().fromHsb(255, 255, bytes[index]));
 			}
 		}
@@ -440,14 +442,14 @@ namespace Software2552 {
 		}
 
 		worker.clear();
-		worker.allocate(kinectWidthForDepth, kinectHeightForDepth, OF_IMAGE_COLOR);
-		for (float y = 0; y < kinectHeightForDepth; y++) {
-			for (float x = 0; x < kinectWidthForDepth; x++) {
-				unsigned int index = y * kinectWidthForDepth + x;
+		worker.allocate(Kinect2552::getDepthFrameWidth(), Kinect2552::getDepthFrameHeight(), OF_IMAGE_COLOR);
+		for (float y = 0; y < Kinect2552::getDepthFrameHeight(); y++) {
+			for (float x = 0; x < Kinect2552::getDepthFrameWidth(); x++) {
+				unsigned int index = y * Kinect2552::getDepthFrameWidth() + x;
 				if (((unsigned char*)bytes)[index] != 0xff) {
-					float hue = x / kinectWidthForDepth * 255;
-					float sat = ofMap(y, 0, kinectHeightForDepth / 2, 0, 255, true);
-					float bri = ofMap(y, kinectHeightForDepth / 2, kinectHeightForDepth, 255, 0, true);
+					float hue = x / Kinect2552::getDepthFrameHeight() * 255;
+					float sat = ofMap(y, 0, Kinect2552::getDepthFrameHeight() / 2, 0, 255, true);
+					float bri = ofMap(y, Kinect2552::getDepthFrameHeight() / 2, Kinect2552::getDepthFrameHeight(), 255, 0, true);
 					// make a dynamic image, also there can be up to 6 images so we need them to be a little different 
 					worker.setColor(x, y, ofColor::fromHsb(hue, sat, bri));
 				}

@@ -363,13 +363,13 @@
     <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.h">
       <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\CommonCode\control.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\kinect2552.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\networking.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\control.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

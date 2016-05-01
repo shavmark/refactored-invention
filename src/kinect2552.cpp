@@ -432,7 +432,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			}
 			router->sendTCP(bytes, numBytes, port, clientID);
 		}
-		// enable local draw also
+		// enable local draw also, bugbug copy what is in Client
 		IRImage irImage;//bugbug convert to a an item for our drawing queue
 		BodyIndexImage biImage;
 		Kinect kinect;

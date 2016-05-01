@@ -16,29 +16,22 @@ namespace Software2552 {
 		return true;
 	}
 	void Timeline::start() {
-		if (playlist.getCurrent() != nullptr) {
-			playlist.getCurrent()->getStage()->setup();
-			playlist.getCurrent()->start();
-		}
 	}
 	void Timeline::resume() {
-		if (playlist.getCurrent() != nullptr) {
-			playlist.getCurrent()->getStage()->resume();
-		}
-				
 	}
 	void Timeline::pause() {
-		if (playlist.getCurrent() != nullptr) {
-			playlist.getCurrent()->getStage()->pause();
-		}
 	}
 
 	void Timeline::setup() {
 		//ofSeedRandom(); // turn of to debug if needed
-		client.setup(); // uses a thread to read
-		client.add(defaultServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such
-		client.add(defaultServerIP, TCPKinectBody, true);
-		client.add(defaultServerIP, TCPKinectBodyIndex, true);
+		client = std::make_shared<Software2552::Client>();
+		if (!client) {
+			return; //things would be really messed up...
+		}
+		client->setup(); // uses a thread to read
+		client->add(defaultServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such
+		client->add(defaultServerIP, TCPKinectBody, true);
+		client->add(defaultServerIP, TCPKinectBodyIndex, true);
 
 		router = std::make_shared<Software2552::Sender>();
 		if (!router) {
@@ -48,11 +41,7 @@ namespace Software2552 {
 		router->addTCPServer(TCP, true); // general server
 
 #ifdef _WIN64
-		// there is not a special Kinect build, all builds will support a Kinect if they are 64 bits
-		router->addTCPServer(TCPKinectIR, true);
-		router->addTCPServer(TCPKinectBodyIndex, true);
-		router->addTCPServer(TCPKinectBody, true);
-
+		router->setupKinect();
 		kinectDevice.setup(router);
 		kinectBody = std::make_shared<Software2552::KinectBody>(&kinectDevice);
 #endif
@@ -60,8 +49,8 @@ namespace Software2552 {
 		ofSetVerticalSync(false);
 		ofSetFrameRate(frameRate);
 		colorlist.setup();
-		stage.setup();
-		read.setup();
+		stage.setup(client);
+		
 		//write.setup();
 		ofxJSON data;
 		data.open("json4.json");// use json editor vs. coding it up
@@ -71,7 +60,9 @@ namespace Software2552 {
 	}
 	// keep this super fast
 	void Timeline::update() { 
+		stage.update();
 		return;
+#if 0
 		//kinect/joints kinect/face kinect/audio kinect/body kinect/audioCommand kinect/install
 		shared_ptr<ofxJSON> joints = read.get("kinect/joints");
 		string s;
@@ -112,6 +103,7 @@ namespace Software2552 {
 		stage.update();
 		return;
 
+#endif // 0
 		playlist.removeExpiredItems();
 		if (playlist.getCurrent() != nullptr) {
 			playlist.getCurrent()->getStage()->update();

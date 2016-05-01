@@ -140,6 +140,10 @@ namespace Software2552 {
 		return deleteExisting;
 
 	}
+	void Stage::readNextwork() {
+
+	}
+
 	//recursive reader
 	void Stage::readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent) {
 		// read from input (web, osc etc and queue input, resort by priority post each read and remove timed out data
@@ -171,6 +175,7 @@ namespace Software2552 {
 		if (data) {
 			Json::Value::Members m = data->getMemberNames();
 			readGraphics((*data)["graphics"], nullptr);
+			readNextwork();
 			CreateReadAndaddBackgroundItems((*data)["background"]);
 			readLights((*data)["lights"]);
 			readCameras((*data)["cameras"]);
@@ -228,7 +233,8 @@ namespace Software2552 {
 		myClear(force);
 	}
 
-	void Stage::setup() {
+	void Stage::setup(shared_ptr<Client>clientIn) {
+		client = clientIn;
 		mySetup();
 	}
 	void Stage::update() {

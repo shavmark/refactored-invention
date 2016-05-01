@@ -275,9 +275,9 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSnappy\libs\snappy\src</A
     <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.h" />
     <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-public.h" />
     <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.h" />
-    <ClInclude Include="..\CommonCode\control.h" />
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\color.h" />
+    <ClInclude Include="src\control.h" />
     <ClInclude Include="src\kinect2552.h" />
     <ClInclude Include="src\networking.h" />
     <ClInclude Include="src\scenes.h" />
