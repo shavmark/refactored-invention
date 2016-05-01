@@ -1,3 +1,6 @@
+#ifdef _WIN64
+// kinect only works on64 bit windows
+
 #include "ofApp.h"
 //C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\x64
 //bugbug fix path for release and debug, and remove any "mark" dependencies
@@ -25,3 +28,5 @@ namespace Software2552 {
 		return false; // no error
 	}
 }
+
+#endif

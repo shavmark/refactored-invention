@@ -104,8 +104,6 @@
     <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp">
       <Filter>addons\ofxNetwork\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\CommonCode\networking.cpp" />
-    <ClCompile Include="..\CommonCode\control.cpp" />
     <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.cc">
       <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
     </ClCompile>
@@ -115,9 +113,21 @@
     <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.cc">
       <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\kinect2552.cpp" />
-    <ClCompile Include="src\kinectSound.cpp" />
-    <ClCompile Include="src\kinectUtils.cpp" />
+    <ClCompile Include="src\control.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kinect2552.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kinectSound.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kinectUtils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\networking.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -338,8 +348,6 @@
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h">
       <Filter>addons\ofxNetwork\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\CommonCode\networking.h" />
-    <ClInclude Include="..\CommonCode\control.h" />
     <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-internal.h">
       <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
     </ClInclude>
@@ -355,7 +363,15 @@
     <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.h">
       <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\kinect2552.h" />
+    <ClInclude Include="..\CommonCode\control.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect2552.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\networking.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

@@ -1,3 +1,6 @@
+#ifdef _WIN64
+// kinect only works on64 bit windows
+
 #include "ofApp.h"
 #include "kinect2552.h"
 //SetKinectTwoPersonSystemEngagement vs one?
@@ -614,3 +617,4 @@ void KinectFaces::buildFaces() {
 	}
 }
 }
+#endif // !WIN32

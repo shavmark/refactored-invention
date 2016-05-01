@@ -1,4 +1,4 @@
-
+#pragma once
 #include <inc\Kinect.Face.h>
 
 //https://github.com/Vangos, http://www.cs.princeton.edu/~edwardz/tutorials/kinect2/kinect0_sdl.html, https://github.com/UnaNancyOwen
@@ -60,10 +60,10 @@ namespace Software2552 {
 		IKinectSensor* getSensor() {return pSensor;	}
 		ICoordinateMapper* getMapper() {	return pCoordinateMapper;	}
 
-		int getDepthFrameWidth() { return 512; }
-		int getDepthFrameHeight() { return 424; }
-		int getColorFrameWidth() { return 1920; }
-		int getColorFrameHeight() { return 1080; }
+		static int getDepthFrameWidth() { return 512; }
+		static int getDepthFrameHeight() { return 424; }
+		static int getColorFrameWidth() { return 1920; }
+		static int getColorFrameHeight() { return 1080; }
 
 		HRESULT depth(UINT cameraPointCount, CameraSpacePoint*csp, UINT depthPointCount, DepthSpacePoint *dsp) { return pCoordinateMapper->MapCameraPointsToDepthSpace(1, csp, 1, dsp); }
 		HRESULT color(UINT cameraPointCount, const CameraSpacePoint*csp, UINT depthPointCount, ColorSpacePoint *color) { return pCoordinateMapper->MapCameraPointsToColorSpace(1, csp, 1, color); }
