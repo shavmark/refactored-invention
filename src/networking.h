@@ -44,7 +44,7 @@ namespace Software2552 {
 		static shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage>);
 		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&address);
 		static void getRawString(string &buffer, shared_ptr<ofxOscMessage>);
-		static string& getRemoteIP(shared_ptr<ofxOscMessage>m) { return (m) ? m->getRemoteIp() : ""; }
+		static string getRemoteIP(shared_ptr<ofxOscMessage>m);
 	};
 
 	const char PacketFence = 'f'; // used to validate packet were set properly

@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
 
 	Software2552::init(); //bugbug maybe pass opengl and other parmeters here
 	ofApp *app = new ofApp(); // assume ram here or just blow up any way
-	app->seekKinect = findkinect; // command line
+	app->seekKinect = false;// findkinect; // command line
 							
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN

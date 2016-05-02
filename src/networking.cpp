@@ -20,6 +20,12 @@ namespace Software2552 {
 		}
 		return true;
 	}
+	static string OSCMessage::getRemoteIP(shared_ptr<ofxOscMessage>m) {
+		if (m) {
+			return m->getRemoteIp();
+		}
+		return "";
+	}
 
 	void OSCMessage::getRawString(string &buffer, shared_ptr<ofxOscMessage>m) {
 		buffer.clear();
