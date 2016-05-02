@@ -78,6 +78,8 @@ class ofApp : public ofBaseApp{
 		void keyPressed(int key);
 		void exit();
 
+		bool seekKinect = false; // command line
+
 		// audio
 		void audioOut(ofSoundBuffer &outBuffer);
 		//in
