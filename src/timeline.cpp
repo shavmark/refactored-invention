@@ -78,6 +78,7 @@ namespace Software2552 {
 		if (client) {
 			// check for sign on/off etc of things
 			string signon;
+			string clientOfServer = client->getOscString(signon, SignOnClientOscAddress); // also contains a server address, but of a client
 			string source = client->getOscString(signon, SignOnServerOscAddress);
 			if (source.size() > 0 && signon.find("kinect server")) {
 				//bugbug add these when osc for server comes in
