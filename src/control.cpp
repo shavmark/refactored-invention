@@ -40,7 +40,6 @@ namespace Software2552 {
 	}
 #ifdef _WIN64
 	void Sender::setupKinect() {
-		addTCPServer(TCP, true);
 		addTCPServer(TCPKinectIR, true);
 		addTCPServer(TCPKinectBodyIndex, true);
 		addTCPServer(TCPKinectBody, true);
@@ -60,6 +59,7 @@ namespace Software2552 {
 			shared_ptr<BodyIndexImage>bi = std::make_shared<BodyIndexImage>();
 			if (bi) {
 				bi->bodyIndexFromTCP(packet->data.c_str(), packet->data.size());
+				bi->setup();
 				lock();
 				biQ.push_back(bi);
 				unlock();
@@ -70,6 +70,7 @@ namespace Software2552 {
 			shared_ptr<Kinect>k = std::make_shared<Kinect>();
 			if (k) {
 				k->bodyFromTCP(packet->data.c_str(), packet->data.size());
+				k->setup();
 				lock();
 				kQ.push_back(k);
 				unlock();
@@ -80,6 +81,7 @@ namespace Software2552 {
 			shared_ptr<IRImage>ir = std::make_shared<IRImage>();
 			if (ir) {
 				ir->IRFromTCP((const UINT16 *)packet->data.c_str());
+				ir->setup();
 				lock();
 				irQ.push_back(ir);
 				unlock();

@@ -31,9 +31,12 @@ namespace Software2552 {
 		client->setup(); // uses a thread to read
 		//bugbug use ofxOscMessage ofxOscReceiver (cool way to find server ip for all things, server may need to broad cast this now and then
 		// or advertise I guess for new folks that come on line
-		client->add(defaultServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
-		client->add(defaultServerIP, TCPKinectBody, true);
-		client->add(defaultServerIP, TCPKinectBodyIndex, true);
+		if (0) {
+			//bugbug add these when osc for server comes in
+			client->add(defaultServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
+			client->add(defaultServerIP, TCPKinectBody, true);
+			client->add(defaultServerIP, TCPKinectBodyIndex, true);
+		}
 		stage = std::make_shared<Software2552::Stage>();
 		if (!stage) {
 			return; //things would be really messed up...
@@ -66,6 +69,12 @@ namespace Software2552 {
 	}
 	// keep this super fast
 	void Timeline::update() { 
+#ifdef _WIN64
+		// kinect can only go 30fps 
+		if (kinectBody) {
+			kinectBody->update();
+		}
+#endif
 		if (stage) {
 			stage->update();
 		}

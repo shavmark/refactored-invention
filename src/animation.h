@@ -222,10 +222,11 @@ namespace Software2552 {
 		string notes;// unstructured string of info, can be shown to the user
 		string title; // title object
 		string name; // any object can have a name, note, date, reference, duration
-
+		void setFixed(bool b = true) { fixedPosition = b; }
+		bool getFixed() { return fixedPosition; }
 	private:
 		virtual bool mysetup(const Json::Value &data) { return true; };
-
+		bool fixedPosition = false;
 		bool okToDraw(drawtype type);
 		drawtype type = draw2d;
 		// derived classes supply these if they need them to be called

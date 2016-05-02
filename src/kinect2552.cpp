@@ -446,6 +446,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				shared_ptr<IRImage>p = std::make_shared<IRImage>();
 				if (p) {
 					p->IRFromTCP((const UINT16 *)bytes);
+					p->setup();
 					backStagePass->addToAnimatable(p);
 				}
 			}
@@ -455,6 +456,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				shared_ptr<Kinect>p = std::make_shared<Kinect>();
 				if (p) {
 					p->bodyFromTCP(bytes, numBytes);
+					p->setup();
 					backStagePass->addToAnimatable(p);
 				}
 			}
@@ -464,6 +466,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
 				if (p) {
 					p->bodyIndexFromTCP(bytes, numBytes);
+					p->setup();
 					backStagePass->addToAnimatable(p);
 				}
 			}
@@ -471,7 +474,6 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		default:
 			break;
 		}
-
 	}
 	// send Json over UDP
 	void  Kinect2552::sendUDP(ofxJSON &data, const string& address) {

@@ -86,9 +86,6 @@ namespace Software2552 {
 		return true;
 	}
 
-
-
-
 	// get a string from json
 	bool readStringFromJson(string &value, const Json::Value& data) {
 		if (readJsonValue(value, data)) {
@@ -321,10 +318,21 @@ namespace Software2552 {
 		}
 
 	}
+	void BodyIndexImage::setup() {
+		setFixed(true);
+	}
+
+	void IRImage::setup() {
+		setFixed(true);
+	}
 	void Face::setup() {
+		setFixed(true);
+	}
+	void Kinect::setup() {
+		setFixed(true);
 	}
 	// draw face separte from body
-	void Face::draw() {
+	void Face::myDraw() {
 		ofSetColor(ofColor::blue); //bugbug clean changing up to fit in with rest of app, also each user gets a color
 		ofPushStyle();
 		//ofFill();
@@ -356,8 +364,6 @@ namespace Software2552 {
 		ofPopStyle();
 
 	}
-	void Kinect::setup() {
-	}
 	void Kinect::bodyFromTCP(const char * bytes, const size_t numBytes) {
 		ofxJSON data;
 		if (!data.parse(bytes)) {
@@ -368,7 +374,7 @@ namespace Software2552 {
 	}
 
 	// need to add this to our model etc
-	void Kinect::draw() {
+	void Kinect::myDraw() {
 		ofColor color = ofColor::orange;
 
 		ofNoFill();

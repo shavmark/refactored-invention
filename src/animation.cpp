@@ -329,15 +329,20 @@ namespace Software2552 {
 				ofNoFill();
 			}
 			bool disableEAP = false;
-			if (colorHelper->alphaEnbled()) {
+			if (colorHelper && colorHelper->alphaEnbled()) {
 				disableEAP = true;
 				ofEnableAlphaBlending(); // only use when needed for performance
 			}
 			if (getType() == draw2d) {
-				applyColor(); // in 3d color comes from lights etc
+				applyColor(); // set color here in 2d, 3d color comes from lights etc
 				ofPushMatrix();
-				ofTranslate(getCurrentPosition());
-				rotate();
+				if (!getFixed()) {
+					ofTranslate(getCurrentPosition());
+					rotate(); // fixed does not do rotation here either
+				}
+				else {
+					ofTranslate(0,0);// assume fixed uses screen as it sees fit
+				}
 				myDraw();
 				ofPopMatrix();
 			}

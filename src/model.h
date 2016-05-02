@@ -64,8 +64,8 @@ namespace Software2552 {
 	class Face : public ActorRole {
 	public:
 		friend class Kinect;
-		void draw();
 		void setup();
+		void myDraw();
 	private:
 		void update(const Json::Value &data);
 		vector <ofPoint> points;
@@ -78,8 +78,8 @@ namespace Software2552 {
 	};
 	class Kinect : public ActorRole {
 	public:
-		void draw();
 		void setup();
+		void myDraw();
 		Face face;
 		//bugbug add in sound when we do sound overall
 		void bodyFromTCP(const char * bytes, const size_t numBytes);
@@ -407,11 +407,13 @@ namespace Software2552 {
 	public:
 		// size is fixed
 		void IRFromTCP(const UINT16 * bytes);
+		void setup();
 	private:
 	};
 	class BodyIndexImage : public Image {
 	public:
 		void bodyIndexFromTCP(const char * bytes, const size_t len);
+		void setup();
 	private:
 	};
 
