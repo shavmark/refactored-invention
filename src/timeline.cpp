@@ -44,11 +44,11 @@ namespace Software2552 {
 
 		router->addTCPServer(TCP, true); // general server
 
-		router->sendOsc("kinect server", SignOnServerOscAddress);//bugbug over time we can personallize this more, like machine 2nd from the left set via ui or cmd line
 		router->sendOsc("client", SignOnClientOscAddress);
 
 #ifdef _WIN64
 		if (((ofApp*)ofGetAppPtr())->seekKinect) {
+			router->sendOsc("kinect server", SignOnServerOscAddress);//bugbug over time we can personallize this more, like machine 2nd from the left set via ui or cmd line
 			router->setupKinect();
 			kinectDevice.setup(router, stage);
 			kinectBody = std::make_shared<Software2552::KinectBody>(&kinectDevice);
