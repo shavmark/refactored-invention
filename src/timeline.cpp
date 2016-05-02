@@ -48,9 +48,11 @@ namespace Software2552 {
 		router->sendOsc("client", SignOnClientOscAddress);
 
 #ifdef _WIN64
-		router->setupKinect();
-		kinectDevice.setup(router, stage);
-		kinectBody = std::make_shared<Software2552::KinectBody>(&kinectDevice);
+		if (((ofApp*)ofGetAppPtr())->seekKinect) {
+			router->setupKinect();
+			kinectDevice.setup(router, stage);
+			kinectBody = std::make_shared<Software2552::KinectBody>(&kinectDevice);
+		}
 #endif
 
 		ofSetVerticalSync(false);
