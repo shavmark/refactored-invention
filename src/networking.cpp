@@ -20,7 +20,7 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	static string OSCMessage::getRemoteIP(shared_ptr<ofxOscMessage>m) {
+	string OSCMessage::getRemoteIP(shared_ptr<ofxOscMessage>m) {
 		if (m) {
 			return m->getRemoteIp();
 		}
