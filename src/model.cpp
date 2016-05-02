@@ -273,7 +273,9 @@ namespace Software2552 {
 
 		float ratioX = ((float)ofGetScreenWidth() / KinectDevice::getColorFrameWidth());
 		float ratioY = ((float)ofGetScreenHeight() / KinectDevice::getColorFrameHeight());
-
+		ratioX = (KinectDevice::getDepthFrameWidth() / KinectDevice::getColorFrameWidth());
+		ratioY = (KinectDevice::getDepthFrameHeight() / KinectDevice::getColorFrameHeight());
+		
 		// setup upper left
 		rectangle.set(data["boundingBox"]["left"].asFloat()*ratioX, data["boundingBox"]["top"].asFloat()*ratioY,
 			data["boundingBox"]["right"].asFloat()*ratioX - data["boundingBox"]["left"].asFloat()*ratioX,
@@ -377,7 +379,6 @@ namespace Software2552 {
 		for (const auto&circle : points) {
 			ofSetColor(color); //bugbug clean changing up to fit in with rest of app
 			color.setHue(color.getHue() + 6.0f);
-			ofTranslate(0, 0);
 			ofDrawCircle(circle.x, circle.y, circle.z);
 		}
 
@@ -399,10 +400,12 @@ namespace Software2552 {
 	}
 	void Kinect::update(ofxJSON& data) {
 		points.clear();
-
+		float f1 = (float)ofGetScreenHeight();
+		float f2 = KinectDevice::getDepthFrameHeight();
 		float ratioX = ((float)ofGetScreenWidth() / KinectDevice::getDepthFrameWidth());
 		float ratioY = ((float)ofGetScreenHeight() / KinectDevice::getDepthFrameHeight());
-
+		ratioX = 1;
+		ratioY = 1;
 		for (Json::ArrayIndex i = 0; i < data["body"].size(); ++i) {
 			face.update(data["body"][i]["face"]);
 			Json::Value::Members m = data["body"][i].getMemberNames();

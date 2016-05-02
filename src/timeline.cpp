@@ -41,7 +41,7 @@ namespace Software2552 {
 		if (!router) {
 			return; //things would be really messed up...
 		}
-
+		router->setup();
 		router->addTCPServer(TCP, true); // general server
 
 		router->sendOsc("client", SignOnClientOscAddress);
