@@ -364,7 +364,9 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		SafeRelease(frame);
 	}
 
-	bool Kinect2552::setup(shared_ptr<Sender>p) {
+	bool Kinect2552::setup(shared_ptr<Sender>p, shared_ptr<Stage> backStagePassIn) {
+
+		backStagePass = backStagePassIn;
 
 		HRESULT hResult = GetDefaultKinectSensor(&pSensor);
 		if (hresultFails(hResult, "GetDefaultKinectSensor")) {
@@ -397,7 +399,8 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				break;
 			}
 			else {
-				ofSleepMillis(100);
+				ofLogNotice("Kinect2552::setup") << "waiting for kinect";
+				ofSleepMillis(500);
 			}
 		} while (1);
 
@@ -418,7 +421,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			data["height"]["color"] = getColorFrameHeight();
 			data["height"]["depth"] = getDepthFrameHeight();
 			data["kinectID"] = kinectID;
-			router->sendOsc(data, "kinect/install");
+			router->sendOsc(data, "kinect/install"); // broad cast hello, bugbug is our IP in this data when it gets to the client? hope so
 		}
 		ofLogNotice("Kinect") << "Kinect signed on, life is good";
 
@@ -428,31 +431,41 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 	void  Kinect2552::sendKinectData(const char * bytes, const int numBytes, OurPorts port, int clientID) {
 		if (router && numBytes > 0) {
 			if (numBytes < 1000) {
-				ofLogError() << "data size kindof small, maybe use udp " << " " << ofToString(numBytes);
+				ofLogError() << "data size kindof small, maybe use udp " << " " << ofToString(numBytes); // just a hint
 			}
 			router->sendTCP(bytes, numBytes, port, clientID);
 		}
-		// enable local draw also, bugbug copy what is in Client
-		IRImage irImage;//bugbug convert to a an item for our drawing queue
-		BodyIndexImage biImage;
-		Kinect kinect;
+
+		// show local too if requested
+
 		shared_ptr<ReadTCPPacket> packet;
 
 		switch (port) {
 		case TCPKinectIR:
-			if (ir) {
-				// likely too much for a small pc
-				irImage.IRFromTCP((const UINT16 *)bytes);
+			if (ir && backStagePass) { // ir wanted and there is a stage to send it to 
+				shared_ptr<IRImage>p = std::make_shared<IRImage>();
+				if (p) {
+					p->IRFromTCP((const UINT16 *)bytes);
+					backStagePass->addToAnimatable(p);
+				}
 			}
 			break;
 		case TCPKinectBody:
-			if (body) {
-				kinect.bodyFromTCP(bytes, numBytes);
+			if (body && backStagePass) {
+				shared_ptr<Kinect>p = std::make_shared<Kinect>();
+				if (p) {
+					p->bodyFromTCP(bytes, numBytes);
+					backStagePass->addToAnimatable(p);
+				}
 			}
 			break;
 		case TCPKinectBodyIndex:
-			if (bi) {
-				biImage.bodyIndexFromTCP(bytes, numBytes);
+			if (bi && backStagePass) {
+				shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
+				if (p) {
+					p->bodyIndexFromTCP(bytes, numBytes);
+					backStagePass->addToAnimatable(p);
+				}
 			}
 			break;
 		default:

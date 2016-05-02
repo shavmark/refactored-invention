@@ -23,7 +23,7 @@ namespace Software2552 {
 		deque<shared_ptr<IRImage>>&IRQ() { return irQ; }
 		deque<shared_ptr<BodyIndexImage>>&bodyIndexQ() { return biQ; }
 		deque<shared_ptr<Kinect>>&kinectQ() { return kQ; }
-		shared_ptr<ofxJSON> get(const string&address) { return OscReader.get(address); };
+		shared_ptr<ofxJSON> getOscJson(const string&address) { return OscReader.get(address); };
 	private:
 		deque<shared_ptr<IRImage>>irQ;
 		deque<shared_ptr<BodyIndexImage>>biQ;

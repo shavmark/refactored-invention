@@ -34,9 +34,9 @@ namespace Software2552 {
 		float z3 = 0;
 		ChannelList playlist;
 		ColorList colorlist;
-		Stage stage;
-		shared_ptr<Client>client; // everyone can talk to everyone
-		shared_ptr<Sender>router; // everyone can talk to everyone
+		shared_ptr<Stage> stage = nullptr;
+		shared_ptr<Client>client = nullptr; // everyone can talk to everyone
+		shared_ptr<Sender>router = nullptr; // everyone can talk to everyone
 #ifdef _WIN64
 		// every 64 bit windows with a 3.0 usb can talk to everyone else
 		Kinect2552 kinectDevice;

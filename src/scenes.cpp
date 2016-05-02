@@ -151,7 +151,7 @@ namespace Software2552 {
 			for (const auto&c : client->kinectQ()) {
 				addToAnimatable(c);
 			}
-			shared_ptr<ofxJSON> json = client->get(const string&address);
+			//bugbug code this in too shared_ptr<ofxJSON> json = client->getOscJson(const string&address);
 			
 		}
 

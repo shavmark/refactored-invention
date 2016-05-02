@@ -29,9 +29,16 @@ namespace Software2552 {
 			return; //things would be really messed up...
 		}
 		client->setup(); // uses a thread to read
-		client->add(defaultServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such
+		//bugbug use ofxOscMessage ofxOscReceiver (cool way to find server ip for all things, server may need to broad cast this now and then
+		// or advertise I guess for new folks that come on line
+		client->add(defaultServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
 		client->add(defaultServerIP, TCPKinectBody, true);
 		client->add(defaultServerIP, TCPKinectBodyIndex, true);
+		stage = std::make_shared<Software2552::Stage>();
+		if (!stage) {
+			return; //things would be really messed up...
+		}
+		stage->setup(client);
 
 		router = std::make_shared<Software2552::Sender>();
 		if (!router) {
@@ -42,14 +49,13 @@ namespace Software2552 {
 
 #ifdef _WIN64
 		router->setupKinect();
-		kinectDevice.setup(router);
+		kinectDevice.setup(router, stage);
 		kinectBody = std::make_shared<Software2552::KinectBody>(&kinectDevice);
 #endif
 
 		ofSetVerticalSync(false);
 		ofSetFrameRate(frameRate);
 		colorlist.setup();
-		stage.setup(client);
 		
 		//write.setup();
 		ofxJSON data;
@@ -60,7 +66,9 @@ namespace Software2552 {
 	}
 	// keep this super fast
 	void Timeline::update() { 
-		stage.update();
+		if (stage) {
+			stage->update();
+		}
 		return;
 #if 0
 		//kinect/joints kinect/face kinect/audio kinect/body kinect/audioCommand kinect/install
@@ -116,7 +124,9 @@ namespace Software2552 {
 
 	// keep as fast as possible
 	void Timeline::draw() {
-		stage.draw();
+		if (stage) {
+			stage->draw();
+		}
 		//mesh.draw();
 		if (playlist.getCurrent() != nullptr) {
 			playlist.getCurrent()->getStage()->draw();

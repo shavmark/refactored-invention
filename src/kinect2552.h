@@ -51,7 +51,7 @@ namespace Software2552 {
 	public:
 		~Kinect2552();
 
-		bool setup(shared_ptr<Sender>p=nullptr);
+		bool setup(shared_ptr<Sender>p=nullptr, shared_ptr<Stage> backStagePass = nullptr);
 
 		IMultiSourceFrame* frame = nullptr;
 		IMultiSourceFrameReader* reader = nullptr;   // Kinect data source
@@ -85,6 +85,7 @@ namespace Software2552 {
 		int irThrottle = 20; // send every 20th after the first
 		int biThrottle = 2;
 		int bodyThrottle = 1; 
+		shared_ptr<Stage> backStagePass = nullptr;
 	private:
 		bool ir = false; // get ir
 		bool bi = false; // get body index
