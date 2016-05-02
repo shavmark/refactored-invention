@@ -141,6 +141,19 @@ namespace Software2552 {
 
 	}
 	void Stage::readNextwork() {
+		if (client) {
+			for (const auto&c : client->IRQ()) {
+				addToAnimatable(c);
+			}
+			for (const auto&c : client->bodyIndexQ()) {
+				addToAnimatable(c);
+			}
+			for (const auto&c : client->kinectQ()) {
+				addToAnimatable(c);
+			}
+			shared_ptr<ofxJSON> json = client->get(const string&address);
+			
+		}
 
 	}
 
@@ -175,7 +188,7 @@ namespace Software2552 {
 		if (data) {
 			Json::Value::Members m = data->getMemberNames();
 			readGraphics((*data)["graphics"], nullptr);
-			readNextwork();
+			
 			CreateReadAndaddBackgroundItems((*data)["background"]);
 			readLights((*data)["lights"]);
 			readCameras((*data)["cameras"]);
@@ -238,7 +251,7 @@ namespace Software2552 {
 		mySetup();
 	}
 	void Stage::update() {
-		
+		readNextwork();
 		for (auto& a : animatables) {
 			a->updateForDrawing();
 		}
