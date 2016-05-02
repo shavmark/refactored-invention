@@ -271,8 +271,8 @@ namespace Software2552 {
 			return; // not enough data to matter
 		}
 
-		float ratioX = ((float)ofGetScreenWidth() / Kinect2552::getColorFrameWidth());
-		float ratioY = ((float)ofGetScreenHeight() / Kinect2552::getColorFrameHeight());
+		float ratioX = ((float)ofGetScreenWidth() / KinectDevice::getColorFrameWidth());
+		float ratioY = ((float)ofGetScreenHeight() / KinectDevice::getColorFrameHeight());
 
 		// setup upper left
 		rectangle.set(data["boundingBox"]["left"].asFloat()*ratioX, data["boundingBox"]["top"].asFloat()*ratioY,
@@ -318,18 +318,14 @@ namespace Software2552 {
 		}
 
 	}
-	void BodyIndexImage::setup() {
+	//bugbug give these common objects a base class
+	void FixedLocationImage::setup() {
 		setFixed(true);
+		setFrameCount(1);
 	}
-
-	void IRImage::setup() {
+	void KinectItem::setup() {
 		setFixed(true);
-	}
-	void Face::setup() {
-		setFixed(true);
-	}
-	void Kinect::setup() {
-		setFixed(true);
+		setFrameCount(1);
 	}
 	// draw face separte from body
 	void Face::myDraw() {
@@ -403,8 +399,8 @@ namespace Software2552 {
 	void Kinect::update(ofxJSON& data) {
 		points.clear();
 
-		float ratioX = ((float)ofGetScreenWidth() / Kinect2552::getDepthFrameWidth());
-		float ratioY = ((float)ofGetScreenHeight() / Kinect2552::getDepthFrameHeight());
+		float ratioX = ((float)ofGetScreenWidth() / KinectDevice::getDepthFrameWidth());
+		float ratioY = ((float)ofGetScreenHeight() / KinectDevice::getDepthFrameHeight());
 
 		for (Json::ArrayIndex i = 0; i < data["body"].size(); ++i) {
 			face.update(data["body"][i]["face"]);
@@ -433,10 +429,10 @@ namespace Software2552 {
 	void IRImage::IRFromTCP(const UINT16 * bytes) {
 		worker.clear();
 
-		worker.allocate(Kinect2552::getIRFrameWidth(), Kinect2552::getIRFrameHeight(), OF_IMAGE_COLOR);
-		for (float y = 0; y < Kinect2552::getIRFrameHeight(); y++) {
-			for (float x = 0; x < Kinect2552::getIRFrameWidth(); x++) {
-				unsigned int index = y * Kinect2552::getIRFrameWidth() + x;
+		worker.allocate(KinectDevice::getIRFrameWidth(), KinectDevice::getIRFrameHeight(), OF_IMAGE_COLOR);
+		for (float y = 0; y < KinectDevice::getIRFrameHeight(); y++) {
+			for (float x = 0; x < KinectDevice::getIRFrameWidth(); x++) {
+				unsigned int index = y * KinectDevice::getIRFrameWidth() + x;
 				worker.setColor(x, y, ofColor().fromHsb(255, 255, bytes[index]));
 			}
 		}
@@ -448,14 +444,14 @@ namespace Software2552 {
 		}
 
 		worker.clear();
-		worker.allocate(Kinect2552::getDepthFrameWidth(), Kinect2552::getDepthFrameHeight(), OF_IMAGE_COLOR);
-		for (float y = 0; y < Kinect2552::getDepthFrameHeight(); y++) {
-			for (float x = 0; x < Kinect2552::getDepthFrameWidth(); x++) {
-				unsigned int index = y * Kinect2552::getDepthFrameWidth() + x;
+		worker.allocate(KinectDevice::getDepthFrameWidth(), KinectDevice::getDepthFrameHeight(), OF_IMAGE_COLOR);
+		for (float y = 0; y < KinectDevice::getDepthFrameHeight(); y++) {
+			for (float x = 0; x < KinectDevice::getDepthFrameWidth(); x++) {
+				unsigned int index = y * KinectDevice::getDepthFrameWidth() + x;
 				if (((unsigned char*)bytes)[index] != 0xff) {
-					float hue = x / Kinect2552::getDepthFrameHeight() * 255;
-					float sat = ofMap(y, 0, Kinect2552::getDepthFrameHeight() / 2, 0, 255, true);
-					float bri = ofMap(y, Kinect2552::getDepthFrameHeight() / 2, Kinect2552::getDepthFrameHeight(), 255, 0, true);
+					float hue = x / KinectDevice::getDepthFrameHeight() * 255;
+					float sat = ofMap(y, 0, KinectDevice::getDepthFrameHeight() / 2, 0, 255, true);
+					float bri = ofMap(y, KinectDevice::getDepthFrameHeight() / 2, KinectDevice::getDepthFrameHeight(), 255, 0, true);
 					// make a dynamic image, also there can be up to 6 images so we need them to be a little different 
 					worker.setColor(x, y, ofColor::fromHsb(hue, sat, bri));
 				}

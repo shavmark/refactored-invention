@@ -64,20 +64,9 @@ namespace Software2552 {
 		void removeExpiredItems(vector<shared_ptr<objectLifeTimeManager>>&v) {
 			v.erase(std::remove_if(v.begin(), v.end(), OKToRemove), v.end());
 		}
-		void setFrameCount(int c) {
-			frameMax = new int(c);
-		}
-		bool getAndDecFrameCount() {
-			return (frameMax != nullptr && --(*frameMax) < 0);
-		}
-		bool getFrameCountMaxHit() {
-			return (frameMax != nullptr && (*frameMax) < 0);
-		}
-
-		int *frameMax = nullptr; // number of frames to show this item, null means always show
 	private:
 		int	    usageCount;     // number of times this animation was used
-		float   objectlifetime; // 0=forever, how long object lives after it starts drawing
+		float   objectlifetime; // bugbug drop this in favor of frameMax 0=forever, how long object lives after it starts drawing 
 		bool	expired;    // object is expired
 		float	startTime;
 		float   waitTime;
@@ -202,10 +191,21 @@ namespace Software2552 {
 		void setType(drawtype typeIn) { type = typeIn; }
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
 		void setFill(bool b = true) { fill = b; }
-	protected:
-		static bool OKToRemove(shared_ptr<ActorRole> me) {
-			return objectLifeTimeManager::OKToRemove(me->locationAnimation);
+		void setFrameCount(int c) {
+			frameMax = new int(c);
 		}
+		void decrementFrameCount() {
+			if (frameMax != nullptr) {
+				--(*frameMax);
+			}
+		}
+		bool getFrameCountMaxHit() {
+			return (frameMax != nullptr && (*frameMax) < 0);
+		}
+
+	protected:
+		int *frameMax = nullptr; // number of frames to show this item, null means always show
+		static bool OKToRemove(shared_ptr<ActorRole> me);
 		drawtype getType() { return type; }
 		bool useFill() { return fill; }
 		void rotate();

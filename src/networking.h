@@ -15,7 +15,9 @@
 
 // notes: remote files can use ofImage.loadImage("http://some.com/url.png")
 namespace Software2552 {
-	static const string defaultServerIP = "192.168.1.25";
+	static const string defaultServerIP = "192.168.1.25";//bugbug working to make this dynamic
+	static const string SignOnServerOscAddress="storyteller/server/signon";
+	static const string SignOnClientOscAddress = "storyteller/client/signon";
 
 	enum PacketType : char {
 		TCPID = 't',
@@ -33,6 +35,7 @@ namespace Software2552 {
 		TCPKinectBodyIndex,
 		TCPKinectBody
 	};
+
 	bool compress(const char*buffer, size_t len, string&output);
 	bool uncompress(const char*buffer, size_t len, string&output);
 
@@ -40,6 +43,8 @@ namespace Software2552 {
 	public:
 		static shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage>);
 		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&address);
+		static void getRawString(string &buffer, shared_ptr<ofxOscMessage>);
+		static string& getRemoteIP(shared_ptr<ofxOscMessage>m) { return (m) ? m->getRemoteIp() : ""; }
 	};
 
 	const char PacketFence = 'f'; // used to validate packet were set properly
@@ -68,6 +73,7 @@ namespace Software2552 {
 
 		// add a message to be sent
 		void send(ofxJSON &data, const string&address);
+		void send(const string&data, const string&address);
 
 	private:
 		void threadedFunction();
@@ -82,7 +88,9 @@ namespace Software2552 {
 	public:
 		void setup(int port = OSC);
 
-		shared_ptr<ofxJSON> get(const string&address);
+		shared_ptr<ofxJSON> getJson(const string&address);
+		// returns source ip
+		string getString(string &buffer, const string&address);
 
 	private:
 		void threadedFunction();
@@ -140,6 +148,7 @@ namespace Software2552 {
 		bool tcpEnabled();
 		bool enabled(OurPorts port);
 		void sendOsc(ofxJSON &data, const string&address) { comms.send(data, address); }
+		void sendOsc(const string &data, const string&address) { comms.send(data, address); }
 	private:
 		WriteOsc comms;
 		ServerMap servers;

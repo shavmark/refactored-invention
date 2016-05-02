@@ -103,26 +103,26 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		return colorframe;
 	}
 
-	Kinect2552::~Kinect2552() {
+	KinectDevice::~KinectDevice() {
 		if (pSensor) {
 			pSensor->Close();
 		}
 		SafeRelease(pSensor);
 		SafeRelease(pCoordinateMapper);
 	}
-	bool Kinect2552::getIR() {
+	bool KinectDevice::getIR() {
 		if (ir || (router && router->kinectIREnabled())) {
 			return true;
 		}
 		return ir;
 	}
-	bool Kinect2552::getBodyIndex() {
+	bool KinectDevice::getBodyIndex() {
 		if (bi || (router && router->KinectBodyIndexEndabled())) {
 			return true;
 		}
 		return ir;
 	}
-	bool Kinect2552::getBody() {
+	bool KinectDevice::getBody() {
 		if (body || (router && router->KinectBodyEnabled())) {
 			return true;
 		}
@@ -132,7 +132,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 	//const const int colorwidth = 1920;
 	//const const int colorheight = 1080;
 	//bugbug send these phase II
-	void depth2RGB(Kinect2552 *kinect, unsigned short*buffer, float*destrgb, unsigned char*rgbimage) {
+	void depth2RGB(KinectDevice *kinect, unsigned short*buffer, float*destrgb, unsigned char*rgbimage) {
 		ColorSpacePoint * depth2rgb = new ColorSpacePoint[512 * 424];     // Maps depth pixels to rgb pixels
 		if (depth2rgb) {
 			HRESULT hResult = kinect->getMapper()->MapDepthFrameToColorSpace(
@@ -159,7 +159,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			delete depth2rgb;
 		}
 	}
-	void depth2XYZ(Kinect2552 *kinect, unsigned short*buffer, float*destXYZ) {
+	void depth2XYZ(KinectDevice *kinect, unsigned short*buffer, float*destXYZ) {
 		CameraSpacePoint * depth2xyz = new CameraSpacePoint[512 * 424];     // Maps depth pixels to rgb pixels
 		if (depth2xyz) {
 			HRESULT hResult = kinect->getMapper()->MapDepthFrameToCameraSpace(
@@ -364,7 +364,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		SafeRelease(frame);
 	}
 
-	bool Kinect2552::setup(shared_ptr<Sender>p, shared_ptr<Stage> backStagePassIn) {
+	bool KinectDevice::setup(shared_ptr<Sender>p, shared_ptr<Stage> backStagePassIn) {
 
 		backStagePass = backStagePassIn;
 
@@ -399,7 +399,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				break;
 			}
 			else {
-				ofLogNotice("Kinect2552::setup") << "waiting for kinect";
+				ofLogNotice("KinectDevice::setup") << "waiting for kinect";
 				ofSleepMillis(500);
 			}
 		} while (1);
@@ -428,7 +428,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		return true;
 	}
 	// send fast as Kinect is waiting
-	void  Kinect2552::sendKinectData(const char * bytes, const int numBytes, OurPorts port, int clientID) {
+	void  KinectDevice::sendKinectData(const char * bytes, const int numBytes, OurPorts port, int clientID) {
 		if (router && numBytes > 0) {
 			if (numBytes < 1000) {
 				ofLogError() << "data size kindof small, maybe use udp " << " " << ofToString(numBytes); // just a hint
@@ -476,7 +476,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		}
 	}
 	// send Json over UDP
-	void  Kinect2552::sendUDP(ofxJSON &data, const string& address) {
+	void  KinectDevice::sendUDP(ofxJSON &data, const string& address) {
 		if (router) {
 			if (data.size() > 1000) {
 				ofLogError() << "data size kindof large, maybe use TCP " << address << " " << ofToString(data.size());

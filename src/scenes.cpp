@@ -335,6 +335,7 @@ namespace Software2552 {
 			light->worker.disable();
 		}
 		ofDisableLighting();
+
 	}
 	void Stage::draw3d() {
 
@@ -375,6 +376,7 @@ namespace Software2552 {
 		myDraw2d();
 		for (auto& a : animatables) {
 			a->drawIt(ActorRole::draw2d);
+			a->decrementFrameCount();
 		}
 
 		//ofBackground(ofColor::black);

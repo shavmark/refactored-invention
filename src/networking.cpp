@@ -21,6 +21,16 @@ namespace Software2552 {
 		return true;
 	}
 
+	void OSCMessage::getRawString(string &buffer, shared_ptr<ofxOscMessage>m) {
+		buffer.clear();
+		if (m) {
+			if (m->getArgAsBool(0)) {
+				string input = m->getArgAsString(0);
+				uncompress(input.c_str(), input.size(), buffer);
+			}
+		}
+	 }
+
 	shared_ptr<ofxJSON> OSCMessage::toJson(shared_ptr<ofxOscMessage> m) {
 		if (m) {
 			// bugbug data comes from one of http/s, string or local file but for now just a string
@@ -30,6 +40,8 @@ namespace Software2552 {
 				string input = m->getArgAsString(0);
 				if (uncompress(input.c_str(), input.size(), output)) {
 					p->parse(output);
+					//bugbug add in sourceIP = OSCMessage::getRemoteIP(p); if needed
+
 				}
 			}
 			return p;
@@ -84,7 +96,25 @@ namespace Software2552 {
 		}
 		return false;
 	}
-	// add a message to be sent
+	void WriteOsc::send(const string&data, const string&address) {
+		if (data.size() > 0) {
+			shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
+			if (p) {
+				p->setAddress(address); 
+				string output;
+				if (compress(data.c_str(), data.size(), output)) {
+					p->addStringArg(output); 
+				}
+				p->addBoolArg(true);// all data is in json by default so we tag this as raw
+				lock();
+				q.push_front(p); //bugbub do we want to add a priority? front & back? not sure
+				unlock();
+			}
+		}
+
+	}
+
+	// add a message to be sent, json is default
 	void WriteOsc::send(ofxJSON &data, const string&address) {
 		if (data.size() > 0) {
 			shared_ptr<ofxOscMessage> p = OSCMessage::fromJson(data, address);
@@ -118,13 +148,31 @@ namespace Software2552 {
 			}
 		}
 	}
-	shared_ptr<ofxJSON> ReadOsc::get(const string&address) {
+	string ReadOsc::getString(string &buffer, const string&address) {
+		string sourceIP;
+		if (q.size() > 0) {
+			lock();
+			MessageMap::iterator m = q.find(address);
+			if (m != q.end() && m->second.size() > 0) {
+				shared_ptr<ofxOscMessage> p = (m->second).back();
+				OSCMessage::getRawString(buffer, p);
+				m->second.pop_back();// first in first out
+				sourceIP = OSCMessage::getRemoteIP(p);
+			}
+			unlock();
+		}
+		return sourceIP;
+	}
+	shared_ptr<ofxJSON> ReadOsc::getJson(const string&address) {
 		shared_ptr<ofxJSON> j = nullptr;
 		if (q.size() > 0) {
 			lock();
 			MessageMap::iterator m = q.find(address);
 			if (m != q.end() && m->second.size() > 0) {
-				j = OSCMessage::toJson((m->second).back());
+				shared_ptr<ofxOscMessage> p = (m->second).back();
+				if (p && !p->getArgAsBool(0)) {//bugbug this code is not tested
+					j = OSCMessage::toJson(p);
+				}
 				m->second.pop_back();// first in first out
 			}
 			unlock();

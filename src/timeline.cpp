@@ -31,12 +31,6 @@ namespace Software2552 {
 		client->setup(); // uses a thread to read
 		//bugbug use ofxOscMessage ofxOscReceiver (cool way to find server ip for all things, server may need to broad cast this now and then
 		// or advertise I guess for new folks that come on line
-		if (0) {
-			//bugbug add these when osc for server comes in
-			client->add(defaultServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
-			client->add(defaultServerIP, TCPKinectBody, true);
-			client->add(defaultServerIP, TCPKinectBodyIndex, true);
-		}
 		stage = std::make_shared<Software2552::Stage>();
 		if (!stage) {
 			return; //things would be really messed up...
@@ -49,6 +43,9 @@ namespace Software2552 {
 		}
 
 		router->addTCPServer(TCP, true); // general server
+
+		router->sendOsc("kinect server", SignOnServerOscAddress);//bugbug over time we can personallize this more, like machine 2nd from the left set via ui or cmd line
+		router->sendOsc("client", SignOnClientOscAddress);
 
 #ifdef _WIN64
 		router->setupKinect();
@@ -75,6 +72,18 @@ namespace Software2552 {
 			kinectBody->update();
 		}
 #endif
+		// router updates itself and builds a queue of input
+		if (client) {
+			// check for sign on/off etc of things
+			string signon;
+			string source = client->getOscString(signon, SignOnServerOscAddress);
+			if (source.size() > 0 && signon.find("kinect server")) {
+				//bugbug add these when osc for server comes in
+				client->add(source, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
+				client->add(source, TCPKinectBody, true);
+				client->add(source, TCPKinectBodyIndex, true);
+			}
+		}
 		if (stage) {
 			stage->update();
 		}

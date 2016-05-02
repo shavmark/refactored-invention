@@ -61,10 +61,13 @@ namespace Software2552 {
 		string source;
 	};
 
-	class Face : public ActorRole {
+	class KinectItem : public ActorRole {
+	public:
+		void setup();
+	};
+	class Face : public KinectItem {
 	public:
 		friend class Kinect;
-		void setup();
 		void myDraw();
 	private:
 		void update(const Json::Value &data);
@@ -76,9 +79,8 @@ namespace Software2552 {
 		float roll = 0;
 
 	};
-	class Kinect : public ActorRole {
+	class Kinect : public KinectItem {
 	public:
-		void setup();
 		void myDraw();
 		Face face;
 		//bugbug add in sound when we do sound overall
@@ -403,17 +405,19 @@ namespace Software2552 {
 		bool mysetup(const Json::Value &data);
 	};
 
-	class IRImage : public Image {
+	class FixedLocationImage : public Image {
+	public:
+		void setup();
+	};
+	class IRImage : public FixedLocationImage {
 	public:
 		// size is fixed
 		void IRFromTCP(const UINT16 * bytes);
-		void setup();
 	private:
 	};
-	class BodyIndexImage : public Image {
+	class BodyIndexImage : public FixedLocationImage {
 	public:
 		void bodyIndexFromTCP(const char * bytes, const size_t len);
-		void setup();
 	private:
 	};
 

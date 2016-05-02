@@ -22,7 +22,7 @@ namespace Software2552 {
 		if (me == nullptr) {
 			return false;
 		}
-		if (me->isExpired() || me->getFrameCountMaxHit()) {
+		if (me->isExpired()) {
 			return true;
 		}
 		// duration == 0 means never go away, and start == 0 means we have not started yet
@@ -356,10 +356,16 @@ namespace Software2552 {
 			}
 		}
 	};
+	bool ActorRole::OKToRemove(shared_ptr<ActorRole> me) {
+		if (me) {
+			return me->getFrameCountMaxHit() || objectLifeTimeManager::OKToRemove(me->locationAnimation);
+		}
+		return true; // ok to remove nullptr?
+	}
 
 	bool ActorRole::okToDraw(drawtype type) {
 		drawtype dt = getType();
-		if (type != getType()){
+		if (type != getType() || getFrameCountMaxHit()){
 			return false;
 		}
 		// bugbug objectLifeTimeManager will handle these also

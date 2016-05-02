@@ -47,9 +47,9 @@ namespace Software2552 {
 		bool                    m_SpeechActive;
 	};
 
-	class Kinect2552  {
+	class KinectDevice  {
 	public:
-		~Kinect2552();
+		~KinectDevice();
 
 		bool setup(shared_ptr<Sender>p=nullptr, shared_ptr<Stage> backStagePass = nullptr);
 
@@ -60,12 +60,12 @@ namespace Software2552 {
 		IKinectSensor* getSensor() {return pSensor;	}
 		ICoordinateMapper* getMapper() {	return pCoordinateMapper;	}
 
-		static int getDepthFrameWidth() { return 512; }
-		static int getDepthFrameHeight() { return 424; }
-		static int getIRFrameWidth() { return 512; }
-		static int getIRFrameHeight() { return 424; }
-		static int getColorFrameWidth() { return 1920; }
-		static int getColorFrameHeight() { return 1080; }
+		static float getDepthFrameWidth() { return 512.0f; }
+		static float getDepthFrameHeight() { return 424.0f; }
+		static float getIRFrameWidth() { return 512.0f; }
+		static float getIRFrameHeight() { return 424.0f; }
+		static float getColorFrameWidth() { return 1920.0f; }
+		static float getColorFrameHeight() { return 1080.0f; }
 
 		HRESULT depth(UINT cameraPointCount, CameraSpacePoint*csp, UINT depthPointCount, DepthSpacePoint *dsp) { return pCoordinateMapper->MapCameraPointsToDepthSpace(1, csp, 1, dsp); }
 		HRESULT color(UINT cameraPointCount, const CameraSpacePoint*csp, UINT depthPointCount, ColorSpacePoint *color) { return pCoordinateMapper->MapCameraPointsToColorSpace(1, csp, 1, color); }
@@ -98,16 +98,16 @@ namespace Software2552 {
 
 	class KinectBaseClass {
 	public:
-		KinectBaseClass(Kinect2552 *pKinectIn) { pKinect = pKinectIn; }
-		Kinect2552 *getKinect() { return pKinect; }
+		KinectBaseClass(KinectDevice *pKinectIn) { pKinect = pKinectIn; }
+		KinectDevice *getKinect() { return pKinect; }
 	private:
-		Kinect2552 *pKinect;
+		KinectDevice *pKinect;
 	};
 
 
 	class KinectFace : public KinectBaseClass {
 	public:
-		KinectFace(Kinect2552 *pKinect) : KinectBaseClass(pKinect) {}
+		KinectFace(KinectDevice *pKinect) : KinectBaseClass(pKinect) {}
 		void cleanup();
 
 		IFaceFrameReader* getFaceReader() {	return pFaceReader;	}
@@ -123,7 +123,7 @@ namespace Software2552 {
 	// one optional face for every kinect person
 	class KinectFaces : public KinectBaseClass {
 	public:
-		KinectFaces(Kinect2552 *pKinect) : KinectBaseClass(pKinect) {}
+		KinectFaces(KinectDevice *pKinect) : KinectBaseClass(pKinect) {}
 
 		~KinectFaces();
 
@@ -154,7 +154,7 @@ namespace Software2552 {
 	public:
 		friend class KinectBody;
 
-		KinectAudio(Kinect2552 *pKinect) :KinectBaseClass(pKinect) {};
+		KinectAudio(KinectDevice *pKinect) :KinectBaseClass(pKinect) {};
 
 		~KinectAudio();
 
@@ -204,7 +204,7 @@ namespace Software2552 {
 
 	class KinectBody : public KinectBaseClass {
 	public:
-		KinectBody(Kinect2552 *pKinect) : KinectBaseClass(pKinect) {  }
+		KinectBody(KinectDevice *pKinect) : KinectBaseClass(pKinect) {  }
 
 		void update();
 		void useFaces(shared_ptr<KinectFaces> facesIn)  { faces = facesIn; }
