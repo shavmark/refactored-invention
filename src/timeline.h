@@ -39,7 +39,7 @@ namespace Software2552 {
 		shared_ptr<Sender>router = nullptr; // everyone can talk to everyone
 #ifdef _WIN64
 		// every 64 bit windows with a 3.0 usb can talk to everyone else
-		KinectDevice kinectDevice;
+		shared_ptr<KinectDevice> kinectDevice = nullptr;
 		shared_ptr<KinectBody> kinectBody = nullptr;
 #endif
 	};

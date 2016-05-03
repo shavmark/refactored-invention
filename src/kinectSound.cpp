@@ -137,7 +137,7 @@ namespace Software2552 {
 									data["confidence"] = pSemantic->Confidence;//if not enough hit turn down the gain bugbug
 									data["value"] = pSemantic->pszValue;
 									data["kinectID"] = getKinect()->getId();
-									getKinect()->sendUDP(data, "kinect/audioCommand");
+									//bugbug figure out sound getKinect()->sendUDP(data, "kinect/audioCommand");
 								}
 							}
 							CoTaskMemFree(pPhrase);

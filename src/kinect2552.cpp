@@ -364,7 +364,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		SafeRelease(frame);
 	}
 
-	bool KinectDevice::setup(shared_ptr<Sender>p, shared_ptr<Stage> backStagePassIn) {
+	bool KinectDevice::setup(shared_ptr<Sender>p, shared_ptr<Stage> backStagePassIn, int retries) {
 
 		backStagePass = backStagePassIn;
 
@@ -399,10 +399,16 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				break;
 			}
 			else {
-				ofLogNotice("KinectDevice::setup") << "waiting for kinect";
+				ofLogNotice("KinectDevice::setup") << "waiting for kinect, retries count " << retries;
 				ofSleepMillis(500);
 			}
-		} while (1);
+		} while (retries < 0 || --retries > 0); // tries -1 from the start is infinite loop, else count down
+
+		if (!avail) {
+			ofLogNotice("Kinect") << "Kinect not found, but life is still good";
+			kinectID.clear();// reset
+			return false;
+		}
 
 		WCHAR id[256] = { 0 };
 		hResult = pSensor->get_UniqueKinectId(256, id);
@@ -413,16 +419,6 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			kinectID += id[i];
 		}
 
-		router = p;
-		if (router) {
-			ofxJSONElement data;
-			data["width"]["color"] = getColorFrameWidth();
-			data["width"]["depth"] = getDepthFrameWidth();
-			data["height"]["color"] = getColorFrameHeight();
-			data["height"]["depth"] = getDepthFrameHeight();
-			data["kinectID"] = kinectID;
-			router->sendOsc(data, "kinect/install"); // broad cast hello, bugbug is our IP in this data when it gets to the client? hope so
-		}
 		ofLogNotice("Kinect") << "Kinect signed on, life is good";
 
 		return true;
@@ -473,15 +469,6 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			break;
 		default:
 			break;
-		}
-	}
-	// send Json over UDP
-	void  KinectDevice::sendUDP(ofxJSON &data, const string& address) {
-		if (router) {
-			if (data.size() > 1000) {
-				ofLogError() << "data size kindof large, maybe use TCP " << address << " " << ofToString(data.size());
-			}
-			router->sendOsc(data, address);
 		}
 	}
 

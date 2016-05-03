@@ -51,7 +51,7 @@ namespace Software2552 {
 	public:
 		~KinectDevice();
 
-		bool setup(shared_ptr<Sender>p=nullptr, shared_ptr<Stage> backStagePass = nullptr);
+		bool setup(shared_ptr<Sender>p=nullptr, shared_ptr<Stage> backStagePass = nullptr, int retries =-1);
 
 		IMultiSourceFrame* frame = nullptr;
 		IMultiSourceFrameReader* reader = nullptr;   // Kinect data source
@@ -73,8 +73,6 @@ namespace Software2552 {
 		const string &getId() { return kinectID; }
 		// send large binary data over TCP (over 1000 byte)
 		void sendKinectData(const char * bytes, const int numBytes, OurPorts port, int clientID = -1);
-		// send Json over UDP, fast, small
-		void sendUDP(ofxJSON &data, const string& address);
 		shared_ptr<Sender> sender() { return router; }
 		bool getIR();
 		void setIR(bool b) { ir = b; }
@@ -98,16 +96,15 @@ namespace Software2552 {
 
 	class KinectBaseClass {
 	public:
-		KinectBaseClass(KinectDevice *pKinectIn) { pKinect = pKinectIn; }
-		KinectDevice *getKinect() { return pKinect; }
+		KinectBaseClass(shared_ptr<KinectDevice> kinectDeviceIn) { kinectDevice = kinectDeviceIn; }
+		shared_ptr<KinectDevice>getKinect() { return kinectDevice; }
 	private:
-		KinectDevice *pKinect;
+		shared_ptr<KinectDevice>kinectDevice;
 	};
-
 
 	class KinectFace : public KinectBaseClass {
 	public:
-		KinectFace(KinectDevice *pKinect) : KinectBaseClass(pKinect) {}
+		KinectFace(shared_ptr<KinectDevice> kinectDevice) : KinectBaseClass(kinectDevice) {}
 		void cleanup();
 
 		IFaceFrameReader* getFaceReader() {	return pFaceReader;	}
@@ -123,7 +120,7 @@ namespace Software2552 {
 	// one optional face for every kinect person
 	class KinectFaces : public KinectBaseClass {
 	public:
-		KinectFaces(KinectDevice *pKinect) : KinectBaseClass(pKinect) {}
+		KinectFaces(shared_ptr<KinectDevice> kinectDevice) : KinectBaseClass(kinectDevice) {}
 
 		~KinectFaces();
 
@@ -154,7 +151,7 @@ namespace Software2552 {
 	public:
 		friend class KinectBody;
 
-		KinectAudio(KinectDevice *pKinect) :KinectBaseClass(pKinect) {};
+		KinectAudio(shared_ptr<KinectDevice> kinectDevice) :KinectBaseClass(kinectDevice) {};
 
 		~KinectAudio();
 
@@ -204,7 +201,7 @@ namespace Software2552 {
 
 	class KinectBody : public KinectBaseClass {
 	public:
-		KinectBody(KinectDevice *pKinect) : KinectBaseClass(pKinect) {  }
+		KinectBody(shared_ptr<KinectDevice> kinectDevice) : KinectBaseClass(kinectDevice) {  }
 
 		void update();
 		void useFaces(shared_ptr<KinectFaces> facesIn)  { faces = facesIn; }

@@ -16,7 +16,7 @@
 // notes: remote files can use ofImage.loadImage("http://some.com/url.png")
 namespace Software2552 {
 	static const string defaultServerIP = "192.168.1.25";//bugbug working to make this dynamic
-	static const string SignOnServerOscAddress="storyteller/server/signon";
+	static const string SignOnKinectServerOscAddress="storyteller/kinect/server/signon";
 	static const string SignOnClientOscAddress = "storyteller/client/signon";
 
 	enum PacketType : char {
@@ -38,14 +38,10 @@ namespace Software2552 {
 
 	bool compress(const char*buffer, size_t len, string&output);
 	bool uncompress(const char*buffer, size_t len, string&output);
-
-	class OSCMessage {
-	public:
-		static shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage>);
-		static shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&address);
-		static void getRawString(string &buffer, shared_ptr<ofxOscMessage>);
-		static string getRemoteIP(shared_ptr<ofxOscMessage>m);
-	};
+	shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage>);
+	shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&address);
+	void getRawString(string &buffer, shared_ptr<ofxOscMessage>);
+	string getRemoteIP(shared_ptr<ofxOscMessage>m);
 
 	const char PacketFence = 'f'; // used to validate packet were set properly
 
@@ -74,7 +70,7 @@ namespace Software2552 {
 		// add a message to be sent
 		void send(ofxJSON &data, const string&address);
 		void send(const string&data, const string&address);
-
+		void send(shared_ptr<ofxOscMessage>, const string&address);
 	private:
 		void threadedFunction();
 		bool ignoreDups(shared_ptr<ofxOscMessage> p, ofxJSON &data, const string&address);
@@ -88,10 +84,11 @@ namespace Software2552 {
 	public:
 		void setup(int port = OSC);
 
+		// caller can use the address to determine how things are sent
 		shared_ptr<ofxJSON> getJson(const string&address);
 		// returns source ip
 		string getString(string &buffer, const string&address);
-
+		shared_ptr<ofxOscMessage> getMessage(const string&address);
 	private:
 		void threadedFunction();
 		ofxOscReceiver receiver;
@@ -149,6 +146,7 @@ namespace Software2552 {
 		bool enabled(OurPorts port);
 		void sendOsc(ofxJSON &data, const string&address) { comms.send(data, address); }
 		void sendOsc(const string &data, const string&address) { comms.send(data, address); }
+		void sendOsc(shared_ptr<ofxOscMessage>data, const string&address) { comms.send(data, address); }
 	private:
 		WriteOsc comms;
 		ServerMap servers;

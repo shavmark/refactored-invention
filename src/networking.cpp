@@ -20,14 +20,14 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	string OSCMessage::getRemoteIP(shared_ptr<ofxOscMessage>m) {
+	string getRemoteIP(shared_ptr<ofxOscMessage>m) {
 		if (m) {
 			return m->getRemoteIp();
 		}
 		return "";
 	}
 
-	void OSCMessage::getRawString(string &buffer, shared_ptr<ofxOscMessage>m) {
+	void getRawString(string &buffer, shared_ptr<ofxOscMessage>m) {
 		buffer.clear();
 		if (m) {
 			if (m->getArgAsBool(0)) {
@@ -37,7 +37,7 @@ namespace Software2552 {
 		}
 	 }
 
-	shared_ptr<ofxJSON> OSCMessage::toJson(shared_ptr<ofxOscMessage> m) {
+	shared_ptr<ofxJSON> toJson(shared_ptr<ofxOscMessage> m) {
 		if (m) {
 			// bugbug data comes from one of http/s, string or local file but for now just a string
 			shared_ptr<ofxJSON> p = std::make_shared<ofxJSON>();
@@ -54,7 +54,7 @@ namespace Software2552 {
 		}
 		return nullptr;
 	}
-	shared_ptr<ofxOscMessage> OSCMessage::fromJson(ofxJSON &data, const string&address) {
+	shared_ptr<ofxOscMessage> fromJson(ofxJSON &data, const string&address) {
 		shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
 		if (p) {
 			p->setAddress(address); // use 32 bits so we can talk to everyone easiy
@@ -102,6 +102,15 @@ namespace Software2552 {
 		}
 		return false;
 	}
+	void WriteOsc::send(shared_ptr<ofxOscMessage> m, const string&address) {
+		if (m) {
+			m->setAddress(address);
+			lock();//bugbug review useage of lock in entire app
+			q.push_front(m); //bugbub do we want to add a priority? front & back? not sure
+			unlock();
+		}
+	}
+	// simples string send
 	void WriteOsc::send(const string&data, const string&address) {
 		if (data.size() > 0) {
 			shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
@@ -111,7 +120,7 @@ namespace Software2552 {
 				if (compress(data.c_str(), data.size(), output)) {
 					p->addStringArg(output); 
 				}
-				p->addBoolArg(true);// all data is in json by default so we tag this as raw
+				p->addBoolArg(true);// arg 0, all data is in json by default so we tag this as raw
 				lock();
 				q.push_front(p); //bugbub do we want to add a priority? front & back? not sure
 				unlock();
@@ -123,7 +132,7 @@ namespace Software2552 {
 	// add a message to be sent, json is default
 	void WriteOsc::send(ofxJSON &data, const string&address) {
 		if (data.size() > 0) {
-			shared_ptr<ofxOscMessage> p = OSCMessage::fromJson(data, address);
+			shared_ptr<ofxOscMessage> p = fromJson(data, address);
 			if (p) {
 				if (checkForDups && ignoreDups(p, data, address)) {
 					return;
@@ -154,16 +163,31 @@ namespace Software2552 {
 			}
 		}
 	}
+	shared_ptr<ofxOscMessage> ReadOsc::getMessage(const string&address) {
+		shared_ptr<ofxOscMessage> m = nullptr;
+
+		if (q.size() > 0) {
+			lock();
+			MessageMap::iterator found = q.find(address);
+			if (found != q.end() && found->second.size() > 0) {
+				m = (found->second).back();
+				found->second.pop_back();// first in first out
+			}
+			unlock();
+		}
+
+		return m;
+	}
 	string ReadOsc::getString(string &buffer, const string&address) {
 		string sourceIP;
 		if (q.size() > 0) {
 			lock();
-			MessageMap::iterator m = q.find(address);
-			if (m != q.end() && m->second.size() > 0) {
-				shared_ptr<ofxOscMessage> p = (m->second).back();
-				OSCMessage::getRawString(buffer, p);
-				m->second.pop_back();// first in first out
-				sourceIP = OSCMessage::getRemoteIP(p);
+			MessageMap::iterator found = q.find(address);
+			if (found != q.end() && found->second.size() > 0) {
+				shared_ptr<ofxOscMessage> p = (found->second).back();
+				getRawString(buffer, p);
+				found->second.pop_back();// first in first out
+				sourceIP = getRemoteIP(p);
 			}
 			unlock();
 		}
@@ -173,13 +197,13 @@ namespace Software2552 {
 		shared_ptr<ofxJSON> j = nullptr;
 		if (q.size() > 0) {
 			lock();
-			MessageMap::iterator m = q.find(address);
-			if (m != q.end() && m->second.size() > 0) {
-				shared_ptr<ofxOscMessage> p = (m->second).back();
+			MessageMap::iterator found = q.find(address);
+			if (found != q.end() && found->second.size() > 0) {
+				shared_ptr<ofxOscMessage> p = (found->second).back();
 				if (p && !p->getArgAsBool(0)) {//bugbug this code is not tested
-					j = OSCMessage::toJson(p);
+					j = toJson(p);
 				}
-				m->second.pop_back();// first in first out
+				found->second.pop_back();// first in first out
 			}
 			unlock();
 		}

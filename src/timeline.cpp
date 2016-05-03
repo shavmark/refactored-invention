@@ -48,10 +48,15 @@ namespace Software2552 {
 
 #ifdef _WIN64
 		if (((ofApp*)ofGetAppPtr())->seekKinect) {
-			router->sendOsc("kinect server", SignOnServerOscAddress);//bugbug over time we can personallize this more, like machine 2nd from the left set via ui or cmd line
-			router->setupKinect();
-			kinectDevice.setup(router, stage);
-			kinectBody = std::make_shared<Software2552::KinectBody>(&kinectDevice);
+			kinectDevice = std::make_shared<KinectDevice>();
+			if (kinectDevice) {
+				router->setupKinect();
+				if (kinectDevice->setup(router, stage, 3)) {
+					//bugbug over time we can personallize this more, like machine 2nd from the left set via ui or cmd line
+					router->sendOsc(kinectDevice->getId(), SignOnKinectServerOscAddress);
+					kinectBody = std::make_shared<Software2552::KinectBody>(kinectDevice);
+				}
+			}
 		}
 #endif
 
@@ -79,12 +84,10 @@ namespace Software2552 {
 			// check for sign on/off etc of things
 			string signon;
 			string clientOfServer = client->getOscString(signon, SignOnClientOscAddress); // also contains a server address, but of a client
-			string source = client->getOscString(signon, SignOnServerOscAddress);
-			if (source.size() > 0 && signon.find("kinect server")) {
-				if (!((ofApp*)ofGetAppPtr())->seekKinect) {
-					//kinect server does not listen to these, even if > 1
-					//bugbug include the Kinect ID in the message and 
-					// allow this
+			string source = client->getOscString(signon, SignOnKinectServerOscAddress);
+			// if there is a valid message, if I am not the kinect sending the sign on is requested then ...
+			if (source.size() > 0) {
+				if (!kinectDevice || signon != kinectDevice->getId()) {
 					client->add(source, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
 					client->add(source, TCPKinectBody, true);
 					client->add(source, TCPKinectBodyIndex, true);
