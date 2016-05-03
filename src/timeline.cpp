@@ -24,11 +24,13 @@ namespace Software2552 {
 
 	void Timeline::setup() {
 		//ofSeedRandom(); // turn of to debug if needed
+
+		// design to run in low mem on slow devices, many items can not be allocated and graphics should still display
+
 		client = std::make_shared<Software2552::Client>();
-		if (!client) {
-			return; //things would be really messed up...
+		if (client) {
+			client->setup(); // uses a thread to read
 		}
-		client->setup(); // uses a thread to read
 		//bugbug use ofxOscMessage ofxOscReceiver (cool way to find server ip for all things, server may need to broad cast this now and then
 		// or advertise I guess for new folks that come on line
 		stage = std::make_shared<Software2552::Stage>();
@@ -38,14 +40,13 @@ namespace Software2552 {
 		stage->setup(client);
 
 		router = std::make_shared<Software2552::Sender>();
-		if (!router) {
-			return; //things would be really messed up...
+		if (router) {
+			router->setup();
+			router->addTCPServer(TCP, true); // general server
+
+			router->sendOsc("client", SignOnClientOscAddress);
+
 		}
-		router->setup();
-		router->addTCPServer(TCP, true); // general server
-
-		router->sendOsc("client", SignOnClientOscAddress);
-
 #ifdef _WIN64
 		if (((ofApp*)ofGetAppPtr())->seekKinect) {
 			kinectDevice = std::make_shared<KinectDevice>();
