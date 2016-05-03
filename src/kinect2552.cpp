@@ -242,10 +242,17 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 
 	}
 	void KinectBody::update() {
+
+		if (!getKinect()) {
+			return;
+		}
 		IMultiSourceFrame* frame = NULL;
 		HRESULT hResult;
-
-		if ((getKinect()->signonFrequency % ofGetFrameNum()) == 0) {
+		uint64_t count = ofGetFrameNum();
+		if (count <= 0) {
+			count = 1; // could be called before any frame counts
+		}
+		if ((getKinect()->signonFrequency % count) == 0) {
 			getKinect()->getSender()->sendOsc(getKinect()->getId(), SignOnKinectServerOscAddress);
 		}
 
