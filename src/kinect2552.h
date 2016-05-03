@@ -73,7 +73,7 @@ namespace Software2552 {
 		const string &getId() { return kinectID; }
 		// send large binary data over TCP (over 1000 byte)
 		void sendKinectData(const char * bytes, const int numBytes, OurPorts port, int clientID = -1);
-		shared_ptr<Sender> sender() { return router; }
+		shared_ptr<Sender> getSender() { return sender; }
 		bool getIR();
 		void setIR(bool b) { ir = b; }
 		bool getBodyIndex();
@@ -83,12 +83,13 @@ namespace Software2552 {
 		int irThrottle = 20; // send every 20th after the first
 		int biThrottle = 2;
 		int bodyThrottle = 1; 
+		uint64_t signonFrequency = 5000; // advertise once ever 5000 frames
 		shared_ptr<Stage> backStagePass = nullptr;
 	private:
 		bool ir = false; // get ir
 		bool bi = false; // get body index
 		bool body = true; // get body
-		shared_ptr<Sender> router = nullptr; // optional
+		shared_ptr<Sender> sender = nullptr; // optional
 		string kinectID;
 		IKinectSensor*     pSensor = nullptr;
 		ICoordinateMapper* pCoordinateMapper = nullptr;

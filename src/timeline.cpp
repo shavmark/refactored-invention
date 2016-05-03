@@ -43,19 +43,16 @@ namespace Software2552 {
 		if (router) {
 			router->setup();
 			router->addTCPServer(TCP, true); // general server
-
 			router->sendOsc("client", SignOnClientOscAddress);
-
 		}
 #ifdef _WIN64
 		if (((ofApp*)ofGetAppPtr())->seekKinect) {
 			kinectDevice = std::make_shared<KinectDevice>();
 			if (kinectDevice) {
 				router->setupKinect();
-				if (kinectDevice->setup(router, stage, 3)) {
-					//bugbug over time we can personallize this more, like machine 2nd from the left set via ui or cmd line
-					router->sendOsc(kinectDevice->getId(), SignOnKinectServerOscAddress);
+				if (kinectDevice->setup(router, stage, 5)) {
 					kinectBody = std::make_shared<Software2552::KinectBody>(kinectDevice);
+					router->sendOsc(kinectDevice->getId(), SignOnKinectServerOscAddress);
 				}
 			}
 		}

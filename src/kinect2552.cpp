@@ -111,19 +111,19 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		SafeRelease(pCoordinateMapper);
 	}
 	bool KinectDevice::getIR() {
-		if (ir || (router && router->kinectIREnabled())) {
+		if (ir || (getSender() && getSender()->kinectIREnabled())) {
 			return true;
 		}
 		return ir;
 	}
 	bool KinectDevice::getBodyIndex() {
-		if (bi || (router && router->KinectBodyIndexEndabled())) {
+		if (bi || (getSender() && getSender()->KinectBodyIndexEndabled())) {
 			return true;
 		}
 		return ir;
 	}
 	bool KinectDevice::getBody() {
-		if (body || (router && router->KinectBodyEnabled())) {
+		if (body || (getSender() && getSender()->KinectBodyEnabled())) {
 			return true;
 		}
 		return ir;
@@ -244,6 +244,10 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 	void KinectBody::update() {
 		IMultiSourceFrame* frame = NULL;
 		HRESULT hResult;
+
+		if ((getKinect()->signonFrequency % ofGetFrameNum()) == 0) {
+			getKinect()->getSender()->sendOsc(getKinect()->getId(), SignOnKinectServerOscAddress);
+		}
 
 		hResult = getKinect()->reader->AcquireLatestFrame(&frame); // gets all data in one shot
 		if (hresultFails(hResult, "AcquireLatestFrame")) {
@@ -400,7 +404,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			}
 			else {
 				ofLogNotice("KinectDevice::setup") << "waiting for kinect, retries count " << retries;
-				ofSleepMillis(500);
+				ofSleepMillis(1000);
 			}
 		} while (retries < 0 || --retries > 0); // tries -1 from the start is infinite loop, else count down
 
@@ -425,11 +429,12 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 	}
 	// send fast as Kinect is waiting
 	void  KinectDevice::sendKinectData(const char * bytes, const int numBytes, OurPorts port, int clientID) {
-		if (router && numBytes > 0) {
+		// new folks need to know about us
+		if (getSender() && numBytes > 0) {
 			if (numBytes < 1000) {
 				ofLogError() << "data size kindof small, maybe use udp " << " " << ofToString(numBytes); // just a hint
 			}
-			router->sendTCP(bytes, numBytes, port, clientID);
+			getSender()->sendTCP(bytes, numBytes, port, clientID);
 		}
 
 		// show local too if requested
