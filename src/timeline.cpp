@@ -80,10 +80,14 @@ namespace Software2552 {
 			string signon;
 			string source = client->getOscString(signon, SignOnServerOscAddress);
 			if (source.size() > 0 && signon.find("kinect server")) {
-				//bugbug add these when osc for server comes in
-				client->add(source, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
-				client->add(source, TCPKinectBody, true);
-				client->add(source, TCPKinectBodyIndex, true);
+				if (!((ofApp*)ofGetAppPtr())->seekKinect) {
+					//kinect server does not listen to these, even if > 1
+					//bugbug include the Kinect ID in the message and 
+					// allow this
+					client->add(source, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
+					client->add(source, TCPKinectBody, true);
+					client->add(source, TCPKinectBodyIndex, true);
+				}
 			}
 		}
 		if (stage) {
