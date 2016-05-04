@@ -335,28 +335,36 @@ namespace Software2552 {
 		ofPushStyle();
 		//ofFill();
 		if (rectangle.width != 0) {
-			ofPushMatrix();
+			//ofPushMatrix();
 			//ofTranslate(rectangle.width / 2, rectangle.height / 2, 0);//move pivot to centre
 			//ofRotateZ(yaw); // bugbug figure out rotation
 			//ofTranslate(rectangle.width/2, rectangle.height/2);
 			//ofRotateX(roll);
 			//ofRotateY(pitch);
-			ofPushMatrix();
+			//ofPushMatrix();
 			//ofTranslate(-rectangle.width / 2, -rectangle.height / 2);
 			ofDrawRectRounded(rectangle, 5);
-			ofPopMatrix();
+			//ofPopMatrix();
 			//ofRotateX(pitch);
 			//ofPushMatrix();
 			//rectangle.draw(-rectangle.width / 2, -rectangle.height / 2);//move back by the centre offset
-			ofPopMatrix();
+			//ofPopMatrix();
 			//ofPopMatrix();
 		}
 		ofSetColor(ofColor::red); //bugbug clean changing up to fit in with rest of app, also each user gets a color
 		for (const auto&face : points) {
+			if (face.x == face.y && face.x == 0) {
+				continue; // noise, bugbug but I am not sure about a real 0,0 yet
+			}
 			ofDrawCircle(face.x, face.y, face.z); // z is radius
 		}
+		ofSetColor(ofColor::pink); //bugbug clean changing up to fit in with rest of app, also each user gets a color
+		ofDrawCircle(0, 0, 111); // z is radius
 		ofSetColor(ofColor::green); //bugbug clean changing up to fit in with rest of app, also each user gets a color
 		for (const auto&e : elipses) {
+			if (e.x == e.y && e.x == 0) {
+				continue; // noise, bugbug but I am not sure about a real 0,0 yet
+			}
 			ofDrawEllipse(e.x, e.y, e.z, e.w);
 		}
 		ofPopStyle();

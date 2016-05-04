@@ -341,7 +341,8 @@ namespace Software2552 {
 					rotate(); // fixed does not do rotation here either
 				}
 				else {
-					ofTranslate(0,0);// assume fixed uses screen as it sees fit
+					ofPoint pt;
+					ofTranslate(-ofGetWidth()/2, - ofGetHeight()/2);// assume fixed uses screen as it sees fit
 				}
 				myDraw();
 				ofPopMatrix();
