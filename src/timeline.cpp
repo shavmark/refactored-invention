@@ -27,17 +27,17 @@ namespace Software2552 {
 
 		// design to run in low mem on slow devices, many items can not be allocated and graphics should still display
 
-		client = std::make_shared<Software2552::Client>();
-		if (client) {
-			client->setup(); // uses a thread to read
-		}
 		//bugbug use ofxOscMessage ofxOscReceiver (cool way to find server ip for all things, server may need to broad cast this now and then
 		// or advertise I guess for new folks that come on line
 		stage = std::make_shared<Software2552::Stage>();
 		if (!stage) {
 			return; //things would be really messed up...
 		}
-		stage->setup(client);
+
+		oscClient = std::make_shared<Software2552::ReadOsc>();
+		if (oscClient) {
+			oscClient->setup();
+		}
 
 		router = std::make_shared<Software2552::Sender>();
 		if (router) {
@@ -83,20 +83,27 @@ namespace Software2552 {
 		}
 #endif
 		// router updates itself and builds a queue of input
-		if (client && !clientInstalled) {
-			// check for sign on/off etc of things
-			string signon;
-			string clientOfServer = client->getOscString(signon, SignOnClientOscAddress); // also contains a server address, but of a client
-			string source = client->getOscString(signon, SignOnKinectServerOscAddress);
-			// if there is a valid message, if I am not the kinect sending the sign on is requested then ...
-			if (source.size() > 0 && signon.size() > 0) {
-				if (!kinectDevice || signon != kinectDevice->getId()) {
-					client->add(source, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
-					client->add(source, TCPKinectBody, true);
-					client->add(source, TCPKinectBodyIndex, true);
-					clientInstalled = true;//bugbug no way to reset server once started in this release
+		// check for sign on/off etc of things
+		//string clientOfServer = client->getOscString(signon, SignOnClientOscAddress); // also contains a server address, but of a client
+		string signon;
+		string source = oscClient->getString(signon, SignOnKinectServerOscAddress);
+		// if there is a valid message, if I am not the kinect sending the sign on is requested then ...
+		if (source.size() > 0 && signon.size() > 0 && source != kinectServerIP) {
+			kinectServerIP = source;//bugbug only 1 kinect for now, needs to be a vector for > 1 kinect
+			if (!kinectDevice || signon != kinectDevice->getId()) {
+				tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
+				if (tcpKinectClient) {
+					tcpKinectClient->setup(); // uses a thread to read
 				}
+				ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon;
+				tcpKinectClient->add(kinectServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
+				tcpKinectClient->add(kinectServerIP, TCPKinectBody, true);
+				tcpKinectClient->add(kinectServerIP, TCPKinectBodyIndex, true);
+				stage->setup(tcpKinectClient);
 			}
+		}
+		if (tcpKinectClient) {
+			tcpKinectClient->update();
 		}
 		if (stage) {
 			stage->update();

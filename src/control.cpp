@@ -45,12 +45,11 @@ namespace Software2552 {
 		addTCPServer(TCPKinectBody, true);
 	}
 #endif
-	void Client::setup() {
+	void TCPKinectClient::setup() {
 		TCPReader::setup();
-		OscReader.setup();
 	}
 	// read from Kinect and save data (or from any input port)
-	void Client::update() {
+	void TCPKinectClient::update() {
 		shared_ptr<ReadTCPPacket> packet;
 		shared_ptr<IRImage>ir = nullptr;
 
