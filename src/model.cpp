@@ -373,12 +373,18 @@ namespace Software2552 {
 
 	// need to add this to our model etc
 	void Kinect::myDraw() {
+
+		face.myDraw();
+
 		ofColor color = ofColor::orange;
 
 		ofNoFill();
 		for (const auto&circle : points) {
 			ofSetColor(color); //bugbug clean changing up to fit in with rest of app
 			color.setHue(color.getHue() + 6.0f);
+			if (circle.x == circle.y && circle.x == 0) {
+				continue; // not valid data
+			}
 			ofDrawCircle(circle.x, circle.y, circle.z);
 		}
 

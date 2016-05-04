@@ -251,6 +251,7 @@ namespace Software2552 {
 		mySetup();
 	}
 	void Stage::update() {
+		removeExpiredItems(animatables); // keep things clean 
 		readNextwork();
 		for (auto& a : animatables) {
 			a->updateForDrawing();
