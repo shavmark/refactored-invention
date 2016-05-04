@@ -15,7 +15,7 @@ namespace Software2552 {
 		bool KinectBodyEnabled();
 	};
 
-	class Client : public TCPReader {
+	class TCPKinectClient : public TCPReader {
 	public:
 		void setup();
 		void update();
@@ -23,13 +23,10 @@ namespace Software2552 {
 		deque<shared_ptr<IRImage>>&IRQ() { return irQ; }
 		deque<shared_ptr<BodyIndexImage>>&bodyIndexQ() { return biQ; }
 		deque<shared_ptr<Kinect>>&kinectQ() { return kQ; }
-		shared_ptr<ofxJSON> getOscJson(const string&address) { return OscReader.getJson(address); };
-		string getOscString(string&buffer, const string&address) { return OscReader.getString(buffer, address); };
 	private:
 		deque<shared_ptr<IRImage>>irQ;
 		deque<shared_ptr<BodyIndexImage>>biQ;
 		deque<shared_ptr<Kinect>>kQ;
-		ReadOsc OscReader;
 	};
 
 }

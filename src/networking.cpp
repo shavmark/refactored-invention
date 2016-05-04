@@ -15,7 +15,8 @@ namespace Software2552 {
 	// input buffer returned as reference
 	bool uncompress(const char*buffer, size_t len, string&output) {
 		if (!snappy::Uncompress(buffer, len, &output)) {
-			return output.size() > 0; // maybe data is there
+			ofLogError("uncompress") << "fails";
+			return false;
 		}
 		return true;
 	}
@@ -29,8 +30,10 @@ namespace Software2552 {
 	void getRawString(string &buffer, shared_ptr<ofxOscMessage>m) {
 		buffer.clear();
 		if (m) {
-			string input = m->getArgAsString(0);
-			uncompress(input.c_str(), input.size(), buffer);
+			if (m->getArgAsBool(0)) {
+				string input = m->getArgAsString(0);
+				uncompress(input.c_str(), input.size(), buffer);
+			}
 		}
 	 }
 
@@ -102,7 +105,7 @@ namespace Software2552 {
 	void WriteOsc::send(shared_ptr<ofxOscMessage> m, const string&address) {
 		if (m) {
 			m->setAddress(address);
-			lock();
+			lock();//bugbug review useage of lock in entire app
 			q.push_front(m); //bugbub do we want to add a priority? front & back? not sure
 			unlock();
 		}
@@ -116,12 +119,10 @@ namespace Software2552 {
 				string output;
 				if (compress(data.c_str(), data.size(), output)) {
 					p->addStringArg(output); 
+					p->addBoolArg(true);// arg 0, all data is in json by default so we tag this as raw
 					lock();
 					q.push_front(p); //bugbub do we want to add a priority? front & back? not sure
 					unlock();
-				}
-				else {
-					ofLogError("WriteOsc::send") << "ignore " << data;
 				}
 			}
 		}

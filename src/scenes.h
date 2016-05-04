@@ -23,7 +23,7 @@ namespace Software2552 {
 	// contains  elements of a stage
 	class Stage {
 	public:
-		void setup(shared_ptr<Client>client);
+		void setup(shared_ptr<TCPKinectClient>client);
 		void update();
 		void draw();
 		bool updateData(shared_ptr<ofxJSON>);
@@ -59,7 +59,7 @@ namespace Software2552 {
 		void addToAnimatable(shared_ptr<ActorRole>p, bool inFront = false);
 
 	protected:
-		shared_ptr<Client>client = nullptr;
+		shared_ptr<TCPKinectClient>tcpKinectClient = nullptr;
 		void fixed3d(bool b = true) { drawIn3dFixed = b; }
 		void moving3d(bool b = true) { drawIn3dMoving = b; }
 		void fixed2d(bool b = true) { drawIn2d = b; }

@@ -141,14 +141,14 @@ namespace Software2552 {
 
 	}
 	void Stage::readNextwork() {
-		if (client) {
-			for (const auto&c : client->IRQ()) {
+		if (tcpKinectClient) {
+			for (const auto&c : tcpKinectClient->IRQ()) {
 				addToAnimatable(c);
 			}
-			for (const auto&c : client->bodyIndexQ()) {
+			for (const auto&c : tcpKinectClient->bodyIndexQ()) {
 				addToAnimatable(c);
 			}
-			for (const auto&c : client->kinectQ()) {
+			for (const auto&c : tcpKinectClient->kinectQ()) {
 				addToAnimatable(c);
 			}
 			//bugbug code this in too shared_ptr<ofxJSON> json = client->getOscJson(const string&address);
@@ -246,8 +246,8 @@ namespace Software2552 {
 		myClear(force);
 	}
 
-	void Stage::setup(shared_ptr<Client>clientIn) {
-		client = clientIn;
+	void Stage::setup(shared_ptr<TCPKinectClient>clientIn) {
+		tcpKinectClient = clientIn;
 		mySetup();
 	}
 	void Stage::update() {
