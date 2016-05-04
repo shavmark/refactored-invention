@@ -260,16 +260,14 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		if (hresultFails(hResult, "AcquireLatestFrame")) {
 			return;
 		}
-		c++;
-
 		// IR optional, only sent if client asks for it, not shown locally
-		if (getKinect()->getIR() && (c % getKinect()->irThrottle)) {
+		if (getKinect()->getIR() && (count % getKinect()->irThrottle)) {
 			updateImageIR(frame);
 		}
-		if (getKinect()->getBodyIndex() && (c % getKinect()->biThrottle)) {
+		if (getKinect()->getBodyIndex() && (count % getKinect()->biThrottle)) {
 			updateImageBodyIndex(frame);
 		}
-		if (!getKinect()->getBody() && (c % getKinect()->bodyThrottle)) {
+		if (!getKinect()->getBody() && (count % getKinect()->bodyThrottle)) {
 			SafeRelease(frame);
 			return;
 		}
@@ -283,15 +281,15 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 
 		hResult = bodyframe->GetAndRefreshBodyData(BODY_COUNT, pBody);
 		if (!hresultFails(hResult, "GetAndRefreshBodyData")) {
-			for (int count = 0; count < BODY_COUNT; count++) {
+			for (int bodyIndex = 0; bodyIndex < BODY_COUNT; bodyIndex++) {
 				// breaks here
 				BOOLEAN bTracked = false;
 
-				hResult = pBody[count]->get_IsTracked(&bTracked);
+				hResult = pBody[bodyIndex]->get_IsTracked(&bTracked);
 				if (SUCCEEDED(hResult) && bTracked) {
 					// Set TrackingID to Detect Face
 					UINT64 trackingId = _UI64_MAX;
-					hResult = pBody[count]->get_TrackingId(&trackingId);
+					hResult = pBody[bodyIndex]->get_TrackingId(&trackingId);
 					if (hresultFails(hResult, "get_TrackingId")) {
 						continue;
 					}
@@ -299,31 +297,31 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 					Joint joints[JointType::JointType_Count];
 					PointF leanAmount;
 
-					data["body"][count]["trackingId"] = trackingId;
-					data["body"][count]["kinectID"] = getKinect()->getId();
+					data["body"][bodyIndex]["trackingId"] = trackingId;
+					data["body"][bodyIndex]["kinectID"] = getKinect()->getId();
 					if (audio) {
 						// see if any audio there
 						audio->getAudioCorrelation();
 						//bugbug can we use the tracking id, and is valid id, here vs creating our own?
 						if (audio->getTrackingID() == trackingId) {
-							audio->update(data["body"][count], trackingId);
+							audio->update(data["body"][bodyIndex], trackingId);
 						}
 					}
 					if (faces) {
 						// will fire off face data before body data
-						setTrackingID(count, trackingId);// keep face on track with body
-						faces->update(data["body"][count], trackingId);//bugbug need to simplfy this but see what happens for now
+						setTrackingID(bodyIndex, trackingId);// keep face on track with body
+						faces->update(data["body"][bodyIndex], trackingId);//bugbug need to simplfy this but see what happens for now
 					}
 
 					// get joints
-					hResult = pBody[count]->GetJoints(JointType::JointType_Count, joints);
+					hResult = pBody[bodyIndex]->GetJoints(JointType::JointType_Count, joints);
 					if (SUCCEEDED(hResult)) {
-						pBody[count]->get_Lean(&leanAmount);
-						data["body"][count]["lean"]["x"] = leanAmount.X;//bugbug account for this in drawing code
-						data["body"][count]["lean"]["y"] = leanAmount.Y;
+						pBody[bodyIndex]->get_Lean(&leanAmount);
+						data["body"][bodyIndex]["lean"]["x"] = leanAmount.X;//bugbug account for this in drawing code
+						data["body"][bodyIndex]["lean"]["y"] = leanAmount.Y;
 
 						for (int i = 0; i < JointType::JointType_Count; ++i) {
-							data["body"][count]["joint"][i]["trackingState"] = joints[i].TrackingState;
+							data["body"][bodyIndex]["joint"][i]["trackingState"] = joints[i].TrackingState;
 							if (joints[i].TrackingState != TrackingState::TrackingState_NotTracked) {
 								ColorSpacePoint colorSpacePoint = { 0 };
 								DepthSpacePoint depthSpacePoint = { 0 };
@@ -334,26 +332,26 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 									&& (depthSpacePoint.Y >= 0) && (depthSpacePoint.Y < getKinect()->getDepthFrameHeight())) {
 									TrackingConfidence confidence;
 									HandState state;
-									data["body"][count]["joint"][i]["jointType"] = joints[i].JointType;
+									data["body"][bodyIndex]["joint"][i]["jointType"] = joints[i].JointType;
 									float t = round(depthSpacePoint.X);
-									data["body"][count]["joint"][i]["depth"]["x"] = round(depthSpacePoint.X);  // in x,y per kinect device size
-									data["body"][count]["joint"][i]["depth"]["y"] = round(depthSpacePoint.Y);
-									data["body"][count]["joint"][i]["color"]["x"] = round(colorSpacePoint.X); // in x,y per kinect device size
-									data["body"][count]["joint"][i]["color"]["y"] = round(colorSpacePoint.Y);
-									data["body"][count]["joint"][i]["cam"]["x"] = round(joints[i].Position.X); // in meters, things like getting closer
-									data["body"][count]["joint"][i]["cam"]["y"] = round(joints[i].Position.Y);
-									data["body"][count]["joint"][i]["cam"]["z"] = round(joints[i].Position.Z);
+									data["body"][bodyIndex]["joint"][i]["depth"]["x"] = round(depthSpacePoint.X);  // in x,y per kinect device size
+									data["body"][bodyIndex]["joint"][i]["depth"]["y"] = round(depthSpacePoint.Y);
+									data["body"][bodyIndex]["joint"][i]["color"]["x"] = round(colorSpacePoint.X); // in x,y per kinect device size
+									data["body"][bodyIndex]["joint"][i]["color"]["y"] = round(colorSpacePoint.Y);
+									data["body"][bodyIndex]["joint"][i]["cam"]["x"] = round(joints[i].Position.X); // in meters, things like getting closer
+									data["body"][bodyIndex]["joint"][i]["cam"]["y"] = round(joints[i].Position.Y);
+									data["body"][bodyIndex]["joint"][i]["cam"]["z"] = round(joints[i].Position.Z);
 
 									if (joints[i].JointType == JointType::JointType_HandRight) {
-										pBody[count]->get_HandRightConfidence(&confidence); // send this so we do not have to decide
-										pBody[count]->get_HandRightState(&state);
-										setHand(data["body"][count]["joint"][i]["right"], confidence, state);
+										pBody[bodyIndex]->get_HandRightConfidence(&confidence); // send this so we do not have to decide
+										pBody[bodyIndex]->get_HandRightState(&state);
+										setHand(data["body"][bodyIndex]["joint"][i]["right"], confidence, state);
 									}
 									else if (joints[i].JointType == JointType::JointType_HandLeft) {
-										pBody[count]->get_HandLeftConfidence(&confidence); // send this so we do not have to decide
-										pBody[count]->get_HandLeftState(&state);
+										pBody[bodyIndex]->get_HandLeftConfidence(&confidence); // send this so we do not have to decide
+										pBody[bodyIndex]->get_HandLeftState(&state);
 										string s = data.getRawString(false);
-										setHand(data["body"][count]["joint"][i]["left"], confidence, state);
+										setHand(data["body"][bodyIndex]["joint"][i]["left"], confidence, state);
 									}
 									else {
 										// just the joint gets drawn, its name other than JointType_Head (hand above head)
@@ -368,16 +366,16 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				}
 			}
 		}
-		for (int count = 0; count < BODY_COUNT; count++) {
-			SafeRelease(pBody[count]);
+		for (int bodyIndex = 0; bodyIndex < BODY_COUNT; bodyIndex++) {
+			SafeRelease(pBody[bodyIndex]);
 		}
 		SafeRelease(bodyframe);
 		SafeRelease(frame);
 	}
 
 	bool KinectDevice::setup(shared_ptr<Sender>p, shared_ptr<Stage> backStagePassIn, int retries) {
-
 		backStagePass = backStagePassIn;
+		sender = p;
 
 		HRESULT hResult = GetDefaultKinectSensor(&pSensor);
 		if (hresultFails(hResult, "GetDefaultKinectSensor")) {
@@ -610,6 +608,19 @@ void KinectFaces::update(Json::Value &data, UINT64 trackingId)
 	SafeRelease(pFaceResult);
 	SafeRelease(pFaceFrame);
 }
+void KinectBody::useFaces(shared_ptr<KinectFaces> facesIn) {
+	faces = facesIn; 
+	if (faces) {
+		faces->setup();
+	}
+}
+void KinectBody::useAudio(shared_ptr<KinectAudio> audioIn) {
+	audio = audioIn; 
+	if (audio) {
+		audio->setup();
+	}
+}
+
 void KinectFaces::buildFaces() {
 	for (int i = 0; i < BODY_COUNT; ++i) {
 		shared_ptr<KinectFace> p = make_shared<KinectFace>(getKinect());

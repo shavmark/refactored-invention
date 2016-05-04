@@ -49,9 +49,14 @@ namespace Software2552 {
 		if (((ofApp*)ofGetAppPtr())->seekKinect) {
 			kinectDevice = std::make_shared<KinectDevice>();
 			if (kinectDevice) {
+				// build out a full kinect
 				router->setupKinect();
-				if (kinectDevice->setup(router, stage, 5)) {
+				if (kinectDevice->setup(router, stage, 10)) {
 					kinectBody = std::make_shared<Software2552::KinectBody>(kinectDevice);
+					if (kinectBody) {
+						kinectBody->useFaces(std::make_shared<Software2552::KinectFaces>(kinectDevice));
+						kinectBody->useAudio(std::make_shared<Software2552::KinectAudio>(kinectDevice));
+					}
 					router->sendOsc(kinectDevice->getId(), SignOnKinectServerOscAddress);
 				}
 			}
@@ -78,17 +83,18 @@ namespace Software2552 {
 		}
 #endif
 		// router updates itself and builds a queue of input
-		if (client) {
+		if (client && !clientInstalled) {
 			// check for sign on/off etc of things
 			string signon;
 			string clientOfServer = client->getOscString(signon, SignOnClientOscAddress); // also contains a server address, but of a client
 			string source = client->getOscString(signon, SignOnKinectServerOscAddress);
 			// if there is a valid message, if I am not the kinect sending the sign on is requested then ...
-			if (source.size() > 0) {
+			if (source.size() > 0 && signon.size() > 0) {
 				if (!kinectDevice || signon != kinectDevice->getId()) {
 					client->add(source, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
 					client->add(source, TCPKinectBody, true);
 					client->add(source, TCPKinectBodyIndex, true);
+					clientInstalled = true;//bugbug no way to reset server once started in this release
 				}
 			}
 		}

@@ -380,6 +380,10 @@ namespace Software2552 {
 	}
 
 	void KinectAudio::getAudioCorrelation() {
+
+		if (!getAudioBeamReader()) {
+			return;//bugbug do we get this from the multi?
+		}
 		correlationCount = 0;
 		trackingIndex = NoTrackingIndex;
 		audioTrackingId = NoTrackingID;

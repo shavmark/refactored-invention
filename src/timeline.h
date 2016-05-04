@@ -32,6 +32,7 @@ namespace Software2552 {
 		float x3 = 0;
 		float y3 = 0;
 		float z3 = 0;
+		bool clientInstalled = false;
 		ChannelList playlist;
 		ColorList colorlist;
 		shared_ptr<Stage> stage = nullptr;

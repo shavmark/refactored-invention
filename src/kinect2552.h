@@ -205,11 +205,10 @@ namespace Software2552 {
 		KinectBody(shared_ptr<KinectDevice> kinectDevice) : KinectBaseClass(kinectDevice) {  }
 
 		void update();
-		void useFaces(shared_ptr<KinectFaces> facesIn)  { faces = facesIn; }
-		void useAudio(shared_ptr<KinectAudio> audioIn) { audio = audioIn; }
+		void useFaces(shared_ptr<KinectFaces> facesIn);
+		void useAudio(shared_ptr<KinectAudio> audioIn);
 
 	private:
-		int c = 0; // times called count
 		void updateImageBodyIndex(IMultiSourceFrame* frame);
 		void updateImageIR(IMultiSourceFrame* frame);
 		bool getPoint(CameraSpacePoint& position, DepthSpacePoint& depthSpacePoint);

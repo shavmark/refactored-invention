@@ -200,7 +200,7 @@ namespace Software2552 {
 			}
 		}
 		bool getFrameCountMaxHit() {
-			return (frameMax != nullptr && (*frameMax) < 0);
+			return (frameMax != nullptr && (*frameMax) <= 0);
 		}
 
 	protected:

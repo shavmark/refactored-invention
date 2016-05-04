@@ -406,6 +406,8 @@ namespace Software2552 {
 		float ratioY = ((float)ofGetScreenHeight() / KinectDevice::getDepthFrameHeight());
 		ratioX = 1;
 		ratioY = 1;
+		string s = data.getRawString(false); // too large for UDP
+
 		for (Json::ArrayIndex i = 0; i < data["body"].size(); ++i) {
 			face.update(data["body"][i]["face"]);
 			Json::Value::Members m = data["body"][i].getMemberNames();
