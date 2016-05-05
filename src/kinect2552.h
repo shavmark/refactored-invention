@@ -83,7 +83,7 @@ namespace Software2552 {
 		int irThrottle = 20; // send every 20th after the first
 		int biThrottle = 2;
 		int bodyThrottle = 1; 
-		uint64_t signonFrequency = 5000; // advertise once ever 5000 frames
+		uint64_t signonFrequency = 30*10; // advertise 900, at 30fps this is every 30 seconds
 		shared_ptr<Stage> backStagePass = nullptr;
 	private:
 		bool ir = false; // get ir

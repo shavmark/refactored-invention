@@ -249,10 +249,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		IMultiSourceFrame* frame = NULL;
 		HRESULT hResult;
 		uint64_t count = ofGetFrameNum();
-		if (count <= 0) {
-			count = 1; // could be called before any frame counts
-		}
-		if ((getKinect()->signonFrequency % count) == 0) {
+		if ((count % getKinect()->signonFrequency) == 0) {
 			getKinect()->getSender()->sendOsc(getKinect()->getId(), SignOnKinectServerOscAddress);
 		}
 
