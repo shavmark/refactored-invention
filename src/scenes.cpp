@@ -142,17 +142,15 @@ namespace Software2552 {
 	}
 	void Stage::readNextwork() {
 		if (tcpKinectClient) {
-			for (const auto&c : tcpKinectClient->IRQ()) {
-				addToAnimatable(c);
+			for (int i = 0; i < tcpKinectClient->IRQ().size(); ++i) {
+				addToAnimatable(tcpKinectClient->IRQ()[i]);
 			}
-			for (const auto&c : tcpKinectClient->bodyIndexQ()) {
-				addToAnimatable(c);
+			for (int i = 0; i < tcpKinectClient->bodyIndexQ().size(); ++i) {
+				addToAnimatable(tcpKinectClient->bodyIndexQ()[i]);
 			}
-			for (const auto&c : tcpKinectClient->kinectQ()) {
-				addToAnimatable(c);
+			for (int i = 0; i < tcpKinectClient->kinectQ().size(); ++i) {
+				addToAnimatable(tcpKinectClient->kinectQ()[i]);
 			}
-			//bugbug code this in too shared_ptr<ofxJSON> json = client->getOscJson(const string&address);
-			
 		}
 
 	}
@@ -251,8 +249,11 @@ namespace Software2552 {
 		mySetup();
 	}
 	void Stage::update() {
+		
 		removeExpiredItems(animatables); // keep things clean 
+
 		readNextwork();
+
 		for (auto& a : animatables) {
 			a->updateForDrawing();
 		}

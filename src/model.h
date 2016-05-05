@@ -399,6 +399,8 @@ namespace Software2552 {
 		void myUpdate();
 		void mySetup();
 		void myDraw();
+		float getWidth() { return worker.getWidth(); }
+		float getHeight() { return worker.getHeight(); }
 	protected:
 		ofImage worker;
 	private:
@@ -412,7 +414,7 @@ namespace Software2552 {
 	class IRImage : public FixedLocationImage {
 	public:
 		// size is fixed
-		void IRFromTCP(const UINT16 * bytes);
+		void IRFromTCP(const UINT16 * bytes, const size_t len);
 	private:
 	};
 	class BodyIndexImage : public FixedLocationImage {

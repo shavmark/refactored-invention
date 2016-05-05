@@ -325,8 +325,8 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 								getPoint(joints[i].Position, colorSpacePoint);
 								getPoint(joints[i].Position, depthSpacePoint);
 								
-								if ((colorSpacePoint.X >= 0) && (colorSpacePoint.X < getKinect()->getColorFrameWidth())
-									&& (depthSpacePoint.Y >= 0) && (depthSpacePoint.Y < getKinect()->getDepthFrameHeight())) {
+								if ((colorSpacePoint.X >= 0) && (colorSpacePoint.X < getColorFrameWidth())
+									&& (depthSpacePoint.Y >= 0) && (depthSpacePoint.Y < getDepthFrameHeight())) {
 									TrackingConfidence confidence;
 									HandState state;
 									data["body"][bodyIndex]["joint"][i]["jointType"] = joints[i].JointType;
@@ -448,7 +448,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			if (ir && backStagePass) { // ir wanted and there is a stage to send it to 
 				shared_ptr<IRImage>p = std::make_shared<IRImage>();
 				if (p) {
-					p->IRFromTCP((const UINT16 *)bytes);
+					p->IRFromTCP((const UINT16 *)bytes, numBytes);
 					p->setup();
 					backStagePass->addToAnimatable(p);
 				}

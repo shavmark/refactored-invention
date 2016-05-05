@@ -374,6 +374,7 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\sound.h" />
+    <ClInclude Include="src\consts.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

@@ -60,13 +60,6 @@ namespace Software2552 {
 		IKinectSensor* getSensor() {return pSensor;	}
 		ICoordinateMapper* getMapper() {	return pCoordinateMapper;	}
 
-		static float getDepthFrameWidth() { return 512.0f; }
-		static float getDepthFrameHeight() { return 424.0f; }
-		static float getIRFrameWidth() { return 512.0f; }
-		static float getIRFrameHeight() { return 424.0f; }
-		static float getColorFrameWidth() { return 1920.0f; }
-		static float getColorFrameHeight() { return 1080.0f; }
-
 		HRESULT depth(UINT cameraPointCount, CameraSpacePoint*csp, UINT depthPointCount, DepthSpacePoint *dsp) { return pCoordinateMapper->MapCameraPointsToDepthSpace(1, csp, 1, dsp); }
 		HRESULT color(UINT cameraPointCount, const CameraSpacePoint*csp, UINT depthPointCount, ColorSpacePoint *color) { return pCoordinateMapper->MapCameraPointsToColorSpace(1, csp, 1, color); }
 

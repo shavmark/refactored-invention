@@ -269,20 +269,20 @@ namespace Software2552 {
 			update();
 			yield();
 		}
-
 	}
 	shared_ptr<ReadTCPPacket> TCPClient::get() {
 		shared_ptr<ReadTCPPacket>p = nullptr;
 		if (q.size() > 0) {
+			lock();
 			p = q.back();// last in first out
 			q.pop_back();
+			unlock();
 		}
 		return p;
 	}
 	char TCPClient::update() {
 		char type = 0;
 		if (tcpClient.isConnected()) {
-			lock();// need to read one at a time to keep input organized
 			char* b = (char*)std::malloc(MAXSEND);
 			if (b) {
 				int messageSize = 0;
@@ -310,7 +310,9 @@ namespace Software2552 {
 							if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
 								type = p->type; // data should change a litte
 								returnedData->type = type;
+								lock();
 								q.push_back(returnedData);
+								unlock();
 							}
 							else {
 								ofLogError("data ignored");
@@ -321,7 +323,6 @@ namespace Software2552 {
 
 				free(b); // only delete if data not returned
 			}
-			unlock();
 			return 0;
 
 		}

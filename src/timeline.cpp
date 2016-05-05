@@ -51,7 +51,7 @@ namespace Software2552 {
 			if (kinectDevice) {
 				// build out a full kinect
 				router->setupKinect();
-				if (kinectDevice->setup(router, stage, 10)) {
+				if (kinectDevice->setup(router, stage, 5)) {
 					kinectBody = std::make_shared<Software2552::KinectBody>(kinectDevice);
 					if (kinectBody) {
 						kinectBody->useFaces(std::make_shared<Software2552::KinectFaces>(kinectDevice));
@@ -91,17 +91,17 @@ namespace Software2552 {
 			kinectServerIP = source;//bugbug only 1 kinect for now, needs to be a vector for > 1 kinect
 			if (!kinectDevice || signon != kinectDevice->getId()) {
 				tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
-				if (tcpKinectClient) {
-					tcpKinectClient->setup(); // uses a thread to read
-				}
 				ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon;
 				tcpKinectClient->add(kinectServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
 				tcpKinectClient->add(kinectServerIP, TCPKinectBody, true);
 				tcpKinectClient->add(kinectServerIP, TCPKinectBodyIndex, true);
+				if (tcpKinectClient) {
+					tcpKinectClient->setup(); // uses a thread to read
+				}
 				stage->setup(tcpKinectClient);
 			}
 		}
-		if (tcpKinectClient) {
+		else if (tcpKinectClient) {
 			tcpKinectClient->update();
 		}
 		if (stage) {

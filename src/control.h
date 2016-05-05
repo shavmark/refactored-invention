@@ -1,5 +1,7 @@
 #pragma once
 
+// tries to to things together
+
 namespace Software2552 {
 
 	PacketType mapPortToType(OurPorts ports);

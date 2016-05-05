@@ -44,6 +44,7 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 	}
 }
 #include "ofxJSON.h"
+#include "consts.h"
 #include "animation.h"
 #include "color.h"
 #include "model.h"
