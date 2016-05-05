@@ -21,7 +21,7 @@ namespace Software2552 {
 	shared_ptr<Stage> getScene(const string&name);
 
 	// contains  elements of a stage
-	class Stage {
+	class Stage : public ofThread {
 	public:
 		void setup(shared_ptr<TCPKinectClient>client);
 		void update();

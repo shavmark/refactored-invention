@@ -84,7 +84,6 @@ namespace Software2552 {
 #endif
 		// router updates itself and builds a queue of input
 		// check for sign on/off etc of things
-		//string clientOfServer = client->getOscString(signon, SignOnClientOscAddress); // also contains a server address, but of a client
 		string signon;
 		string source = oscClient->getString(signon, SignOnKinectServerOscAddress);
 		// if there is a valid message, if I am not the kinect sending the sign on is requested then ...

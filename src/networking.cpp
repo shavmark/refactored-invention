@@ -30,10 +30,8 @@ namespace Software2552 {
 	void getRawString(string &buffer, shared_ptr<ofxOscMessage>m) {
 		buffer.clear();
 		if (m) {
-			if (m->getArgAsBool(0)) {
-				string input = m->getArgAsString(0);
-				uncompress(input.c_str(), input.size(), buffer);
-			}
+			string input = m->getArgAsString(0);
+			uncompress(input.c_str(), input.size(), buffer);
 		}
 	 }
 
@@ -44,11 +42,8 @@ namespace Software2552 {
 			if (p) {
 				string output;
 				string input = m->getArgAsString(0);
-				if (uncompress(input.c_str(), input.size(), output)) {
-					p->parse(output);
-					//bugbug add in sourceIP = OSCMessage::getRemoteIP(p); if needed
-
-				}
+				uncompress(input.c_str(), input.size(), output);
+				p->parse(output); // uncompress returns input upon error
 			}
 			return p;
 		}
@@ -119,7 +114,6 @@ namespace Software2552 {
 				string output;
 				if (compress(data.c_str(), data.size(), output)) {
 					p->addStringArg(output); 
-					p->addBoolArg(true);// arg 0, all data is in json by default so we tag this as raw
 					lock();
 					q.push_front(p); //bugbub do we want to add a priority? front & back? not sure
 					unlock();
@@ -154,8 +148,8 @@ namespace Software2552 {
 			while (receiver.hasWaitingMessages()) {
 				shared_ptr<ofxOscMessage> p = std::make_shared<ofxOscMessage>();
 				if (p) {
-					receiver.getNextMessage(*p);
 					lock();
+					receiver.getNextMessage(*p);
 					q[p->getAddress()].push_front(p); // will create a new queue if needed
 					unlock();
 				}
@@ -395,7 +389,9 @@ namespace Software2552 {
 		shared_ptr<TCPClient> c = std::make_shared<TCPClient>();
 		if (c) {
 			c->setup(ip, port, blocking);
+			lock();
 			clients[port] = c;
+			unlock();
 		}
 	}
 

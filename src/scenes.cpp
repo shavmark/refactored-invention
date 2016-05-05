@@ -312,12 +312,14 @@ namespace Software2552 {
 				fixed2d(true); // do not set to false in case its already set
 			}
 			p->setupForDrawing();
+			lock();
 			if (inFront) {
 				animatables.push_front(p);
 			}
 			else {
 				animatables.push_back(p);
 			}
+			unlock();
 		}
 	}
 
