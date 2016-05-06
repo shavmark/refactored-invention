@@ -215,14 +215,15 @@ namespace Software2552 {
 		startThread();
 	}
 	// input data is  deleted by this object at the right time (at least that is the plan)
-	void TCPServer::update(const char * bytes, const size_t numBytes, PacketType type, int clientID) {
+	void TCPServer::update(const char * bytes, const size_t numBytes, PacketType type, TypeOfSend typeOfSend, int clientID) {
 		string buffer;
 		if (compress(bytes, numBytes, buffer)) { // copy and compress data so caller can free passed data 
 			char *bytes = new char[sizeof(TCPMessage) + buffer.size()];
 			if (bytes) {
 				TCPMessage *message = (TCPMessage *)bytes;
 				message->clientID = -1;
-				message->packet.type = type; // passed as a double check
+				message->typeOfSend = typeOfSend;
+				message->packet.typeOfPacket = type; // passed as a double check
 				message->packet.b[0] = PacketFence; // help check for lost or out of sync data
 				message->numberOfBytesToSend = sizeof(TCPPacket) + buffer.size();
 				memcpy_s(&message->packet.b[1], buffer.size(), buffer.c_str(), buffer.size());
@@ -236,6 +237,26 @@ namespace Software2552 {
 		}
 		return;
 	}
+	// no compression yet bugbug
+	void TCPServer::update(ofPixels &pixels, PacketType type, TypeOfSend typeOfSend, int clientID) {
+		unsigned char *data = pixels.getPixels();
+		char *bytes = new char[sizeof(TCPMessage) + pixels.size()];
+		if (bytes) {
+			TCPMessage *message = (TCPMessage *)bytes;
+			message->clientID = -1;
+			message->typeOfSend = typeOfSend;
+			message->packet.typeOfPacket = type; // passed as a double check
+			message->packet.b[0] = PacketFence; // help check for lost or out of sync data
+			message->pixels = pixels;//bugbug use shared pointer to avoid uneeded data copy
+			lock();
+			if (q.size() > maxItems) {
+				q.pop_back(); // remove oldest
+			}
+			q.push_front(message); //bugbub do we want to add a priority? 
+			unlock();
+		}
+		return;
+	}
 
 	// control data deletion (why we have our own thread) to avoid data copy since this code is in a Kinect crital path 
 	void TCPServer::threadedFunction() {
@@ -245,7 +266,12 @@ namespace Software2552 {
 				TCPMessage* m = q.back();// last in first out
 				q.pop_back();
 				if (m) { 
-					sendbinary(m);
+					if (m->typeOfSend == 's') {
+						sendStream(m);
+					}
+					else if (m->typeOfSend == 'm') {
+						sendMessage(m);
+					}
 					delete m;
 				}
 			}
@@ -253,7 +279,8 @@ namespace Software2552 {
 			yield();
 		}
 	}
-	void TCPServer::sendbinary(TCPMessage *m) {
+	// client needs to know if its a stream of message
+	void TCPServer::sendMessage(TCPMessage *m) {
 		if (m) {
 			if (m->numberOfBytesToSend > MAXSEND) {
 				ofLogError("TCPServer::sendbinary") << "block too large " << ofToString(m->numberOfBytesToSend) + " max " << ofToString(MAXSEND);
@@ -269,8 +296,36 @@ namespace Software2552 {
 			}
 		}
 	}
+	void TCPServer::sendStream(TCPMessage *m) {
+		if (m) {
+			if (m->numberOfBytesToSend > MAXSEND) {
+				ofLogError("TCPServer::sendbinary") << "block too large " << ofToString(m->numberOfBytesToSend) + " max " << ofToString(MAXSEND);
+				return;
+			}
+			if (server.getNumClients() > 0) {
+				const char* index = (const char*)m->pixels.getPixels(); //start at beginning of pixel array 
+				int length = m->pixels.getWidth() * 3;//length of one row of pixels in the image 
+				int size = m->pixels.getHeight() * m->pixels.getWidth() * 3;
+				int pixelCount = 0;
+				while (pixelCount < size) {
+					if (m->clientID > 0) {
+						server.sendRawBytes(m->clientID, (const char*)&m->packet, m->numberOfBytesToSend);
+					}
+					else {
+						server.sendRawBytesToAll(index, length); //send the first row of the image 
+					}
+					index += length; //increase pointer so that it points to the next image row 
+					pixelCount += length; //increase pixel count by one row 
+				}
+			}
+		}
+	}
 	void TCPClient::threadedFunction() {
+		ofPixels bi;//body index
+		ofPixels ir;// ir
 		while (1) {
+			readPixelStream(bi, getDepthFrameWidth(), getDepthFrameHeight());
+			readPixelStream(ir, getIRFrameWidth(), getIRFrameHeight());
 			update();
 			yield();
 		}
@@ -285,6 +340,21 @@ namespace Software2552 {
 		unlock();
 		return p;
 	}
+	//Receiving loop that must ensure a frame is received as a whole
+	// must know the size of item being sent
+	void TCPClient::readPixelStream(ofPixels &pixels, float width, float height) {
+		unsigned char* receivePos = pixels.getPixels();
+		int length = width * 3;
+		int totalReceivedBytes = 0;
+		int size = size = width * height * 3;
+		//bugbug maybe this needs to be non blocking?
+		while (totalReceivedBytes < size) {
+			int receivedBytes = tcpClient.receiveRawBytes((char*)receivePos, length); //returns received bytes 
+			totalReceivedBytes += receivedBytes;
+			receivePos += receivedBytes;
+		}
+	}
+
 	char TCPClient::update() {
 		char type = 0;
 		if (tcpClient.isConnected()) {
@@ -313,7 +383,7 @@ namespace Software2552 {
 						shared_ptr<ReadTCPPacket> returnedData = std::make_shared<ReadTCPPacket>();
 						if (returnedData) {
 							if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
-								type = p->type; // data should change a litte
+								type = p->typeOfPacket; // data should change a litte
 								returnedData->type = type;
 								lock();
 								q.push_back(returnedData);
@@ -358,11 +428,20 @@ namespace Software2552 {
 		}
 	}
 
-	void Server::sendTCP(const char * bytes, const size_t numBytes, OurPorts port, int clientID) {
+	void Server::sendTCP(const char * bytes, const size_t numBytes, OurPorts port, TypeOfSend typeOfSend, int clientID) {
 		if (numBytes > 0) {
 			ServerMap::const_iterator s = servers.find(port);
 			if (s != servers.end()) {
-				s->second->update(bytes, numBytes, mapPortToType(port), clientID);
+				s->second->update(bytes, numBytes, mapPortToType(port),  typeOfSend, clientID);
+			}
+		}
+	}
+	void Server::sendTCP(ofPixels &pixels, OurPorts port, TypeOfSend typeOfSend, int clientID) {
+		if (pixels.size() > 0) {
+			ServerMap::const_iterator s = servers.find(port);
+			if (s != servers.end()) {
+				//bugbug go with shared pointered to avoid data copy
+				s->second->update(pixels, mapPortToType(port), typeOfSend, clientID);
 			}
 		}
 	}

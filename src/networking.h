@@ -27,6 +27,11 @@ namespace Software2552 {
 		JsonID = 'j',
 		UnknownID ='k'
 	};
+	enum TypeOfSend : char {
+		Stream = 's',
+		Message = 'm',
+		Unknown = '?'
+	};
 
 	enum OurPorts : int {
 		OSC = 2552, 
@@ -47,7 +52,7 @@ namespace Software2552 {
 
 	// what gets sent over the wire
 	struct TCPPacket {
-		char type; // byte only
+		char typeOfPacket; // bytes only
 		char b[1]; // validates data was properly read
 	};
 	struct ReadTCPPacket {
@@ -55,7 +60,9 @@ namespace Software2552 {
 		string data;
 	};
 	struct TCPMessage {
-		int clientID;			// -1 for all connected
+		int clientID;	// -1 for all connected
+		TypeOfSend typeOfSend;// 's' stream or 'm' message
+		ofPixels pixels; // optional pixels to send
 		size_t numberOfBytesToSend;
 		TCPPacket packet;		// data that is sent
 	};
@@ -100,12 +107,14 @@ namespace Software2552 {
 		void setup(int port= TCP, bool blocking = false);
 		int  port() { return server.getPort(); }
 		int  clientCount() { return server.getNumClients(); }
-		void update(const char * rawBytes, const size_t numBytes, PacketType type, int clientID = -1);
+		void update(const char * rawBytes, const size_t numBytes, PacketType type, TypeOfSend typeOfSend=Message, int clientID = -1);
+		void update(ofPixels &pixels, PacketType type, TypeOfSend typeOfSend=Stream, int clientID=-1);
 		int maxItems = 10; // max size of q
 	private:
 		ofxTCPServer server;
 		void threadedFunction();
-		void sendbinary(TCPMessage *m);
+		void sendMessage(TCPMessage *m);
+		void sendStream(TCPMessage *m);
 		deque<TCPMessage*> q;
 	};
 	class TCPClient : ofThread {
@@ -115,6 +124,7 @@ namespace Software2552 {
 		shared_ptr<ReadTCPPacket> get();
 	private:
 		char update();
+		void readPixelStream(ofPixels &pixels, float width, float height);
 		void threadedFunction();
 		deque<shared_ptr<ReadTCPPacket>> q;
 		ofxTCPClient tcpClient; 
@@ -140,7 +150,8 @@ namespace Software2552 {
 	class Server {
 	public:
 		void setup();
-		void sendTCP(const char * bytes, const size_t numBytes, OurPorts port, int clientID = -1);
+		void sendTCP(ofPixels &pixels, OurPorts port, TypeOfSend typeOfSend=Stream, int clientID=-1);
+		void sendTCP(const char * bytes, const size_t numBytes, OurPorts port, TypeOfSend typeOfSend = Message, int clientID = -1);
 		void addTCPServer(OurPorts port = TCP, bool blocking = false);
 		bool tcpEnabled();
 		bool enabled(OurPorts port);

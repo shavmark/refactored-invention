@@ -184,17 +184,25 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		unsigned char* buffer = nullptr;//bugbug where does this get deleted? when we free bodyindex?
 		HRESULT hResult = bodyindex->AccessUnderlyingBuffer(&bufferSize, &buffer);
 		if (SUCCEEDED(hResult)) {
-			// only send if real data is present
-			int found = 0;
-			for (int i = 0; i < bufferSize; ++i) {
-				if (buffer[i] != 0xff) {
-					++found;//bugbug lots of scans but I am not sure how to find if something is not in a buffer w/o a scan
-					//break;
+			ofImage image;
+			image.allocate(getDepthFrameWidth(), getDepthFrameHeight(), OF_IMAGE_COLOR);
+			for (float y = 0; y < getDepthFrameHeight(); y++) {
+				for (float x = 0; x < getDepthFrameWidth(); x++) {
+					unsigned int index = y * getDepthFrameWidth() + x;
+					if (buffer[index] != 0xff) {
+						float hue = x / getDepthFrameHeight() * 255;
+						float sat = ofMap(y, 0, getDepthFrameHeight() / 2, 0, 255, true);
+						float bri = ofMap(y, getDepthFrameHeight() / 2, getDepthFrameHeight(), 255, 0, true);
+						// make a dynamic image, also there can be up to 6 images so we need them to be a little different 
+						image.setColor(x, y, ofColor::fromHsb(hue, sat, bri));
+					}
+					else {
+						image.setColor(x, y, ofColor::white);
+					}
 				}
 			}
-			if (found) {
-				getKinect()->sendKinectData((const char*)buffer, bufferSize, TCPKinectBodyIndex);
-			}
+
+			getKinect()->sendKinectData(image, TCPKinectBodyIndex);
 		}
 		SafeRelease(bodyindex);
 	}
@@ -207,6 +215,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		UINT16 * buffer = nullptr;
 		HRESULT hResult = ir->AccessUnderlyingBuffer(&bufferSize, &buffer);
 		if (SUCCEEDED(hResult)) {
+
 			getKinect()->sendKinectData((const char*)buffer, bufferSize, TCPKinectIR);
 		}
 
@@ -430,13 +439,10 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		return true;
 	}
 	// send fast as Kinect is waiting
-	void  KinectDevice::sendKinectData(const char * bytes, const int numBytes, OurPorts port, int clientID) {
+	void  KinectDevice::sendKinectData(const char * bytes, const int numBytes, OurPorts port, TypeOfSend typeOfSend, int clientID) {
 		// new folks need to know about us
 		if (getSender() && numBytes > 0) {
-			if (numBytes < 1000) {
-				ofLogError() << "data size kindof small, maybe use udp " << " " << ofToString(numBytes); // just a hint
-			}
-			getSender()->sendTCP(bytes, numBytes, port, clientID);
+			getSender()->sendTCP(bytes, numBytes, port, typeOfSend, clientID);
 		}
 
 		// show local too if requested
@@ -444,16 +450,6 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		shared_ptr<ReadTCPPacket> packet;
 
 		switch (port) {
-		case TCPKinectIR:
-			if (ir && backStagePass) { // ir wanted and there is a stage to send it to 
-				shared_ptr<IRImage>p = std::make_shared<IRImage>();
-				if (p) {
-					p->IRFromTCP((const UINT16 *)bytes, numBytes);
-					p->setup();
-					backStagePass->addToAnimatable(p);
-				}
-			}
-			break;
 		case TCPKinectBody:
 			if (body && backStagePass) {
 				shared_ptr<Kinect>p = std::make_shared<Kinect>();
@@ -464,11 +460,37 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				}
 			}
 			break;
+		default:
+			break;
+		}
+	}
+
+	void  KinectDevice::sendKinectData(ofPixels &pixels, OurPorts port, TypeOfSend typeOfSend, int clientID) {
+		// new folks need to know about us
+		if (getSender() && pixels.size() > 0) {
+			getSender()->sendTCP(pixels, port, typeOfSend, clientID);
+		}
+		return; // not showing local right now
+		// show local too if requested
+
+		shared_ptr<ReadTCPPacket> packet;
+
+		switch (port) {
+		case TCPKinectIR:
+			if (ir && backStagePass) { // ir wanted and there is a stage to send it to 
+				shared_ptr<IRImage>p = std::make_shared<IRImage>();
+				if (p) {
+					//p->IRFromTCP((const UINT16 *)bytes, numBytes);
+					p->setup();
+					backStagePass->addToAnimatable(p);
+				}
+			}
+			break;
 		case TCPKinectBodyIndex:
 			if (bi && backStagePass) {
 				shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
 				if (p) {
-					p->bodyIndexFromTCP(bytes, numBytes);
+					//p->bodyIndexFromTCP(bytes, numBytes);
 					p->setup();
 					backStagePass->addToAnimatable(p);
 				}
@@ -478,8 +500,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			break;
 		}
 	}
-
-void KinectFace::cleanup()
+	void KinectFace::cleanup()
 {
 	// do not call in destructor as pointers are used, call when needed
 	SafeRelease(pFaceReader);
