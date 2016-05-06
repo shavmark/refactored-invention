@@ -59,9 +59,8 @@ namespace Software2552 {
 			// even compress the small ones so more messages can use UDP
 			string output;
 			string input = data.getRawString(false);
-			if (compress(input.c_str(), input.size(), output)) {
-				p->addStringArg(output); // all data is in json
-			}
+			compress(input.c_str(), input.size(), output);
+			p->addStringArg(output); // all data is in json
 		}
 		return p;
 	}

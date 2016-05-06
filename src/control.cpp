@@ -61,7 +61,7 @@ namespace Software2552 {
 			shared_ptr<BodyIndexImage>bi = std::make_shared<BodyIndexImage>();
 			if (bi) {
 				bi->bodyIndexFromTCP(packet->data.c_str(), packet->data.size());
-				pt.x = getDepthFrameWidth()*ratioDepthToScreenX();
+				pt.x = getDepthFrameWidth();// *ratioDepthToScreenX();
 				pt.y = 0;
 				bi->setActorPosition(pt);
 				bi->setup();
@@ -91,7 +91,7 @@ namespace Software2552 {
 				k->bodyFromTCP(packet->data.c_str(), packet->data.size());
 				k->setup();
 				pt.x = 0;		
-				pt.y = getDepthFrameHeight()*ratioDepthToScreenY(); 
+				pt.y = getDepthFrameHeight();// *ratioDepthToScreenY();
 				k->setActorPosition(pt);
 				lock();
 				kQ.push_back(k);

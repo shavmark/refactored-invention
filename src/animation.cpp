@@ -342,7 +342,9 @@ namespace Software2552 {
 				}
 				else {
 					ofPoint pt;
-					ofTranslate(-ofGetWidth()/2, - ofGetHeight()/2);// assume fixed uses screen as it sees fit
+					ofTranslate(getCurrentPosition());
+					//ofTranslate(-ofGetWidth()/2, - ofGetHeight()/2);// assume fixed uses screen as it sees fit
+
 				}
 				myDraw();
 				ofPopMatrix();

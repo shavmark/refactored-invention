@@ -446,8 +446,13 @@ namespace Software2552 {
 		worker.allocate(getIRFrameWidth(), getIRFrameHeight(), OF_IMAGE_COLOR);
 		for (float y = 0; y < getIRFrameHeight(); y++) {
 			for (float x = 0; x < getIRFrameWidth(); x++) {
-				unsigned int index = y * getIRFrameWidth() + x;
-				worker.setColor(x, y, ofColor().fromHsb(255, 255, bytes[index]));
+				unsigned int index = y * getIRFrameHeight() + x;
+				if (index < len) {
+					worker.setColor(x, y, ofColor().fromHsb(255, 255, bytes[index]));
+				}
+				else {
+					int i;
+				}
 			}
 		}
 		worker.update();
