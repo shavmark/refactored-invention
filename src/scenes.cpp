@@ -145,16 +145,16 @@ namespace Software2552 {
 			for (int i = 0; i < tcpKinectClient->irQ.size(); ++i) {
 				tcpKinectClient->irQ[i]->setLoaded();
 				addToAnimatable(tcpKinectClient->irQ[i]);
-				tcpKinectClient->irQ.erase(tcpKinectClient->irQ.begin() + i); // hand off and delete
+				tcpKinectClient->deleteFromIrq(i); // hand off and delete
 			}
 			for (int i = 0; i < tcpKinectClient->biQ.size(); ++i) {
 				tcpKinectClient->biQ[i]->setLoaded();
 				addToAnimatable(tcpKinectClient->biQ[i]);
-				tcpKinectClient->biQ.erase(tcpKinectClient->biQ.begin() + i); // hand off and delete
+				tcpKinectClient->deleteFromBi(i); // hand off and delete
 			}
 			for (int i = 0; i < tcpKinectClient->kQ.size(); ++i) {
 				addToAnimatable(tcpKinectClient->kQ[i]);
-				tcpKinectClient->kQ.erase(tcpKinectClient->kQ.begin() + i); // hand off and delete
+				tcpKinectClient->deleteFromBody(i); // hand off and delete
 			}
 		}
 

@@ -22,6 +22,10 @@ namespace Software2552 {
 		void setup();
 		void update();
 		
+		void deleteFromIrq(int index);
+		void deleteFromBi(int index);
+		void deleteFromBody(int index);
+
 		deque<shared_ptr<IRImage>>irQ;
 		deque<shared_ptr<BodyIndexImage>>biQ;
 		deque<shared_ptr<Kinect>>kQ;

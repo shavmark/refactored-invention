@@ -50,6 +50,22 @@ namespace Software2552 {
 	void TCPKinectClient::setup() {
 		TCPReader::setup();
 	}
+	void TCPKinectClient::deleteFromIrq(int index) {
+		lock();
+		irQ.erase(irQ.begin() + index); // no range chekcing here
+		unlock();
+	}
+	void TCPKinectClient::deleteFromBi(int index){
+		lock();
+		biQ.erase(biQ.begin() + index); // no range chekcing here
+		unlock();
+	}
+	void TCPKinectClient::deleteFromBody(int index) {
+		lock();
+		kQ.erase(kQ.begin() + index); // no range chekcing here
+		unlock();
+	}
+
 	// read from Kinect and save data (or from any input port)
 	void TCPKinectClient::update() {
 		shared_ptr<ReadTCPPacket> packet;
