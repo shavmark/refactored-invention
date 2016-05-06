@@ -185,11 +185,11 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		HRESULT hResult = bodyindex->AccessUnderlyingBuffer(&bufferSize, &buffer);
 		if (SUCCEEDED(hResult)) {
 			// only send if real data is present
-			bool found = false;
+			int found = 0;
 			for (int i = 0; i < bufferSize; ++i) {
 				if (buffer[i] != 0xff) {
-					found = true;//bugbug lots of scans but I am not sure how to find if something is not in a buffer w/o a scan
-					break;
+					++found;//bugbug lots of scans but I am not sure how to find if something is not in a buffer w/o a scan
+					//break;
 				}
 			}
 			if (found) {
