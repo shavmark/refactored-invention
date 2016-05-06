@@ -69,7 +69,7 @@ namespace Software2552 {
 				biQ.push_back(bi);
 				unlock();
 			}
-		}
+		}	
 
 		if (get(TCPKinectIR, packet)) {
 			shared_ptr<IRImage>ir = std::make_shared<IRImage>();
@@ -80,7 +80,7 @@ namespace Software2552 {
 				pt.y = 0;
 				ir->setActorPosition(pt); // upper left
 				lock();
-				irQ.push_back(ir);
+				//irQ.push_back(ir);
 				unlock();
 			}
 		}

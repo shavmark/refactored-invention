@@ -308,6 +308,7 @@ namespace Software2552 {
 	class Visual : public ActorRole {
 	public:
 		void myUpdate();
+		void setLoaded(bool b = true) { isLoaded = b; }
 	protected:
 		bool isLoaded = false;
 		int width = 0;
@@ -398,7 +399,7 @@ namespace Software2552 {
 	public:
 		void myUpdate();
 		void mySetup();
-		void myDraw();
+		virtual void myDraw();
 		float getWidth() { return worker.getWidth(); }
 		float getHeight() { return worker.getHeight(); }
 	protected:
@@ -409,6 +410,7 @@ namespace Software2552 {
 
 	class FixedLocationImage : public Image {
 	public:
+		void myDraw();
 		void setup();
 	};
 	class IRImage : public FixedLocationImage {

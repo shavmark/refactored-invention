@@ -341,9 +341,8 @@ namespace Software2552 {
 					rotate(); // fixed does not do rotation here either
 				}
 				else {
-					ofPoint pt;
-					ofTranslate(getCurrentPosition());
-					//ofTranslate(-ofGetWidth()/2, - ofGetHeight()/2);// assume fixed uses screen as it sees fit
+					// should go to home, bugbug can I just go to 0,0 no matter where I am?
+					ofTranslate(-ofGetWidth()/2, - ofGetHeight()/2);// assume fixed uses screen as it sees fit
 
 				}
 				myDraw();

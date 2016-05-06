@@ -5,6 +5,9 @@ namespace Software2552 {
 
 	// input buffer returned as reference
 	bool compress(const char*buffer, size_t len, string&output) {
+		output.assign(buffer, len);
+		return true;
+		//bug remove one more data point
 		size_t size = snappy::Compress((const char*)buffer, len, &output);
 		if (size <= 0) {
 			ofLogError("compress") << "fails " << size;
@@ -14,6 +17,8 @@ namespace Software2552 {
 
 	// input buffer returned as reference
 	bool uncompress(const char*buffer, size_t len, string&output) {
+		output.assign(buffer, len);
+		return true;
 		if (!snappy::Uncompress(buffer, len, &output)) {
 			ofLogError("uncompress") << "fails";
 			return false;
@@ -70,16 +75,16 @@ namespace Software2552 {
 	}
 	void WriteOsc::threadedFunction() {
 		while (1) {
+			lock();
 			if (q.size() > 0) {
-				lock();
 				shared_ptr<ofxOscMessage> m = q.front();
 				q.pop_front();
-				unlock();
 				if (m) {
 					sender.sendMessage(*m, false);
-					yield();
 				}
 			}
+			unlock();
+			yield();
 		}
 	}
 	// return true to ignore messages that have been added recently
@@ -158,23 +163,23 @@ namespace Software2552 {
 	}
 	shared_ptr<ofxOscMessage> ReadOsc::getMessage(const string&address) {
 		shared_ptr<ofxOscMessage> m = nullptr;
-
+		lock();
 		if (q.size() > 0) {
-			lock();
 			MessageMap::iterator found = q.find(address);
 			if (found != q.end() && found->second.size() > 0) {
 				m = (found->second).back();
 				found->second.pop_back();// first in first out
 			}
-			unlock();
 		}
+		unlock();
 
 		return m;
 	}
 	string ReadOsc::getString(string &buffer, const string&address) {
 		string sourceIP;
+		lock();
 		if (q.size() > 0) {
-			lock();
+
 			MessageMap::iterator found = q.find(address);
 			if (found != q.end() && found->second.size() > 0) {
 				shared_ptr<ofxOscMessage> p = (found->second).back();
@@ -182,14 +187,14 @@ namespace Software2552 {
 				found->second.pop_back();// first in first out
 				sourceIP = getRemoteIP(p);
 			}
-			unlock();
 		}
+		unlock();
 		return sourceIP;
 	}
 	shared_ptr<ofxJSON> ReadOsc::getJson(const string&address) {
 		shared_ptr<ofxJSON> j = nullptr;
+		lock();
 		if (q.size() > 0) {
-			lock();
 			MessageMap::iterator found = q.find(address);
 			if (found != q.end() && found->second.size() > 0) {
 				shared_ptr<ofxOscMessage> p = (found->second).back();
@@ -198,8 +203,8 @@ namespace Software2552 {
 				}
 				found->second.pop_back();// first in first out
 			}
-			unlock();
 		}
+		unlock();
 		return j;
 	}
 
@@ -234,16 +239,16 @@ namespace Software2552 {
 	// control data deletion (why we have our own thread) to avoid data copy since this code is in a Kinect crital path 
 	void TCPServer::threadedFunction() {
 		while (1) {
+			lock();
 			if (q.size() > 0) {
-				lock();
 				TCPMessage* m = q.back();// last in first out
 				q.pop_back();
-				unlock();
 				if (m) { 
 					sendbinary(m);
 					delete m;
 				}
 			}
+			unlock();
 			yield();
 		}
 	}
@@ -271,12 +276,12 @@ namespace Software2552 {
 	}
 	shared_ptr<ReadTCPPacket> TCPClient::get() {
 		shared_ptr<ReadTCPPacket>p = nullptr;
+		lock(); // q can pop in an other thread then q.back will fail
 		if (q.size() > 0) {
-			lock();
 			p = q.back();// last in first out
 			q.pop_back();
-			unlock();
 		}
+		unlock();
 		return p;
 	}
 	char TCPClient::update() {
@@ -397,12 +402,13 @@ namespace Software2552 {
 
 	// get data, if any
 	bool TCPReader::get(OurPorts port, shared_ptr<ReadTCPPacket>& packet) {
-
+		lock();
 		ClientMap::const_iterator c = clients.find(port);
 		if (c != clients.end()) {
 			packet = c->second->get();
 			if (packet) {
 				if (packet->type == mapPortToType(port)) {
+					unlock();
 					return true;
 				}
 				else {
@@ -410,6 +416,7 @@ namespace Software2552 {
 				}
 			}
 		}
+		unlock();
 		return false;
 	}
 

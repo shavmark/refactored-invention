@@ -142,14 +142,19 @@ namespace Software2552 {
 	}
 	void Stage::readNextwork() {
 		if (tcpKinectClient) {
-			for (int i = 0; i < tcpKinectClient->IRQ().size(); ++i) {
-				addToAnimatable(tcpKinectClient->IRQ()[i]);
+			for (int i = 0; i < tcpKinectClient->irQ.size(); ++i) {
+				tcpKinectClient->irQ[i]->setLoaded();
+				addToAnimatable(tcpKinectClient->irQ[i]);
+				tcpKinectClient->irQ.erase(tcpKinectClient->irQ.begin() + i); // hand off and delete
 			}
-			for (int i = 0; i < tcpKinectClient->bodyIndexQ().size(); ++i) {
-				addToAnimatable(tcpKinectClient->bodyIndexQ()[i]);
+			for (int i = 0; i < tcpKinectClient->biQ.size(); ++i) {
+				tcpKinectClient->biQ[i]->setLoaded();
+				addToAnimatable(tcpKinectClient->biQ[i]);
+				tcpKinectClient->biQ.erase(tcpKinectClient->biQ.begin() + i); // hand off and delete
 			}
-			for (int i = 0; i < tcpKinectClient->kinectQ().size(); ++i) {
-				addToAnimatable(tcpKinectClient->kinectQ()[i]);
+			for (int i = 0; i < tcpKinectClient->kQ.size(); ++i) {
+				addToAnimatable(tcpKinectClient->kQ[i]);
+				tcpKinectClient->kQ.erase(tcpKinectClient->kQ.begin() + i); // hand off and delete
 			}
 		}
 
