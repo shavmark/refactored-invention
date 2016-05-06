@@ -202,7 +202,8 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				}
 			}
 
-			getKinect()->sendKinectData(image, TCPKinectBodyIndex);
+			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>(image);
+			getKinect()->sendKinectData(pixels, TCPKinectBodyIndex);
 		}
 		SafeRelease(bodyindex);
 	}
@@ -465,9 +466,9 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		}
 	}
 
-	void  KinectDevice::sendKinectData(ofPixels &pixels, OurPorts port, TypeOfSend typeOfSend, int clientID) {
+	void  KinectDevice::sendKinectData(shared_ptr<ofPixels>pixels, OurPorts port, TypeOfSend typeOfSend, int clientID) {
 		// new folks need to know about us
-		if (getSender() && pixels.size() > 0) {
+		if (getSender() && pixels && pixels->size() > 0) {
 			getSender()->sendTCP(pixels, port, typeOfSend, clientID);
 		}
 		return; // not showing local right now

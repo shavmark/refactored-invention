@@ -238,9 +238,9 @@ namespace Software2552 {
 		return;
 	}
 	// no compression yet bugbug
-	void TCPServer::update(ofPixels &pixels, PacketType type, TypeOfSend typeOfSend, int clientID) {
-		unsigned char *data = pixels.getPixels();
-		char *bytes = new char[sizeof(TCPMessage) + pixels.size()];
+	void TCPServer::update(shared_ptr<ofPixels>pixels, PacketType type, TypeOfSend typeOfSend, int clientID) {
+		unsigned char *data = pixels->getPixels();
+		char *bytes = new char[sizeof(TCPMessage)];
 		if (bytes) {
 			TCPMessage *message = (TCPMessage *)bytes;
 			message->clientID = -1;
@@ -302,10 +302,10 @@ namespace Software2552 {
 				ofLogError("TCPServer::sendbinary") << "block too large " << ofToString(m->numberOfBytesToSend) + " max " << ofToString(MAXSEND);
 				return;
 			}
-			if (server.getNumClients() > 0) {
-				const char* index = (const char*)m->pixels.getPixels(); //start at beginning of pixel array 
-				int length = m->pixels.getWidth() * 3;//length of one row of pixels in the image 
-				int size = m->pixels.getHeight() * m->pixels.getWidth() * 3;
+			if (server.getNumClients() > 0 && m->pixels) {
+				const char* index = (const char*)m->pixels->getPixels(); //start at beginning of pixel array 
+				int length = m->pixels->getWidth() * 3;//length of one row of pixels in the image 
+				int size = m->pixels->getHeight() * m->pixels->getWidth() * 3;
 				int pixelCount = 0;
 				while (pixelCount < size) {
 					if (m->clientID > 0) {
@@ -436,8 +436,8 @@ namespace Software2552 {
 			}
 		}
 	}
-	void Server::sendTCP(ofPixels &pixels, OurPorts port, TypeOfSend typeOfSend, int clientID) {
-		if (pixels.size() > 0) {
+	void Server::sendTCP(shared_ptr<ofPixels>pixels, OurPorts port, TypeOfSend typeOfSend, int clientID) {
+		if (pixels->size() > 0) {
 			ServerMap::const_iterator s = servers.find(port);
 			if (s != servers.end()) {
 				//bugbug go with shared pointered to avoid data copy

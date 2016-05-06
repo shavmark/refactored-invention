@@ -60,9 +60,9 @@ namespace Software2552 {
 		string data;
 	};
 	struct TCPMessage {
-		int clientID;	// -1 for all connected
-		TypeOfSend typeOfSend;// 's' stream or 'm' message
-		ofPixels pixels; // optional pixels to send
+		int clientID=-1;	// -1 for all connected
+		TypeOfSend typeOfSend=Message;// 's' stream or 'm' message
+		shared_ptr<ofPixels> pixels=nullptr; // optional pixels to send
 		size_t numberOfBytesToSend;
 		TCPPacket packet;		// data that is sent
 	};
@@ -108,7 +108,7 @@ namespace Software2552 {
 		int  port() { return server.getPort(); }
 		int  clientCount() { return server.getNumClients(); }
 		void update(const char * rawBytes, const size_t numBytes, PacketType type, TypeOfSend typeOfSend=Message, int clientID = -1);
-		void update(ofPixels &pixels, PacketType type, TypeOfSend typeOfSend=Stream, int clientID=-1);
+		void update(shared_ptr<ofPixels>pixels, PacketType type, TypeOfSend typeOfSend=Stream, int clientID=-1);
 		int maxItems = 10; // max size of q
 	private:
 		ofxTCPServer server;
@@ -150,7 +150,7 @@ namespace Software2552 {
 	class Server {
 	public:
 		void setup();
-		void sendTCP(ofPixels &pixels, OurPorts port, TypeOfSend typeOfSend=Stream, int clientID=-1);
+		void sendTCP(shared_ptr<ofPixels>pixels, OurPorts port, TypeOfSend typeOfSend=Stream, int clientID=-1);
 		void sendTCP(const char * bytes, const size_t numBytes, OurPorts port, TypeOfSend typeOfSend = Message, int clientID = -1);
 		void addTCPServer(OurPorts port = TCP, bool blocking = false);
 		bool tcpEnabled();

@@ -66,7 +66,7 @@ namespace Software2552 {
 		const string &getId() { return kinectID; }
 		// send large binary data over TCP (over 1000 byte)
 		void sendKinectData(const char * bytes, const int numBytes, OurPorts port, TypeOfSend typeOfSend = Message, int clientID = -1);
-		void sendKinectData(ofPixels &pixels, OurPorts port, TypeOfSend typeOfSend = Message, int clientID = -1);
+		void sendKinectData(shared_ptr<ofPixels>pixels, OurPorts port, TypeOfSend typeOfSend = Message, int clientID = -1);
 		shared_ptr<Sender> getSender() { return sender; }
 		bool getIR();
 		void setIR(bool b) { ir = b; }
