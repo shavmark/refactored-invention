@@ -1,26 +1,11 @@
 #include "ofApp.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace Software2552 {
 #define MAXSEND (1024*1024)
 
 	// input buffer returned as reference
 	bool compress(const char*buffer, size_t len, string&output) {
-		output.assign(buffer, len);
+		output.clear();
+		output.append(buffer, len);
 		return true;
 		//bug remove one more data point
 		size_t size = snappy::Compress((const char*)buffer, len, &output);
@@ -32,7 +17,8 @@ namespace Software2552 {
 
 	// input buffer returned as reference
 	bool uncompress(const char*buffer, size_t len, string&output) {
-		output.assign(buffer, len);
+		output.clear();
+		output.append(buffer, len);
 		return true;
 		if (!snappy::Uncompress(buffer, len, &output)) {
 			ofLogError("uncompress") << "fails";
