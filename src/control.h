@@ -22,10 +22,6 @@ namespace Software2552 {
 		void setup();
 		void update();
 		
-		deque<shared_ptr<IRImage>>&IRQ() { return irQ; }
-		deque<shared_ptr<BodyIndexImage>>&bodyIndexQ() { return biQ; }
-		deque<shared_ptr<Kinect>>&kinectQ() { return kQ; }
-	private:
 		deque<shared_ptr<IRImage>>irQ;
 		deque<shared_ptr<BodyIndexImage>>biQ;
 		deque<shared_ptr<Kinect>>kQ;

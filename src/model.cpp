@@ -319,7 +319,28 @@ namespace Software2552 {
 	//bugbug give these common objects a base class
 	void FixedLocationImage::setup() {
 		setFixed(true); // image is always there until a new one comes along
+		setFrameCount(1);
 	}
+	void FixedLocationImage::myDraw() {
+		ofTranslate(getCurrentPosition()); // image handles exact drawing
+		ofPixels pixels = worker.getPixelsRef();
+		int count = 0;
+		for (int y = 0; y < pixels.getHeight(); y++) {
+			for (int x = 0; x < pixels.getWidth(); x++) {
+				int index = y * pixels.getWidth() + x;
+				unsigned char cur = pixels[index];
+				if (cur != 0xff) {
+					++count;
+				}
+			}
+		}
+
+		// only draw if data has something interesting bugbug not sure where all 0xff is coming from as we block this at the send
+		if (count) {
+			Image::myDraw();
+		}
+	}
+
 	void KinectItem::setup() {
 		setFixed(true);
 		setFrameCount(1);
@@ -446,7 +467,7 @@ namespace Software2552 {
 		worker.allocate(getIRFrameWidth(), getIRFrameHeight(), OF_IMAGE_COLOR);
 		for (float y = 0; y < getIRFrameHeight(); y++) {
 			for (float x = 0; x < getIRFrameWidth(); x++) {
-				unsigned int index = y * getIRFrameHeight() + x;
+				unsigned int index = y * getIRFrameWidth() + x;
 				if (index < len) {
 					worker.setColor(x, y, ofColor().fromHsb(255, 255, bytes[index]));
 				}
