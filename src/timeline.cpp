@@ -94,7 +94,7 @@ namespace Software2552 {
 				ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon;
 				//tcpKinectClient->add(kinectServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
 				tcpKinectClient->add(kinectServerIP, TCPKinectBody, true);
-				//tcpKinectClient->add(kinectServerIP, TCPKinectBodyIndex, true);
+				tcpKinectClient->add(kinectServerIP, TCPKinectBodyIndex, true);
 				if (tcpKinectClient) {
 					tcpKinectClient->setup(); // uses a thread to read
 				}
