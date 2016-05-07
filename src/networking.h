@@ -59,9 +59,10 @@ namespace Software2552 {
 		char type; // byte only
 		string data;
 	};
-	struct TCPMessage {
+	class TCPMessage {
+	public:
 		int clientID=-1;	// -1 for all connected
-		TypeOfSend typeOfSend=Message;// 's' stream or 'm' message
+		TypeOfSend typeOfSend;// 's' stream or 'm' message
 		shared_ptr<ofPixels> pixels=nullptr; // optional pixels to send
 		size_t numberOfBytesToSend;
 		TCPPacket packet;		// data that is sent
