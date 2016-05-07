@@ -292,7 +292,11 @@ namespace Software2552 {
 					server.sendRawMsg(m->clientID, (const char*)&m->packet, m->numberOfBytesToSend);
 				}
 				else {
-					server.sendRawMsgToAll((const char*)&m->packet, m->numberOfBytesToSend);
+					for (int clientID = 0; clientID < server.getLastID(); clientID++) {
+						// avoid sending to self
+						server.sendRawMsg(clientID, (const char*)&m->packet, m->numberOfBytesToSend);
+						//server.sendRawMsgToAll((const char*)&m->packet, m->numberOfBytesToSend);
+					}
 				}
 			}
 		}
@@ -300,19 +304,24 @@ namespace Software2552 {
 	void TCPServer::sendStream(TCPMessage *m) {
 		if (m) {
 			if (server.getNumClients() > 0 && m->pixels) {
-				const char* index = (const char*)m->pixels->getPixels(); //start at beginning of pixel array 
-				int length = m->pixels->getWidth() * 3;//length of one row of pixels in the image 
-				int size = m->pixels->getHeight() * m->pixels->getWidth() * 3;
-				int pixelCount = 0;
-				while (pixelCount < size) {
-					if (m->clientID > 0) {
-						server.sendRawBytes(m->clientID, index, length);
+				for (int clientID = 0; clientID < server.getLastID(); clientID++) {
+					const char* index = (const char*)m->pixels->getPixels(); //start at beginning of pixel array 
+					int length = m->pixels->getWidth() * 3;//length of one row of pixels in the image 
+					int size = m->pixels->getHeight() * m->pixels->getWidth() * 3;
+					int pixelCount = 0;
+					while (pixelCount < size) {
+						//if (m->clientID > 0) {
+						// bugbug avoid sending to self
+
+						server.sendRawBytes(for (int clientID = 0; clientID < server.getLastID(); clientID++) {
+							, index, length);
+						//}
+						//else {
+						//server.sendRawBytesToAll(index, length); //send the first row of the image 
+						//}
+						index += length; //increase pointer so that it points to the next image row 
+						pixelCount += length; //increase pixel count by one row 
 					}
-					else {
-						server.sendRawBytesToAll(index, length); //send the first row of the image 
-					}
-					index += length; //increase pointer so that it points to the next image row 
-					pixelCount += length; //increase pixel count by one row 
 				}
 			}
 		}
@@ -375,9 +384,6 @@ namespace Software2552 {
 					if (messageSize > MAXSEND) {
 						ofExit(-2); // enables DOS, the real fix is for to not over flow in receiveRawMsg bugbug
 					}
-					if (messageSize > 0) {
-						ofLogNotice("msg") << "got packet of size " << ofToString(messageSize);
-					}
 					break;
 				} while (1);
 
@@ -389,12 +395,13 @@ namespace Software2552 {
 							if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
 								type = p->typeOfPacket; // data should change a litte
 								returnedData->type = type;
+								ofLogNotice("TCPClient::update") << "receiveRawMsg packet of size " << ofToString(messageSize) << " type " << type;
 								lock();
 								q.push_back(returnedData);
 								unlock();
 							}
 							else {
-								ofLogError("data ignored");
+								ofLogError("TCPClient::update") << "data ignored";
 							}
 						}
 					}
@@ -416,8 +423,11 @@ namespace Software2552 {
 				ofSleepMillis(500); // wait before a try again if failed
 				tcpClient.setup(ip, port, blocking); // caller must try again beyond this
 			}
-			if (!isThreadRunning() && tcpClient.isConnected()) {
-				startThread(); // start thread once connection is made
+			if (tcpClient.isConnected()) {
+				ofLogNotice("TCPClient::setup") << "connected " << ip << ":" << port << " blocking" << blocking;
+				if (!isThreadRunning()) {
+					startThread(); // start thread once connection is made
+				}
 			}
 		}
 	}
