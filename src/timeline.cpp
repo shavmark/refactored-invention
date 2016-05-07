@@ -94,7 +94,7 @@ namespace Software2552 {
 				ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon;
 				if (tcpKinectClient) {
 					tcpKinectClient->setup(kinectServerIP, TCPKinectBody, true);
-					tcpBodyIndex->set(stage);
+					tcpKinectClient->set(stage);
 				}
 				stage->setup(tcpKinectClient);
 				tcpBodyIndex = std::make_shared<Software2552::BodyIndexClient>(); // frees of any existing
