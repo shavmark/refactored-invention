@@ -352,18 +352,23 @@ namespace Software2552 {
 	// must know the size of item being sent
 	void TCPPixels::readPixelStream(ofPixels &pixels, float width, float height) {
 		if (tcpClient.isConnected()) {
-			unsigned char* receivePos = pixels.getPixels();
 			int length = width * 3;
 			int totalReceivedBytes = 0;
-			int size = size = width * height * 3;
-			//bugbug maybe this needs to be non blocking?
-			while (totalReceivedBytes < size) {
-				int receivedBytes = tcpClient.receiveRawBytes((char*)receivePos, length); //returns received bytes 
-				if (receivedBytes < 0) {
-					break; // try again later
+			int size = width * height * 3;
+			char* start;
+			char* receivePos = start = new char[size];
+			if (start) {
+				//bugbug maybe this needs to be non blocking?
+				while (totalReceivedBytes < size) {
+					int receivedBytes = tcpClient.receiveRawBytes(receivePos, length); //returns received bytes 
+					if (receivedBytes < 0) {
+						break; // try again later
+					}
+					totalReceivedBytes += receivedBytes;
+					receivePos += receivedBytes;
 				}
-				totalReceivedBytes += receivedBytes;
-				receivePos += receivedBytes;
+				pixels.setFromPixels(start, width, height, OF_IMAGE_COLOR)
+				delete start;
 			}
 		}
 		else {
