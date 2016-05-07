@@ -26,7 +26,6 @@ namespace Software2552 {
 	class BodyIndexClient : public TCPPixels, public StagedClient {
 	public:
 		void update();
-
 	};
 
 	class TCPKinectClient : public TCPClient, public StagedClient {

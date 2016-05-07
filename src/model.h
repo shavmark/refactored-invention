@@ -402,8 +402,8 @@ namespace Software2552 {
 		virtual void myDraw();
 		float getWidth() { return worker.getWidth(); }
 		float getHeight() { return worker.getHeight(); }
-	protected:
 		ofImage worker;
+	protected:
 	private:
 		bool mysetup(const Json::Value &data);
 	};
@@ -421,7 +421,6 @@ namespace Software2552 {
 	};
 	class BodyIndexImage : public FixedLocationImage {
 	public:
-		void bodyIndexFromTCP(const char * bytes, const size_t len);
 	private:
 	};
 

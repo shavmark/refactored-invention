@@ -50,25 +50,24 @@ namespace Software2552 {
 	void BodyIndexClient::update() {
 		// if no pass the buffer will grow and go... so be sure to set one
 		if (backStagePass) {
-			shared_ptr<ReadTCPPacket> packet;
+			shared_ptr<ofPixels> pixels;
 			do {
-				packet = get();
+				pixels = get();
 				ofPoint pt;// start at 0,0
-
-				if (packet) {
+				if (pixels) {
 					// map data to stage
-					shared_ptr<BodyIndexImage>bi = std::make_shared<BodyIndexImage>();
-					if (bi) {
-						bi->bodyIndexFromTCP(packet->data.c_str(), packet->data.size());
-						pt.x = getDepthFrameWidth();// *ratioDepthToScreenX();
-						pt.y = 0;
-						bi->setActorPosition(pt);
-						bi->setup();
-						bi->setLoaded(); //avoi
-						backStagePass->addToAnimatable(bi);
+					pt.x = getDepthFrameWidth();// *ratioDepthToScreenX();
+					pt.y = 0;
+					shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
+					if (p) {
+						p->worker.setFromPixels(*pixels);
+						p->setActorPosition(pt);
+						p->setup();
+						p->setLoaded(); //avoi
+						backStagePass->addToAnimatable(p);
 					}
 				}
-			} while (packet);
+			} while (pixels);
 		}
 	}
 	// read from Kinect and save data (or from any input port)

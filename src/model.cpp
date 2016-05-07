@@ -478,6 +478,7 @@ namespace Software2552 {
 		}
 		worker.update();
 	}
+#if 0
 	void BodyIndexImage::bodyIndexFromTCP(const char * bytes, const size_t len) {
 		if (len == 0) {
 			return;
@@ -504,6 +505,7 @@ namespace Software2552 {
 
 	}
 
+#endif // 0
 
 	bool Visual::mysetup(const Json::Value &data) {
 		READINT(width, data);

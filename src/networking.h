@@ -118,28 +118,77 @@ namespace Software2552 {
 		void sendStream(TCPMessage *m);
 		deque<TCPMessage*> q;
 	};
-	class TCPClient : public ofThread {
+	template <class T>
+	class TCPBase : public ofThread {
 	public:
-		void setup(const string& ip= defaultServerIP, int _port=TCP, bool blocking=false);
+		shared_ptr<T> get() {
+			shared_ptr<T>p = nullptr;
+			lock(); // q can pop in an other thread then q.back will fail
+			if (q.size() > 0) {
+				p = q.back();// last in first out
+				q.pop_back();
+			}
+			unlock();
+			return p;
+		}
+		void setup(const string& ipIn, int portIn, bool blockingIn) {//192.168.1.21 or 127.0.0.1
+			ip = ipIn; // save to retry setup via thread
+			port = portIn;
+			blocking = blockingIn;
+			if (!tcpClient.isConnected()) {
+				if (!tcpClient.setup(ip, port, blocking)) {
+					ofSleepMillis(500); // wait before a try again if failed
+					tcpClient.setup(ip, port, blocking); // caller must try again beyond this
+				}
+				if (tcpClient.isConnected()) {
+					ofLogNotice("TCPClient::setup") << "connected " << ip << ":" << port << " blocking" << blocking;
+					if (!isThreadRunning()) {
+						startThread(); // start thread once connection is made
+					}
+				}
+			}
+		}
 
-		shared_ptr<ReadTCPPacket> get();
 	protected:
-		char update();
-		virtual void threadedFunction();
-		deque<shared_ptr<ReadTCPPacket>> q;
-		ofxTCPClient tcpClient; 
-	};
-	class TCPPixels : public TCPClient {
-	public:
-		ofPixels pixels;
+		ofxTCPClient tcpClient;
+		deque<shared_ptr<T>> q;
 	private:
-		virtual void threadedFunction();
-		void readPixelStream(ofPixels &pixels, float width, float height);
+		void setup() { setup(ip, port, blocking); }// enables setup retry in the thread loop, not for external callers
+		void threadedFunction() {
+			while (1) {
+				if (tcpClient.isConnected()) {
+					update();
+				}
+				else {
+					setup();
+				}
+				yield();
+			}
+		}
+		virtual void update()=0;
+		string ip; // save to retry setup via thread
+		int port=0;
+		bool blocking=true;
+	};
+
+	class TCPClient : public TCPBase<ReadTCPPacket> {
+	public:
+
+	private:
+		void update();
+	};
+	class TCPPixels : public TCPBase<ofPixels> {
+	public:
+	// ex: ofTexture::readToPixels(pixels); // now all the pixels from tex are in pix
+		float width = getDepthFrameWidth();
+		float height= getDepthFrameHeight();
+	private:
+		void update();
 	};
 
 	typedef std::unordered_map<OurPorts, shared_ptr<TCPServer>> ServerMap;
 
-	// send in tpc or osc
+	// send in tpc or osc, server may be a bit too complicated since it trys to be one server source for all things, not sure yet
 	class Server {
 	public:
 		void setup();

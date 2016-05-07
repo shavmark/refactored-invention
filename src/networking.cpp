@@ -324,122 +324,82 @@ namespace Software2552 {
 			}
 		}
 	}
-	void TCPPixels::threadedFunction() {
-		while (1) {
-			//bugbug need to go with a list else the most recent one is all we get
-			// bugbug sizes need to be set also
-			readPixelStream(pixels, getDepthFrameWidth(), getDepthFrameHeight());
-			yield();
-		}
-	}
-	void TCPClient::threadedFunction() {
-		while (1) {
-			update();
-			yield();
-		}
-	}
-	shared_ptr<ReadTCPPacket> TCPClient::get() {
-		shared_ptr<ReadTCPPacket>p = nullptr;
-		lock(); // q can pop in an other thread then q.back will fail
-		if (q.size() > 0) {
-			p = q.back();// last in first out
-			q.pop_back();
-		}
-		unlock();
-		return p;
-	}
+
 	//Receiving loop that must ensure a frame is received as a whole
 	// must know the size of item being sent
-	void TCPPixels::readPixelStream(ofPixels &pixels, float width, float height) {
-		if (tcpClient.isConnected()) {
-			int length = width * 3;
-			int totalReceivedBytes = 0;
-			int size = width * height * 3;
-			char* start;
-			char* receivePos = start = new char[size];
-			if (start) {
-				//bugbug maybe this needs to be non blocking?
+	void TCPPixels::update() {
+		int length = width * 3;
+		int totalReceivedBytes = 0;
+		int size = width * height * 3;
+		char* start;
+		char* receivePos = start = new char[size];
+		if (start) {
+			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>();
+			if (pixels) {
+				pixels->allocate(width, height, OF_IMAGE_COLOR);
 				while (totalReceivedBytes < size) {
 					int receivedBytes = tcpClient.receiveRawBytes(receivePos, length); //returns received bytes 
 					if (receivedBytes < 0) {
 						break; // try again later
 					}
+					for (int i = 0; i < receivedBytes; ++i) {
+						(*pixels)[i + totalReceivedBytes] = receivePos[i];
+					}
 					totalReceivedBytes += receivedBytes;
 					receivePos += receivedBytes;
 				}
-				pixels.setFromPixels(start, width, height, OF_IMAGE_COLOR)
-				delete start;
+				lock();
+				q.push_back(pixels);
+				unlock();
 			}
-		}
-		else {
-			setup();
+			delete start;
 		}
 
 	}
 
-	char TCPClient::update() {
+	void TCPClient::update() {
 		char type = 0;
-		if (tcpClient.isConnected()) {
-			char* b = (char*)std::malloc(MAXSEND);
-			if (b) {
-				int messageSize = 0;
+		char* b = (char*)std::malloc(MAXSEND);
+		if (b) {
+			int messageSize = 0;
 
-				do {
-					// this api will write the size of the data not the size of the buffer we pass in (ouch)
-					// it buffers data beteen its markets and returns 0 until all data between 
-					// markers is in its buffer which it then returns.
-					messageSize = tcpClient.receiveRawMsg(b, MAXSEND);
-					// only occurs due to bug or hack as we never send more than MAXSEND ourself, at this point we need to crash
-					if (messageSize > MAXSEND) {
-						ofExit(-2); // enables DOS, the real fix is for to not over flow in receiveRawMsg bugbug
-					}
-					break;
-				} while (1);
+			do {
+				// this api will write the size of the data not the size of the buffer we pass in (ouch)
+				// it buffers data beteen its markets and returns 0 until all data between 
+				// markers is in its buffer which it then returns.
+				messageSize = tcpClient.receiveRawMsg(b, MAXSEND);
+				// only occurs due to bug or hack as we never send more than MAXSEND ourself, at this point we need to crash
+				if (messageSize > MAXSEND) {
+					ofExit(-2); // enables DOS, the real fix is for to not over flow in receiveRawMsg bugbug
+				}
+				break;
+			} while (1);
 
-				if (messageSize > 0) {
-					TCPPacket*p = (TCPPacket*)b;
-					if (p->b[0] == PacketFence) { // basic validation
-						shared_ptr<ReadTCPPacket> returnedData = std::make_shared<ReadTCPPacket>();
-						if (returnedData) {
-							if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
-								type = p->typeOfPacket; // data should change a litte
-								returnedData->type = type;
-								ofLogNotice("TCPClient::update") << "receiveRawMsg packet of size " << ofToString(messageSize) << " type " << type;
-								lock();
-								q.push_back(returnedData);
-								unlock();
-							}
-							else {
-								ofLogError("TCPClient::update") << "data ignored";
-							}
+			if (messageSize > 0) {
+				TCPPacket*p = (TCPPacket*)b;
+				if (p->b[0] == PacketFence) { // basic validation
+					shared_ptr<ReadTCPPacket> returnedData = std::make_shared<ReadTCPPacket>();
+					if (returnedData) {
+						if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
+							type = p->typeOfPacket; // data should change a litte
+							returnedData->type = type;
+							ofLogNotice("TCPClient::update") << "receiveRawMsg packet of size " << ofToString(messageSize) << " type " << type;
+							lock();
+							q.push_back(returnedData);
+							unlock();
+						}
+						else {
+							ofLogError("TCPClient::update") << "data ignored";
 						}
 					}
 				}
+			}
 
-				free(b); // only delete if data not returned
-			}
-			return 0;
+			free(b); // only delete if data not returned
+		}
+		return;
+	}
 
-		}
-		else {
-			setup();
-		}
-		return type;
-	}
-	void TCPClient::setup(const string& ip, int port, bool blocking) {//192.168.1.21 or 127.0.0.1
-		if (!tcpClient.isConnected()) {
-			if (!tcpClient.setup(ip, port, blocking)) {
-				ofSleepMillis(500); // wait before a try again if failed
-				tcpClient.setup(ip, port, blocking); // caller must try again beyond this
-			}
-			if (tcpClient.isConnected()) {
-				ofLogNotice("TCPClient::setup") << "connected " << ip << ":" << port << " blocking" << blocking;
-				if (!isThreadRunning()) {
-					startThread(); // start thread once connection is made
-				}
-			}
-		}
-	}
 	void Server::setup() {
 		comms.setup();
 	}
