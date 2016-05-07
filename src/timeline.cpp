@@ -87,14 +87,14 @@ namespace Software2552 {
 		string signon;
 		string source = oscClient->getString(signon, SignOnKinectServerOscAddress);
 		// if there is a valid message, if I am not the kinect sending the sign on is requested then ...
-		if (source.size() > 0 && signon.size() > 0 && source != kinectServerIP) {
+		if (!kinectBody && source.size() > 0 && signon.size() > 0 && source != kinectServerIP) {
 			kinectServerIP = source;//bugbug only 1 kinect for now, needs to be a vector for > 1 kinect
 			if (!kinectDevice || signon != kinectDevice->getId()) {
 				tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
 				ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon;
 				if (tcpKinectClient) {
 					tcpKinectClient->setup(kinectServerIP, TCPKinectBody, true);
-					tcpBodyIndex->set(stage);
+					tcpKinectClient->set(stage);
 				}
 				stage->setup(tcpKinectClient);
 				tcpBodyIndex = std::make_shared<Software2552::BodyIndexClient>(); // frees of any existing
