@@ -117,19 +117,24 @@ namespace Software2552 {
 		void sendStream(TCPMessage *m);
 		deque<TCPMessage*> q;
 	};
-	class TCPClient : ofThread {
+	class TCPClient : public ofThread {
 	public:
 		void setup(const string& ip= defaultServerIP, int _port=TCP, bool blocking=false);
 
 		shared_ptr<ReadTCPPacket> get();
-	private:
+	protected:
 		char update();
-		void readPixelStream(ofPixels &pixels, float width, float height);
-		void threadedFunction();
+		virtual void threadedFunction();
 		deque<shared_ptr<ReadTCPPacket>> q;
 		ofxTCPClient tcpClient; 
 	};
-
+	class TCPPixels : public TCPClient {
+	public:
+		ofPixels pixels;
+	private:
+		virtual void threadedFunction();
+		void readPixelStream(ofPixels &pixels, float width, float height);
+	};
 	typedef std::unordered_map<OurPorts, shared_ptr<TCPClient>> ClientMap;
 
 	class TCPReader : public ofThread {

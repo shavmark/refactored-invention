@@ -1,4 +1,5 @@
 // store notes here
+//https://github.com/patriciogonzalezvivo/thebookofshaders
 // items to help make it more human https://dev.projectoxford.ai/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9652
 //https://processing.org/tutorials/transform2d/
 // https://github.com/CNMAT/OSC arduino osc, good stuff to get that thing going

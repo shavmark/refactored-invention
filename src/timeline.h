@@ -37,7 +37,8 @@ namespace Software2552 {
 		ColorList colorlist;
 		shared_ptr<Stage> stage = nullptr;
 		shared_ptr<ReadOsc>oscClient = nullptr; // everyone can talk to everyone
-		shared_ptr<TCPKinectClient>tcpKinectClient = nullptr;
+		shared_ptr<TCPPixels>tcpPixels = nullptr;
+		shared_ptr<TCPKinectClient>tcpKinectClient = nullptr; 
 		shared_ptr<Sender>router = nullptr; // everyone can talk to everyone
 #ifdef _WIN64
 		// every 64 bit windows with a 3.0 usb can talk to everyone else

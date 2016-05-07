@@ -93,12 +93,16 @@ namespace Software2552 {
 				tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
 				ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon;
 				//tcpKinectClient->add(kinectServerIP, TCPKinectIR, true); //bugbug get server ip via osc broad cast or such, osc sign on from kinect likely to contain ip
-				tcpKinectClient->add(kinectServerIP, TCPKinectBody, true);
-				tcpKinectClient->add(kinectServerIP, TCPKinectBodyIndex, true);
 				if (tcpKinectClient) {
+					tcpKinectClient->add(kinectServerIP, TCPKinectBody, true);
 					tcpKinectClient->setup(); // uses a thread to read
 				}
 				stage->setup(tcpKinectClient);
+				tcpPixels = std::make_shared<Software2552::TCPPixels>(); // frees of any existing
+				if (tcpPixels) {
+					tcpKinectClient->add(kinectServerIP, TCPKinectBodyIndex, false);
+					tcpPixels->setup(); // uses a thread to read
+				}
 			}
 		}
 		else if (tcpKinectClient) {

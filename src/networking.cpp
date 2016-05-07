@@ -320,12 +320,16 @@ namespace Software2552 {
 			}
 		}
 	}
-	void TCPClient::threadedFunction() {
-		ofPixels bi;//body index
-		ofPixels ir;// ir
+	void TCPPixels::threadedFunction() {
 		while (1) {
-			readPixelStream(bi, getDepthFrameWidth(), getDepthFrameHeight());
-			readPixelStream(ir, getIRFrameWidth(), getIRFrameHeight());
+			//bugbug need to go with a list else the most recent one is all we get
+			// bugbug sizes need to be set also
+			readPixelStream(pixels, getDepthFrameWidth(), getDepthFrameHeight());
+			yield();
+		}
+	}
+	void TCPClient::threadedFunction() {
+		while (1) {
 			update();
 			yield();
 		}
@@ -342,7 +346,7 @@ namespace Software2552 {
 	}
 	//Receiving loop that must ensure a frame is received as a whole
 	// must know the size of item being sent
-	void TCPClient::readPixelStream(ofPixels &pixels, float width, float height) {
+	void TCPPixels::readPixelStream(ofPixels &pixels, float width, float height) {
 		unsigned char* receivePos = pixels.getPixels();
 		int length = width * 3;
 		int totalReceivedBytes = 0;
@@ -350,6 +354,9 @@ namespace Software2552 {
 		//bugbug maybe this needs to be non blocking?
 		while (totalReceivedBytes < size) {
 			int receivedBytes = tcpClient.receiveRawBytes((char*)receivePos, length); //returns received bytes 
+			if (receivedBytes < 0) {
+				break; // try again later
+			}
 			totalReceivedBytes += receivedBytes;
 			receivePos += receivedBytes;
 		}
