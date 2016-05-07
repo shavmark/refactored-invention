@@ -42,7 +42,7 @@ namespace Software2552 {
 		router = std::make_shared<Software2552::Sender>();
 		if (router) {
 			router->setup();
-			router->addTCPServer(TCP, true); // general server
+			router->addTCPServer(TCP, false); // general server
 			router->sendOsc("client", SignOnClientOscAddress);
 		}
 #ifdef _WIN64
