@@ -351,19 +351,25 @@ namespace Software2552 {
 	//Receiving loop that must ensure a frame is received as a whole
 	// must know the size of item being sent
 	void TCPPixels::readPixelStream(ofPixels &pixels, float width, float height) {
-		unsigned char* receivePos = pixels.getPixels();
-		int length = width * 3;
-		int totalReceivedBytes = 0;
-		int size = size = width * height * 3;
-		//bugbug maybe this needs to be non blocking?
-		while (totalReceivedBytes < size) {
-			int receivedBytes = tcpClient.receiveRawBytes((char*)receivePos, length); //returns received bytes 
-			if (receivedBytes < 0) {
-				break; // try again later
+		if (tcpClient.isConnected()) {
+			unsigned char* receivePos = pixels.getPixels();
+			int length = width * 3;
+			int totalReceivedBytes = 0;
+			int size = size = width * height * 3;
+			//bugbug maybe this needs to be non blocking?
+			while (totalReceivedBytes < size) {
+				int receivedBytes = tcpClient.receiveRawBytes((char*)receivePos, length); //returns received bytes 
+				if (receivedBytes < 0) {
+					break; // try again later
+				}
+				totalReceivedBytes += receivedBytes;
+				receivePos += receivedBytes;
 			}
-			totalReceivedBytes += receivedBytes;
-			receivePos += receivedBytes;
 		}
+		else {
+			setup();
+		}
+
 	}
 
 	char TCPClient::update() {
