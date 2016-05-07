@@ -220,6 +220,7 @@ namespace Software2552 {
 		if (compress(bytes, numBytes, buffer)) { // copy and compress data so caller can free passed data 
 			char *bytes = new char[sizeof(TCPMessage) + buffer.size()];
 			if (bytes) {
+				memset(bytes, 0, sizeof(TCPMessage) + buffer.size());
 				TCPMessage *message = (TCPMessage *)bytes;
 				message->clientID = -1;
 				message->typeOfSend = typeOfSend;
@@ -240,9 +241,8 @@ namespace Software2552 {
 	// no compression yet bugbug
 	void TCPServer::update(shared_ptr<ofPixels>pixels, PacketType type, TypeOfSend typeOfSend, int clientID) {
 		unsigned char *data = pixels->getPixels();
-		char *bytes = new char[sizeof(TCPMessage)];
-		if (bytes) {
-			TCPMessage *message = (TCPMessage *)bytes;
+		TCPMessage *message = new TCPMessage;
+		if (message && data) {
 			message->clientID = -1;
 			message->typeOfSend = typeOfSend;
 			message->packet.typeOfPacket = type; // passed as a double check
@@ -266,13 +266,14 @@ namespace Software2552 {
 				TCPMessage* m = q.back();// last in first out
 				q.pop_back();
 				if (m) { 
-					if (m->typeOfSend == 's') {
+					if (m->typeOfSend == Stream) {
 						sendStream(m);
+						delete m;
 					}
-					else if (m->typeOfSend == 'm') {
+					else if (m->typeOfSend == Message) {
 						sendMessage(m);
+						delete (char *)m; // allocated as char buffer
 					}
-					delete m;
 				}
 			}
 			unlock();
@@ -298,10 +299,6 @@ namespace Software2552 {
 	}
 	void TCPServer::sendStream(TCPMessage *m) {
 		if (m) {
-			if (m->numberOfBytesToSend > MAXSEND) {
-				ofLogError("TCPServer::sendbinary") << "block too large " << ofToString(m->numberOfBytesToSend) + " max " << ofToString(MAXSEND);
-				return;
-			}
 			if (server.getNumClients() > 0 && m->pixels) {
 				const char* index = (const char*)m->pixels->getPixels(); //start at beginning of pixel array 
 				int length = m->pixels->getWidth() * 3;//length of one row of pixels in the image 
@@ -309,7 +306,7 @@ namespace Software2552 {
 				int pixelCount = 0;
 				while (pixelCount < size) {
 					if (m->clientID > 0) {
-						server.sendRawBytes(m->clientID, (const char*)&m->packet, m->numberOfBytesToSend);
+						server.sendRawBytes(m->clientID, index, length);
 					}
 					else {
 						server.sendRawBytesToAll(index, length); //send the first row of the image 

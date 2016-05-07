@@ -203,7 +203,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			}
 
 			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>(image);
-			getKinect()->sendKinectData(pixels, TCPKinectBodyIndex);
+			getKinect()->sendKinectData(pixels, TCPKinectBodyIndex, Stream);
 		}
 		SafeRelease(bodyindex);
 	}
