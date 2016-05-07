@@ -28,7 +28,6 @@ namespace Software2552 {
 		void draw();
 		bool updateData(shared_ptr<ofxJSON>);
 		void readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent);
-		void readNextwork();
 		void readLights(const Json::Value &data);
 		void readCameras(const Json::Value &data);
 		void clear(bool force=false);
@@ -100,9 +99,7 @@ namespace Software2552 {
 
 	private:
 		bool deleteExisting(const Json::Value &data);
-		void removeExpiredItems(list<shared_ptr<ActorRole>>&v) {
-			v.remove_if(ActorRole::OKToRemove);
-		}
+		void removeExpiredItems(list<shared_ptr<ActorRole>>&v);
 		template<typename T> void removeExpiredItems(vector<shared_ptr<T>>&v) {
 			v.erase(std::remove_if(v.begin(), v.end(), objectLifeTimeManager::OKToRemove), v.end());
 		}

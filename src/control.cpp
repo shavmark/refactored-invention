@@ -47,32 +47,57 @@ namespace Software2552 {
 		addTCPServer(TCPKinectBody, true);
 	}
 #endif
-	void TCPKinectClient::setup() {
-		TCPReader::setup();
-	}
-	void TCPKinectClient::deleteFromIrq(int index) {
-		lock();
-		irQ.erase(irQ.begin() + index); // no range chekcing here
-		unlock();
-	}
-	void TCPKinectClient::deleteFromBi(int index){
-		lock();
-		biQ.erase(biQ.begin() + index); // no range chekcing here
-		unlock();
-	}
-	void TCPKinectClient::deleteFromBody(int index) {
-		lock();
-		kQ.erase(kQ.begin() + index); // no range chekcing here
-		unlock();
-	}
+	void BodyIndexClient::update() {
+		// if no pass the buffer will grow and go... so be sure to set one
+		if (backStagePass) {
+			shared_ptr<ReadTCPPacket> packet;
+			do {
+				packet = get();
+				ofPoint pt;// start at 0,0
 
+				if (packet) {
+					// map data to stage
+					shared_ptr<BodyIndexImage>bi = std::make_shared<BodyIndexImage>();
+					if (bi) {
+						bi->bodyIndexFromTCP(packet->data.c_str(), packet->data.size());
+						pt.x = getDepthFrameWidth();// *ratioDepthToScreenX();
+						pt.y = 0;
+						bi->setActorPosition(pt);
+						bi->setup();
+						bi->setLoaded(); //avoi
+						backStagePass->addToAnimatable(bi);
+					}
+				}
+			} while (packet);
+		}
+	}
 	// read from Kinect and save data (or from any input port)
 	void TCPKinectClient::update() {
-		shared_ptr<ReadTCPPacket> packet;
-		shared_ptr<IRImage>ir = nullptr;
-		ofPoint pt;// start at 0,0
+		if (backStagePass) {
+			shared_ptr<IRImage>ir = nullptr;
+			ofPoint pt;// start at 0,0
+			shared_ptr<ReadTCPPacket> packet;
+			do {
 
-		// this code is designed to read all set connections, validate data and process it
+				packet = get();
+				if (packet) {
+					// map data to stage
+					shared_ptr<Kinect>k = std::make_shared<Kinect>();
+					if (k) {
+						k->bodyFromTCP(packet->data.c_str(), packet->data.size());
+						k->setup();
+						pt.x = 0;
+						pt.y = getDepthFrameHeight();// *ratioDepthToScreenY();
+						k->setActorPosition(pt);
+						backStagePass->addToAnimatable(k);
+					}
+				}
+			} while (packet);
+
+		}
+	}
+#if 0
+						// this code is designed to read all set connections, validate data and process it
 		if (get(TCPKinectBodyIndex, packet)) {
 			shared_ptr<BodyIndexImage>bi = std::make_shared<BodyIndexImage>();
 			if (bi) {
@@ -85,12 +110,12 @@ namespace Software2552 {
 				biQ.push_back(bi);
 				unlock();
 			}
-		}	
+		}
 
 		if (get(TCPKinectIR, packet)) {
 			shared_ptr<IRImage>ir = std::make_shared<IRImage>();
 			if (ir) {
-				ir->IRFromTCP((const UINT16 *)packet->data.c_str(), packet->data.size()/sizeof(UINT16));
+				ir->IRFromTCP((const UINT16 *)packet->data.c_str(), packet->data.size() / sizeof(UINT16));
 				ir->setup();
 				pt.x = 0;
 				pt.y = 0;
@@ -106,7 +131,7 @@ namespace Software2552 {
 			if (k) {
 				k->bodyFromTCP(packet->data.c_str(), packet->data.size());
 				k->setup();
-				pt.x = 0;		
+				pt.x = 0;
 				pt.y = getDepthFrameHeight();// *ratioDepthToScreenY();
 				k->setActorPosition(pt);
 				lock();
@@ -119,5 +144,6 @@ namespace Software2552 {
 			;// not defined yet
 		}
 
-	}
+#endif // 0
+	
 }

@@ -140,25 +140,6 @@ namespace Software2552 {
 		return deleteExisting;
 
 	}
-	void Stage::readNextwork() {
-		if (tcpKinectClient) {
-			for (int i = 0; i < tcpKinectClient->irQ.size(); ++i) {
-				tcpKinectClient->irQ[i]->setLoaded();
-				addToAnimatable(tcpKinectClient->irQ[i]);
-				tcpKinectClient->deleteFromIrq(i); // hand off and delete
-			}
-			for (int i = 0; i < tcpKinectClient->biQ.size(); ++i) {
-				tcpKinectClient->biQ[i]->setLoaded();
-				addToAnimatable(tcpKinectClient->biQ[i]);
-				tcpKinectClient->deleteFromBi(i); // hand off and delete
-			}
-			for (int i = 0; i < tcpKinectClient->kQ.size(); ++i) {
-				addToAnimatable(tcpKinectClient->kQ[i]);
-				tcpKinectClient->deleteFromBody(i); // hand off and delete
-			}
-		}
-
-	}
 
 	//recursive reader
 	void Stage::readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent) {
@@ -248,6 +229,11 @@ namespace Software2552 {
 		}
 		myClear(force);
 	}
+	void Stage::removeExpiredItems(list<shared_ptr<ActorRole>>&v) {
+		lock();
+		v.remove_if(ActorRole::OKToRemove);
+		unlock();
+	}
 
 	void Stage::setup(shared_ptr<TCPKinectClient>clientIn) {
 		tcpKinectClient = clientIn;
@@ -256,8 +242,6 @@ namespace Software2552 {
 	void Stage::update() {
 		
 		removeExpiredItems(animatables); // keep things clean 
-
-		readNextwork();
 
 		for (auto& a : animatables) {
 			a->updateForDrawing();

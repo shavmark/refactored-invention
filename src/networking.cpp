@@ -469,47 +469,5 @@ namespace Software2552 {
 		}
 		return false;
 	}
-	void TCPReader::setup(const string& ip) {
-		//add("192.168.1.25", TCP, true);
-		if (!isThreadRunning()) {
-			startThread();
-		}
-	}
-	void TCPReader::threadedFunction() {
-		while (1) {
-			update();
-			yield();
-		}
-	}
-
-	void TCPReader::add(const string& ip, OurPorts port, bool blocking) {
-		shared_ptr<TCPClient> c = std::make_shared<TCPClient>();
-		if (c) {
-			c->setup(ip, port, blocking);
-			lock();
-			clients[port] = c;
-			unlock();
-		}
-	}
-
-	// get data, if any
-	bool TCPReader::get(OurPorts port, shared_ptr<ReadTCPPacket>& packet) {
-		lock();
-		ClientMap::const_iterator c = clients.find(port);
-		if (c != clients.end()) {
-			packet = c->second->get();
-			if (packet) {
-				if (packet->type == mapPortToType(port)) {
-					unlock();
-					return true;
-				}
-				else {
-					ofLogError("TCPReader::get()") << " wrong type " << packet->type << "for port " << port;
-				}
-			}
-		}
-		unlock();
-		return false;
-	}
 
 }

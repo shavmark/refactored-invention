@@ -136,19 +136,6 @@ namespace Software2552 {
 		virtual void threadedFunction();
 		void readPixelStream(ofPixels &pixels, float width, float height);
 	};
-	typedef std::unordered_map<OurPorts, shared_ptr<TCPClient>> ClientMap;
-
-	class TCPReader : public ofThread {
-	public:
-		void setup(const string& ip = defaultServerIP);
-		void add(const string& ip = defaultServerIP, OurPorts port = TCP, bool blocking = false);
-		bool get(OurPorts port, shared_ptr<ReadTCPPacket>& packet);
-
-	private:
-		void threadedFunction();
-		virtual void update()=0; // let the thread do this
-		ClientMap clients;
-	};
 
 	typedef std::unordered_map<OurPorts, shared_ptr<TCPServer>> ServerMap;
 

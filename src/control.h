@@ -17,18 +17,23 @@ namespace Software2552 {
 		bool KinectBodyEnabled();
 	};
 
-	class TCPKinectClient : public TCPReader {
+	class StagedClient : public TCPClient {
 	public:
-		void setup();
+		void set(shared_ptr<Stage> stage) { backStagePass = stage; }
+	protected:
+		shared_ptr<Stage> backStagePass = nullptr;
+	};
+	class BodyIndexClient : public StagedClient {
+	public:
 		void update();
-		
-		void deleteFromIrq(int index);
-		void deleteFromBi(int index);
-		void deleteFromBody(int index);
 
-		deque<shared_ptr<IRImage>>irQ;
-		deque<shared_ptr<BodyIndexImage>>biQ;
-		deque<shared_ptr<Kinect>>kQ;
+	};
+
+	class TCPKinectClient : public StagedClient {
+	public:
+		void update();
+
+
 	};
 
 }
