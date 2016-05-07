@@ -293,7 +293,6 @@ namespace Software2552 {
 				}
 				else {
 					for (int clientID = 0; clientID < server.getLastID(); clientID++) {
-						// avoid sending to self
 						server.sendRawMsg(clientID, (const char*)&m->packet, m->numberOfBytesToSend);
 						//server.sendRawMsgToAll((const char*)&m->packet, m->numberOfBytesToSend);
 					}
@@ -311,10 +310,9 @@ namespace Software2552 {
 					int pixelCount = 0;
 					while (pixelCount < size) {
 						//if (m->clientID > 0) {
-						// bugbug avoid sending to self
-
-						server.sendRawBytes(for (int clientID = 0; clientID < server.getLastID(); clientID++) {
-							, index, length);
+						for (int clientID = 0; clientID < server.getLastID(); clientID++) {
+							server.sendRawBytes(clientID, index, length); //bugbug not sure if different sizes go
+						}
 						//}
 						//else {
 						//server.sendRawBytesToAll(index, length); //send the first row of the image 
