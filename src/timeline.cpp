@@ -93,14 +93,14 @@ namespace Software2552 {
 				tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
 				ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon;
 				if (tcpKinectClient) {
-					tcpKinectClient->setup(kinectServerIP, TCPKinectBody, true);
 					tcpKinectClient->set(stage);
+					tcpKinectClient->setup(kinectServerIP, TCPKinectBody, true);
 				}
 				stage->setup(tcpKinectClient);
 				tcpBodyIndex = std::make_shared<Software2552::BodyIndexClient>(); // frees of any existing
 				if (tcpBodyIndex) {
-					tcpBodyIndex->setup(kinectServerIP, TCPKinectBodyIndex, true);
 					tcpBodyIndex->set(stage);
+					tcpBodyIndex->setup(kinectServerIP, TCPKinectBodyIndex, true);
 				}
 			}
 		}

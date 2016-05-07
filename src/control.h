@@ -17,19 +17,19 @@ namespace Software2552 {
 		bool KinectBodyEnabled();
 	};
 
-	class StagedClient : public TCPClient {
+	class StagedClient  {
 	public:
 		void set(shared_ptr<Stage> stage) { backStagePass = stage; }
 	protected:
 		shared_ptr<Stage> backStagePass = nullptr;
 	};
-	class BodyIndexClient : public StagedClient {
+	class BodyIndexClient : public TCPPixels, public StagedClient {
 	public:
 		void update();
 
 	};
 
-	class TCPKinectClient : public StagedClient {
+	class TCPKinectClient : public TCPClient, public StagedClient {
 	public:
 		void update();
 
