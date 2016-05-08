@@ -300,22 +300,20 @@ namespace Software2552 {
 		}
 	}
 	void TCPServer::sendStream(TCPMessage *m) {
-		if (m && server.getNumClients() > 0 && m->pixels) {
-			for (int clientID = 0; clientID < server.getLastID(); clientID++) {
-				const char* index = (const char*)m->pixels->getPixels(); //start at beginning of pixel array 
-				int length = m->pixels->getWidth() * 3;//length of one row of pixels in the image 
-				int size = m->pixels->getHeight() * m->pixels->getWidth() * 3;
-				int pixelCount = 0;
-				while (pixelCount < size) {
-					if (m->clientID > 0) {
-						server.sendRawBytes(m->clientID, index, length); //bugbug not sure if different sizes go
-					}
-					else {
-						server.sendRawBytesToAll(index, length); //send the first row of the image 
-					}
-					index += length; //increase pointer so that it points to the next image row 
-					pixelCount += length; //increase pixel count by one row 
+		if (server.getNumClients() > 0 && m && m->pixels) {
+			const char* index = (const char*)m->pixels->getPixels(); //start at beginning of pixel array 
+			int length = m->pixels->getWidth() * 3;//length of one row of pixels in the image 
+			int size = m->pixels->getHeight() * m->pixels->getWidth() * 3;
+			int pixelCount = 0;
+			while (pixelCount < size) {
+				if (m->clientID > 0) {
+					server.sendRawBytes(m->clientID, index, length); //bugbug not sure if different sizes go
 				}
+				else {
+					server.sendRawBytesToAll(index, length); //send the first row of the image 
+				}
+				index += length; //increase pointer so that it points to the next image row 
+				pixelCount += length; //increase pixel count by one row 
 			}
 		}
 	}
