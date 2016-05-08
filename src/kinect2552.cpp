@@ -203,7 +203,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			}
 
 			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>();
-			if (pixels) {
+			if (pixels) { 
 				*pixels = image.getPixelsRef();
 				getKinect()->sendKinectData(pixels, TCPKinectBodyIndex, Stream);
 			}
@@ -495,7 +495,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
 				if (p) {
 					//p->bodyIndexFromTCP(bytes, numBytes);
-					//p->setup();
+					p->setup();
 					backStagePass->addToAnimatable(p);
 				}
 			}
