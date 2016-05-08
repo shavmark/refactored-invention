@@ -353,20 +353,16 @@ namespace Software2552 {
 	void TCPClient::update() {
 		char* b = (char*)std::malloc(MAXSEND);
 		if (b) {
-			int messageSize = 0;
+			int messageSize;
 
-			do {
-				// this api will write the size of the data not the size of the buffer we pass in (ouch)
-				// it buffers data beteen its markets and returns 0 until all data between 
-				// markers is in its buffer which it then returns.
-				messageSize = tcpClient.receiveRawMsg(b, MAXSEND);
-				// only occurs due to bug or hack as we never send more than MAXSEND ourself, at this point we need to crash
-				if (messageSize > MAXSEND) {
-					ofExit(-2); // enables DOS, the real fix is for to not over flow in receiveRawMsg bugbug
-				}
-				break;
-			} while (1);
-
+			// this api will write the size of the data not the size of the buffer we pass in (ouch)
+			// it buffers data beteen its markets and returns 0 until all data between 
+			// markers is in its buffer which it then returns.
+			messageSize = tcpClient.receiveRawMsg(b, MAXSEND);
+			// only occurs due to bug or hack as we never send more than MAXSEND ourself, at this point we need to crash
+			if (messageSize > MAXSEND) {
+				ofExit(-2); // enables DOS, the real fix is for to not over flow in receiveRawMsg bugbug
+			}
 			if (messageSize > 0) {
 				TCPPacket*p = (TCPPacket*)b;
 				if (p->b[0] == PacketFence) { // basic validation

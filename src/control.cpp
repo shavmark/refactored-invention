@@ -50,6 +50,7 @@ namespace Software2552 {
 	void BodyIndexClient::update() {
 		// if no pass the buffer will grow and go... so be sure to set one
 		if (backStagePass) {
+			TCPPixels::update(); //reads the data
 			shared_ptr<ofPixels> pixels;
 			do {
 				pixels = get();
@@ -73,6 +74,7 @@ namespace Software2552 {
 	// read from Kinect and save data (or from any input port)
 	void TCPKinectClient::update() {
 		if (backStagePass) {
+			TCPClient::update(); //reads the data
 			shared_ptr<IRImage>ir = nullptr;
 			ofPoint pt;// start at 0,0
 			shared_ptr<ReadTCPPacket> packet;

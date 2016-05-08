@@ -175,17 +175,18 @@ namespace Software2552 {
 
 	class TCPClient : public TCPBase<ReadTCPPacket> {
 	public:
-
-	private:
+	protected:
 		void update();
+	private:
 	};
 	class TCPPixels : public TCPBase<ofPixels> {
 	public:
 	// ex: ofTexture::readToPixels(pixels); // now all the pixels from tex are in pix
 		float width = getDepthFrameWidth();
 		float height= getDepthFrameHeight();
-	private:
+	protected:
 		void update();
+	private:
 	};
 
 	typedef std::unordered_map<OurPorts, shared_ptr<TCPServer>> ServerMap;
