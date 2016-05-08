@@ -341,6 +341,7 @@ namespace Software2552 {
 					totalReceivedBytes += receivedBytes;
 					receivePos += receivedBytes;
 				}
+				ofLogNotice("TCPPixels::update") << "receiveRawBytes packet size " << size << " type Pixels";
 				lock();
 				q.push_back(pixels);
 				unlock();
@@ -370,7 +371,7 @@ namespace Software2552 {
 					if (returnedData) {
 						if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
 							returnedData->typeOfPacket = p->typeOfPacket;
-							ofLogNotice("TCPClient::update") << "receiveRawMsg packet of size " << ofToString(messageSize) << " type " << p->typeOfPacket;
+							ofLogNotice("TCPClient::update") << "receiveRawMsg packet size " << messageSize << " type " << p->typeOfPacket;
 							q.push_back(returnedData);
 						}
 						else {

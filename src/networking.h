@@ -20,11 +20,12 @@ namespace Software2552 {
 	static const string SignOnClientOscAddress = "storyteller/client/signon";
 
 	enum PacketType : char {
-		TCPID = 't',
-		BodyIndexID = 'x',
-		IrID = 'i',
-		BodyID = 'b',
-		JsonID = 'j',
+		TCPID = 't',	//116
+		BodyIndexID = 'x',//120
+		IrID = 'i',		//105
+		BodyID = 'b',	// 98
+		JsonID = 'j',	//106
+		Pixels='p',		//12
 		UnknownID ='k'
 	};
 	enum TypeOfSend : char {
