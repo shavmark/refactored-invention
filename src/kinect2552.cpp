@@ -224,7 +224,13 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			for (int y = 0; y < getDepthFrameHeight(); y++) {
 				for (int x = 0; x < getDepthFrameWidth(); x++) {
 					unsigned int index = y * getDepthFrameWidth() + x;
-					image.setColor(x, y, buffer[index] >> 8);
+					// calc taken from kinect sdk sample
+					float intensityRatio = static_cast<float>(buffer[index]) / static_cast<float>(USHRT_MAX);
+					intensityRatio /= 0.08f * 3.0f;
+					intensityRatio = min(1.0f, intensityRatio);
+					intensityRatio = max(0.01f, intensityRatio);
+					byte intensity = static_cast<byte>(intensityRatio * 255.0f);
+					image.setColor(x, y, ofColor(intensity, intensity, intensity));
 				}
 			}
 			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>();

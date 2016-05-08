@@ -6,7 +6,7 @@ namespace Software2552 {
 	bool compress(const char*buffer, size_t len, string&output) {
 		output.clear();
 		output.append(buffer, len);
-		return true;
+		return true; //bugbug restore compression when things mostly work
 		//bug remove one more data point
 		size_t size = snappy::Compress((const char*)buffer, len, &output);
 		if (size <= 0) {
