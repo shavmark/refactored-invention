@@ -318,7 +318,8 @@ namespace Software2552 {
 	}
 	void KinectItem::setup() {
 		setFixed(true);
-		setFrameCount(1);
+		setFrameCount(frameRate/2);//bugbug how to avoid flash?  1 frame or 1 second?
+
 	}
 	// draw face separte from body
 	void Face::myDraw() {
@@ -440,7 +441,7 @@ namespace Software2552 {
 		//bugbug doing this or just about any other thing draws blck iamage image.allocate(pixels->getWidth(), pixels->getHeight(), OF_IMAGE_COLOR);//bugbug get OF_IMAGE_COLOR from data if this works
 		image.getPixelsRef() = *pixels;
 		setFixed(true); 
-		//setFrameCount(1);//bugbug how to avoid flash?
+		setFrameCount(frameRate);//bugbug how to avoid flash?
 	}
 	void PixelsManager::myUpdate() {
 		image.update();
@@ -450,6 +451,7 @@ namespace Software2552 {
 		if (image.getTexture().isAllocated()) {
 			// some times texuture does not get allocated 
 			ofTranslate(getCurrentPosition());
+			ofSetColor(255, 255, 255); // this one is always pure bugbug just while learning
 			image.draw(0, 0);//bugbug some times texture is missing
 		}
 	}

@@ -4,7 +4,7 @@
 
 namespace Software2552 {
 
-	PacketType mapPortToType(OurPorts ports);
+	DataType mapPortToType(OurPorts ports);
 
 	// can be used even w/o kinect installed
 	class Sender : public Server {
@@ -19,13 +19,17 @@ namespace Software2552 {
 
 	class StagedClient  {
 	public:
+		StagedClient(DataType idIn = UnknownID) { id = idIn; }
 		void set(shared_ptr<Stage> stage) { backStagePass = stage; }
 	protected:
 		shared_ptr<Stage> backStagePass = nullptr;
+		DataType id;// optional
+
 	};
 	// read known size ofPixels
 	class PixelsClient : public TCPPixels, public StagedClient {
 	public:
+		PixelsClient(DataType id) :StagedClient(id) {}
 		virtual void myUpdate(shared_ptr<ofPixels> pixels);
 		ofPoint pt; // optional starting point for drawing
 	};

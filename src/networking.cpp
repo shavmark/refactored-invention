@@ -214,7 +214,7 @@ namespace Software2552 {
 		server.setup(port, blocking);
 		startThread();
 	}
-	void TCPMessage::setup(size_t bytesToSend, PacketType typeIn, TypeOfSend typeOfSendIn, int clientIDIn) {
+	void TCPMessage::setup(size_t bytesToSend, DataType typeIn, TypeOfSend typeOfSendIn, int clientIDIn) {
 		clientID = clientIDIn;
 		typeOfSend = typeOfSendIn;
 		packet.typeOfPacket = typeIn; // passed as a double check
@@ -224,7 +224,7 @@ namespace Software2552 {
 	}
 
 	// input data is  deleted by this object at the right time (at least that is the plan)
-	void TCPServer::update(const char * bytes, const size_t numBytes, PacketType type, TypeOfSend typeOfSend, int clientID) {
+	void TCPServer::update(const char * bytes, const size_t numBytes, DataType type, TypeOfSend typeOfSend, int clientID) {
 		string buffer;
 		if (compress(bytes, numBytes, buffer)) { // copy and compress data so caller can free passed data 
 			char *bytes = new char[sizeof(TCPMessage) + buffer.size()];
@@ -244,7 +244,7 @@ namespace Software2552 {
 		return;
 	}
 	// no compression yet bugbug
-	void TCPServer::update(shared_ptr<ofPixels>pixels, PacketType type, TypeOfSend typeOfSend, int clientID) {
+	void TCPServer::update(shared_ptr<ofPixels>pixels, DataType type, TypeOfSend typeOfSend, int clientID) {
 		unsigned char *data = pixels->getPixels();
 		TCPMessage *message = new TCPMessage;
 		if (message && data) {

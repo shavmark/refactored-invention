@@ -34,6 +34,7 @@ namespace Software2552 {
 		void pause();
 		void resume();
 		string &getKeyName() { return keyname; }
+		std::list<shared_ptr<ActorRole>>::iterator  find(DataType);
 
 		template<typename T> void CreateReadAndaddAnimatable(const Json::Value &data, shared_ptr<ActorRole> parent, bool inFront = false, bool fullsize=false) {
 			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {

@@ -153,8 +153,8 @@ namespace Software2552 {
 	public:
 		friend class Stage;
 		enum drawtype {  draw2d, draw3dFixedCamera, draw3dMovingCamera };
-		ActorRole() {  }
-		ActorRole(const string&path) { 	setLocationPath(path);	}
+		ActorRole(DataType idIn = UnknownID) { id = idIn; }
+		ActorRole(const string&path, DataType idIn = UnknownID) { setLocationPath(path);	id = idIn; }
 		shared_ptr<ActorRole> parent = nullptr;
 		ofNode *node = nullptr; // for 3d
 		bool setup(const Json::Value &data);
@@ -227,6 +227,7 @@ namespace Software2552 {
 	private:
 		virtual bool mysetup(const Json::Value &data) { return true; };
 		bool fixedPosition = false;
+		DataType id;// optional
 		bool okToDraw(drawtype type);
 		drawtype type = draw2d;
 		// derived classes supply these if they need them to be called

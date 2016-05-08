@@ -410,6 +410,7 @@ namespace Software2552 {
 
 	class PixelsManager : public ActorRole {
 	public:
+		PixelsManager(DataType id = UnknownID) : ActorRole(id) { }
 		shared_ptr<ofPixels> pixels;
 		void myDraw();
 		void mySetup();

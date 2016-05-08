@@ -209,7 +209,6 @@ namespace Software2552 {
 	void AnimiatedColor::setAlpha(float val) {
 		setAlphaOnly(val);
 	}
-
 	bool ActorRole::setup(const Json::Value &data) {
 		fill = true; // set default
 		drawOrder = 0;

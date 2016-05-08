@@ -19,7 +19,6 @@ namespace Software2552 {
 		void draw();
 		void pause();
 		void resume();
-		const int frameRate = 30;
 
 		bool readScript(const string& path);
 

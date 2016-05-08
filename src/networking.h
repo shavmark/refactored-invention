@@ -19,15 +19,6 @@ namespace Software2552 {
 	static const string SignOnKinectServerOscAddress="storyteller/kinect/server/signon";
 	static const string SignOnClientOscAddress = "storyteller/client/signon";
 
-	enum PacketType : char {
-		TCPID = 't',	//116
-		BodyIndexID = 'x',//120
-		IrID = 'i',		//105
-		BodyID = 'b',	// 98
-		JsonID = 'j',	//106
-		Pixels='p',		//12
-		UnknownID ='k'
-	};
 	enum TypeOfSend : char {
 		Stream = 's',
 		Message = 'm',
@@ -53,16 +44,16 @@ namespace Software2552 {
 
 	// what gets sent over the wire
 	struct TCPPacket {
-		PacketType typeOfPacket; // bytes only
+		DataType typeOfPacket; // bytes only
 		char b[1]; // validates data was properly read
 	};
 	struct ReadTCPPacket {
-		PacketType typeOfPacket; // byte only
+		DataType typeOfPacket; // byte only
 		string data;
 	};
 	class TCPMessage {
 	public:
-		void setup(size_t bytesToSend, PacketType type, TypeOfSend typeOfSend=Message, int clientID = -1);
+		void setup(size_t bytesToSend, DataType type, TypeOfSend typeOfSend=Message, int clientID = -1);
 		
 		int clientID;	// -1 for all connected
 		TypeOfSend typeOfSend;// 's' stream or 'm' message
@@ -111,8 +102,8 @@ namespace Software2552 {
 		void setup(int port= TCP, bool blocking = false);
 		int  port() { return server.getPort(); }
 		int  clientCount() { return server.getNumClients(); }
-		void update(const char * rawBytes, const size_t numBytes, PacketType type, TypeOfSend typeOfSend=Message, int clientID = -1);
-		void update(shared_ptr<ofPixels>pixels, PacketType type, TypeOfSend typeOfSend=Stream, int clientID=-1);
+		void update(const char * rawBytes, const size_t numBytes, DataType type, TypeOfSend typeOfSend=Message, int clientID = -1);
+		void update(shared_ptr<ofPixels>pixels, DataType type, TypeOfSend typeOfSend=Stream, int clientID=-1);
 		int maxItems = 10; // max size of q
 	private:
 		ofxTCPServer server;

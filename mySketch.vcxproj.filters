@@ -128,7 +128,9 @@
     <ClCompile Include="src\networking.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\sound.cpp" />
+    <ClCompile Include="src\sound.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -373,8 +375,12 @@
     <ClInclude Include="src\control.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\sound.h" />
-    <ClInclude Include="src\consts.h" />
+    <ClInclude Include="src\sound.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\consts.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

@@ -4,7 +4,7 @@
 // connect things together
 
 namespace Software2552 {
-	PacketType mapPortToType(OurPorts port) {
+	DataType mapPortToType(OurPorts port) {
 		switch (port) {
 		case TCP:
 			return TCPID;
@@ -50,10 +50,10 @@ namespace Software2552 {
 	void PixelsClient::myUpdate(shared_ptr<ofPixels> pixels) {
 		if (backStagePass && pixels) {
 			// map data to stage
-			shared_ptr<PixelsManager>p = std::make_shared<PixelsManager>();
+			shared_ptr<PixelsManager>p = std::make_shared<PixelsManager>(id);
 			if (p) {
-				p->pixels = pixels; // drawing needs to occur in main thread to make 
-				p->setActorPosition(pt);//bugbug not set in object yet
+				p->pixels = pixels; // drawing needs to occur in main thread to make OpenGL work
+				p->setActorPosition(pt);
 				backStagePass->addToAnimatable(p);
 			}
 		}

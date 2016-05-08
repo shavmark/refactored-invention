@@ -288,6 +288,15 @@ namespace Software2552 {
 			}
 		}
 	}
+
+	std::list<shared_ptr<ActorRole>>::iterator Stage::find(DataType type) {
+		std::list<shared_ptr<ActorRole>>::iterator it = std::find_if(animatables.begin(), animatables.end(), [&type](shared_ptr<ActorRole>p) {
+			return p->id == type;
+		});
+		return it;
+	}
+
+
 	void Stage::addToAnimatable(shared_ptr<ActorRole>p, bool inFront) {
 		// only save working pointers
 		if (p != nullptr) {
