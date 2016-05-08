@@ -478,11 +478,16 @@ namespace Software2552 {
 		}
 		worker.update();
 	}
+	void BodyIndexImage::mySetup() {
+		image.getPixelsRef() = *pixels;
+	}
+	void BodyIndexImage::myUpdate() {
+		image.update();
+	}
+
 	void BodyIndexImage::myDraw() { 
 		ofSetColor(255, 255, 255);
-		//texture.draw(0, 0); 
-		bool b = img.load("clm_earth_mos.gif");
-		img.draw(0, 0);
+		image.draw(0,0);
 	}
 
 #if 0

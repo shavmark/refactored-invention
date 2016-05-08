@@ -421,9 +421,12 @@ namespace Software2552 {
 	};
 	class BodyIndexImage : public ActorRole {
 	public:
+		shared_ptr<ofPixels> pixels;
 		ofTexture texture;
-		ofImage img;
+		ofImage image;
 		void myDraw();
+		void mySetup();
+		void myUpdate();
 	private:
 	};
 

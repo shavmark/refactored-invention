@@ -104,9 +104,6 @@ namespace Software2552 {
 				}
 			}
 		}
-		else if (tcpKinectClient) {
-			tcpKinectClient->update();
-		}
 		if (stage) {
 			stage->update();
 		}
