@@ -50,9 +50,6 @@ namespace Software2552 {
 	void PixelsClient::myUpdate(shared_ptr<ofPixels> pixels) {
 		if (backStagePass && pixels) {
 			// map data to stage
-			ofPoint pt;// start at 0,0
-			pt.x = getDepthFrameWidth();// *ratioDepthToScreenX();
-			pt.y = 0;
 			shared_ptr<PixelsManager>p = std::make_shared<PixelsManager>();
 			if (p) {
 				p->pixels = pixels; // drawing needs to occur in main thread to make 

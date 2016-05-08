@@ -27,7 +27,7 @@ namespace Software2552 {
 	class PixelsClient : public TCPPixels, public StagedClient {
 	public:
 		virtual void myUpdate(shared_ptr<ofPixels> pixels);
-
+		ofPoint pt; // optional starting point for drawing
 	};
 	
 	// easily add in more types here such as...

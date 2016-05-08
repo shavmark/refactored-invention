@@ -102,11 +102,14 @@ namespace Software2552 {
 					tcpBodyIndex->set(stage);
 					tcpBodyIndex->setup(kinectServerIP, TCPKinectBodyIndex, true);
 				}
+				/* ir takes too much from our little Kinect server, maybe the server needs to be high powered, like this dev box (or the one I gave away :() 
 				tcpIRIndex = std::make_shared<Software2552::PixelsClient>(); // frees of any existing
 				if (tcpIRIndex) {
 					tcpIRIndex->set(stage);
 					tcpIRIndex->setup(kinectServerIP, TCPKinectIR, true);
+					tcpIRIndex->pt.x = getDepthFrameWidth();// *ratioDepthToScreenX();
 				}
+				*/
 				
 			}
 		}
