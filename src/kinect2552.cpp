@@ -197,13 +197,16 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 						image.setColor(x, y, ofColor::fromHsb(hue, sat, bri));
 					}
 					else {
-						image.setColor(x, y, ofColor::white);
+						image.setColor(x, y, ofColor::green);
 					}
 				}
 			}
 
-			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>(image);
-			getKinect()->sendKinectData(pixels, TCPKinectBodyIndex, Stream);
+			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>();
+			if (pixels) {
+				*pixels = image.getPixelsRef();
+				getKinect()->sendKinectData(pixels, TCPKinectBodyIndex, Stream);
+			}
 		}
 		SafeRelease(bodyindex);
 	}
