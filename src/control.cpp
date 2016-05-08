@@ -43,7 +43,7 @@ namespace Software2552 {
 #ifdef _WIN64
 	void Sender::setupKinect() {
 		addTCPServer(TCPKinectIR, true);
-		addTCPServer(TCPKinectBodyIndex, false);
+		addTCPServer(TCPKinectBodyIndex, true);
 		addTCPServer(TCPKinectBody, true);
 	}
 #endif
