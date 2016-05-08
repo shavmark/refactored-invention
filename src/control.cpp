@@ -61,10 +61,8 @@ namespace Software2552 {
 					pt.y = 0;
 					shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
 					if (p) {
-						p->worker.setFromPixels(*pixels);
-						p->setActorPosition(pt);
-						p->setup();
-						p->setLoaded(); //avoi
+						p->texture.allocate(*pixels);
+						p->setActorPosition(pt);//bugbug not set in object yet
 						backStagePass->addToAnimatable(p);
 					}
 				}

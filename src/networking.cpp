@@ -354,7 +354,7 @@ namespace Software2552 {
 		char* b = (char*)std::malloc(MAXSEND);
 		if (b) {
 			int messageSize;
-
+			lock(); // big lock window
 			// this api will write the size of the data not the size of the buffer we pass in (ouch)
 			// it buffers data beteen its markets and returns 0 until all data between 
 			// markers is in its buffer which it then returns.
@@ -371,9 +371,7 @@ namespace Software2552 {
 						if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
 							returnedData->typeOfPacket = p->typeOfPacket;
 							ofLogNotice("TCPClient::update") << "receiveRawMsg packet of size " << ofToString(messageSize) << " type " << p->typeOfPacket;
-							lock();
 							q.push_back(returnedData);
-							unlock();
 						}
 						else {
 							ofLogError("TCPClient::update") << "data ignored";
@@ -381,7 +379,7 @@ namespace Software2552 {
 					}
 				}
 			}
-
+			unlock();
 			free(b); // only delete if data not returned
 		}
 		return;
