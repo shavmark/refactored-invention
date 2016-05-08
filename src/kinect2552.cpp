@@ -494,8 +494,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			if (bi && backStagePass) {
 				shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
 				if (p) {
-					//p->bodyIndexFromTCP(bytes, numBytes);
-					p->setup();
+					p->pixels = pixels; // drawing needs to occur in main thread to make 
 					backStagePass->addToAnimatable(p);
 				}
 			}

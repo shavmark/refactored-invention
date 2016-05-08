@@ -479,7 +479,8 @@ namespace Software2552 {
 		worker.update();
 	}
 	void BodyIndexImage::mySetup() {
-		image.getPixelsRef() = *pixels;
+		//image.getPixelsRef() = *pixels;
+		image.setFromPixels(*pixels);//bugbug try to fix texture error
 	}
 	void BodyIndexImage::myUpdate() {
 		image.update();
@@ -490,34 +491,6 @@ namespace Software2552 {
 		image.draw(0,0);
 	}
 
-#if 0
-	void BodyIndexImage::bodyIndexFromTCP(const char * bytes, const size_t len) {
-		if (len == 0) {
-			return;
-		}
-
-		worker.clear();
-		worker.allocate(getDepthFrameWidth(), getDepthFrameHeight(), OF_IMAGE_COLOR);
-		for (float y = 0; y < getDepthFrameHeight(); y++) {
-			for (float x = 0; x < getDepthFrameWidth(); x++) {
-				unsigned int index = y * getDepthFrameWidth() + x;
-				if (((unsigned char*)bytes)[index] != 0xff) {
-					float hue = x / getDepthFrameHeight() * 255;
-					float sat = ofMap(y, 0, getDepthFrameHeight() / 2, 0, 255, true);
-					float bri = ofMap(y, getDepthFrameHeight() / 2, getDepthFrameHeight(), 255, 0, true);
-					// make a dynamic image, also there can be up to 6 images so we need them to be a little different 
-					worker.setColor(x, y, ofColor::fromHsb(hue, sat, bri));
-				}
-				else {
-					worker.setColor(x, y, ofColor::white);
-				}
-			}
-		}
-		worker.update();
-
-	}
-
-#endif // 0
 
 	bool Visual::mysetup(const Json::Value &data) {
 		READINT(width, data);
