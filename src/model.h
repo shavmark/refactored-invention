@@ -422,7 +422,8 @@ namespace Software2552 {
 	class BodyIndexImage : public ActorRole {
 	public:
 		ofTexture texture;
-		void myDraw() { texture.draw(0,0); }
+		ofImage img;
+		void myDraw();
 	private:
 	};
 
