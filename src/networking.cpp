@@ -317,6 +317,12 @@ namespace Software2552 {
 			}
 		}
 	}
+	// default saves to queue
+	void TCPPixels::myUpdate(shared_ptr<ofPixels> pixels) {
+		lock();
+		 q.push_back(pixels);
+		unlock();
+	}
 
 	//Receiving loop that must ensure a frame is received as a whole
 	// must know the size of item being sent
@@ -341,14 +347,18 @@ namespace Software2552 {
 					totalReceivedBytes += receivedBytes;
 					receivePos += receivedBytes;
 				}
-				ofLogNotice("TCPPixels::update") << "receiveRawBytes packet size " << size << " type Pixels";
+				ofLogVerbose("TCPPixels::update") << "receiveRawBytes packet size " << size << " type Pixels";
 				lock();
-				q.push_back(pixels);
+				myUpdate(pixels);
+				// not used q.push_back(pixels);
 				unlock();
 			}
 			delete start;
 		}
 
+	}
+	void TCPClient::myUpdate(shared_ptr<ReadTCPPacket> packet) {
+		q.push_back(packet); //bugbug assume called while locked but can we just lock here vs in update?
 	}
 
 	void TCPClient::update() {
@@ -371,8 +381,8 @@ namespace Software2552 {
 					if (returnedData) {
 						if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
 							returnedData->typeOfPacket = p->typeOfPacket;
-							ofLogNotice("TCPClient::update") << "receiveRawMsg packet size " << messageSize << " type " << p->typeOfPacket;
-							q.push_back(returnedData);
+							ofLogVerbose("TCPClient::update") << "receiveRawMsg packet size " << messageSize << " type " << p->typeOfPacket;
+							myUpdate(returnedData);
 						}
 						else {
 							ofLogError("TCPClient::update") << "data ignored";

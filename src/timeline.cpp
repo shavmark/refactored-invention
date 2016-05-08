@@ -97,11 +97,17 @@ namespace Software2552 {
 					tcpKinectClient->setup(kinectServerIP, TCPKinectBody, true);
 				}
 				stage->setup(tcpKinectClient);
-				tcpBodyIndex = std::make_shared<Software2552::BodyIndexClient>(); // frees of any existing
+				tcpBodyIndex = std::make_shared<Software2552::PixelsClient>(); // frees of any existing
 				if (tcpBodyIndex) {
 					tcpBodyIndex->set(stage);
 					tcpBodyIndex->setup(kinectServerIP, TCPKinectBodyIndex, true);
 				}
+				tcpIRIndex = std::make_shared<Software2552::PixelsClient>(); // frees of any existing
+				if (tcpIRIndex) {
+					tcpIRIndex->set(stage);
+					tcpIRIndex->setup(kinectServerIP, TCPKinectIR, true);
+				}
+				
 			}
 		}
 		if (stage) {

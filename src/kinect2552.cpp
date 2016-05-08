@@ -219,8 +219,20 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		UINT16 * buffer = nullptr;
 		HRESULT hResult = ir->AccessUnderlyingBuffer(&bufferSize, &buffer);
 		if (SUCCEEDED(hResult)) {
+			ofImage image;
+			image.allocate(getDepthFrameWidth(), getDepthFrameHeight(), OF_IMAGE_COLOR);
+			for (int y = 0; y < getDepthFrameHeight(); y++) {
+				for (int x = 0; x < getDepthFrameWidth(); x++) {
+					unsigned int index = y * getDepthFrameWidth() + x;
+					image.setColor(x, y, buffer[index] >> 8);
+				}
+			}
+			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>();
+			if (pixels) {
+				*pixels = image.getPixelsRef();
+				getKinect()->sendKinectData(pixels, TCPKinectIR, Stream);
+			}
 
-			getKinect()->sendKinectData((const char*)buffer, bufferSize, TCPKinectIR);
 		}
 
 		SafeRelease(ir);
@@ -474,34 +486,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 		if (getSender() && pixels && pixels->size() > 0) {
 			getSender()->sendTCP(pixels, port, typeOfSend, clientID);
 		}
-		return; // not showing local right now
-		// show local too if requested
-
-		shared_ptr<ReadTCPPacket> packet;
-
-		switch (port) {
-		case TCPKinectIR:
-			if (ir && backStagePass) { // ir wanted and there is a stage to send it to 
-				shared_ptr<IRImage>p = std::make_shared<IRImage>();
-				if (p) {
-					//p->IRFromTCP((const UINT16 *)bytes, numBytes);
-					p->setup();
-					backStagePass->addToAnimatable(p);
-				}
-			}
-			break;
-		case TCPKinectBodyIndex:
-			if (bi && backStagePass) {
-				shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
-				if (p) {
-					p->pixels = pixels; // drawing needs to occur in main thread to make 
-					backStagePass->addToAnimatable(p);
-				}
-			}
-			break;
-		default:
-			break;
-		}
+		// not showing local right now
 	}
 	void KinectFace::cleanup()
 {

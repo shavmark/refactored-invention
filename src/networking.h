@@ -154,7 +154,7 @@ namespace Software2552 {
 
 	protected:
 		ofxTCPClient tcpClient;
-		deque<shared_ptr<T>> q;
+		deque<shared_ptr<T>> q; // optional q
 	private:
 		void setup() { setup(ip, port, blocking); }// enables setup retry in the thread loop, not for external callers
 		void threadedFunction() {
@@ -178,6 +178,7 @@ namespace Software2552 {
 	public:
 	protected:
 		void update();
+		virtual void myUpdate(shared_ptr<ReadTCPPacket> packet);// let dervied class do their thing, q not used
 	private:
 	};
 	class TCPPixels : public TCPBase<ofPixels> {
@@ -187,6 +188,7 @@ namespace Software2552 {
 		float height= getDepthFrameHeight();
 	protected:
 		void update();
+		virtual void myUpdate(shared_ptr<ofPixels> pixels);// let dervied class do their thing, q not used
 	private:
 	};
 

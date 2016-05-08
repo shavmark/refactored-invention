@@ -37,8 +37,9 @@ namespace Software2552 {
 		ColorList colorlist;
 		shared_ptr<Stage> stage = nullptr;
 		shared_ptr<ReadOsc>oscClient = nullptr; // everyone can talk to everyone
-		shared_ptr<BodyIndexClient>tcpBodyIndex = nullptr;
-		shared_ptr<TCPKinectClient>tcpKinectClient = nullptr; 
+		shared_ptr<PixelsClient>tcpBodyIndex = nullptr;
+		shared_ptr<PixelsClient>tcpIRIndex = nullptr;
+		shared_ptr<TCPKinectClient>tcpKinectClient = nullptr;
 
 		shared_ptr<Sender>router = nullptr; // everyone can talk to everyone
 #ifdef _WIN64

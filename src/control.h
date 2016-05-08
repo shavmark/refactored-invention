@@ -1,6 +1,6 @@
 #pragma once
 
-// tries to to things together
+// ties to to things together
 
 namespace Software2552 {
 
@@ -23,15 +23,18 @@ namespace Software2552 {
 	protected:
 		shared_ptr<Stage> backStagePass = nullptr;
 	};
-	class BodyIndexClient : public TCPPixels, public StagedClient {
+	// read known size ofPixels
+	class PixelsClient : public TCPPixels, public StagedClient {
 	public:
-		void update();
+		virtual void myUpdate(shared_ptr<ofPixels> pixels);
+
 	};
+	
+	// easily add in more types here such as...
 
 	class TCPKinectClient : public TCPClient, public StagedClient {
 	public:
-		void update();
-
+		virtual void myUpdate(shared_ptr<ReadTCPPacket> packet);// let dervied class do their thing, q not used
 
 	};
 

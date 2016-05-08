@@ -408,26 +408,14 @@ namespace Software2552 {
 		bool mysetup(const Json::Value &data);
 	};
 
-	class FixedLocationImage : public Image {
-	public:
-		void myDraw();
-		void setup();
-	};
-	class IRImage : public FixedLocationImage {
-	public:
-		// size is fixed
-		void IRFromTCP(const UINT16 * bytes, const size_t len);
-	private:
-	};
-	class BodyIndexImage : public ActorRole {
+	class PixelsManager : public ActorRole {
 	public:
 		shared_ptr<ofPixels> pixels;
-		ofTexture texture;
-		ofImage image;
 		void myDraw();
 		void mySetup();
 		void myUpdate();
 	private:
+		ofImage image;
 	};
 
 
