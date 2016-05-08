@@ -479,16 +479,18 @@ namespace Software2552 {
 		worker.update();
 	}
 	void BodyIndexImage::mySetup() {
-		//image.getPixelsRef() = *pixels;
-		image.setFromPixels(*pixels);//bugbug try to fix texture error
+		//bugbug doing this or just about any other thing draws blck iamage image.allocate(pixels->getWidth(), pixels->getHeight(), OF_IMAGE_COLOR);//bugbug get OF_IMAGE_COLOR from data if this works
+		image.getPixelsRef() = *pixels;
 	}
 	void BodyIndexImage::myUpdate() {
 		image.update();
 	}
 
 	void BodyIndexImage::myDraw() { 
-		ofSetColor(255, 255, 255);
-		image.draw(0,0);
+		if (image.getTexture().isAllocated()) {
+			// some times texuture does not get allocated 
+			image.draw(0, 0);//bugbug some times texture is missing
+		}
 	}
 
 
