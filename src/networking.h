@@ -52,18 +52,20 @@ namespace Software2552 {
 
 	// what gets sent over the wire
 	struct TCPPacket {
-		char typeOfPacket; // bytes only
+		PacketType typeOfPacket; // bytes only
 		char b[1]; // validates data was properly read
 	};
 	struct ReadTCPPacket {
-		char type; // byte only
+		PacketType typeOfPacket; // byte only
 		string data;
 	};
 	class TCPMessage {
 	public:
-		int clientID=-1;	// -1 for all connected
+		void setup(size_t bytesToSend, PacketType type, TypeOfSend typeOfSend=Message, int clientID = -1);
+		
+		int clientID;	// -1 for all connected
 		TypeOfSend typeOfSend;// 's' stream or 'm' message
-		shared_ptr<ofPixels> pixels=nullptr; // optional pixels to send
+		shared_ptr<ofPixels> pixels; // optional pixels to send
 		size_t numberOfBytesToSend;
 		TCPPacket packet;		// data that is sent
 	};

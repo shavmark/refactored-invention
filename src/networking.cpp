@@ -214,6 +214,15 @@ namespace Software2552 {
 		server.setup(port, blocking);
 		startThread();
 	}
+	void TCPMessage::setup(size_t bytesToSend, PacketType typeIn, TypeOfSend typeOfSendIn, int clientIDIn) {
+		clientID = clientIDIn;
+		typeOfSend = typeOfSendIn;
+		packet.typeOfPacket = typeIn; // passed as a double check
+		numberOfBytesToSend = bytesToSend;
+		packet.b[0] = PacketFence; // help check for lost or out of sync data
+		pixels = nullptr;
+	}
+
 	// input data is  deleted by this object at the right time (at least that is the plan)
 	void TCPServer::update(const char * bytes, const size_t numBytes, PacketType type, TypeOfSend typeOfSend, int clientID) {
 		string buffer;
@@ -222,11 +231,7 @@ namespace Software2552 {
 			if (bytes) {
 				memset(bytes, 0, sizeof(TCPMessage) + buffer.size());
 				TCPMessage *message = (TCPMessage *)bytes;
-				message->clientID = -1;
-				message->typeOfSend = typeOfSend;
-				message->packet.typeOfPacket = type; // passed as a double check
-				message->packet.b[0] = PacketFence; // help check for lost or out of sync data
-				message->numberOfBytesToSend = sizeof(TCPPacket) + buffer.size();
+				message->setup(sizeof(TCPPacket) + buffer.size(), type, typeOfSend, clientID);
 				memcpy_s(&message->packet.b[1], buffer.size(), buffer.c_str(), buffer.size());
 				lock();
 				if (q.size() > maxItems) {
@@ -243,11 +248,8 @@ namespace Software2552 {
 		unsigned char *data = pixels->getPixels();
 		TCPMessage *message = new TCPMessage;
 		if (message && data) {
-			message->clientID = -1;
-			message->typeOfSend = typeOfSend;
-			message->packet.typeOfPacket = type; // passed as a double check
-			message->packet.b[0] = PacketFence; // help check for lost or out of sync data
-			message->pixels = pixels;//bugbug use shared pointer to avoid uneeded data copy
+			message->setup(0, type, typeOfSend, clientID);
+			message->pixels = pixels;
 			lock();
 			if (q.size() > maxItems) {
 				q.pop_back(); // remove oldest
@@ -292,34 +294,27 @@ namespace Software2552 {
 					server.sendRawMsg(m->clientID, (const char*)&m->packet, m->numberOfBytesToSend);
 				}
 				else {
-					for (int clientID = 0; clientID < server.getLastID(); clientID++) {
-						server.sendRawMsg(clientID, (const char*)&m->packet, m->numberOfBytesToSend);
-						//server.sendRawMsgToAll((const char*)&m->packet, m->numberOfBytesToSend);
-					}
+					server.sendRawMsgToAll((const char*)&m->packet, m->numberOfBytesToSend);
 				}
 			}
 		}
 	}
 	void TCPServer::sendStream(TCPMessage *m) {
-		if (m) {
-			if (server.getNumClients() > 0 && m->pixels) {
-				for (int clientID = 0; clientID < server.getLastID(); clientID++) {
-					const char* index = (const char*)m->pixels->getPixels(); //start at beginning of pixel array 
-					int length = m->pixels->getWidth() * 3;//length of one row of pixels in the image 
-					int size = m->pixels->getHeight() * m->pixels->getWidth() * 3;
-					int pixelCount = 0;
-					while (pixelCount < size) {
-						//if (m->clientID > 0) {
-						for (int clientID = 0; clientID < server.getLastID(); clientID++) {
-							server.sendRawBytes(clientID, index, length); //bugbug not sure if different sizes go
-						}
-						//}
-						//else {
-						//server.sendRawBytesToAll(index, length); //send the first row of the image 
-						//}
-						index += length; //increase pointer so that it points to the next image row 
-						pixelCount += length; //increase pixel count by one row 
+		if (m && server.getNumClients() > 0 && m->pixels) {
+			for (int clientID = 0; clientID < server.getLastID(); clientID++) {
+				const char* index = (const char*)m->pixels->getPixels(); //start at beginning of pixel array 
+				int length = m->pixels->getWidth() * 3;//length of one row of pixels in the image 
+				int size = m->pixels->getHeight() * m->pixels->getWidth() * 3;
+				int pixelCount = 0;
+				while (pixelCount < size) {
+					if (m->clientID > 0) {
+						server.sendRawBytes(m->clientID, index, length); //bugbug not sure if different sizes go
 					}
+					else {
+						server.sendRawBytesToAll(index, length); //send the first row of the image 
+					}
+					index += length; //increase pointer so that it points to the next image row 
+					pixelCount += length; //increase pixel count by one row 
 				}
 			}
 		}
@@ -358,7 +353,6 @@ namespace Software2552 {
 	}
 
 	void TCPClient::update() {
-		char type = 0;
 		char* b = (char*)std::malloc(MAXSEND);
 		if (b) {
 			int messageSize = 0;
@@ -381,9 +375,8 @@ namespace Software2552 {
 					shared_ptr<ReadTCPPacket> returnedData = std::make_shared<ReadTCPPacket>();
 					if (returnedData) {
 						if (uncompress(&p->b[1], messageSize - sizeof(TCPPacket), returnedData->data)) {
-							type = p->typeOfPacket; // data should change a litte
-							returnedData->type = type;
-							ofLogNotice("TCPClient::update") << "receiveRawMsg packet of size " << ofToString(messageSize) << " type " << type;
+							returnedData->typeOfPacket = p->typeOfPacket;
+							ofLogNotice("TCPClient::update") << "receiveRawMsg packet of size " << ofToString(messageSize) << " type " << p->typeOfPacket;
 							lock();
 							q.push_back(returnedData);
 							unlock();
@@ -423,7 +416,6 @@ namespace Software2552 {
 		if (pixels->size() > 0) {
 			ServerMap::const_iterator s = servers.find(port);
 			if (s != servers.end()) {
-				//bugbug go with shared pointered to avoid data copy
 				s->second->update(pixels, mapPortToType(port), typeOfSend, clientID);
 			}
 		}
