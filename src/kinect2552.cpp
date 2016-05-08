@@ -495,7 +495,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				shared_ptr<BodyIndexImage>p = std::make_shared<BodyIndexImage>();
 				if (p) {
 					//p->bodyIndexFromTCP(bytes, numBytes);
-					p->setup();
+					//p->setup();
 					backStagePass->addToAnimatable(p);
 				}
 			}

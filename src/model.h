@@ -419,8 +419,11 @@ namespace Software2552 {
 		void IRFromTCP(const UINT16 * bytes, const size_t len);
 	private:
 	};
-	class BodyIndexImage : public FixedLocationImage {
+	class BodyIndexImage : public ActorRole {
 	public:
+		ofTexture texture;
+		ofImage img;
+		void myDraw();
 	private:
 	};
 
