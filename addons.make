@@ -1,5 +1,6 @@
 ofxNetwork
 ofxOsc
+ofxXmlSettings
 ofxAnimatable
 ofxJson
 ofxParagraph

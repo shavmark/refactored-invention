@@ -2,8 +2,9 @@
 #include "color.h"
 #include "model.h"
 
-namespace Software2552 {
 
+namespace Software2552 {
+	//bugbug maybe add this https://github.com/arturoc/ofxDepthStreamCompression
 	Timeline::Timeline(){
 		//bugbug should we get this from data too at some point? these items cannot be set for each object ofColor colorOne(255, 0, 0);
 		// bugbug a timeline json?
@@ -43,8 +44,13 @@ namespace Software2552 {
 		if (router) {
 			router->setup();
 			router->addTCPServer(TCP, false); // general server
+#ifdef _WIN32
+			// for 64 and 32 bit windows, os ver not tracked
+#endif
 			router->sendOsc("client", SignOnClientOscAddress);
 		}
+
+
 #ifdef _WIN64
 		if (((ofApp*)ofGetAppPtr())->seekKinect) {
 			kinectDevice = std::make_shared<KinectDevice>();

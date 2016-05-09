@@ -1,26 +1,29 @@
 #include "ofApp.h"
-
+#include "ofxXmlSettings.h"
 namespace Software2552 {
 	void init() {
+		string build = __DATE__;//bugbug this is our build version right now
+		ofxXmlSettings xmlsettings; // local settings like box performance and type
+		xmlsettings.loadFile("settings.xml");
+
+		// performance calc, run compubenchcl and compare it to my dev box which is pretty average so lets say its a 5 of 10 which is generous but
+		// its my dev box so I need to be kind, 11 is reserved.
+		// my dev box results: face 15Mpixels, TVL1 3.9, ocean 282, particle 128, t rex	1.2 frames/second, video 25, bitcoin 73
+		// example a low end box (Intel HD graphics) I have gets: face 4.6, tv .86, ocean 75, partical 57, t rex .49, video 4, bit coin 7.3, this is
+		// pretty bad so its about a 2. 
+		// based on Compubench (5-9-16) the fastest test yields: face 253, tv 45, ocean, 3099, particle 2283, t rex 16, video 179, bitcoin 918,
+		// this is a 10.
+
+		// 32 bit boxes use gfxbench as it supports 32 bit
 		ofGLWindowSettings settings;
-		settings.setGLVersion(4, 0); // for now use 4 (vs 4.5) until I can figure out how to do this at run time bugbug
-		do {
-			settings.width = 800;
-			settings.height = 800;
-			settings.windowMode = ofWindowMode::OF_WINDOW;
-			// this kicks off the running of my app    
-			if (ofCreateWindow(settings)) {
-				break;
-			}
-			if (settings.glVersionMinor > 0) {
-				settings.glVersionMinor = 0;
-				continue;
-			}
-			if (settings.glVersionMinor > 3) {
-				settings.glVersionMajor = 3;
-				continue;//bugbug keep trying on low end devices to see how low things need to go
-			}
-		} while (settings.glVersionMajor < 3);
+		int performance = xmlsettings.getValue("settings:Performance", 0.0); // 0 is slowest, 11 is fastest
+
+		settings.setGLVersion(xmlsettings.getValue("settings:OpenglMajor", 4), xmlsettings.getValue("settings:OpenglMinor", 0));
+		settings.width = xmlsettings.getValue("settings:ScreenWidth", 800);
+		settings.height = xmlsettings.getValue("settings:ScreenHeight", 800);
+		settings.windowMode = ofWindowMode::OF_WINDOW;
+		// this kicks off the running of my app    
+		ofCreateWindow(settings);
 		string s = "ver " + ofToString(settings.glVersionMajor) + "." + ofToString(settings.glVersionMinor);
 		ofLog(OF_LOG_NOTICE, s);
 
