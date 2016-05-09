@@ -11,7 +11,7 @@ namespace Software2552 {
 
 
 	void SoundOut::setup() {
-
+		 
 		soundDataOut.sampleRate = 44100;
 		soundDataOut.wavePhase = 0;
 		soundDataOut.pulsePhase = 0;
