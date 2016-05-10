@@ -122,17 +122,22 @@ namespace Software2552 {
 			stage->update();
 		}
 		// let new people know where are here once time per minute (every window will call this)
-		if (((ofGetFrameNum() % ((ofApp*)ofGetAppPtr())->appconfig.getFramerate()*60) == 0) && router) {
+		uint64_t frame = ofGetFrameNum();
+		uint64_t rate = ((ofApp*)ofGetAppPtr())->appconfig.getFramerate() * 60;
+		if ((frame % rate ) == 0 && router) {
 			sendClientSigon(router);
 		}
 		// see if someone else checked in, every window is a client (but we do not care really, we just care that its a client)
+		// its a bit bizzare in that we may talk to ourself via osc but thats ok on an internal network with out much traffic usign osc
+		// and these sign on items are not time sensative
 		signon = oscClient->getMessage(SignOnClientOscAddress);
 		if (signon) {
 			// add or update client bubug we do not use this data yet
 			//MachineConfiguration
 			string name;
 			AppConfiguration::getName(name, signon);
-			if (name != ((ofApp*)ofGetAppPtr())->appconfig.getName()) { // skip our own signon messages
+			name += ofToString(AppConfiguration::getWindowNumber(signon));
+			if (name != ((ofApp*)ofGetAppPtr())->appconfig.getName()+ ofToString(((ofApp*)ofGetAppPtr())->appconfig.getWindowNumber())) { // skip our own signon messages
 				std::vector <shared_ptr<AppConfiguration>>::iterator it = std::find_if(others.begin(), others.end(), [&name](shared_ptr<AppConfiguration>p) {
 					return p->getName() == name;
 				});

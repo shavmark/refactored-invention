@@ -63,6 +63,7 @@ void SystemConfiguration::setup() {
 			window->app->appconfig.build = build;
 			window->app->appconfig.seekKinect = seekKinect;// only want one per window
 			window->app->appconfig.machineName = machineName;
+			window->app->appconfig.windowCount = windowCount; // track as an fyi
 			window->app->appconfig.frameRate = xmlsettings.getValue("framerate", 30);
 			string loc = xmlsettings.getValue("location", "left");
 			if (loc == "left") {
@@ -96,6 +97,13 @@ void AppConfiguration::getName(string &name, shared_ptr<ofxOscMessage>p) {
 		name = p->getArgAsString(2);
 	}
 }
+int AppConfiguration::getWindowNumber(shared_ptr<ofxOscMessage>p) {
+	if (p) {
+		return p->getArgAsInt(6); 
+	}
+	return -1;// bad news
+}
+
 AppConfiguration::AppConfiguration(shared_ptr<ofxOscMessage>p) {
 	if (p) {
 		os = p->getArgAsString(0);
@@ -103,7 +111,7 @@ AppConfiguration::AppConfiguration(shared_ptr<ofxOscMessage>p) {
 		machineName = p->getArgAsString(2);
 		location = (Location)p->getArgAsInt(3);
 		performance = p->getArgAsInt(4);
-		monitorCount = p->getArgAsInt(5); // bugbug likely need to sign on by monitor vs machine
+		windowCount = p->getArgAsInt(5); // bugbug likely need to sign on by monitor vs machine
 		windowNumber = p->getArgAsInt(6);
 	}
 
@@ -125,7 +133,7 @@ shared_ptr<ofxOscMessage>  AppConfiguration::getsignon() {
 		signon->addStringArg(machineName);
 		signon->addIntArg(location);
 		signon->addIntArg(performance);
-		signon->addIntArg(monitorCount); // bugbug likely need to sign on by monitor vs machine
+		signon->addIntArg(windowCount); 
 		signon->addIntArg(windowNumber);
 	 // our app becomes a collection of windows, input devices, speakers all acting as one including Kinect.  A machine can drive any number of monitors
 	}

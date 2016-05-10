@@ -76,21 +76,23 @@ public:
 	int getseekKinect() { return seekKinect; }
 	string&getName() { return machineName; }
 	static void getName(string&name, shared_ptr<ofxOscMessage>);
+	int getWindowNumber() {	return windowNumber	;};
+	static int getWindowNumber(shared_ptr<ofxOscMessage>);
 	void setFrameRateinOF() { ofSetFrameRate(frameRate); }
 	enum Location { left, right, middle, back };
 	//bugbug wrap as needed when ready
 	vector <string> jsonFile;
-	int windowNumber;
 	shared_ptr<SystemConfiguration::Window> parent;
 
 private:
+	int windowNumber;
 	Location location;
 	string os;
 	int performance = 0;
 	string build;
 	bool seekKinect = false;
 	int frameRate = 30;
-	int monitorCount = 1;
+	int windowCount = 1;
 	string machineName;
 };
 
