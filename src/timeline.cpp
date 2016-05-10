@@ -6,13 +6,9 @@
 namespace Software2552 {
 	//bugbug maybe add this https://github.com/arturoc/ofxDepthStreamCompression
 	Timeline::Timeline(){
-		//bugbug should we get this from data too at some point? these items cannot be set for each object ofColor colorOne(255, 0, 0);
-		// bugbug a timeline json?
-
 	}
 	// read one act and save it to the list of acts (ie a story)
 	bool Timeline::readScript(const string& path) {
-
 		//return playlist.read(path);
 		return true;
 	}
@@ -21,6 +17,11 @@ namespace Software2552 {
 	void Timeline::resume() {
 	}
 	void Timeline::pause() {
+	}
+	void  Timeline::sendClientSigon(shared_ptr<Sender> sender) {
+		if (sender) {
+			router->sendOsc(((ofApp*)ofGetAppPtr())->config.getsignon(), SignOnClientOscAddress);
+		}
 	}
 
 	void Timeline::setup() {
@@ -44,38 +45,42 @@ namespace Software2552 {
 		if (router) {
 			router->setup();
 			router->addTCPServer(TCP, false); // general server
-#ifdef _WIN32
-			// for 64 and 32 bit windows, os ver not tracked
-#endif
-			router->sendOsc("client", SignOnClientOscAddress);
 		}
 
-
 #ifdef _WIN64
-		if (((ofApp*)ofGetAppPtr())->seekKinect) {
+		if (((ofApp*)ofGetAppPtr())->config.getseekKinect()) {
 			kinectDevice = std::make_shared<KinectDevice>();
 			if (kinectDevice) {
 				// build out a full kinect
 				router->setupKinect();
-				if (kinectDevice->setup(router, stage, 5)) {
+				if (kinectDevice->setup(router, stage, 25)) { // give after a while
 					kinectBody = std::make_shared<Software2552::KinectBody>(kinectDevice);
 					if (kinectBody) {
 						kinectBody->useFaces(std::make_shared<Software2552::KinectFaces>(kinectDevice));
 						kinectBody->useAudio(std::make_shared<Software2552::KinectAudio>(kinectDevice));
 					}
-					router->sendOsc(kinectDevice->getId(), SignOnKinectServerOscAddress);
+					shared_ptr<ofxOscMessage> signon = std::make_shared<ofxOscMessage>();
+					if (signon) {
+						signon->addStringArg(kinectDevice->getId());
+						router->sendOsc(signon, SignOnKinectServerOscAddress);
+					}
 				}
 			}
 		}
 #endif
 
 		ofSetVerticalSync(false);
-		ofSetFrameRate(frameRate);
+		((ofApp*)ofGetAppPtr())->config.setFrameRateinOF();
 		colorlist.setup();
 		
 		//write.setup();
 		ofxJSON data;
-		data.open("json4.json");// use json editor vs. coding it up
+		for (const auto& window : ((ofApp*)ofGetAppPtr())->config.getWindows()) {
+			//bugbug write a better iterator etc so we can loop through jsons for ever
+			for (const auto& file : window->jsonFile) {
+				data.open(file);// use json editor vs. coding it up
+			}
+		}
 		//write.send(data, "graphics");
 		return;
 
@@ -90,81 +95,59 @@ namespace Software2552 {
 #endif
 		// router updates itself and builds a queue of input
 		// check for sign on/off etc of things
-		string signon;
-		string source = oscClient->getString(signon, SignOnKinectServerOscAddress);
+		shared_ptr<ofxOscMessage> signon = oscClient->getMessage(SignOnKinectServerOscAddress);
 		// if there is a valid message, if I am not the kinect sending the sign on is requested then ...
-		if (!kinectBody && source.size() > 0 && signon.size() > 0 && source != kinectServerIP) {
-			kinectServerIP = source;//bugbug only 1 kinect for now, needs to be a vector for > 1 kinect
-			if (!kinectDevice || signon != kinectDevice->getId()) {
-				tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
-				ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon;
-				if (tcpKinectClient) {
-					tcpKinectClient->set(stage);
-					tcpKinectClient->setup(kinectServerIP, TCPKinectBody, true);
-				}
-				stage->setup(tcpKinectClient);
-				tcpBodyIndex = std::make_shared<Software2552::PixelsClient>(BodyIndexID); // frees of any existing
-				if (tcpBodyIndex) {
-					tcpBodyIndex->set(stage);
-					tcpBodyIndex->setup(kinectServerIP, TCPKinectBodyIndex, true);
-				}
-				/* ir takes too much from our little Kinect server, maybe the server needs to be high powered, like this dev box (or the one I gave away :() 
-				tcpIRIndex = std::make_shared<Software2552::PixelsClient>(); // frees of any existing
-				if (tcpIRIndex) {
-					tcpIRIndex->set(stage);
-					tcpIRIndex->setup(kinectServerIP, TCPKinectIR, true);
-					tcpIRIndex->pt.x = getDepthFrameWidth();// *ratioDepthToScreenX();
-				}
-				*/
-				
+		if ((!((ofApp*)ofGetAppPtr())->config.getseekKinect()) && signon) {
+			ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon->getArgAsString(0);
+			kinectServerIP = signon->getRemoteIp();//bugbug only 1 kinect for now, needs to be a vector for > 1 kinect
+			tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
+			if (tcpKinectClient) {
+				tcpKinectClient->set(stage);
+				tcpKinectClient->setup(kinectServerIP, TCPKinectBody, true);
 			}
+			stage->setup(tcpKinectClient);
+			tcpBodyIndex = std::make_shared<Software2552::PixelsClient>(BodyIndexID); // frees of any existing
+			if (tcpBodyIndex) {
+				tcpBodyIndex->set(stage);
+				tcpBodyIndex->setup(kinectServerIP, TCPKinectBodyIndex, true);
+			}
+			/* ir takes too much from our little Kinect server, maybe the server needs to be high powered, like this dev box (or the one I gave away :() 
+			tcpIRIndex = std::make_shared<Software2552::PixelsClient>(); // frees of any existing
+			if (tcpIRIndex) {
+				tcpIRIndex->set(stage);
+				tcpIRIndex->setup(kinectServerIP, TCPKinectIR, true);
+				tcpIRIndex->pt.x = getDepthFrameWidth();// *ratioDepthToScreenX();
+			}
+			*/
 		}
 		if (stage) {
 			stage->update();
 		}
+		// let new people know where are here once time per minute
+		if (((ofGetFrameNum() % ((ofApp*)ofGetAppPtr())->config.getFramerate()*60) == 0) && router) {
+			sendClientSigon(router);
+		}
+		// see if someone else checked in
+		signon = oscClient->getMessage(SignOnClientOscAddress);
+		if (signon) {
+			// add or update client bubug we do not use this data yet
+			//MachineConfiguration
+			string name;
+			AppConfiguration::getName(name, signon);
+			std::vector <shared_ptr<AppConfiguration>>::iterator it = std::find_if(others.begin(), others.end(), [&name](shared_ptr<AppConfiguration>p) {
+				return p->getName() == name;
+			});
+			if (it == others.end()) {
+				shared_ptr<AppConfiguration> p = std::make_shared<AppConfiguration>(signon);
+				if (p) {
+					others.push_back(p);
+				}
+			}
+			else {
+				*it = std::make_shared<AppConfiguration>(signon); //bugbug does this really work? It should
+			}
+		}
 		return;
-#if 0
-		//kinect/joints kinect/face kinect/audio kinect/body kinect/audioCommand kinect/install
-		shared_ptr<ofxJSON> joints = read.get("kinect/joints");
-		string s;
-		if (joints) {
-			s = joints->getRawString();
-			int type = (*joints)["jointType"].asInt();
-			x = (*joints)["depth"]["x"].asFloat();
-			y = (*joints)["depth"]["y"].asFloat();
-			x2 = (*joints)["color"]["x"].asFloat();
-			y2 = (*joints)["color"]["y"].asFloat();
-			x3 = (*joints)["cam"]["x"].asFloat();
-			y3 = (*joints)["cam"]["y"].asFloat();
-			z3 = (*joints)["cam"]["z"].asFloat();
-		}
-		shared_ptr<ofxJSON> face = read.get("kinect/face");
-		if (face) {
-			s = face->getRawString();
-		}
-		shared_ptr<ofxJSON> install = read.get("kinect/install");
-		if (install) {
-			s = install->getRawString();
-		}
-		shared_ptr<ofxJSON> body = read.get("kinect/body");
-		if (body) {
-			s = body->getRawString();
-		}
-		shared_ptr<ofxJSON> audio = read.get("kinect/audio");
-		if (audio) {
-			s = audio->getRawString();
-		}
-		shared_ptr<ofxJSON> audioCommand = read.get("kinect/audioCommand");
-		if (audioCommand) {
-			s = audioCommand->getRawString();
-		}
-		// add a drawing object like a small square that will only draw 5 frames or such using
-		// the new frame count code
-		//stage.updateData(read.get("graphics")); // data can come from files, http/s, osc ++
-		stage.update();
-		return;
-
-#endif // 0
 		playlist.removeExpiredItems();
 		if (playlist.getCurrent() != nullptr) {
 			playlist.getCurrent()->getStage()->update();

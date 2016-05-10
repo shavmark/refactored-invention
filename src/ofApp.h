@@ -43,21 +43,50 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 		f1 = f2;
 	}
 }
+
 #include "ofxJSON.h"
 #include "consts.h"
 #include "animation.h"
 #include "color.h"
 #include "model.h"
 #include "networking.h"
+#define STRINGIFY(p) #p
+
+class AppConfiguration {
+public:
+	AppConfiguration() {}
+	AppConfiguration(shared_ptr<ofxOscMessage>);
+	void setup();
+	shared_ptr<ofxOscMessage> getsignon();
+	int getPerformance() { return performance; }
+	int getFramerate() { return frameRate; }
+	int getseekKinect() { return seekKinect; }
+	string&getName() { return machineName; }
+	static void getName(string&name, shared_ptr<ofxOscMessage>);
+	void setFrameRateinOF() { ofSetFrameRate(frameRate); }
+	class Window {
+	public:
+		vector <string> jsonFile;
+		int x, y, width, height;
+	};
+	vector<shared_ptr<Window>>& getWindows() { return windows; }
+private:
+	string os;
+	int performance = 0;
+	string build;
+	bool seekKinect = false;
+	vector<shared_ptr<Window>> windows;// pair windows, json
+	int frameRate = 30;
+	int monitorCount = 1;
+	string machineName;
+	enum Location { left, right, middle, back };
+	Location location;
+};
+
 #include "control.h"
 #include "scenes.h"
 #include "timeline.h"
 
-
-#define STRINGIFY(p) #p
-namespace Software2552 {
-	void init();
-}
 
 class ofApp : public ofBaseApp{
 
@@ -67,7 +96,6 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-
 		void mouseMoved(int x, int y );
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
@@ -79,8 +107,6 @@ class ofApp : public ofBaseApp{
 		void keyPressed(int key);
 		void exit();
 
-		bool seekKinect = false; // command line
-
 		// audio
 		void audioOut(ofSoundBuffer &outBuffer);
 		//in
@@ -89,112 +115,8 @@ class ofApp : public ofBaseApp{
 
 		Software2552::Timeline timeline;
 
-		void ofApp::drawScene(bool isPreview){
-	
-	ofEnableDepthTest();
+		void ofApp::drawScene(bool isPreview) {}
+		AppConfiguration config; // our config
+private:
 
-	if (false) { // keep to learn how to tie to kinect
-		ofPushStyle();
-		ofSetColor(150, 100, 100);
-		ofDrawGrid(1.0f, 5.0f, true);
-		
-		ofSetColor(255);
-		
-		//--
-		//draw camera preview
-		//
-		headTrackedCamera.transformGL();
-		
-		ofPushMatrix();
-		ofScale(0.002f, 0.002f, 0.002f);
-		ofNode().draw();
-		ofPopMatrix();
-		
-		ofMultMatrix(headTrackedCamera.getProjectionMatrix().getInverse());
-		
-		ofNoFill();
-		ofDrawBox(2.0f);
-		
-		headTrackedCamera.restoreTransformGL();
-		//
-		//--
-		
-		//--
-		//draw window preview
-		//
-		window.clear();
-		window.addVertex(windowTopLeft);
-		window.addVertex(windowBottomLeft);
-		window.addVertex(windowBottomRight);
-		window.setMode(OF_PRIMITIVE_LINE_STRIP);
-		window.draw();
-		glPointSize(3.0f);
-		window.drawVertices();
-		//
-		//--
-        ofPopStyle();
-	}
-	
-	ofPushStyle();
-	ofNoFill();
-	ofColor col(200,100,100);
-	for (float z = 0.0f; z > -40.0f; z-= 0.1f){
-		col.setHue(int(-z * 100.0f + ofGetElapsedTimef() * 10.0f) % 360);
-		ofSetColor(col);
-		ofDrawRectangle(-windowWidth / 2.0f, -windowHeight / 2.0f, z, windowWidth, windowHeight);
-	}
-	ofPopStyle();
-	
-	ofPushStyle();
-	ofEnableSmoothing();
-	ofSetColor(255);
-	ofSetLineWidth(5.0f);
-	ofBeginShape();
-	for (unsigned int i=0; i<headPositionHistory.size(); i++) {
-		ofPoint vertex(headPositionHistory[i].x, headPositionHistory[i].y, -float( headPositionHistory.size() - i ) * 0.05f);
-		ofCurveVertex(vertex);
-	}
-	ofEndShape(false);
-	ofPopStyle();
-	
-	ofDisableDepthTest();
-}
-
-		ofLight	light;
-		ofEasyCam camera;
-		ofVideoPlayer test;
-		ofMaterial material;
-		int   appFPS;
-		float sequenceFPS;
-		bool  bFrameIndependent;
-		
-		void circleResolutionChanged(int & circleResolution);
-		void ringButtonPressed();
-		bool bHide;
-		
-		int years;
-
-		ofSoundPlayer ring;
-		ofImage backgroundImage;
-		// example only, but a good one, SceneAnimator sa;
-		
-		ofPlanePrimitive plane;
-		ofCamera cam;
-		float angle;
-		ofVec3f previous, current;
-		ofEasyCam easyCam;
-
-		deque<ofVec3f> pathVertices;
-		ofMesh pathLines;
-		ofCamera headTrackedCamera;
-		float windowWidth;
-		float windowHeight;
-		ofVec3f windowTopLeft;
-		ofVec3f windowBottomLeft;
-		ofVec3f windowBottomRight;
-		float viewerDistance;
-
-		deque<ofPoint> headPositionHistory;
-
-		ofVboMesh window;
 };

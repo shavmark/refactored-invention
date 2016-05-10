@@ -230,9 +230,9 @@ namespace Software2552 {
 		myClear(force);
 	}
 	void Stage::removeExpiredItems(list<shared_ptr<ActorRole>>&v) {
-		lock();
+		mutex.lock();
 		v.remove_if(ActorRole::OKToRemove);
-		unlock();
+		mutex.unlock();
 	}
 
 	void Stage::setup(shared_ptr<TCPKinectClient>clientIn) {
@@ -311,14 +311,14 @@ namespace Software2552 {
 				fixed2d(true); // do not set to false in case its already set
 			}
 			p->setupForDrawing();
-			lock();
+			mutex.lock();
 			if (inFront) {
 				animatables.push_front(p);
 			}
 			else {
 				animatables.push_back(p);
 			}
-			unlock();
+			mutex.unlock();
 		}
 	}
 

@@ -17,8 +17,6 @@ namespace Software2552 {
 	static float ratioColorToDepthX() { return (float)getDepthFrameWidth() / getColorFrameWidth(); }
 	static float ratioColorToDepthY() { return (float)getDepthFrameHeight() / getColorFrameHeight(); }
 
-	static const int frameRate = 30;
-
 	enum DataType : char {
 		TCPID = 't',	//116
 		BodyIndexID = 'x',//120

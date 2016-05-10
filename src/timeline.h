@@ -23,6 +23,7 @@ namespace Software2552 {
 		bool readScript(const string& path);
 
 	private:
+		void sendClientSigon(shared_ptr<Sender>);
 		//bugbug likely to go into ofApp.cpp once things settle down and timeline just goes away
 		float x =0;
 		float y = 0;
@@ -39,6 +40,7 @@ namespace Software2552 {
 		shared_ptr<PixelsClient>tcpBodyIndex = nullptr;
 		shared_ptr<PixelsClient>tcpIRIndex = nullptr;
 		shared_ptr<TCPKinectClient>tcpKinectClient = nullptr;
+		vector <shared_ptr<AppConfiguration>> others; // the config of all other machines on our network
 
 		shared_ptr<Sender>router = nullptr; // everyone can talk to everyone
 #ifdef _WIN64

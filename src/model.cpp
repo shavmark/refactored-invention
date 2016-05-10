@@ -318,8 +318,14 @@ namespace Software2552 {
 	}
 	void KinectItem::setup() {
 		setFixed(true);
-		setFrameCount(frameRate/2);//bugbug how to avoid flash?  1 frame or 1 second?
-
+		// lots of data comes in, if we want to draw motion we need to keep up, at the same time
+		// we do not want to flash the screen if there is no data
+		int count = ((ofApp*)ofGetAppPtr())->config.getFramerate() / 2;
+		if (((ofApp*)ofGetAppPtr())->config.getPerformance() < 3) {
+			count /= 5;
+		}
+		setFrameCount(count);//bugbug how to avoid flash?  1 frame or 1 second?
+		
 	}
 	// draw face separte from body
 	void Face::myDraw() {
@@ -441,7 +447,7 @@ namespace Software2552 {
 		//bugbug doing this or just about any other thing draws blck iamage image.allocate(pixels->getWidth(), pixels->getHeight(), OF_IMAGE_COLOR);//bugbug get OF_IMAGE_COLOR from data if this works
 		image.getPixelsRef() = *pixels;
 		setFixed(true); 
-		setFrameCount(frameRate);//bugbug how to avoid flash?
+		setFrameCount(((ofApp*)ofGetAppPtr())->config.getFramerate());//bugbug how to avoid flash?
 	}
 	void PixelsManager::myUpdate() {
 		image.update();
@@ -1406,9 +1412,8 @@ namespace Software2552 {
 		easyCam.end();
 	}
 
-	// its ok also if Controller passes in an object such as a paragraph to copy in
-	// bugbug move to a text object
-	void Graphics2552::rotateToNormal(ofVec3f normal) {
+	// figure out rotationsfor face
+	void rotateToNormal(ofVec3f normal) {
 		normal.normalize();
 
 		float rotationAmount;

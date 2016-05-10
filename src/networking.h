@@ -196,7 +196,7 @@ namespace Software2552 {
 		bool enabled(OurPorts port);
 		void sendOsc(ofxJSON &data, const string&address) { comms.send(data, address); }
 		void sendOsc(const string &data, const string&address) { comms.send(data, address); }
-		void sendOsc(shared_ptr<ofxOscMessage>data, const string&address) { comms.send(data, address); }
+		void sendOsc(shared_ptr<ofxOscMessage>data, const string&address) { if (data) comms.send(data, address); }
 	private:
 		WriteOsc comms;
 		ServerMap servers;

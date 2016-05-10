@@ -21,7 +21,7 @@ namespace Software2552 {
 	shared_ptr<Stage> getScene(const string&name);
 
 	// contains  elements of a stage
-	class Stage : public ofThread {
+	class Stage {
 	public:
 		void setup(shared_ptr<TCPKinectClient>client);
 		void update();
@@ -112,7 +112,7 @@ namespace Software2552 {
 		Director director;
 
 		void draw3d();
-
+		ofMutex mutex;
 	};
 
 	// over time this just does whats in the data
