@@ -3,6 +3,8 @@
 
 #include "ofApp.h"
 #include "kinect2552.h"
+#include "scenes.h"
+
 //SetKinectTwoPersonSystemEngagement vs one?
 //InputPointerManager.TransformInputPointerCoordinatesToWindowCoordinates
 // https://social.msdn.microsoft.com/Forums/en-US/f29a202a-fa27-4cfc-9079-5addad0906e0/how-can-i-map-a-depth-frame-to-camera-space-without-having-a-kinect-on-hand?forum=kinectv2sdk

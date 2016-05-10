@@ -48,10 +48,10 @@ namespace Software2552 {
 	class StagedClient  {
 	public:
 		StagedClient(DataType idIn = UnknownID) { id = idIn; }
-		void set(shared_ptr<Stage> stage) { backStagePass = stage; }
+		void set(shared_ptr<Stage> stage) { backStagePass.push_back(stage); }
 	protected:
-		shared_ptr<Stage> backStagePass = nullptr;
-		DataType id;// optional
+		vector<shared_ptr<Stage>> backStagePass;
+		DataType id;// optional bugbug DataType not supported any more, remove it when ready
 
 	};
 	// read known size ofPixels

@@ -32,27 +32,10 @@ namespace Software2552 {
 		float x3 = 0;
 		float y3 = 0;
 		float z3 = 0;
-		string kinectServerIP;
 		ChannelList playlist;
 		ColorList colorlist;
-		shared_ptr<Stage> stage = nullptr;
-		shared_ptr<ReadOsc>oscClient = nullptr; // everyone can talk to everyone
-		shared_ptr<PixelsClient>tcpBodyIndex = nullptr;
-		shared_ptr<PixelsClient>tcpIRIndex = nullptr;
-		shared_ptr<TCPKinectClient>tcpKinectClient = nullptr;
+		shared_ptr<Stage> stage = nullptr; // each window is a stage with its own graphics list
 		vector <shared_ptr<AppConfiguration>> others; // the config of all other machines on our network
-
-		shared_ptr<Sender>router = nullptr; // everyone can talk to everyone
-#ifdef _WIN64
-		// every 64 bit windows with a 3.0 usb can talk to everyone else
-		shared_ptr<KinectBody> kinectBody = nullptr;
-#else
-		class KinectDevice {
-		public:
-			string getId() { return ""; }// no kinect in 32 bit worlds
-		};
-#endif
-		shared_ptr<KinectDevice> kinectDevice = nullptr;
 	};
 
 

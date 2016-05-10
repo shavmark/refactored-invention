@@ -5,9 +5,6 @@
 	//- float : positionY
 	//- float : positionZ
 	//- string : trackingState(Tracked, NotTracked or Inferred)
-#include "ofApp.h"
-#include "ofxOsc.h"
-#include "ofxNetwork.h"
 #include "snappy.h"
 
 

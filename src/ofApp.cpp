@@ -1,6 +1,7 @@
 #include "ofApp.h"
 #include "ofxXmlSettings.h"
 
+OneGlobalInstance globalinstance;
 
 void SystemConfiguration::setup() {
 		ofxXmlSettings xmlsettings; // local settings like box performance and type
@@ -23,7 +24,8 @@ void SystemConfiguration::setup() {
 		string build = __DATE__;//bugbug this is our build version right now, need to add more info bugbug or pass in a data structure
 		bool seekKinect = xmlsettings.getValue("settings:Kinect", false);
 		string machineName = xmlsettings.getValue("settings:MachineName", "bob");
-
+		int major = xmlsettings.getValue("settings:OpenglMajor", 4);// could make each window set this too
+		int minor = xmlsettings.getValue("settings:OpenglMinor", 0);
 		// per window items
 
 		xmlsettings.pushTag("settings");
@@ -53,7 +55,7 @@ void SystemConfiguration::setup() {
 			settings.height = xmlsettings.getValue("ScreenHeight", 1);
 			settings.setPosition(ofVec2f(xmlsettings.getValue("x", 1), xmlsettings.getValue("y", 1)));
 			// come back to this for multiple windows/ monitors http://blog.openframeworks.cc/post/133404337264/openframeworks-090-multi-window-and-ofmainloop
-			settings.setGLVersion(xmlsettings.getValue("settings:OpenglMajor", 4), xmlsettings.getValue("settings:OpenglMinor", 0));
+			settings.setGLVersion(major, minor);
 
 			settings.windowMode = ofWindowMode::OF_WINDOW;
 			// this kicks off the running of my app    

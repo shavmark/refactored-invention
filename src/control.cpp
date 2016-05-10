@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include "inc\Kinect.h" // needed for enums
+#include "scenes.h"
 
 // connect things together
 
@@ -48,27 +49,33 @@ namespace Software2552 {
 	}
 #endif
 	void PixelsClient::myUpdate(shared_ptr<ofPixels> pixels) {
-		if (backStagePass && pixels) {
+		if (pixels) {
 			// map data to stage
-			shared_ptr<PixelsManager>p = std::make_shared<PixelsManager>(id);
-			if (p) {
-				p->pixels = pixels; // drawing needs to occur in main thread to make OpenGL work
-				p->setActorPosition(pt);
-				backStagePass->addToAnimatable(p);
+			for (const auto&pass : backStagePass) {
+				shared_ptr<PixelsManager>p = std::make_shared<PixelsManager>(id);
+				if (p) {
+					p->pixels = pixels; // drawing needs to occur in main thread to make OpenGL work
+					p->setActorPosition(pt);
+					// add to all stages bugbug until we figure left/right etc and groupings
+					pass->addToAnimatable(p);
+				}
 			}
 		}
 	}
 	void TCPKinectClient::myUpdate(shared_ptr<ReadTCPPacket> packet) {
-		if (backStagePass && packet) {
-			shared_ptr<Kinect>k = std::make_shared<Kinect>();
-			if (k) {
-				ofPoint pt;// start at 0,0
-				k->bodyFromTCP(packet->data.c_str(), packet->data.size());
-				k->setup();
-				pt.x = 0;
-				pt.y = getDepthFrameHeight();// *ratioDepthToScreenY();
-				k->setActorPosition(pt);
-				backStagePass->addToAnimatable(k);
+		if (packet) {
+				// add to all stages bugbug until we figure left/right etc and groupings
+				for (const auto&pass : backStagePass) {
+					shared_ptr<Kinect>k = std::make_shared<Kinect>();
+					if (k) {
+						ofPoint pt;// start at 0,0
+						k->bodyFromTCP(packet->data.c_str(), packet->data.size());
+						k->setup();
+						pt.x = 0;
+						pt.y = getDepthFrameHeight();// *ratioDepthToScreenY();
+						k->setActorPosition(pt);
+						pass->addToAnimatable(k);
+				}
 			}
 		}
 	}

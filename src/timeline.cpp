@@ -1,7 +1,7 @@
 #include "ofapp.h"
 #include "color.h"
 #include "model.h"
-
+#include "scenes.h"
 
 namespace Software2552 {
 	//bugbug maybe add this https://github.com/arturoc/ofxDepthStreamCompression
@@ -20,7 +20,7 @@ namespace Software2552 {
 	}
 	void  Timeline::sendClientSigon(shared_ptr<Sender> sender) {
 		if (sender) {
-			router->sendOsc(((ofApp*)ofGetAppPtr())->appconfig.getsignon(), SignOnClientOscAddress);
+			sender->sendOsc(((ofApp*)ofGetAppPtr())->appconfig.getsignon(), SignOnClientOscAddress);
 		}
 	}
 
@@ -36,33 +36,37 @@ namespace Software2552 {
 			return; //things would be really messed up...
 		}
 
-		oscClient = std::make_shared<Software2552::ReadOsc>();
-		if (oscClient) {
-			oscClient->setup();
+		if (!globalinstance.oscClient) {
+			globalinstance.oscClient = std::make_shared<Software2552::ReadOsc>();
+			if (globalinstance.oscClient) {
+				globalinstance.oscClient->setup();
+			}
 		}
 
-		router = std::make_shared<Software2552::Sender>();
-		if (router) {
-			router->setup();
-			router->addTCPServer(TCP, false); // general server
+		if (!globalinstance.router) {
+			globalinstance.router = std::make_shared<Software2552::Sender>();
+			if (globalinstance.router) {
+				globalinstance.router->setup();
+				globalinstance.router->addTCPServer(TCP, false); // general server
+			}
 		}
 
 #ifdef _WIN64
-		if (((ofApp*)ofGetAppPtr())->appconfig.getseekKinect()) {
-			kinectDevice = std::make_shared<KinectDevice>();
-			if (kinectDevice) {
+		if (((ofApp*)ofGetAppPtr())->appconfig.getseekKinect() && !globalinstance.kinectDevice) {
+			globalinstance.kinectDevice = std::make_shared<KinectDevice>();
+			if (globalinstance.kinectDevice) {
 				// build out a full kinect
-				router->setupKinect();
-				if (kinectDevice->setup(router, stage, 25)) { // give after a while
-					kinectBody = std::make_shared<Software2552::KinectBody>(kinectDevice);
-					if (kinectBody) {
-						kinectBody->useFaces(std::make_shared<Software2552::KinectFaces>(kinectDevice));
-						kinectBody->useAudio(std::make_shared<Software2552::KinectAudio>(kinectDevice));
+				globalinstance.router->setupKinect();
+				if (globalinstance.kinectDevice->setup(globalinstance.router, stage, 25)) { // give after a while
+					globalinstance.kinectBody = std::make_shared<Software2552::KinectBody>(globalinstance.kinectDevice);
+					if (globalinstance.kinectBody) {
+						globalinstance.kinectBody->useFaces(std::make_shared<Software2552::KinectFaces>(globalinstance.kinectDevice));
+						globalinstance.kinectBody->useAudio(std::make_shared<Software2552::KinectAudio>(globalinstance.kinectDevice));
 					}
 					shared_ptr<ofxOscMessage> signon = std::make_shared<ofxOscMessage>();
 					if (signon) {
-						signon->addStringArg(kinectDevice->getId());
-						router->sendOsc(signon, SignOnKinectServerOscAddress);
+						signon->addStringArg(globalinstance.kinectDevice->getId());
+						globalinstance.router->sendOsc(signon, SignOnKinectServerOscAddress);
 					}
 				}
 			}
@@ -87,27 +91,30 @@ namespace Software2552 {
 	void Timeline::update() { 
 #ifdef _WIN64
 		// kinect can only go 30fps 
-		if (kinectBody) {
-			kinectBody->update();
+		if (globalinstance.kinectBody) {
+			globalinstance.kinectBody->update();
 		}
 #endif
+		if (!((ofApp*)ofGetAppPtr())->appconfig.installed && globalinstance.tcpKinectClient) {
+			globalinstance.tcpKinectClient->set(stage); // unique stages
+			stage->setup(globalinstance.tcpKinectClient);
+			globalinstance.tcpBodyIndex->set(stage);
+			((ofApp*)ofGetAppPtr())->appconfig.installed = true;
+		}
 		// router updates itself and builds a queue of input
 		// check for sign on/off etc of things
-		shared_ptr<ofxOscMessage> signon = oscClient->getMessage(SignOnKinectServerOscAddress);
-		// if there is a valid message, if I am not the kinect sending the sign on is requested then ...
-		if ((!((ofApp*)ofGetAppPtr())->appconfig.getseekKinect()) && signon) {
+		shared_ptr<ofxOscMessage> signon = globalinstance.oscClient->getMessage(SignOnKinectServerOscAddress);
+		// if there is a valid message, if I am not the kinect sending, and I am not already signed in the sign on is requested then ...
+		if ((!((ofApp*)ofGetAppPtr())->appconfig.getseekKinect()) && signon && globalinstance.kinectServerIP.empty()) {
 			ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon->getArgAsString(0);
-			kinectServerIP = signon->getRemoteIp();//bugbug only 1 kinect for now, needs to be a vector for > 1 kinect
-			tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
-			if (tcpKinectClient) {
-				tcpKinectClient->set(stage);
-				tcpKinectClient->setup(kinectServerIP, TCPKinectBody, true);
+			globalinstance.kinectServerIP = signon->getRemoteIp();//bugbug only 1 kinect for now, needs to be a vector for > 1 kinect
+			globalinstance.tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
+			if (globalinstance.tcpKinectClient) {
+				globalinstance.tcpKinectClient->setup(globalinstance.kinectServerIP, TCPKinectBody, true);
 			}
-			stage->setup(tcpKinectClient);
-			tcpBodyIndex = std::make_shared<Software2552::PixelsClient>(BodyIndexID); // frees of any existing
-			if (tcpBodyIndex) {
-				tcpBodyIndex->set(stage);
-				tcpBodyIndex->setup(kinectServerIP, TCPKinectBodyIndex, true);
+			globalinstance.tcpBodyIndex = std::make_shared<Software2552::PixelsClient>(BodyIndexID); // frees of any existing
+			if (globalinstance.tcpBodyIndex) {
+				globalinstance.tcpBodyIndex->setup(globalinstance.kinectServerIP, TCPKinectBodyIndex, true);
 			}
 			/* ir takes too much from our little Kinect server, maybe the server needs to be high powered, like this dev box (or the one I gave away :() 
 			tcpIRIndex = std::make_shared<Software2552::PixelsClient>(); // frees of any existing
@@ -124,13 +131,13 @@ namespace Software2552 {
 		// let new people know where are here once time per minute (every window will call this)
 		uint64_t frame = ofGetFrameNum();
 		uint64_t rate = ((ofApp*)ofGetAppPtr())->appconfig.getFramerate() * 60;
-		if ((frame % rate ) == 0 && router) {
-			sendClientSigon(router);
+		if ((frame % rate ) == 0 && globalinstance.router) {
+			sendClientSigon(globalinstance.router);
 		}
 		// see if someone else checked in, every window is a client (but we do not care really, we just care that its a client)
 		// its a bit bizzare in that we may talk to ourself via osc but thats ok on an internal network with out much traffic usign osc
 		// and these sign on items are not time sensative
-		signon = oscClient->getMessage(SignOnClientOscAddress);
+		signon = globalinstance.oscClient->getMessage(SignOnClientOscAddress);
 		if (signon) {
 			// add or update client bubug we do not use this data yet
 			//MachineConfiguration

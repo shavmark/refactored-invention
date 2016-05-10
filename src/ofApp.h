@@ -43,6 +43,8 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 		f1 = f2;
 	}
 }
+#include "ofxOsc.h"
+#include "ofxNetwork.h"
 
 #include "ofxJSON.h"
 #include "consts.h"
@@ -50,6 +52,7 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 #include "color.h"
 #include "model.h"
 #include "networking.h"
+
 #define STRINGIFY(p) #p
 class ofApp;
 class SystemConfiguration {
@@ -61,8 +64,10 @@ public:
 		shared_ptr<ofApp> app; // not sure yet but lets see if it works here
 	};
 	vector<shared_ptr<Window>>& getWindows() { return windows; }
+
 private:
 	vector<shared_ptr<Window>> windows;// pair windows, json
+
 };
 
 class AppConfiguration {
@@ -83,6 +88,7 @@ public:
 	//bugbug wrap as needed when ready
 	vector <string> jsonFile;
 	shared_ptr<SystemConfiguration::Window> parent;
+	bool installed = false;
 
 private:
 	int windowNumber;
@@ -96,9 +102,33 @@ private:
 	string machineName;
 };
 
-#include "control.h"
-#include "scenes.h"
 #include "timeline.h"
+#include "control.h"
+
+
+// one instance of network items
+class OneGlobalInstance {
+public:
+	string kinectServerIP; // each window could connect to an other kinect bugbug future phase
+	shared_ptr<Software2552::PixelsClient>tcpIRIndex = nullptr;
+	shared_ptr<Software2552::PixelsClient>tcpBodyIndex = nullptr;
+	shared_ptr<Software2552::TCPKinectClient>tcpKinectClient = nullptr;
+	shared_ptr<Software2552::ReadOsc>oscClient = nullptr; // everyone can talk to everyone
+	shared_ptr<Software2552::Sender>router = nullptr; // everyone can talk to everyone
+#ifdef _WIN64
+										// every 64 bit windows with a 3.0 usb can talk to everyone else
+	shared_ptr<Software2552::KinectBody> kinectBody = nullptr;
+#else
+	class KinectDevice {
+	public:
+		string getId() { return ""; }// no kinect in 32 bit worlds
+	};
+#endif
+	shared_ptr<Software2552::KinectDevice> kinectDevice = nullptr;
+
+};
+extern OneGlobalInstance globalinstance;
+
 
 
 class ofApp : public ofBaseApp{
@@ -132,7 +162,6 @@ class ofApp : public ofBaseApp{
 		AppConfiguration appconfig;
 
 private:
-
 };
 
 
