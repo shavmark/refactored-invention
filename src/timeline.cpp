@@ -20,7 +20,7 @@ namespace Software2552 {
 	}
 	void  Timeline::sendClientSigon(shared_ptr<Sender> sender) {
 		if (sender) {
-			router->sendOsc(((ofApp*)ofGetAppPtr())->config.getsignon(), SignOnClientOscAddress);
+			router->sendOsc(((ofApp*)ofGetAppPtr())->appconfig.getsignon(), SignOnClientOscAddress);
 		}
 	}
 
@@ -48,7 +48,7 @@ namespace Software2552 {
 		}
 
 #ifdef _WIN64
-		if (((ofApp*)ofGetAppPtr())->config.getseekKinect()) {
+		if (((ofApp*)ofGetAppPtr())->appconfig.getseekKinect()) {
 			kinectDevice = std::make_shared<KinectDevice>();
 			if (kinectDevice) {
 				// build out a full kinect
@@ -70,16 +70,14 @@ namespace Software2552 {
 #endif
 
 		ofSetVerticalSync(false);
-		((ofApp*)ofGetAppPtr())->config.setFrameRateinOF();
+		((ofApp*)ofGetAppPtr())->appconfig.setFrameRateinOF();
 		colorlist.setup();
 		
 		//write.setup();
 		ofxJSON data;
-		for (const auto& window : ((ofApp*)ofGetAppPtr())->config.getWindows()) {
+		for (const auto& file : ((ofApp*)ofGetAppPtr())->appconfig.jsonFile) {
 			//bugbug write a better iterator etc so we can loop through jsons for ever
-			for (const auto& file : window->jsonFile) {
-				data.open(file);// use json editor vs. coding it up
-			}
+			data.open(file);// use json editor vs. coding it up
 		}
 		//write.send(data, "graphics");
 		return;
@@ -97,7 +95,7 @@ namespace Software2552 {
 		// check for sign on/off etc of things
 		shared_ptr<ofxOscMessage> signon = oscClient->getMessage(SignOnKinectServerOscAddress);
 		// if there is a valid message, if I am not the kinect sending the sign on is requested then ...
-		if ((!((ofApp*)ofGetAppPtr())->config.getseekKinect()) && signon) {
+		if ((!((ofApp*)ofGetAppPtr())->appconfig.getseekKinect()) && signon) {
 			ofLogNotice("Timeline::update()") << " client sign on for kinect ID " << signon->getArgAsString(0);
 			kinectServerIP = signon->getRemoteIp();//bugbug only 1 kinect for now, needs to be a vector for > 1 kinect
 			tcpKinectClient = std::make_shared<Software2552::TCPKinectClient>(); // frees of any existing
@@ -123,28 +121,30 @@ namespace Software2552 {
 		if (stage) {
 			stage->update();
 		}
-		// let new people know where are here once time per minute
-		if (((ofGetFrameNum() % ((ofApp*)ofGetAppPtr())->config.getFramerate()*60) == 0) && router) {
+		// let new people know where are here once time per minute (every window will call this)
+		if (((ofGetFrameNum() % ((ofApp*)ofGetAppPtr())->appconfig.getFramerate()*60) == 0) && router) {
 			sendClientSigon(router);
 		}
-		// see if someone else checked in
+		// see if someone else checked in, every window is a client (but we do not care really, we just care that its a client)
 		signon = oscClient->getMessage(SignOnClientOscAddress);
 		if (signon) {
 			// add or update client bubug we do not use this data yet
 			//MachineConfiguration
 			string name;
 			AppConfiguration::getName(name, signon);
-			std::vector <shared_ptr<AppConfiguration>>::iterator it = std::find_if(others.begin(), others.end(), [&name](shared_ptr<AppConfiguration>p) {
-				return p->getName() == name;
-			});
-			if (it == others.end()) {
-				shared_ptr<AppConfiguration> p = std::make_shared<AppConfiguration>(signon);
-				if (p) {
-					others.push_back(p);
+			if (name != ((ofApp*)ofGetAppPtr())->appconfig.getName()) { // skip our own signon messages
+				std::vector <shared_ptr<AppConfiguration>>::iterator it = std::find_if(others.begin(), others.end(), [&name](shared_ptr<AppConfiguration>p) {
+					return p->getName() == name;
+				});
+				if (it == others.end()) {
+					shared_ptr<AppConfiguration> p = std::make_shared<AppConfiguration>(signon);
+					if (p) {
+						others.push_back(p);
+					}
 				}
-			}
-			else {
-				*it = std::make_shared<AppConfiguration>(signon); //bugbug does this really work? It should
+				else {
+					*it = std::make_shared<AppConfiguration>(signon); //bugbug does this really work? It should
+				}
 			}
 		}
 		return;

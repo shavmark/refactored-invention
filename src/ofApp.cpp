@@ -1,8 +1,8 @@
 #include "ofApp.h"
 #include "ofxXmlSettings.h"
 
-void AppConfiguration::setup() {
 
+void SystemConfiguration::setup() {
 		ofxXmlSettings xmlsettings; // local settings like box performance and type
 		xmlsettings.loadFile("settings.xml");
 
@@ -17,25 +17,15 @@ void AppConfiguration::setup() {
 		//bugbug each screen gets one of these functions so XML is rooted with video name
 
 		// 32 bit boxes use gfxbench as it supports 32 bit
-		ofGLWindowSettings settings;
-		performance = xmlsettings.getValue("settings:Performance", 0.0); // 0 is slowest, 11 is fastest
-		build = __DATE__;//bugbug this is our build version right now, need to add more info bugbug or pass in a data structure
-		seekKinect = xmlsettings.getValue("settings:Kinect", false);
-		frameRate = xmlsettings.getValue("settings:Framerate", 30);
-		machineName = xmlsettings.getValue("settings:MachineName", "bob");
-		string loc = xmlsettings.getValue("settings:Location", "none");
-		if (loc == "left") {
-			location = left;
-		}
-		else if (loc == "right") {
-			location = right;
-		}
-		else if (loc == "middle") {
-			location = middle;
-		}
-		else if (loc == "back") {
-			location = back;
-		}
+
+		// data that is true for all windows
+		int performance = xmlsettings.getValue("settings:Performance", 0.0); // 0 is slowest, 11 is fastest
+		string build = __DATE__;//bugbug this is our build version right now, need to add more info bugbug or pass in a data structure
+		bool seekKinect = xmlsettings.getValue("settings:Kinect", false);
+		string machineName = xmlsettings.getValue("settings:MachineName", "bob");
+
+		// per window items
+
 		xmlsettings.pushTag("settings");
 		xmlsettings.pushTag("Windows");
 		int windowCount = xmlsettings.getNumTags("window");
@@ -45,31 +35,59 @@ void AppConfiguration::setup() {
 			if (!window) {
 				return; // too early for this, time to go
 			}
+			window->app = make_shared<ofApp>();
+			if (!window->app) {
+				return; 
+			}
+			ofGLWindowSettings settings;
 			window->x = xmlsettings.getValue("x", 1); //bugbug set proper defaults once working
 			window->y = xmlsettings.getValue("y", 1);
 			window->width = xmlsettings.getValue("ScreenWidth", 1);  //bugbug maybe -1 means max size or such
 			window->height = xmlsettings.getValue("ScreenHeight", 1);
 			int jsonCount = xmlsettings.getNumTags("json");
 			for (int i = 0; i < jsonCount; i++) {
-				window->jsonFile.push_back(xmlsettings.getValue("json", "baddata", i));
+				window->app->appconfig.jsonFile.push_back(xmlsettings.getValue("json", "baddata", i));
 			}
+
+			settings.width = xmlsettings.getValue("ScreenWidth", 1);
+			settings.height = xmlsettings.getValue("ScreenHeight", 1);
+			settings.setPosition(ofVec2f(xmlsettings.getValue("x", 1), xmlsettings.getValue("y", 1)));
+			// come back to this for multiple windows/ monitors http://blog.openframeworks.cc/post/133404337264/openframeworks-090-multi-window-and-ofmainloop
+			settings.setGLVersion(xmlsettings.getValue("settings:OpenglMajor", 4), xmlsettings.getValue("settings:OpenglMinor", 0));
+
+			settings.windowMode = ofWindowMode::OF_WINDOW;
+			// this kicks off the running of my app    
+			shared_ptr<ofAppBaseWindow> win = ofCreateWindow(settings);
+			window->app->appconfig.windowNumber = i; // just so we know whats coming from where
+			window->app->appconfig.performance = performance;
+			window->app->appconfig.build = build;
+			window->app->appconfig.seekKinect = seekKinect;// only want one per window
+			window->app->appconfig.machineName = machineName;
+			window->app->appconfig.frameRate = xmlsettings.getValue("framerate", 30);
+			string loc = xmlsettings.getValue("location", "left");
+			if (loc == "left") {
+				window->app->appconfig.location = AppConfiguration::left;
+			}
+			else if (loc == "right") {
+				window->app->appconfig.location = AppConfiguration::right;
+			}
+			else if (loc == "middle") {
+				window->app->appconfig.location = AppConfiguration::middle;
+			}
+			else if (loc == "back") {
+				window->app->appconfig.location = AppConfiguration::back;
+			}
+			window->app->appconfig.parent = window; // tie ack
+			ofRunApp(win, window->app);
+
+			string s = "ver " + ofToString(settings.glVersionMajor) + "." + ofToString(settings.glVersionMinor);
+			ofLog(OF_LOG_NOTICE, s);
+
 			windows.push_back(window);
 			xmlsettings.popTag();
 		}
 		xmlsettings.popTag();
 		xmlsettings.popTag();
-
-		settings.width = 800;
-		settings.height = 800;
-		settings.setPosition(ofVec2f(300, 0));
-		// come back to this for multiple windows/ monitors http://blog.openframeworks.cc/post/133404337264/openframeworks-090-multi-window-and-ofmainloop
-		settings.setGLVersion(xmlsettings.getValue("settings:OpenglMajor", 4), xmlsettings.getValue("settings:OpenglMinor", 0));
-		
-		settings.windowMode = ofWindowMode::OF_WINDOW;
-		// this kicks off the running of my app    
-		ofCreateWindow(settings);
-		string s = "ver " + ofToString(settings.glVersionMajor) + "." + ofToString(settings.glVersionMinor);
-		ofLog(OF_LOG_NOTICE, s);
 
 }
 
@@ -86,6 +104,7 @@ AppConfiguration::AppConfiguration(shared_ptr<ofxOscMessage>p) {
 		location = (Location)p->getArgAsInt(3);
 		performance = p->getArgAsInt(4);
 		monitorCount = p->getArgAsInt(5); // bugbug likely need to sign on by monitor vs machine
+		windowNumber = p->getArgAsInt(6);
 	}
 
 }
@@ -107,7 +126,8 @@ shared_ptr<ofxOscMessage>  AppConfiguration::getsignon() {
 		signon->addIntArg(location);
 		signon->addIntArg(performance);
 		signon->addIntArg(monitorCount); // bugbug likely need to sign on by monitor vs machine
-																		 // our app becomes a collection of monitors, devices, speakers all acting as one including Kinect
+		signon->addIntArg(windowNumber);
+	 // our app becomes a collection of windows, input devices, speakers all acting as one including Kinect.  A machine can drive any number of monitors
 	}
 	return signon;
 }
@@ -148,6 +168,7 @@ void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 //--------------------------------------------------------------
 void ofApp::draw(){
 	timeline.draw();
+	ofDrawCircle(0, 0, 200);
 	//Software2552::SoundOut::draw();//bugbug move to timeline
 	return;
 

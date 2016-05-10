@@ -51,12 +51,25 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 #include "model.h"
 #include "networking.h"
 #define STRINGIFY(p) #p
+class ofApp;
+class SystemConfiguration {
+public:
+	void setup();
+	class Window {
+	public:
+		int x, y, width, height;
+		shared_ptr<ofApp> app; // not sure yet but lets see if it works here
+	};
+	vector<shared_ptr<Window>>& getWindows() { return windows; }
+private:
+	vector<shared_ptr<Window>> windows;// pair windows, json
+};
 
 class AppConfiguration {
 public:
 	AppConfiguration() {}
 	AppConfiguration(shared_ptr<ofxOscMessage>);
-	void setup();
+	friend class SystemConfiguration;
 	shared_ptr<ofxOscMessage> getsignon();
 	int getPerformance() { return performance; }
 	int getFramerate() { return frameRate; }
@@ -64,23 +77,21 @@ public:
 	string&getName() { return machineName; }
 	static void getName(string&name, shared_ptr<ofxOscMessage>);
 	void setFrameRateinOF() { ofSetFrameRate(frameRate); }
-	class Window {
-	public:
-		vector <string> jsonFile;
-		int x, y, width, height;
-	};
-	vector<shared_ptr<Window>>& getWindows() { return windows; }
+	enum Location { left, right, middle, back };
+	//bugbug wrap as needed when ready
+	vector <string> jsonFile;
+	int windowNumber;
+	shared_ptr<SystemConfiguration::Window> parent;
+
 private:
+	Location location;
 	string os;
 	int performance = 0;
 	string build;
 	bool seekKinect = false;
-	vector<shared_ptr<Window>> windows;// pair windows, json
 	int frameRate = 30;
 	int monitorCount = 1;
 	string machineName;
-	enum Location { left, right, middle, back };
-	Location location;
 };
 
 #include "control.h"
@@ -116,7 +127,10 @@ class ofApp : public ofBaseApp{
 		Software2552::Timeline timeline;
 
 		void ofApp::drawScene(bool isPreview) {}
-		AppConfiguration config; // our config
+		AppConfiguration appconfig;
+
 private:
 
 };
+
+
