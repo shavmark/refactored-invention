@@ -269,8 +269,8 @@ namespace Software2552 {
 			return; // not enough data to matter
 		}
 
-		float ratioX = ratioColorToDepthX();
-		float ratioY = ratioColorToDepthY();
+		float ratioX = ratioColorToScreenX();
+		float ratioY = ratioColorToScreenY();
 
 		// setup upper left
 		rectangle.set(data["boundingBox"]["left"].asFloat()*ratioX, data["boundingBox"]["top"].asFloat()*ratioY,
