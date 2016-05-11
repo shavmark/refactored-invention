@@ -118,13 +118,14 @@ public:
 #ifdef _WIN64
 										// every 64 bit windows with a 3.0 usb can talk to everyone else
 	shared_ptr<Software2552::KinectBody> kinectBody = nullptr;
+	shared_ptr<Software2552::KinectDevice> kinectDevice = nullptr;
 #else
 	class KinectDevice {
 	public:
 		string getId() { return ""; }// no kinect in 32 bit worlds
 	};
+	shared_ptr<KinectDevice> kinectDevice = nullptr;
 #endif
-	shared_ptr<Software2552::KinectDevice> kinectDevice = nullptr;
 
 };
 extern OneGlobalInstance globalinstance;

@@ -1,6 +1,8 @@
 #include "ofApp.h"
 #include "color.h"
+#ifdef _WIN64
 #include "inc\Kinect.h" // needed for enums
+#endif
 #include "model.h"
 #include "scenes.h"
 // maps json to drawing and animation tools
@@ -321,7 +323,7 @@ namespace Software2552 {
 		// lots of data comes in, if we want to draw motion we need to keep up, at the same time
 		// we do not want to flash the screen if there is no data
 		int count = ((ofApp*)ofGetAppPtr())->appconfig.getFramerate() / 2;
-		if (((ofApp*)ofGetAppPtr())->appconfig.getPerformance() < 3) {
+		if (((ofApp*)ofGetAppPtr())->appconfig.getPerformance() > 3) {
 			count /= 5;
 		}
 		setFrameCount(count);//bugbug how to avoid flash?  1 frame or 1 second?
@@ -445,7 +447,7 @@ namespace Software2552 {
 	}
 	void PixelsManager::mySetup() {
 		//bugbug doing this or just about any other thing draws blck iamage image.allocate(pixels->getWidth(), pixels->getHeight(), OF_IMAGE_COLOR);//bugbug get OF_IMAGE_COLOR from data if this works
-		image.getPixelsRef() = *pixels;
+		image.getPixelsRef() = pixels;
 		setFixed(true); 
 		setFrameCount(((ofApp*)ofGetAppPtr())->appconfig.getFramerate());//bugbug how to avoid flash?
 	}

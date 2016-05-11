@@ -93,8 +93,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath);$(KinectSDK20_DIR)</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86);$(KinectSDK20_DIR)</LibraryPath>
+    <IncludePath>$(IncludePath);</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86);</LibraryPath>
     <TargetName>$(ProjectName)32</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -127,7 +127,7 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxXmlSettings\libs;%(Additi
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>"$(INHERIT)"  Kinect20.lib Kinect20.Face.lib;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSnappy\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSnappy\libs\snappy\src;
+      <AdditionalIncludeDirectories>"$(INHERIT)"  ;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxAnimatable\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxJson\libs\jsoncpp\include\json;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxParagraph\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSmartFont\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\posix;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\ip\win32;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxOsc\libs\oscpack\src\osc;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxNetwork\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSnappy\src;C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxSnappy\libs\snappy\src;
 C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxXmlSettings\src;
 C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxXmlSettings\libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -138,8 +138,8 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxXmlSettings\libs;%(Additi
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);assimp.lib;Kinect20.lib;Kinect20.Face.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
@@ -183,8 +183,8 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxXmlSettings\libs</Additio
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);assimp.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>

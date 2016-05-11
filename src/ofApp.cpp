@@ -178,7 +178,7 @@ void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 //--------------------------------------------------------------
 void ofApp::draw(){
 	timeline.draw();
-	ofDrawCircle(0, 0, 200);
+	//ofDrawCircle(0, 0, 200);
 	//Software2552::SoundOut::draw();//bugbug move to timeline
 	return;
 

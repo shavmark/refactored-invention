@@ -1,5 +1,7 @@
 #include "ofApp.h"
+#ifdef _WIN64
 #include "inc\Kinect.h" // needed for enums
+#endif
 #include "scenes.h"
 
 // connect things together
@@ -54,7 +56,7 @@ namespace Software2552 {
 			for (const auto&pass : backStagePass) {
 				shared_ptr<PixelsManager>p = std::make_shared<PixelsManager>(id);
 				if (p) {
-					p->pixels = pixels; // drawing needs to occur in main thread to make OpenGL work
+					p->pixels = *pixels; // drawing needs to occur in main thread to make OpenGL work
 					p->setActorPosition(pt);
 					// add to all stages bugbug until we figure left/right etc and groupings
 					pass->addToAnimatable(p);
