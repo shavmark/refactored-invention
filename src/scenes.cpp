@@ -149,20 +149,20 @@ namespace Software2552 {
 			if (deleteExisting(data)) {
 				getAnimatables().clear();
 			}
+			ADDANIMATION(shaders, Shader, parent);
+			ADDANIMATION(audio, Audio, parent);// sound phase 1a
 			ADDANIMATION(videos, Video, parent);
 			ADDANIMATION(pictures, Image, parent);
 			ADDANIMATION(rainbows, Rainbow, parent);
 			ADDANIMATION(circles, Ball, parent);
 			ADDANIMATION(cubes, Cube, parent);
 			ADDANIMATION(spheres, Sphere, parent);
-			ADDANIMATION(videos, Video, parent);
 			ADDANIMATION(grabbers, CameraGrabber, parent);
 			ADDANIMATION(texts, Text, parent);
 			ADDANIMATION(paragraphs, Paragraph, parent);
 			ADDANIMATION(planets, Planet, parent);
 			ADDANIMATION(videoSpheres, VideoSphere, parent);
 			ADDANIMATION(solarSystems, SolarSystem, parent);//bugbug forgot how to rotate around clyde, does not run w/ others
-			ADDANIMATION(audio, Audio, parent);// sound phase 1a
 			getAnimatables().sort(compareOrder);
 
 		}

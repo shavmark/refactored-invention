@@ -233,12 +233,13 @@ namespace Software2552 {
 		// derived classes supply these if they need them to be called
 		virtual void mySetup() {};
 		virtual void myUpdate() {};
-		virtual void myDraw() {};
+		virtual void myDraw();
 		bool fill = false;
 		string   locationPath;   // location of item to draw
 		shared_ptr<Rotation> rotationAnimation = nullptr; // optional rotation
 		shared_ptr<PointAnimation> locationAnimation = nullptr; // optional movement
 		shared_ptr<ScaleAnimation> scaleAnimation = nullptr; // 2d scale multply x,y by scale, 1 by default bugbug 
+		vector<shared_ptr<ActorRole>> partners; // working together bugbug test this out in data and add to drawing/update/setup etc
 		shared_ptr<vector<shared_ptr<Reference>>> references = nullptr; // research reference to show where actor came from
 	};
 

@@ -51,6 +51,7 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 #include "animation.h"
 #include "color.h"
 #include "model.h"
+#include "shaders.h"
 #include "networking.h"
 
 #define STRINGIFY(p) #p

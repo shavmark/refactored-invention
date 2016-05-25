@@ -319,6 +319,10 @@ namespace Software2552 {
 		}
 		return 1.0f;
 	}
+	// derived class needs to fill this in
+	void ActorRole::myDraw() {
+	};
+
 	void ActorRole::drawIt(drawtype type) {
 		if (okToDraw(type)) {
 			if (useFill()) {

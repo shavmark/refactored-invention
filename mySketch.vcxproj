@@ -231,6 +231,7 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxXmlSettings\libs</Additio
     <ClCompile Include="src\kinectUtils.cpp" />
     <ClCompile Include="src\networking.cpp" />
     <ClCompile Include="src\scenes.cpp" />
+    <ClCompile Include="src\shaders.cpp" />
     <ClCompile Include="src\sound.cpp" />
     <ClCompile Include="src\timeline.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -289,6 +290,7 @@ C:\Users\mark\Documents\of_v0.9.3_vs_release\addons\ofxXmlSettings\libs</Additio
     <ClInclude Include="src\kinect2552.h" />
     <ClInclude Include="src\networking.h" />
     <ClInclude Include="src\scenes.h" />
+    <ClInclude Include="src\shaders.h" />
     <ClInclude Include="src\sound.h" />
     <ClInclude Include="src\timeline.h" />
     <ClInclude Include="src\ofApp.h" />
