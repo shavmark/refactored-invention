@@ -150,6 +150,7 @@ namespace Software2552 {
 				getAnimatables().clear();
 			}
 			ADDANIMATION(shaders, Shader, parent);
+			return;
 			ADDANIMATION(audio, Audio, parent);// sound phase 1a
 			ADDANIMATION(videos, Video, parent);
 			ADDANIMATION(pictures, Image, parent);

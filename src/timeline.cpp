@@ -77,13 +77,17 @@ namespace Software2552 {
 		((ofApp*)ofGetAppPtr())->appconfig.setFrameRateinOF();
 		colorlist.setup();
 		
-		//write.setup();
 		ofxJSON data;
 		for (const auto& file : ((ofApp*)ofGetAppPtr())->appconfig.jsonFile) {
 			//bugbug write a better iterator etc so we can loop through jsons for ever
-			data.open(file);// use json editor vs. coding it up
+			shared_ptr<ofxJSON> data = make_shared<ofxJSON>();
+			if (stage && data) {
+				if (data->open(file)) {
+					stage->updateData(data);
+				}
+			}
+
 		}
-		//write.send(data, "graphics");
 		return;
 
 	}

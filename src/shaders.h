@@ -3,7 +3,9 @@
 // shader helpers
 
 namespace Software2552 {
-	string zigzag(bool fragment=true); // shader function
+	string zigzag(bool fragment=true); // shader functions
+	string basic(bool fragment = true);
+	string digits(bool fragment = true);
 
 	class Shader : public ActorRole{
 	public:
