@@ -138,7 +138,7 @@ namespace Software2552 {
 			}
 		}
 		if (shaders.size() > 0) {
-			index = 0;
+			index = ofRandom(shaders.size() - 1);
 		}
 		else {
 			index = -1;
@@ -167,7 +167,7 @@ namespace Software2552 {
 			if (shaders[index]->first.getFrameCountMaxHit()) {
 				// try the next one, or start over if requested  bugbug add a Random() also
 				if (index+1 >= shaders.size()) {
-					index = 0; // wrap bugbug add more here
+					index = ofRandom(shaders.size()-1); // bugbug add more here like repeat, linear etc vs. just random
 					for (auto& item : shaders) {
 						item->first.reset();
 					}
@@ -638,6 +638,7 @@ namespace Software2552 {
 				outputColor = vec4(color, 1.0);
 			}
 			);
+			return frag;
 		}
 		else {
 			return "";
@@ -673,6 +674,7 @@ namespace Software2552 {
 				outputColor = vec4(color, 1.0);
 			}
 			);
+			return frag;
 		}
 		else {
 			return "";
@@ -788,6 +790,7 @@ namespace Software2552 {
 					outputColor = vec4(color, 1.0);
 				}
 			);
+			return frag;
 		}
 		else {
 			return "";
@@ -830,6 +833,7 @@ namespace Software2552 {
 				outputColor = vec4(color, 1.0);
 			}
 		);
+			return frag;
 		}
 		else {
 			return "";

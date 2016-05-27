@@ -149,9 +149,16 @@ namespace Software2552 {
 	class FrameCounter {
 	public:
 		// -1 means infinite
-		FrameCounter(int frames=-1) {
-			setFrameCount(frames);
-			frameStart = frames;
+		FrameCounter(int frames=-1, bool random=false) {
+			int time;
+			if (random) {
+				time = frames + ofRandom(frames / 2); // mix it up a little
+			}
+			else {
+				time = frames;
+			}
+			setFrameCount(time);
+			frameStart = time;
 		}
 		void setFrameCount(int c) {
 			frameMax = c;
@@ -168,6 +175,7 @@ namespace Software2552 {
 		void reset() {
 			frameMax = frameStart;
 		}
+		// use random duration
 		void rand() {
 			if (frameStart != -1) {
 				// cannot randomize non counting object
