@@ -180,9 +180,6 @@ namespace Software2552 {
 			stage->draw();
 		}
 		//mesh.draw();
-		if (playlist.getCurrent() != nullptr) {
-			playlist.getCurrent()->getStage()->draw();
-		}
 	};
 
 }

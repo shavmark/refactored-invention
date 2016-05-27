@@ -12,12 +12,12 @@ namespace Software2552 {
 	string smooth(bool fragment = true);
 	string groovy(bool fragment = true);
 	string red(bool fragment = true);
-
+	string greenCircle(bool fragment = true);
+	string sea(bool fragment = true);
 	class Shader : public ActorRole{
 	public:
 		bool setup(const Json::Value & val);
 		virtual void myDraw();
-
 		static string codeHeader();
 		Json::Value buildCodeJson(const string& name, const string&fragment, const string&vertex);
 		Json::Value buildCodeJson(const string& name);

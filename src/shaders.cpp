@@ -24,6 +24,7 @@ namespace Software2552 {
 		s += "uniform vec2 u_mouse;\n"; // share with all
 		s += "uniform vec2 u_resolution;\n"; // share with all
 		s += "uniform float u_time;\n"; // share with all
+		s += "out vec4 outputColor;\n";
 		return s;
 	}
 	// for non file based json, ie internal shaders. bugbug add way to load from file some day too
@@ -63,6 +64,10 @@ namespace Software2552 {
 			fragment = basic(true);
 			vertex = basic(false);
 		}
+		else if (val["name"] == "sea") {
+			fragment = sea(true);
+			vertex = sea(false);
+		}
 		else if (val["name"] == "digits") {
 			fragment = digits(true);
 			vertex = digits(false);
@@ -78,6 +83,10 @@ namespace Software2552 {
 		else if (val["name"] == "mosaic") {
 			fragment = mosaic(true);
 			vertex = mosaic(false);
+		}
+		else if (val["name"] == "greenCircle") {
+			fragment = greenCircle(true);
+			vertex = greenCircle(false);
 		}
 		else if (val["name"] == "smooth") {
 			fragment = smooth(true);
@@ -118,15 +127,15 @@ namespace Software2552 {
 		//bugbug add kinect stuff, voice stuff go beyond mouse
 		shader.setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
 	}
-
 	void Shader::myDraw() {
 		start();
 		ofPushMatrix();
-		ofSetColor(ofColor::royalBlue);
-
-		//ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+		ofPushStyle();
 		ofFill();
-		ofRect(0, 0, ofGetWidth(), ofGetHeight());
+		// assume middle is location
+		ofSetColor(255);
+		ofDrawRectangle(-ofGetWidth() / 2, -ofGetHeight() / 2, ofGetWidth(), ofGetHeight());
+		ofPopStyle();
 		ofPopMatrix();
 		shader.end();
 	}
@@ -135,8 +144,7 @@ namespace Software2552 {
 		if (fragment) {
 			string frag = Shader::codeHeader();
 			return frag + STRINGIFY(
-			void main(void)
-			{
+			void main(void)			{
 
 				vec2 uv = (gl_FragCoord.xy / u_resolution.xy)*4.0;
 
@@ -145,8 +153,7 @@ namespace Software2552 {
 				float i1 = 1.0;
 				float i2 = 1.0;
 				float i4 = 0.0;
-				for (int s = 0; s < 7; s++)
-				{
+				for (int s = 0; s < 7; s++)				{
 					vec2 r;
 					r = vec2(cos(uv.y*i0 - i4 + u_time / i1), sin(uv.x*i0 - i4 + u_time / i1)) / i2;
 					r += vec2(-r.y, r.x)*0.3;
@@ -161,10 +168,10 @@ namespace Software2552 {
 				float b = sin(uv.y + u_time)*0.5 + 0.5;
 				float g = sin((sqrt(uv.x*uv.x + uv.y*uv.y) + u_time))*0.5 + 0.5;
 				vec3 c = vec3(r, g, b);
-				gl_FragColor = vec4(c, 1.0);
+				outputColor = vec4(c, 1.0);
 
-				gl_FragColor *= vec4(c - 0.5*sqrt(uv.x*uv.x + uv.y*uv.y), 1.0);
-				gl_FragColor *= vec4(c - 1.0*sqrt(uv.x*uv.x + uv.y*uv.y), 1.0);
+				outputColor *= vec4(c - 0.5*sqrt(uv.x*uv.x + uv.y*uv.y), 1.0);
+				outputColor *= vec4(c - 1.0*sqrt(uv.x*uv.x + uv.y*uv.y), 1.0);
 			}
 			);
 		}
@@ -175,11 +182,11 @@ namespace Software2552 {
 	// Author unknown but from http://glslsandbox.com/e#32842.2
 	// Title: smooth
 	string smooth(bool fragment) {
+		string frag = Shader::codeHeader();
 		if (fragment) {
-			string frag = Shader::codeHeader();
+		
 			return frag + STRINGIFY(
-			void main(void)
-			{
+			void main(void)			{
 				vec2 uv = (gl_FragCoord.xy / u_resolution.xy)*4.0;
 
 				vec2 uv0 = uv;
@@ -187,8 +194,7 @@ namespace Software2552 {
 				float i1 = 0.95;
 				float i2 = 1.5;
 				vec2 i4 = vec2(0.0, 0.0);
-				for (int s = 0; s < 4; s++)
-				{
+				for (int s = 0; s < 4; s++)				{
 					vec2 r;
 					r = vec2(cos(uv.y*i0 - i4.y + u_time / i1), sin(uv.x*i0 + i4.x + u_time / i1)) / i2;
 					r += vec2(-r.y, r.x)*0.2;
@@ -203,12 +209,21 @@ namespace Software2552 {
 				float b = sin(uv.y + u_time)*0.5 + 0.5;
 				float g = sin((sqrt(uv.x*uv.x + uv.y*uv.y) + u_time))*0.5 + 0.5;
 				vec3 c = vec3(r, g, b);
-				gl_FragColor = vec4(c, 1.0);
+				outputColor = vec4(c, 1.0);
 			}
 			);
 		}
 		else {
-			return "";
+			return frag + STRINGIFY(
+
+				uniform mat4 modelViewProjectionMatrix;
+
+			in vec4 position;
+
+			void main() {
+				gl_Position = modelViewProjectionMatrix * position;
+			}
+			);
 		}
 
 	}
@@ -218,29 +233,233 @@ namespace Software2552 {
 			return frag + STRINGIFY(
 				hi
 			);
-			return frag;
 		}
 		else {
 			return "";// return vector
 		}
 
 	}
-	// http://glslsandbox.com/e#32902.0
-	string red(bool fragment) {
+	// http://glslsandbox.com/e#32904.1
+	string greenCircle(bool fragment) {
 		if (fragment) {
-			string frag = "#extension GL_OES_standard_derivatives : enable\n";
-			frag += Shader::codeHeader();
+			string frag = Shader::codeHeader();
 			return frag + STRINGIFY(
 				void main(void) {
-				vec2 uv = (02.0 * gl_FragCoord.xy / u_resolution.xy - 1.0) * vec2(u_resolution.x / u_resolution.y, 9.50);
+				vec2 uv = (2.0 * gl_FragCoord.xy / u_resolution.xy - 1.0) * vec2(u_resolution.x / u_resolution.y, 1.0);
 
-				float a = 71.90*atan(uv.y / uv.x);
-				uv /= 0.5 + 0.202 * sin(115.0 * a - u_time * 16.0);
+				float a = 2.0*atan(uv.y / uv.x);
+				uv /= 02.5 + 0.02 * sin(15.0 * a - u_time * 1889999.0);
 
-				float f = 0.40 + 0.2 * sin(u_time * 04786.14);
-				float d = (abs(length(uv) - f) * 1.0);
+				float f = 0.40 + 0.2 * sin(u_time * 0.14);
+				float d = (abs(length(uv) - f) * 180.0);
 
-				gl_FragColor += vec4(09.3 / d, 0.62 / d, 0.22 / d, 1);
+				outputColor += vec4(0.989 / d, 2.2 / d, 0.22 / d, 1); 
+			}
+			);
+		}
+		else {
+			return "";// return vector
+		}
+
+	}
+	// http://glslsandbox.com/e#32783.0
+	string sea(bool fragment) {
+		// "Seascape" by Alexander Alekseev aka TDM - 2014
+		// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+		if (fragment) {
+			string frag = Shader::codeHeader();
+			frag += STRINGIFY(
+			const int NUM_STEPS = 16; \n
+			const float PI = 3.1415;\n
+			const float EPSILON = 1e-3;\n
+			float EPSILON_NRM = 0.; \n
+
+			const int ITER_GEOMETRY = 3; \n
+			const int ITER_FRAGMENT = 5; \n
+			const float SEA_HEIGHT = 0.6; \n
+			const float SEA_CHOPPY = 5.0; \n
+			const float SEA_SPEED = 1.0; \n
+			const float SEA_FREQ = 0.16; \n
+			const vec3 SEA_BASE = vec3(0.1, 0.19, 0.22); \n
+			const vec3 SEA_WATER_COLOR = vec3(0.8, 0.9, 0.6); \n
+			float SEA_TIME = 0.0;\n
+			);
+			frag += STRINGIFY(
+				mat2 octave_m = mat2(1.6, 1.2, -1.2, 1.6); \n
+				mat3 fromEuler(vec3 ang) {\n
+				vec2 a1 = vec2(sin(ang.x), cos(ang.x)); \n
+				vec2 a2 = vec2(sin(ang.y), cos(ang.y)); \n
+				vec2 a3 = vec2(sin(ang.z), cos(ang.z)); \n
+				mat3 m; \n
+				m[0] = vec3(a1.y*a3.y + a1.x*a2.x*a3.x, a1.y*a2.x*a3.x + a3.y*a1.x, -a2.y*a3.x); \n
+				m[1] = vec3(-a2.y*a1.x, a1.y*a2.y, a2.x); \n
+				m[2] = vec3(a3.y*a1.x*a2.x + a1.y*a3.x, a1.x*a3.x - a1.y*a3.y*a2.x, a2.y*a3.y); \n
+				return m; \n
+				}\n
+				float hash(vec2 p) {				\n
+					float h = dot(p, vec2(127.1, 311.7)); \n
+					return fract(sin(h)*43758.5453123); \n
+			}\n
+				float noise(in vec2 p) {					\n
+						vec2 i = floor(p); \n
+						vec2 f = fract(p); \n
+						vec2 u = f*f*(3.0 - 2.0*f); \n
+						return -1.0 + 2.0*mix(mix(hash(i + vec2(0.0, 0.0)), \n
+							hash(i + vec2(1.0, 0.0)), u.x), \n
+							mix(hash(i + vec2(0.0, 1.0)), \n
+								hash(i + vec2(1.0, 1.0)), u.x), u.y); \n
+				}\n
+			float diffuse(vec3 n, vec3 l, float p) {				\n
+					return pow(dot(n, l) * 0.4 + 0.6, p); \n
+			}\n
+				float specular(vec3 n, vec3 l, vec3 e, float s) {					\n
+						float nrm = (s + 8.0) / (3.1415 * 8.0); \n
+						return pow(max(dot(reflect(e, n), l), 0.0), s) * nrm; \n
+				}\n
+					vec3 getSkyColor(vec3 e) {						\n
+							e.y = max(e.y, 0.0); \n
+							vec3 ret; \n
+							ret.x = pow(1.0 - e.y, 2.0); \n
+							ret.y = 1.0 - e.y; \n
+							ret.z = 0.6 + (1.0 - e.y)*0.4; \n
+							return ret; \n
+					}\n
+						float sea_octave(vec2 uv, float choppy) {							\n
+								uv += noise(uv); \n
+								vec2 wv = 1.0 - abs(sin(uv)); \n
+								vec2 swv = abs(cos(uv)); \n
+								wv = mix(wv, swv, wv); \n
+								return pow(1.0 - pow(wv.x * wv.y, 0.65), choppy); \n
+						}\n
+							);
+			frag += STRINGIFY(
+				float map(vec3 p) {				\n
+					float freq = SEA_FREQ; \n
+					float amp = SEA_HEIGHT; \n
+					float choppy = SEA_CHOPPY; \n
+					vec2 uv = p.xz; uv.x *= 0.75; \n
+					float d; float h = 0.0; \n
+					for (int i = 0; i < ITER_GEOMETRY; i++) {
+						\n
+							d = sea_octave((uv + SEA_TIME)*freq, choppy); \n
+							d += sea_octave((uv - SEA_TIME)*freq, choppy); \n
+							h += d * amp; \n
+							uv *= octave_m; freq *= 1.9; amp *= 0.22; \n
+							choppy = mix(choppy, 1.0, 0.2); \n
+					}\n
+						return p.y - h; \n
+			}\n
+				float map_detailed(vec3 p) {		\n
+								float freq = SEA_FREQ; \n
+								float amp = SEA_HEIGHT; \n
+								float choppy = SEA_CHOPPY; \n
+								vec2 uv = p.xz; uv.x *= 0.75; \n
+								float d;\n float h = 0.0; \n
+				for (int i = 0; i < ITER_FRAGMENT; i++) {\n
+					d = sea_octave((uv + SEA_TIME)*freq, choppy); \n
+					d += sea_octave((uv - SEA_TIME)*freq, choppy); \n
+					h += d * amp; \n
+					uv *= octave_m; freq *= 1.9; amp *= 0.22; \n
+					choppy = mix(choppy, 1.0, 0.2); \n
+				}\n
+				return p.y - h; \n
+			}\n
+			vec3 getSeaColor(vec3 p, vec3 n, vec3 l, vec3 eye, vec3 dist) {\n
+				float fresnel = 1.0 - max(dot(n, -eye), 0.0); \n
+				fresnel = pow(fresnel, 3.0) * 0.65; \n
+				vec3 reflected = getSkyColor(reflect(eye, n)); \n
+				vec3 refracted = SEA_BASE + diffuse(n, l, 80.0) * SEA_WATER_COLOR * 0.12; \n
+				vec3 color = mix(refracted, reflected, fresnel); \n
+				float atten = max(1.0 - dot(dist, dist) * 0.001, 0.0); \n
+				color += SEA_WATER_COLOR * (p.y - SEA_HEIGHT) * 0.18 * atten; \n
+				color += vec3(specular(n, l, eye, 60.0)); \n
+				return color; \n
+			}\n
+			vec3 getNormal(vec3 p, float eps) {\n
+				vec3 n; \n
+				n.y = map_detailed(p); \n
+				n.x = map_detailed(vec3(p.x + eps, p.y, p.z)) - n.y; \n
+				n.z = map_detailed(vec3(p.x, p.y, p.z + eps)) - n.y; \n
+				n.y = eps; \n
+				return normalize(n); \n
+			}\n
+			float heightMapTracing(vec3 ori, vec3 dir, out vec3 p) {\n
+				float tm = 0.0; \n
+				float tx = 1000.0; \n
+				float hx = map(ori + dir * tx); \n
+				if (hx > 0.0) return tx; \n
+				float hm = map(ori + dir * tm); \n
+				float tmid = 0.0; \n
+				for (int i = 0; i < NUM_STEPS; i++) {\n
+					tmid = mix(tm, tx, hm / (hm - hx)); \n
+					p = ori + dir * tmid;
+					float hmid = map(p); \n
+					if (hmid < 0.0) {\n
+						tx = tmid; \n
+						hx = hmid; \n
+					}\n
+					else {\n
+						tm = tmid; \n
+						hm = hmid; \n
+					}\n
+				}\n
+				return tmid;\n
+			}\n
+			);
+			frag += STRINGIFY(
+				\nvoid main(void) {\n
+			EPSILON_NRM = 0.1 / u_resolution.x; \n
+			SEA_TIME = u_time * SEA_SPEED; \n
+
+			vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+			uv = uv * 2.0 - 1.0;
+			uv.x *= u_resolution.x / u_resolution.y;
+			float time = u_time * 0.3 + u_mouse.x*0.01;
+
+			vec3 ang = vec3(3);
+			vec3 ori = vec3(u_mouse.x*100.0, 3.5, 5.0);
+			vec3 dir = normalize(vec3(uv.xy, -2.0));
+			dir.z += length(uv) * 0.15;
+			dir = normalize(dir) * fromEuler(ang);
+
+			vec3 p;
+			heightMapTracing(ori, dir, p);
+			vec3 dist = p - ori;
+			vec3 n = getNormal(p, dot(dist, dist) * EPSILON_NRM);
+			vec3 light = normalize(vec3(0.0, 1.0, 0.8));
+
+			vec3 color = mix(
+				getSkyColor(dir),
+				getSeaColor(p, n, light, dir, dist),
+				pow(smoothstep(0.0, -0.05, dir.y), 0.3));
+
+			outputColor = vec4(pow(color, vec3(0.75)), 1.0);
+		}
+				);
+			return frag;
+		}
+		else {
+			return "";
+		}
+
+	}
+	// http://glslsandbox.com/e#32902.0
+	// does not compile	
+	string red(bool fragment) {
+		if (fragment) {
+			string frag = Shader::codeHeader();
+			return frag + STRINGIFY(
+				void main(void) {\n
+				vec2 uv = (2.0 * gl_FragCoord.xy / u_resolution.xy - 1.0) * vec2(u_resolution.x / u_resolution.y, 9.50); \n
+
+				float a = 71.90*atan(uv.y / uv.x); \n
+				uv /= 0.5 + 0.202 * sin(115.0 * a - u_time * 16.0); \n
+
+				float f2 = .60 * sin(u_time * 4786.14); \n
+				float d = (abs(length(uv) - f2) * 1.0); \n
+
+				outputColor += vec4(9.3 / d, 0.62 / d, 0.22 / d, 1); \n
+
 				}
 			);
 		}
@@ -275,7 +494,7 @@ namespace Software2552 {
 				// Uncomment to see the subdivided grid
 				color = vec3(fpos,0.0);
 
-				gl_FragColor = vec4(color, 1.0);
+				outputColor = vec4(color, 1.0);
 			}
 			);
 		}
@@ -293,7 +512,7 @@ namespace Software2552 {
 				void main() {
 				float r = gl_FragCoord.x / u_resolution.x;
 				float g = gl_FragCoord.y / u_resolution.y;
-				gl_FragColor = vec4(r, g, 1.0, 1.0);
+				outputColor = vec4(r, g, 1.0, 1.0);
 			}
 			);
 		}
@@ -366,7 +585,7 @@ namespace Software2552 {
 				vec3 color = vec3(char(fpos, 100.*pct));
 				color = mix(color, vec3(color.r, 0., 0.), step(.99, pct));
 
-				gl_FragColor = vec4(color, 1.0);
+				outputColor = vec4(color, 1.0);
 			}
 			);
 		}
@@ -401,7 +620,7 @@ namespace Software2552 {
 				float pct = plot(st, y);
 				color = (1.0 - pct)*color + pct*vec3(0.0, 1.0, 0.0);
 
-				gl_FragColor = vec4(color, 1.0);
+				outputColor = vec4(color, 1.0);
 			}
 			);
 		}
@@ -516,7 +735,7 @@ namespace Software2552 {
 						float pct = random(digits_st_i + floor(crosses_st) + floor(u_time*20.));
 						color += vec3(char(digits_st_f, 100.*pct));
 					}
-					gl_FragColor = vec4(color, 1.0);
+					outputColor = vec4(color, 1.0);
 				}
 			);
 		}
@@ -558,7 +777,7 @@ namespace Software2552 {
 
 				color = vec3(fillY(st, mix(a, b, f), 0.01));
 
-				gl_FragColor = vec4(color, 1.0);
+				outputColor = vec4(color, 1.0);
 			}
 		);
 		}
