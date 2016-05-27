@@ -14,16 +14,21 @@ namespace Software2552 {
 	string red(bool fragment = true);
 	string greenCircle(bool fragment = true);
 	string sea(bool fragment = true);
+
+	Json::Value buildCodeJson(const string& name, const string&fragment, const string&vertex);
+	Json::Value buildCodeJson(const string& name);
+
 	class Shader : public ActorRole{
 	public:
 		bool setup(const Json::Value & val);
 		virtual void myDraw();
+		void myUpdate();
 		static string codeHeader();
-		Json::Value buildCodeJson(const string& name, const string&fragment, const string&vertex);
-		Json::Value buildCodeJson(const string& name);
 	private:
 		void start();
-		ofShader shader;
-		ofPlanePrimitive plane;
+		void end();
+		int index = -1; // none
+		vector<shared_ptr<ofShader>> shaders;
+		bool getShader(const Json::Value &val, shared_ptr<ofShader> shader);
 	};
 }

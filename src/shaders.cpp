@@ -28,7 +28,7 @@ namespace Software2552 {
 		return s;
 	}
 	// for non file based json, ie internal shaders. bugbug add way to load from file some day too
-	Json::Value Shader::buildCodeJson(const string& name, const string&fragment, const string&vertex) {
+	Json::Value buildCodeJson(const string& name, const string&fragment, const string&vertex) {
 		Json::Value val;
 
 		val["name"] = name;
@@ -41,7 +41,7 @@ namespace Software2552 {
 		return val;
 	}
 	// data driven
-	Json::Value Shader::buildCodeJson(const string& name) {
+	Json::Value buildCodeJson(const string& name) {
 		Json::Value val;
 
 		val["name"] = name;
@@ -50,8 +50,7 @@ namespace Software2552 {
 		}
 		return val;
 	}
-	// return true if shader is loaded
-	bool Shader::setup(const Json::Value & val)	{
+	bool Shader::getShader(const Json::Value &val, shared_ptr<ofShader> shader) {
 
 		string fragment;
 		string vertex;
@@ -100,32 +99,55 @@ namespace Software2552 {
 			fragment = red(true);
 			vertex = red(false);
 		}
-		else if (val["name"] == "userdefined"){
+		else if (val["name"] == "userdefined") {
 			if (val["fragment"].asString().size() > 0) {
 				fragment = Shader::codeHeader() + val["fragment"].asString();
 			}
 			vertex = val["vertex"].asString(); // bugbug do we need to check size first?
 		}
-
 		if (vertex.size() > 0) {
-			shader.setupShaderFromSource(GL_VERTEX_SHADER, vertex);
+			shader->setupShaderFromSource(GL_VERTEX_SHADER, vertex);
 		}
 		if (fragment.size() > 0) {
-			shader.setupShaderFromSource(GL_FRAGMENT_SHADER, fragment);
+			shader->setupShaderFromSource(GL_FRAGMENT_SHADER, fragment);
 		}
 		if (vertex.size() > 0 || fragment.size() > 0) {
-			shader.bindDefaults();
-			shader.linkProgram();
+			shader->bindDefaults();
+			shader->linkProgram();
 		}
-		return shader.isLoaded();
+		return shader->isLoaded();
+
+
+	}
+	// return true if shader is loaded
+	bool Shader::setup(const Json::Value & data)	{
+
+		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
+			shared_ptr<ofShader> shader = make_shared<ofShader>();
+			if (!shader) {
+				return false; // try to run in low memory as best as possible
+			}
+			if (getShader(data["set"][j], shader)) {
+				shaders.push_back(shader);
+			}
+		}
+		index = 0;
+		return true;
+
+	}
+	void Shader::end() {
+		shaders[index]->end();
 	}
 	void Shader::start() {
-		shader.begin();
+		shaders[index]->begin();
 		// true for all our shaders (from https://thebookofshaders.com)
-		shader.setUniform1f("u_time", ofGetElapsedTimef());
-		shader.setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
+		shaders[index]->setUniform1f("u_time", ofGetElapsedTimef());
+		shaders[index]->setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
 		//bugbug add kinect stuff, voice stuff go beyond mouse
-		shader.setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
+		shaders[index]->setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
+	}
+	void Shader::myUpdate() {
+		int i = 0; // debug calc this: index
 	}
 	void Shader::myDraw() {
 		start();
@@ -137,7 +159,7 @@ namespace Software2552 {
 		ofDrawRectangle(-ofGetWidth() / 2, -ofGetHeight() / 2, ofGetWidth(), ofGetHeight());
 		ofPopStyle();
 		ofPopMatrix();
-		shader.end();
+		end();
 	}
 	//http://glslsandbox.com/e#32867.0
 	string groovy(bool fragment) {
@@ -444,7 +466,6 @@ namespace Software2552 {
 
 	}
 	// http://glslsandbox.com/e#32902.0
-	// does not compile	
 	string red(bool fragment) {
 		if (fragment) {
 			string frag = Shader::codeHeader();
@@ -457,7 +478,7 @@ namespace Software2552 {
 
 				float f2 = .60 * sin(u_time * 4786.14); \n
 				float d = (abs(length(uv) - f2) * 1.0); \n
-
+					
 				outputColor += vec4(9.3 / d, 0.62 / d, 0.22 / d, 1); \n
 
 				}
