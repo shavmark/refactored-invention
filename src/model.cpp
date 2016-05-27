@@ -326,7 +326,7 @@ namespace Software2552 {
 		if (((ofApp*)ofGetAppPtr())->appconfig.getPerformance() > 3) {
 			count /= 5;
 		}
-		setFrameCount(count);//bugbug how to avoid flash?  1 frame or 1 second?
+		frames.setFrameCount(count);//bugbug how to avoid flash?  1 frame or 1 second?
 		
 	}
 	// draw face separte from body
@@ -449,7 +449,7 @@ namespace Software2552 {
 		//bugbug doing this or just about any other thing draws blck iamage image.allocate(pixels->getWidth(), pixels->getHeight(), OF_IMAGE_COLOR);//bugbug get OF_IMAGE_COLOR from data if this works
 		image.getPixelsRef() = pixels;
 		setFixed(true); 
-		setFrameCount(((ofApp*)ofGetAppPtr())->appconfig.getFramerate());//bugbug how to avoid flash?
+		frames.setFrameCount(((ofApp*)ofGetAppPtr())->appconfig.getFramerate());//bugbug how to avoid flash?
 	}
 	void PixelsManager::myUpdate() {
 		image.update();

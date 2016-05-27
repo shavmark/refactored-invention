@@ -146,6 +146,39 @@ namespace Software2552 {
 		shared_ptr<ofxSmartFont> font;
 	};
 
+	class FrameCounter {
+	public:
+		// -1 means infinite
+		FrameCounter(int frames=-1) {
+			setFrameCount(frames);
+			frameStart = frames;
+		}
+		void setFrameCount(int c) {
+			frameMax = c;
+		}
+		int decrementFrameCount() {
+			if (frameMax > 0) {
+				--frameMax; // never go -1 when counting
+			}
+			return frameMax;
+		}
+		bool getFrameCountMaxHit() {
+			return frameMax == 0;
+		}
+		void reset() {
+			frameMax = frameStart;
+		}
+		void rand() {
+			if (frameStart != -1) {
+				// cannot randomize non counting object
+				setFrameCount(ofRandom(frameStart));
+			}
+		}
+	private:
+		int frameMax; // number of frames to show this item
+		int frameStart; // enable easy reset
+
+	};
 	// basic drawing info, bugbug maybe color set goes here too, not sure yet
 	class Stage;
 	class Reference;
@@ -191,20 +224,9 @@ namespace Software2552 {
 		void setType(drawtype typeIn) { type = typeIn; }
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
 		void setFill(bool b = true) { fill = b; }
-		void setFrameCount(int c) {
-			frameMax = new int(c);
-		}
-		void decrementFrameCount() {
-			if (frameMax != nullptr) {
-				--(*frameMax);
-			}
-		}
-		bool getFrameCountMaxHit() {
-			return (frameMax != nullptr && (*frameMax) <= 0);
-		}
 
 	protected:
-		int *frameMax = nullptr; // number of frames to show this item, null means always show
+		FrameCounter frames; // number of frames to show this item, null means always show
 		static bool OKToRemove(shared_ptr<ActorRole> me);
 		drawtype getType() { return type; }
 		bool useFill() { return fill; }

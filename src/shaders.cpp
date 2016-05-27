@@ -121,33 +121,62 @@ namespace Software2552 {
 	}
 	// return true if shader is loaded
 	bool Shader::setup(const Json::Value & data)	{
-
-		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-			shared_ptr<ofShader> shader = make_shared<ofShader>();
+		for (Json::ArrayIndex j = 0; j < data["draw"].size(); ++j) {
+			shared_ptr<pair<FrameCounter, shared_ptr<ofShader>>> shader = make_shared<pair<FrameCounter, shared_ptr<ofShader>>>();
 			if (!shader) {
 				return false; // try to run in low memory as best as possible
 			}
-			if (getShader(data["set"][j], shader)) {
+			shader->second = make_shared<ofShader>();
+			if (shader->second && getShader(data["draw"][j], shader->second)) {
+				if (data["draw"][j]["seconds"].isInt()) {
+					shader->first = FrameCounter(data["draw"][j]["seconds"].asInt() * ((ofApp*)ofGetAppPtr())->appconfig.getFramerate());
+				}
+				else {
+					shader->first = FrameCounter();
+				}
 				shaders.push_back(shader);
 			}
 		}
-		index = 0;
+		if (shaders.size() > 0) {
+			index = 0;
+		}
+		else {
+			index = -1;
+		}
 		return true;
 
 	}
 	void Shader::end() {
-		shaders[index]->end();
+		if (index > -1 && shaders[index]->second) {
+			shaders[index]->second->end();
+		}
 	}
 	void Shader::start() {
-		shaders[index]->begin();
-		// true for all our shaders (from https://thebookofshaders.com)
-		shaders[index]->setUniform1f("u_time", ofGetElapsedTimef());
-		shaders[index]->setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
-		//bugbug add kinect stuff, voice stuff go beyond mouse
-		shaders[index]->setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
+		if (index > -1 && shaders[index]->second) {
+			shaders[index]->second->begin();
+			// true for all our shaders (from https://thebookofshaders.com)
+			shaders[index]->second->setUniform1f("u_time", ofGetElapsedTimef());
+			shaders[index]->second->setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
+			//bugbug add kinect stuff, voice stuff go beyond mouse
+			shaders[index]->second->setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
+		}
 	}
 	void Shader::myUpdate() {
-		int i = 0; // debug calc this: index
+		if (index > -1) {
+			shaders[index]->first.decrementFrameCount();
+			if (shaders[index]->first.getFrameCountMaxHit()) {
+				// try the next one, or start over if requested  bugbug add a Random() also
+				if (index+1 >= shaders.size()) {
+					index = 0; // wrap bugbug add more here
+					for (auto& item : shaders) {
+						item->first.reset();
+					}
+				}
+				else {
+					++index;
+				}
+			}
+		}
 	}
 	void Shader::myDraw() {
 		start();

@@ -363,14 +363,14 @@ namespace Software2552 {
 	};
 	bool ActorRole::OKToRemove(shared_ptr<ActorRole> me) {
 		if (me) {
-			return me->getFrameCountMaxHit() || objectLifeTimeManager::OKToRemove(me->locationAnimation);
+			return me->frames.getFrameCountMaxHit() || objectLifeTimeManager::OKToRemove(me->locationAnimation);
 		}
 		return true; // ok to remove nullptr?
 	}
 
 	bool ActorRole::okToDraw(drawtype type) {
 		drawtype dt = getType();
-		if (type != getType() || getFrameCountMaxHit()){
+		if (type != getType() || frames.getFrameCountMaxHit()){
 			return false;
 		}
 		// bugbug objectLifeTimeManager will handle these also

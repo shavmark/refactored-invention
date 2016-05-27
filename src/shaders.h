@@ -28,7 +28,8 @@ namespace Software2552 {
 		void start();
 		void end();
 		int index = -1; // none
-		vector<shared_ptr<ofShader>> shaders;
+		//MAP ofShader to 
+		vector<shared_ptr<pair<FrameCounter, shared_ptr<ofShader>>>> shaders;
 		bool getShader(const Json::Value &val, shared_ptr<ofShader> shader);
 	};
 }

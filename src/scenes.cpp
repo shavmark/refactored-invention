@@ -380,7 +380,7 @@ namespace Software2552 {
 		myDraw2d();
 		for (auto& a : animatables) {
 			a->drawIt(ActorRole::draw2d);
-			a->decrementFrameCount();
+			a->frames.decrementFrameCount();
 		}
 
 		//ofBackground(ofColor::black);
