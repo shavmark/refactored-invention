@@ -1,5 +1,6 @@
 ofxNetwork
 ofxOsc
+ofxVectorGraphics
 ofxXmlSettings
 ofxAnimatable
 ofxJson

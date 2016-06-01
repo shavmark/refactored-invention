@@ -26,6 +26,27 @@
     <ClCompile Include="src\animation.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\control.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kinect2552.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kinectSound.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kinectUtils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\networking.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sound.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shaders.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.cpp">
       <Filter>addons\ofxAnimatable\src</Filter>
     </ClCompile>
@@ -49,6 +70,27 @@
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp">
       <Filter>addons\ofxSmartFont\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.cc">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.cc">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.cc">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp">
+      <Filter>addons\ofxNetwork\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp">
       <Filter>addons\ofxOsc\src</Filter>
@@ -92,45 +134,6 @@
     <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.cc">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.cc">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.cc">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\control.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kinect2552.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kinectSound.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kinectUtils.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\networking.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\sound.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp">
       <Filter>addons\ofxXmlSettings\src</Filter>
     </ClCompile>
@@ -143,8 +146,11 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
       <Filter>addons\ofxXmlSettings\libs</Filter>
     </ClCompile>
-    <ClCompile Include="src\shaders.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.cpp">
+      <Filter>addons\ofxVectorGraphics\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.cpp">
+      <Filter>addons\ofxVectorGraphics\libs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,97 +161,106 @@
       <UniqueIdentifier>{44236aad-6673-4333-871e-2acd26176387}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAnimatable">
-      <UniqueIdentifier>{299062ce-800b-43d4-8aea-b18fb788a8b4}</UniqueIdentifier>
+      <UniqueIdentifier>{e49ca89f-5c40-4812-a5f5-ff817983bd1d}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAnimatable\src">
-      <UniqueIdentifier>{604a0d5d-2981-4356-a356-333d3b4b4fa2}</UniqueIdentifier>
+      <UniqueIdentifier>{d8f66409-ecff-407e-a26c-effb224eab39}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxJson">
-      <UniqueIdentifier>{5013f6b1-941a-4573-9ab9-eb75914ee9c2}</UniqueIdentifier>
+      <UniqueIdentifier>{4b0e0b7a-dd73-40e8-b9fd-c9736828df0a}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxJson\src">
-      <UniqueIdentifier>{282fec84-6cb7-40f2-8792-b7025255f799}</UniqueIdentifier>
+      <UniqueIdentifier>{7a43739f-2cc8-4dd5-b776-1424760725df}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxJson\libs">
-      <UniqueIdentifier>{35f7dfc6-04c6-4d1e-8e10-83741e82b695}</UniqueIdentifier>
+      <UniqueIdentifier>{bb7f2254-1693-45f5-accc-2405bd72a9ef}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxJson\libs\jsoncpp">
-      <UniqueIdentifier>{eda5d8ba-8664-4bb9-a65a-dc14f288a406}</UniqueIdentifier>
+      <UniqueIdentifier>{228cdbc6-6fbb-43d6-be39-dae026d40f82}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxJson\libs\jsoncpp\include">
-      <UniqueIdentifier>{61907ccc-ac14-4715-a89b-d87d40ae2071}</UniqueIdentifier>
+      <UniqueIdentifier>{19598888-a097-4b21-b652-d404dc1a682c}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
-      <UniqueIdentifier>{77bdb71c-3cec-4b94-925d-9ed196342fd5}</UniqueIdentifier>
+      <UniqueIdentifier>{e48cd002-56b6-4bc6-b80b-d4f1eae1cba3}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxJson\libs\jsoncpp\src">
-      <UniqueIdentifier>{ad84ccef-75dd-4649-b624-ea94d0483c9e}</UniqueIdentifier>
+      <UniqueIdentifier>{872f9e78-32c0-49b5-b24a-92787808a1c5}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxParagraph">
-      <UniqueIdentifier>{373a3109-c38c-4891-a48a-5d5c942c2fe7}</UniqueIdentifier>
+      <UniqueIdentifier>{073a914e-4acb-4614-bf4d-302f79e3bf96}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxParagraph\src">
-      <UniqueIdentifier>{0cccd6e9-cd86-4ba8-be07-67ddc138618d}</UniqueIdentifier>
+      <UniqueIdentifier>{8aed3b7f-b571-4596-9675-59ae4fb8ea3b}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxSmartFont">
-      <UniqueIdentifier>{65cad884-8a0c-4088-93ff-bbd4680f3f9e}</UniqueIdentifier>
+      <UniqueIdentifier>{175ca0b6-336f-48b8-bf50-956f3e972896}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxSmartFont\src">
-      <UniqueIdentifier>{51559ce4-e515-4f74-a026-0c10c939e985}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc">
-      <UniqueIdentifier>{69d51d3f-3c45-4215-a190-77958439ee13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\src">
-      <UniqueIdentifier>{24943d02-ebea-4465-9fee-5e57ef010a2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs">
-      <UniqueIdentifier>{2b802e98-c855-490a-8627-992458c72001}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack">
-      <UniqueIdentifier>{c4a1b204-10e2-4c9b-97f1-567fdc72d5cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src">
-      <UniqueIdentifier>{00cf6ddf-3e83-411c-ac57-9ed9e1dad93d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip">
-      <UniqueIdentifier>{c1f8d796-98ab-4c2b-9ce1-94509e5a073f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\posix">
-      <UniqueIdentifier>{4a205549-2b2e-4b66-b949-4b7a8e6bf9b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\win32">
-      <UniqueIdentifier>{875eacf7-d12e-45b5-a1ea-1124de0bf32a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
-      <UniqueIdentifier>{11cfc803-8413-4ea3-86ed-652dd6a5891a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxNetwork">
-      <UniqueIdentifier>{4cf4d319-8a7f-4b17-8510-ebfe2fba725f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxNetwork\src">
-      <UniqueIdentifier>{5f6d9072-16ff-4c37-9226-5905d7289062}</UniqueIdentifier>
+      <UniqueIdentifier>{520a5a52-4775-4d35-9bea-fcd1dd7e2796}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxSnappy">
-      <UniqueIdentifier>{f74eb3d7-8e1c-4e14-8c1f-6ad20dbc2b91}</UniqueIdentifier>
+      <UniqueIdentifier>{a8125ec7-a7d1-4a66-9353-62f266cf34e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxSnappy\libs">
-      <UniqueIdentifier>{96ab09e2-1cb5-404a-b670-f953f8b4064f}</UniqueIdentifier>
+      <UniqueIdentifier>{82c13e95-2e68-4268-a6a4-ca23f20f8ebc}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxSnappy\libs\snappy">
-      <UniqueIdentifier>{4a4149b8-e57b-4ba0-87d8-6aa4fd4db070}</UniqueIdentifier>
+      <UniqueIdentifier>{2c601798-62a6-4c4b-b0f3-fceb94c9cbbc}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxSnappy\libs\snappy\src">
-      <UniqueIdentifier>{cd4b5e07-4b59-4378-a817-5028e3902b47}</UniqueIdentifier>
+      <UniqueIdentifier>{48ae16da-8506-4201-8fdc-6beffd258575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNetwork">
+      <UniqueIdentifier>{a310da03-3268-4ad7-be5e-b3a12c36c6e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNetwork\src">
+      <UniqueIdentifier>{9b19d2e6-2bbb-4b10-8dc0-097351551870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc">
+      <UniqueIdentifier>{07925786-8d9c-409b-b32b-e18ebb01c0f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\src">
+      <UniqueIdentifier>{1d3e7c88-4d15-497e-9f05-c1d4ef720f91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\libs">
+      <UniqueIdentifier>{5306b49c-e016-4044-ad0e-245147623bd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\libs\oscpack">
+      <UniqueIdentifier>{dd53989b-0e80-445e-93f5-310950db0261}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\libs\oscpack\src">
+      <UniqueIdentifier>{558c253f-26f2-4cbf-8bf2-6276e80eebf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip">
+      <UniqueIdentifier>{f43ca624-e155-4498-8e61-17a2f1b51111}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\posix">
+      <UniqueIdentifier>{698e0211-5412-46ee-b004-dacd7eed6381}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\win32">
+      <UniqueIdentifier>{1fbfb3e4-88b4-4d72-b3de-e4352e9793d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
+      <UniqueIdentifier>{48a807fe-7264-42fd-bfbb-e158b73a21a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings">
-      <UniqueIdentifier>{f3003513-b411-44a4-9a30-1660c8c197af}</UniqueIdentifier>
+      <UniqueIdentifier>{907baf70-d479-4be4-b713-4d86a1066b7a}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings\src">
-      <UniqueIdentifier>{5949014b-1253-4364-99e9-9bff56df179b}</UniqueIdentifier>
+      <UniqueIdentifier>{ec396bf0-69dc-4212-ba2c-4802685c236b}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings\libs">
-      <UniqueIdentifier>{d1aff4fa-59ec-4e02-a6be-874558767053}</UniqueIdentifier>
+      <UniqueIdentifier>{d8fdb5be-7fa5-4617-8478-ba4da8760c19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxVectorGraphics">
+      <UniqueIdentifier>{ddb832cd-7550-48e2-a77d-84defe2fe4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxVectorGraphics\src">
+      <UniqueIdentifier>{6e036eac-896a-4970-9f1d-bb1105aa4fa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxVectorGraphics\libs">
+      <UniqueIdentifier>{deb8be00-6d57-46a0-9fbb-26dae1215c53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +280,24 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\animation.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect2552.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\networking.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\control.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sound.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\consts.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.h">
@@ -296,6 +329,39 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h">
       <Filter>addons\ofxSmartFont\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-internal.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-public.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h">
+      <Filter>addons\ofxNetwork\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h">
+      <Filter>addons\ofxNetwork\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h">
       <Filter>addons\ofxOsc\src</Filter>
@@ -357,62 +423,20 @@
     <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h">
-      <Filter>addons\ofxNetwork\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-internal.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-public.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\kinect2552.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\networking.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\control.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\sound.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\consts.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h">
       <Filter>addons\ofxXmlSettings\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h">
       <Filter>addons\ofxXmlSettings\libs</Filter>
     </ClInclude>
-    <ClInclude Include="src\shaders.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.h">
+      <Filter>addons\ofxVectorGraphics\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.hpp">
+      <Filter>addons\ofxVectorGraphics\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS_Types.hpp">
+      <Filter>addons\ofxVectorGraphics\libs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
