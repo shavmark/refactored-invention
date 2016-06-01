@@ -395,17 +395,13 @@ namespace Software2552 {
 	};
 
 
-	class Image : public Visual {
+	class Image : public Visual, public RowRoles<ofPixels>{
 	public:
 		void myUpdate();
-		void mySetup();
 		virtual void myDraw();
-		float getWidth() { return worker.getWidth(); }
-		float getHeight() { return worker.getHeight(); }
-		ofImage worker;
 	protected:
 	private:
-		bool mysetup(const Json::Value &data);
+		bool mySetup(const Json::Value &val, shared_ptr<ofPixels> item);
 	};
 
 	class PixelsManager : public ActorRole {
@@ -420,7 +416,7 @@ namespace Software2552 {
 	};
 
 
-	class Background : public Visual {
+	class Background : public Visual, public RowRoles<ofImage>{
 	public:
 		enum TypeOfBackground { ColorFixed, ColorChanging, none };
 		enum TypeOfGradient {

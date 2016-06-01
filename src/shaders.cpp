@@ -51,7 +51,7 @@ namespace Software2552 {
 		return val;
 	}
 
-	bool Shader::myRow(const Json::Value &val, shared_ptr<ofShader> shader) {
+	bool Shader::mySetup(const Json::Value &val, shared_ptr<ofShader> shader) {
 
 		string fragment;
 		string vertex;
@@ -131,23 +131,6 @@ namespace Software2552 {
 			items[index]->second->setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
 			//bugbug add kinect stuff, voice stuff go beyond mouse
 			items[index]->second->setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
-		}
-	}
-	void Shader::myUpdate() {
-		if (index > -1) {
-			items[index]->first.decrementFrameCount();
-			if (items[index]->first.getFrameCountMaxHit()) {
-				// try the next one, or start over if requested  bugbug add a Random() also
-				if (index+1 >= items.size()) {
-					index = ofRandom(items.size()-1); // bugbug add more here like repeat, linear etc vs. just random
-					for (auto& item : items) {
-						item->first.reset();
-					}
-				}
-				else {
-					++index;
-				}
-			}
 		}
 	}
 	void Shader::myDraw() {

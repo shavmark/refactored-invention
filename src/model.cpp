@@ -960,17 +960,40 @@ namespace Software2552 {
 	}
 
 	void Image::myUpdate() {
+		update();
 		Visual::myUpdate();
-		worker.update();
 	}
-
-	void Image::mySetup() {
-		if (!isLoaded) {
-			if (!ofLoadImage(worker, getLocationPath())) {
-				ofLogError("Picture") << "setup Picture Player " << getLocationPath();
+	void Image::myDraw() {
+		if (index > -1 && items[index]->second) {
+			if (items[index]->second->isAllocated()) {
+				ofImage image;
+				image.setFromPixels(*items[index]->second);
+				image.draw(0,0);
 			}
-			isLoaded = true; // avoid keep on trying
 		}
+	}
+	// setup each row
+	bool Image::mySetup(const Json::Value &val, shared_ptr<ofPixels> item) {
+		if (item && val["locationPath"].isString()) {
+			string path = val["locationPath"].asString();
+			if (!ofLoadImage(*item, path)) {
+				ofLogError("Picture") << "setup Picture Player " << path;
+			}
+			else {
+				// set pixels size if needed
+				READINT(height, val);
+				READINT(width, val);
+				if (width == -1 || height == -1) {
+					item->resize(ofGetScreenWidth(), ofGetScreenHeight()); // if either is -1 set both
+				}
+				else if (width != 0 && height != 0) {
+					item->resize(width, height); // but must be set to change size
+				}
+
+				return true;
+			}
+		}
+		return false;
 	}
 
 	float Video::getTimeBeforeStart(float t) {
@@ -989,16 +1012,7 @@ namespace Software2552 {
 		}
 		return t;
 	}
-	void Image::myDraw() {
-		if (worker.isAllocated()) {
-			if (width == 0 || height == 0) {
-				worker.draw(0, 0);
-			}
-			else {
-				worker.draw(0, 0, width, height);
-			}
-		}
-	}
+	
 	void Audio::mySetup() {
 		if (!worker.load(getLocationPath())) {
 			ofLogError("Audio") << "setup audio Player " << getLocationPath();
@@ -1042,10 +1056,6 @@ namespace Software2552 {
 	bool CameraGrabber::mysetup(const Json::Value &data) {
 		//"Logitech HD Pro Webcam C920"
 
-		return true;
-	}
-	bool Image::mysetup(const Json::Value &data) {
-		Visual::mysetup(data);
 		return true;
 	}
 	bool TextureVideo::mybind() {

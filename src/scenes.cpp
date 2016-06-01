@@ -65,7 +65,7 @@ namespace Software2552 {
 		if (!data.empty()) {
 			shared_ptr<Background> b = std::make_shared<Background>();
 			if (b != nullptr) {
-				if (b->setup(data)) {
+				if (b->setupRow(data) && b->setup(data)) {
 					// only save if data was read in 
 					addToAnimatable(b, true);
 				}
@@ -82,6 +82,7 @@ namespace Software2552 {
 	}
 	// samples https://sites.google.com/site/ofauckland/examples
 #define ADDANIMATION(name,type,parent)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)], parent)
+#define ADD_REPEATING_ANIMATION(name,type,parent)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatableThatRepeats<type>(data[STRINGIFY(name)], parent)
 #define ADDLIGHTS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
 #define ADDCAMERAS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
 
@@ -149,11 +150,11 @@ namespace Software2552 {
 			if (deleteExisting(data)) {
 				getAnimatables().clear();
 			}
-			ADDANIMATION(shaders, Shader, parent);
+			//ADD_REPEATING_ANIMATION(shaders, Shader, parent);
+			ADD_REPEATING_ANIMATION(images, Image, parent);
 			return;
 			ADDANIMATION(audio, Audio, parent);// sound phase 1a
 			ADDANIMATION(videos, Video, parent);
-			ADDANIMATION(pictures, Image, parent);
 			ADDANIMATION(rainbows, Rainbow, parent);
 			ADDANIMATION(circles, Ball, parent);
 			ADDANIMATION(cubes, Cube, parent);
