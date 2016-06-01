@@ -273,4 +273,43 @@ namespace Software2552 {
 		shared_ptr<vector<shared_ptr<Reference>>> references = nullptr; // research reference to show where actor came from
 	};
 
+	// things are drawn using a sparse matrix, with rows having at least one column, this object handles rows that have more than one column
+	template<class T> class RowRoles : public ActorRole {
+	public:
+		// return true if shader is loaded
+		bool setup(const Json::Value & data) {
+			for (Json::ArrayIndex j = 0; j < data["draw"].size(); ++j) {
+				shared_ptr<pair<FrameCounter, shared_ptr<T>>> drawer = make_shared<pair<FrameCounter, shared_ptr<T>>>();
+				if (!drawer) {
+					return false; // try to run in low memory as best as possible
+				}
+				drawer->second = make_shared<T>();
+				if (drawer->second && getRow(data["draw"][j], drawer->second)) {
+					if (data["draw"][j]["seconds"].isInt()) {
+						drawer->first = FrameCounter(data["draw"][j]["seconds"].asInt() * ((ofApp*)ofGetAppPtr())->appconfig.getFramerate());
+					}
+					else {
+						drawer->first = FrameCounter();
+					}
+					items.push_back(drawer);
+				}
+			}
+			if (items.size() > 0) {
+				index = ofRandom(items.size() - 1);
+			}
+			else {
+				index = -1;
+			}
+			return true;
+
+		}
+		virtual void start() {};
+		virtual void end() {};
+	protected:
+		int index = -1; // none
+		vector<shared_ptr<pair<FrameCounter, shared_ptr<T>>>> items;
+		bool getRow(const Json::Value &val, shared_ptr<T> item) { return myRow(val, item); };
+		virtual bool myRow(const Json::Value &val, shared_ptr<ofShader> item) = 0;
+	};
+
 }

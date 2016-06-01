@@ -18,18 +18,15 @@ namespace Software2552 {
 	Json::Value buildCodeJson(const string& name, const string&fragment, const string&vertex);
 	Json::Value buildCodeJson(const string& name);
 
-	class Shader : public ActorRole{
+		
+	class Shader : public RowRoles<ofShader> {
 	public:
-		bool setup(const Json::Value & val);
 		virtual void myDraw();
 		void myUpdate();
 		static string codeHeader();
 	private:
 		void start();
 		void end();
-		int index = -1; // none
-		//MAP ofShader to 
-		vector<shared_ptr<pair<FrameCounter, shared_ptr<ofShader>>>> shaders;
-		bool getShader(const Json::Value &val, shared_ptr<ofShader> shader);
+		bool myRow(const Json::Value &val, shared_ptr<ofShader> item);
 	};
 }
