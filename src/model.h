@@ -394,7 +394,7 @@ namespace Software2552 {
 		bool mysetup(const Json::Value &data);
 	};
 
-
+	// images can rotate like a photo viewer
 	class Image : public Visual, public RowRoles<ofPixels>{
 	public:
 		void myUpdate();
@@ -537,54 +537,6 @@ namespace Software2552 {
 		ofNode grandChildNode;
 		ofPolyline line;
 	};
-	class SoundOut {
-	public:
-		static void setup();
-		static void update();
-		static void draw();
-		static void audioOut(ofSoundBuffer &outBuffer);
-
-		class dataOut {
-		public:
-			double wavePhase;
-			double pulsePhase;
-			double sampleRate;
-			mutex audioMutex;
-			ofSoundBuffer lastBuffer;
-			ofPolyline waveform;
-			float rms;
-		};
-
-	private:
-		static dataOut soundDataOut;
-	};
-
-	class SoundIn {
-	public:
-		static void setup();
-		static void update();
-		static void audioIn(float * input, int bufferSize, int nChannels);
-		class dataIn {
-		public:
-			vector <float> left;
-			vector <float> right;
-			vector <float> volHistory;
-			int 	bufferCounter;
-			int 	drawCounter;
-			float smoothedVol;
-			float scaledVol;
-			ofSoundStream soundStream;
-		};
-
-	private:
-		static dataIn soundDataIn;
-	};
-	class Graphics2552 {
-	public:
-		static void rotateToNormal(ofVec3f normal);
-
-	};
-
 
 	class CrazyMesh : public ofMesh {
 	public:
@@ -617,6 +569,11 @@ namespace Software2552 {
 
 	};
 
+	class Graphics2552 {
+	public:
+		static void rotateToNormal(ofVec3f normal);
+
+	};
 
 
 

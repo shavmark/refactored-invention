@@ -53,6 +53,7 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 #include "model.h"
 #include "shaders.h"
 #include "networking.h"
+#include "sound.h"
 
 #define STRINGIFY(p) #p
 class ofApp;
@@ -131,8 +132,6 @@ public:
 };
 extern OneGlobalInstance globalinstance;
 
-
-
 class ofApp : public ofBaseApp{
 
 	public:
@@ -152,16 +151,10 @@ class ofApp : public ofBaseApp{
 		void keyPressed(int key);
 		void exit();
 
-		// audio
-		void audioOut(ofSoundBuffer &outBuffer);
-		//in
-		void audioIn(float * input, int bufferSize, int nChannels);
-		// audio
-
 		Software2552::Timeline timeline;
-
-		void ofApp::drawScene(bool isPreview) {}
+		void audioOut(ofSoundBuffer &outBuffer);
 		AppConfiguration appconfig;
+
 
 private:
 };

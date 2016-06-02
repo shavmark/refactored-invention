@@ -27,6 +27,8 @@ namespace Software2552 {
 	void Timeline::setup() {
 		//ofSeedRandom(); // turn of to debug if needed
 
+
+
 		// design to run in low mem on slow devices, many items can not be allocated and graphics should still display
 
 		//bugbug use ofxOscMessage ofxOscReceiver (cool way to find server ip for all things, server may need to broad cast this now and then
@@ -91,8 +93,16 @@ namespace Software2552 {
 		return;
 
 	}
+	//--------------------------------------------------------------
+	void Timeline::audioOut(ofSoundBuffer &outBuffer) {
+		Software2552::SoundOut::audioOut(outBuffer);
+	}
+
 	// keep this super fast
 	void Timeline::update() { 
+		SoundOut::update();// move to timeline or scene
+		//SoundIn::update();// move to timeline or scene
+
 #ifdef _WIN64
 		// kinect can only go 30fps 
 		if (globalinstance.kinectBody) {

@@ -8,9 +8,7 @@
 #include "sound.h"
 
 namespace Software2552 {
-	SoundIn::dataIn SoundIn::soundDataIn; // only one sound per app instance
-	SoundOut::dataOut SoundOut::soundDataOut;// only one sound per app instance
-
+	SoundOut::data SoundOut::soundDataOut;// only one sound per app instance
 
 	void SoundOut::setup() {
 		 
@@ -21,33 +19,6 @@ namespace Software2552 {
 		// size of 512 samples per audioOut() call
 		ofSoundStreamSetup(2, 0, soundDataOut.sampleRate, 512, 3);
 	//http://openframeworks.cc/documentation/sound/ofSoundStream/
-	}
-	void SoundIn::setup() {
-		// 0 output channels, 
-		// 2 input channels
-		// 44100 samples per second
-		// 256 samples per buffer
-		// 4 num buffers (latency)
-
-		soundDataIn.soundStream.printDeviceList();
-
-		//if you want to set a different device id 
-		//soundStream.setDeviceID(0); //bear in mind the device id corresponds to all audio devices, including  input-only and output-only devices.
-
-		int bufferSize = 256;
-
-
-		soundDataIn.left.assign(bufferSize, 0.0);
-		soundDataIn.right.assign(bufferSize, 0.0);
-		soundDataIn.volHistory.assign(400, 0.0);
-
-		soundDataIn.bufferCounter = 0;
-		soundDataIn.drawCounter = 0;
-		soundDataIn.smoothedVol = 0.0;
-		soundDataIn.scaledVol = 0.0;
-
-		soundDataIn.soundStream.setup(ofGetAppPtr(), 0, 2, 44100, bufferSize, 4);
-
 	}
 
 	void SoundOut::update() {
@@ -76,36 +47,6 @@ namespace Software2552 {
 
 		soundDataOut.rms = soundDataOut.lastBuffer.getRMSAmplitude();
 	}
-	void SoundIn::audioIn(float * input, int bufferSize, int nChannels) {
-
-		float curVol = 0.0;
-
-		// samples are "interleaved"
-		int numCounted = 0;
-
-		//lets go through each sample and calculate the root mean square which is a rough way to calculate volume	
-		for (int i = 0; i < bufferSize; i++) {
-			soundDataIn.left[i] = input[i * 2] * 0.5;
-			soundDataIn.right[i] = input[i * 2 + 1] * 0.5;
-
-			curVol += soundDataIn.left[i] * soundDataIn.left[i];
-			curVol += soundDataIn.right[i] * soundDataIn.right[i];
-			numCounted += 2;
-		}
-
-		//this is how we get the mean of rms :) 
-		curVol /= (float)numCounted;
-
-		// this is how we get the root of rms :) 
-		curVol = sqrt(curVol);
-
-		soundDataIn.smoothedVol *= 0.93;
-		soundDataIn.smoothedVol += 0.07 * curVol;
-
-		soundDataIn.bufferCounter++;
-
-	}
-
 	void SoundOut::audioOut(ofSoundBuffer &outBuffer) {
 
 		// base frequency of the lowest sine wave in cycles per second (hertz)
@@ -153,20 +94,7 @@ namespace Software2552 {
 	void SoundOut::draw() {
 		ofBackground(ofColor::black);
 		ofSetColor(ofColor::white);
-		ofSetLineWidth(1 + (soundDataOut.rms * 30.));
+		ofSetLineWidth(1 + (soundDataOut.rms * 30.0));
 		soundDataOut.waveform.draw();
 	}
-	void SoundIn::update() {
-		//lets scale the vol up to a 0-1 range 
-		soundDataIn.scaledVol = ofMap(soundDataIn.smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
-
-		//lets record the volume into an array
-		soundDataIn.volHistory.push_back(soundDataIn.scaledVol);
-
-		//if we are bigger the the size we want to record - lets drop the oldest value
-		if (soundDataIn.volHistory.size() >= 400) {
-			soundDataIn.volHistory.erase(soundDataIn.volHistory.begin(), soundDataIn.volHistory.begin() + 1);
-		}
-	}
-
 }

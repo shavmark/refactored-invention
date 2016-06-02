@@ -961,7 +961,6 @@ namespace Software2552 {
 
 	void Image::myUpdate() {
 		update();
-		Visual::myUpdate();
 	}
 	void Image::myDraw() {
 		if (index > -1 && items[index]->second) {

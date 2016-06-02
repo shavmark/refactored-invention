@@ -1,6 +1,7 @@
 #include "ofApp.h"
 #include "ofxXmlSettings.h"
 
+
 OneGlobalInstance globalinstance;
 
 void SystemConfiguration::setup() {
@@ -142,44 +143,36 @@ shared_ptr<ofxOscMessage>  AppConfiguration::getsignon() {
 	return signon;
 }
 
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	ofSetWindowTitle("Story Teller");
-	//Software2552::SoundIn::setup();// move to timeline or scene
-	//Software2552::SoundOut::setup();// move to timeline or scene
-
 	ofSetLogLevel(OF_LOG_NOTICE);//OF_LOG_VERBOSE  OF_LOG_NOTICE
+
+	ofSetWindowTitle("Story Teller");
+	
+	Software2552::SoundOut::setup();
+
 	timeline.setup();//logErrorString
 	timeline.readScript("json3.json");
 	timeline.start();
 
 	return;
 }
-
-
-//--------------------------------------------------------------
-void ofApp::update(){
-	timeline.update();
-	Software2552::SoundOut::update();// move to timeline or scene
-	Software2552::SoundIn::update();// move to timeline or scene
-	return;
-	
-	return;
-}
-void ofApp::audioIn(float * input, int bufferSize, int nChannels) {
-	Software2552::SoundIn::audioIn(input, bufferSize, nChannels);
-}
-//--------------------------------------------------------------
 void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 	Software2552::SoundOut::audioOut(outBuffer);
+}
+//--------------------------------------------------------------
+void ofApp::update(){
+	Software2552::SoundOut::update();
+	timeline.update();
+	return;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	Software2552::SoundOut::draw();
 	timeline.draw();
-	//ofDrawCircle(0, 0, 200);
-	//Software2552::SoundOut::draw();//bugbug move to timeline
 	return;
 
 
