@@ -152,6 +152,9 @@ class ofApp : public ofBaseApp{
 		void exit();
 
 		Software2552::Timeline timeline;
+
+		shared_ptr<Software2552::SoundOut> soundout = nullptr; // set, replace etc as needed
+
 		void audioOut(ofSoundBuffer &outBuffer);
 		AppConfiguration appconfig;
 

@@ -4,10 +4,10 @@ namespace Software2552 {
 
 	class SoundOut {
 	public:
-		static void setup();
-		static void update();
-		static void draw();
-		static void audioOut(ofSoundBuffer &outBuffer);
+		void setup();
+		void update();
+		void draw();
+		virtual void audioOut(ofSoundBuffer &outBuffer);
 
 		class data {
 		public:
@@ -19,8 +19,9 @@ namespace Software2552 {
 			ofPolyline waveform;
 			float rms;
 		};
-
+		data soundDataOut;
+		void setDraw(bool b = true) { drawMe = b; }
 	private:
-		static data soundDataOut;
+		bool drawMe = true;
 	};
 }

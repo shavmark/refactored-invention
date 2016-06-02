@@ -22,13 +22,6 @@ namespace Software2552 {
 
 		bool readScript(const string& path);
 
-		// audio
-		ofSoundStream soundStream; 
-		void audioOut(ofSoundBuffer &outBuffer);
-		void audioIn(float * input, int bufferSize, int nChannels);
-
-
-
 	private:
 		void sendClientSigon(shared_ptr<Sender>);
 		//bugbug likely to go into ofApp.cpp once things settle down and timeline just goes away

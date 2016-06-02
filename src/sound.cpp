@@ -8,7 +8,6 @@
 #include "sound.h"
 
 namespace Software2552 {
-	SoundOut::data SoundOut::soundDataOut;// only one sound per app instance
 
 	void SoundOut::setup() {
 		 
@@ -92,9 +91,11 @@ namespace Software2552 {
 
 	//--------------------------------------------------------------
 	void SoundOut::draw() {
-		ofBackground(ofColor::black);
-		ofSetColor(ofColor::white);
-		ofSetLineWidth(1 + (soundDataOut.rms * 30.0));
-		soundDataOut.waveform.draw();
+		if (drawMe) {
+			ofBackground(ofColor::black);
+			ofSetColor(ofColor::white);
+			ofSetLineWidth(1 + (soundDataOut.rms * 30.0));
+			soundDataOut.waveform.draw();
+		}
 	}
 }

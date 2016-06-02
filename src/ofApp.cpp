@@ -150,9 +150,13 @@ void ofApp::setup(){
 	ofSetLogLevel(OF_LOG_NOTICE);//OF_LOG_VERBOSE  OF_LOG_NOTICE
 
 	ofSetWindowTitle("Story Teller");
-	
-	Software2552::SoundOut::setup();
 
+	//bugbug allocation sould be data driven
+	soundout = std::make_shared<Software2552::SoundOut>();
+	if (soundout) {
+		soundout->setup();
+	}
+	
 	timeline.setup();//logErrorString
 	timeline.readScript("json3.json");
 	timeline.start();
@@ -160,18 +164,24 @@ void ofApp::setup(){
 	return;
 }
 void ofApp::audioOut(ofSoundBuffer &outBuffer) {
-	Software2552::SoundOut::audioOut(outBuffer);
+	if (soundout) {
+		soundout->audioOut(outBuffer);
+	}
 }
 //--------------------------------------------------------------
 void ofApp::update(){
-	Software2552::SoundOut::update();
+	if (soundout) {
+		soundout->update();
+	}
 	timeline.update();
 	return;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	Software2552::SoundOut::draw();
+	if (soundout) {
+		soundout->draw();
+	}
 	timeline.draw();
 	return;
 

@@ -93,15 +93,9 @@ namespace Software2552 {
 		return;
 
 	}
-	//--------------------------------------------------------------
-	void Timeline::audioOut(ofSoundBuffer &outBuffer) {
-		Software2552::SoundOut::audioOut(outBuffer);
-	}
-
+	
 	// keep this super fast
 	void Timeline::update() { 
-		SoundOut::update();// move to timeline or scene
-		//SoundIn::update();// move to timeline or scene
 
 #ifdef _WIN64
 		// kinect can only go 30fps 
