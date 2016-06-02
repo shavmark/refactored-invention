@@ -21,7 +21,9 @@ namespace Software2552 {
 		};
 		data soundDataOut;
 		void setDraw(bool b = true) { drawMe = b; }
+		void setStop(bool b = true) { stop = b; }
 	private:
 		bool drawMe = true;
+		bool stop = false;
 	};
 }

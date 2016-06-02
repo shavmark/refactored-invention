@@ -47,7 +47,9 @@ namespace Software2552 {
 		soundDataOut.rms = soundDataOut.lastBuffer.getRMSAmplitude();
 	}
 	void SoundOut::audioOut(ofSoundBuffer &outBuffer) {
-
+		if (stop) {
+			return;
+		}
 		// base frequency of the lowest sine wave in cycles per second (hertz)
 		float frequency = 172.5;
 
