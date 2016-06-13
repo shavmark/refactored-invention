@@ -81,6 +81,7 @@ public:
 	int getPerformance() { return performance; }
 	int getFramerate() { return frameRate; }
 	int getseekKinect() { return seekKinect; }
+	int getseekArduino() { return seekArduino; }
 	string&getName() { return machineName; }
 	static void getName(string&name, shared_ptr<ofxOscMessage>);
 	int getWindowNumber() {	return windowNumber	;};
@@ -99,6 +100,7 @@ private:
 	int performance = 0;
 	string build;
 	bool seekKinect = false;
+	bool seekArduino = false;
 	int frameRate = 30;
 	int windowCount = 1;
 	string machineName;
@@ -117,6 +119,8 @@ public:
 	shared_ptr<Software2552::TCPKinectClient>tcpKinectClient = nullptr;
 	shared_ptr<Software2552::ReadOsc>oscClient = nullptr; // everyone can talk to everyone
 	shared_ptr<Software2552::Sender>router = nullptr; // everyone can talk to everyone
+	shared_ptr<ofArduino>arduino = nullptr;
+
 #ifdef _WIN64
 										// every 64 bit windows with a 3.0 usb can talk to everyone else
 	shared_ptr<Software2552::KinectBody> kinectBody = nullptr;
@@ -152,7 +156,6 @@ class ofApp : public ofBaseApp{
 		void exit();
 
 		Software2552::Timeline timeline;
-
 		shared_ptr<Software2552::SoundOut> soundout = nullptr; // set, replace etc as needed
 
 		void audioOut(ofSoundBuffer &outBuffer);

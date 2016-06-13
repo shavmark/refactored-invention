@@ -24,6 +24,7 @@ void SystemConfiguration::setup() {
 		int performance = xmlsettings.getValue("settings:Performance", 0.0); // 0 is slowest, 11 is fastest
 		string build = __DATE__;//bugbug this is our build version right now, need to add more info bugbug or pass in a data structure
 		bool seekKinect = xmlsettings.getValue("settings:Kinect", false);
+		bool seekArduino = xmlsettings.getValue("settings:Arduino", false);
 		string machineName = xmlsettings.getValue("settings:MachineName", "bob");
 		int major = xmlsettings.getValue("settings:OpenglMajor", 4);// could make each window set this too
 		int minor = xmlsettings.getValue("settings:OpenglMinor", 0);
@@ -64,7 +65,8 @@ void SystemConfiguration::setup() {
 			window->app->appconfig.windowNumber = i; // just so we know whats coming from where
 			window->app->appconfig.performance = performance;
 			window->app->appconfig.build = build;
-			window->app->appconfig.seekKinect = seekKinect;// only want one per window
+			window->app->appconfig.seekKinect = seekKinect;// only want one per app instance
+			window->app->appconfig.seekArduino = seekArduino; // one per app
 			window->app->appconfig.machineName = machineName;
 			window->app->appconfig.windowCount = windowCount; // track as an fyi
 			window->app->appconfig.frameRate = xmlsettings.getValue("framerate", 30);
@@ -148,6 +150,10 @@ shared_ptr<ofxOscMessage>  AppConfiguration::getsignon() {
 void ofApp::setup(){
 
 	ofSetLogLevel(OF_LOG_NOTICE);//OF_LOG_VERBOSE  OF_LOG_NOTICE
+
+	ofLogToFile("logfile.log", true); //set channel to log file. log file resides in the /bin/data folder
+	ofLogVerbose("ofApp::setup") << "Logging to file now";
+	ofLogToConsole(); //set channel to console
 
 	ofSetWindowTitle("Story Teller");
 

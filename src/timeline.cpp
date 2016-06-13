@@ -74,6 +74,22 @@ namespace Software2552 {
 			}
 		}
 #endif
+		if (((ofApp*)ofGetAppPtr())->appconfig.getseekArduino() && !globalinstance.arduino) {
+			globalinstance.arduino = std::make_shared<ofArduino>();
+			if (globalinstance.arduino) {
+				globalinstance.arduino->sendFirmwareVersionRequest();
+				// replace the string below with the serial port for your Arduino board
+				// you can get this from the Arduino application or via command line
+				// for OSX, in your terminal type "ls /dev/tty.*" to get a list of serial devices
+				globalinstance.arduino->connect("COM3", 57600);
+
+				// listen for EInitialized notification. this indicates that
+				// the arduino is ready to receive commands and it is safe to
+				// call setupArduino()
+				ofAddListener(globalinstance.arduino->EInitialized, this, &Timeline::setupArduino);
+				bSetupArduino = false;	// flag so we setup arduino when its ready, you don't need to touch this :)
+			}
+		}
 
 		ofSetVerticalSync(false);
 		((ofApp*)ofGetAppPtr())->appconfig.setFrameRateinOF();
@@ -93,9 +109,88 @@ namespace Software2552 {
 		return;
 
 	}
-	
+	void Timeline::setupArduino(const int & version) {
+
+		if (!globalinstance.arduino) {
+			return;
+		}
+
+		// remove listener because we don't need it anymore
+		ofRemoveListener(globalinstance.arduino->EInitialized, this, &Timeline::setupArduino);
+
+		// it is now safe to send commands to the Arduino
+		bSetupArduino = true;
+
+		// print firmware name and version to the console
+		ofLogNotice() << globalinstance.arduino->getFirmwareName();
+		ofLogNotice() << "firmata v" << globalinstance.arduino->getMajorFirmwareVersion() << "." << globalinstance.arduino->getMinorFirmwareVersion();
+
+		// Note: pins A0 - A5 can be used as digital input and output.
+		// Refer to them as pins 14 - 19 if using StandardFirmata from Arduino 1.0.
+		// If using Arduino 0022 or older, then use 16 - 21.
+		// Firmata pin numbering changed in version 2.3 (which is included in Arduino 1.0)
+
+		// set pins D2 and A5 to digital input
+		globalinstance.arduino->sendDigitalPinMode(2, ARD_INPUT);
+		globalinstance.arduino->sendDigitalPinMode(19, ARD_INPUT);  // pin 21 if using StandardFirmata from Arduino 0022 or older
+
+													// set pin A0 to analog input
+		globalinstance.arduino->sendAnalogPinReporting(0, ARD_ANALOG);
+
+		// set pin D13 as digital output
+		globalinstance.arduino->sendDigitalPinMode(13, ARD_OUTPUT);
+		// set pin A4 as digital output
+		globalinstance.arduino->sendDigitalPinMode(18, ARD_OUTPUT);  // pin 20 if using StandardFirmata from Arduino 0022 or older
+
+													 // set pin D11 as PWM (analog output)
+		globalinstance.arduino->sendDigitalPinMode(11, ARD_PWM);
+
+		// attach a servo to pin D9
+		// servo motors can only be attached to pin D3, D5, D6, D9, D10, or D11
+		globalinstance.arduino->sendServoAttach(9);
+
+		// Listen for changes on the digital and analog pins
+		ofAddListener(globalinstance.arduino->EDigitalPinChanged, this, &Timeline::digitalPinChanged);
+		ofAddListener(globalinstance.arduino->EAnalogPinChanged, this, &Timeline::analogPinChanged);
+	}
+
+	//--------------------------------------------------------------
+	void Timeline::updateArduino() {
+
+		if (globalinstance.arduino) {
+			// update the arduino, get any data or messages.
+			// the call to ard.update() is required
+			globalinstance.arduino->update();
+
+			// do not send anything until the arduino has been set up
+			if (bSetupArduino) {
+				// fade the led connected to pin D11
+				globalinstance.arduino->sendPwm(11, (int)(128 + 128 * sin(ofGetElapsedTimef())));   // pwm...
+			}
+		}
+	}
+
+	// digital pin event handler, called whenever a digital pin value has changed
+	// note: if an analog pin has been set as a digital pin, it will be handled
+	// by the digitalPinChanged function rather than the analogPinChanged function.
+
+	//--------------------------------------------------------------
+	void Timeline::digitalPinChanged(const int & pinNum) {
+		// do something with the digital input. 
+	}
+
+	// analog pin event handler, called whenever an analog pin value has changed
+
+	//--------------------------------------------------------------
+	void Timeline::analogPinChanged(const int & pinNum) {
+		// do something with the analog input. 
+	}
+
+
 	// keep this super fast
 	void Timeline::update() { 
+
+		updateArduino();
 
 #ifdef _WIN64
 		// kinect can only go 30fps 

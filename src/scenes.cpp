@@ -150,8 +150,8 @@ namespace Software2552 {
 			if (deleteExisting(data)) {
 				getAnimatables().clear();
 			}
-			//ADD_REPEATING_ANIMATION(shaders, Shader, parent);
-			ADD_REPEATING_ANIMATION(images, Image, parent);
+			ADD_REPEATING_ANIMATION(shaders, Shader, parent);
+			//ADD_REPEATING_ANIMATION(images, Image, parent);
 			return;
 			ADDANIMATION(audio, Audio, parent);// sound phase 1a
 			ADDANIMATION(videos, Video, parent);
