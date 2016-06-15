@@ -92,12 +92,13 @@ namespace Software2552 {
 	}
 
 	//--------------------------------------------------------------
-	void SoundOut::draw() {
+	void SoundOut::draw(float *f, int size) {
 		if (drawMe) {
 			ofBackground(ofColor::black);
 			ofSetColor(ofColor::white);
 			ofSetLineWidth(1 + (soundDataOut.rms * 30.0));
 			soundDataOut.waveform.draw();
+			//bugbug change data by using parameters
 		}
 	}
 }

@@ -28,7 +28,6 @@ namespace Software2552 {
 		//ofSeedRandom(); // turn of to debug if needed
 
 
-
 		// design to run in low mem on slow devices, many items can not be allocated and graphics should still display
 
 		//bugbug use ofxOscMessage ofxOscReceiver (cool way to find server ip for all things, server may need to broad cast this now and then
@@ -74,6 +73,40 @@ namespace Software2552 {
 			}
 		}
 #endif
+		if (((ofApp*)ofGetAppPtr())->appconfig.getseekSound()) {
+			shared_ptr<ofSoundPlayer> s1 = std::make_shared<ofSoundPlayer>();
+			shared_ptr<ofSoundPlayer> s2 = std::make_shared<ofSoundPlayer>();
+			shared_ptr<ofSoundPlayer> s3 = std::make_shared<ofSoundPlayer>();
+			if (s1 && s2 && s3) { // get from json bugbug
+				s1->loadSound("keep.mp3");//bugbug get from xml play list at start time
+				s1->setMultiPlay(true);
+				s1->setLoop(true);
+				s1->play();
+#if 0
+				s2->loadSound("drum1.wav");//bugbug get from xml play list at start time
+				s2->setMultiPlay(true);
+				s2->setLoop(true);
+				s2->play();
+				s3->loadSound("drum2.wav");//bugbug get from xml play list at start time
+				s3->setMultiPlay(true);
+				s3->setLoop(true);
+				s3->play();
+
+#endif // 0				
+				for (int i = 0; i < N; ++i) {
+					spectrum[i] = 0.0f;		
+				}
+				((ofApp*)ofGetAppPtr())->appconfig.sounds.push_back(s1);
+				((ofApp*)ofGetAppPtr())->appconfig.sounds.push_back(s2);//bugbug move to data not appconfig
+			}
+		}
+		if (((ofApp*)ofGetAppPtr())->appconfig.getSoundGenerator()) {
+			((ofApp*)ofGetAppPtr())->appconfig.soundout = std::make_shared<SoundOut>();
+			if (((ofApp*)ofGetAppPtr())->appconfig.soundout) {
+				((ofApp*)ofGetAppPtr())->appconfig.soundout	->setup();
+			}
+		}
+
 		if (((ofApp*)ofGetAppPtr())->appconfig.getseekArduino() && !globalinstance.arduino) {
 			globalinstance.arduino = std::make_shared<ofArduino>();
 			if (globalinstance.arduino) {
@@ -190,6 +223,14 @@ namespace Software2552 {
 	// keep this super fast
 	void Timeline::update() { 
 
+		ofSoundUpdate();
+
+		float *val = ofSoundGetSpectrum(N);
+		for (int i = 0; i < N; ++i) {
+			spectrum[i] = val[i];
+			//spectrum[i] *= 0.97;// decrease slowly
+		//	spectrum[i] = max(spectrum[i], val[i]);
+		}
 		updateArduino();
 
 #ifdef _WIN64
@@ -275,6 +316,42 @@ namespace Software2552 {
 
 	// keep as fast as possible
 	void Timeline::draw() {
+		if (((ofApp*)ofGetAppPtr())->appconfig.soundout) {
+			((ofApp*)ofGetAppPtr())->appconfig.soundout->draw(spectrum, N);
+		}
+		ofBackgroundGradient(ofColor::white, ofColor::gray);
+		ofPushStyle();
+		ofPushMatrix();
+		ofTranslate(0, ofGetHeight() / 2);// default position, cameras may change location
+		ofFill();
+		int x = 0;
+		for (int i = 0; i<N; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
+			ofColor color(0,0,ofMap(spectrum[i], 0, 1, 5, 255));
+			ofSetColor(color);
+			ofRect(  x, ofGetHeight() / 2, ofGetWidth() / N, -spectrum[i] * 100 );
+			x += ofGetWidth() / N;
+			ofPushMatrix();
+			ofTranslate(ofGetWidth()/2, 0);
+			ofDrawCircle(0, 0, ofMap(spectrum[i], 0, 1, 5, ofGetHeight() / 2));
+			ofPopMatrix();
+		}
+		ofPopMatrix();
+		ofPopStyle();
+		return;//https://www.freesound.org/search/?q=frequency&f=&s=score+desc&advanced=0&g=1
+		ofPushStyle();
+		ofPushMatrix();
+		ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);// default position, cameras may change location
+		for (int i = 0; i < N; ++i) {
+			float x = 500*sin(spectrum[i]);
+			float y = 500 * cos(spectrum[i]);
+			ofSetColor(255);
+			ofSetLineWidth(10.0f);
+			ofDrawLine(ofPoint(x,y), ofPoint(x+i*spectrum[i]*100,y));
+		}
+		ofPopMatrix();
+		ofPopStyle();
+
+
 		if (stage) {
 			stage->draw();
 		}

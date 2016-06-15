@@ -6,7 +6,7 @@ namespace Software2552 {
 	public:
 		void setup();
 		void update();
-		void draw();
+		void draw(float *, int);
 		virtual void audioOut(ofSoundBuffer &outBuffer);
 
 		class data {

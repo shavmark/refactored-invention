@@ -67,6 +67,8 @@ void SystemConfiguration::setup() {
 			window->app->appconfig.build = build;
 			window->app->appconfig.seekKinect = seekKinect;// only want one per app instance
 			window->app->appconfig.seekArduino = seekArduino; // one per app
+			window->app->appconfig.seekSound = xmlsettings.getValue("Sound", false); // every window can have its own sound
+			window->app->appconfig.generateSound = xmlsettings.getValue("GenerateSound", false); // create cool computer noises bugbug drive via json
 			window->app->appconfig.machineName = machineName;
 			window->app->appconfig.windowCount = windowCount; // track as an fyi
 			window->app->appconfig.frameRate = xmlsettings.getValue("framerate", 30);
@@ -157,12 +159,6 @@ void ofApp::setup(){
 
 	ofSetWindowTitle("Story Teller");
 
-	//bugbug allocation sould be data driven
-	soundout = std::make_shared<Software2552::SoundOut>();
-	if (soundout) {
-		soundout->setup();
-	}
-	
 	timeline.setup();//logErrorString
 	timeline.readScript("json3.json");
 	timeline.start();
@@ -170,14 +166,15 @@ void ofApp::setup(){
 	return;
 }
 void ofApp::audioOut(ofSoundBuffer &outBuffer) {
-	if (soundout) {
-		soundout->audioOut(outBuffer);
+	if (appconfig.soundout) {
+		//bugbug somehow let this data be changed via json
+		appconfig.soundout->audioOut(outBuffer);
 	}
 }
 //--------------------------------------------------------------
 void ofApp::update(){
-	if (soundout) {
-		soundout->update();
+	if (appconfig.soundout) {
+		appconfig.soundout->update();
 	}
 	timeline.update();
 	return;
@@ -185,9 +182,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	if (soundout) {
-		soundout->draw();
-	}
 	timeline.draw();
 	return;
 

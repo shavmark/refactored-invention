@@ -82,6 +82,8 @@ public:
 	int getFramerate() { return frameRate; }
 	int getseekKinect() { return seekKinect; }
 	int getseekArduino() { return seekArduino; }
+	int getseekSound() { return seekSound; }
+	int getSoundGenerator(){ return generateSound; }
 	string&getName() { return machineName; }
 	static void getName(string&name, shared_ptr<ofxOscMessage>);
 	int getWindowNumber() {	return windowNumber	;};
@@ -92,6 +94,8 @@ public:
 	vector <string> jsonFile;
 	shared_ptr<SystemConfiguration::Window> parent;
 	bool installed = false;
+	vector <shared_ptr<ofSoundPlayer>>sounds;
+	shared_ptr<Software2552::SoundOut> soundout = nullptr; // set, replace etc as needed
 
 private:
 	int windowNumber;
@@ -101,6 +105,8 @@ private:
 	string build;
 	bool seekKinect = false;
 	bool seekArduino = false;
+	bool seekSound = false;
+	bool generateSound = false;
 	int frameRate = 30;
 	int windowCount = 1;
 	string machineName;
@@ -156,7 +162,6 @@ class ofApp : public ofBaseApp{
 		void exit();
 
 		Software2552::Timeline timeline;
-		shared_ptr<Software2552::SoundOut> soundout = nullptr; // set, replace etc as needed
 
 		void audioOut(ofSoundBuffer &outBuffer);
 		AppConfiguration appconfig;

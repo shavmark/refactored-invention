@@ -36,6 +36,12 @@ namespace Software2552 {
 		ColorList colorlist;
 		shared_ptr<Stage> stage = nullptr; // each window is a stage with its own graphics list
 		vector <shared_ptr<AppConfiguration>> others; // the config of all other machines on our network
+
+		// sound support
+		const int N = 128; // bands in spectrum
+		float spectrum[128];
+
+		// Arduino support
 		bool bSetupArduino;
 		void setupArduino(const int & version);
 		void digitalPinChanged(const int & pinNum);
