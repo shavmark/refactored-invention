@@ -24,6 +24,9 @@ namespace Software2552 {
 		s += "uniform vec2 u_mouse;\n"; // share with all
 		s += "uniform vec2 u_resolution;\n"; // share with all
 		s += "uniform float u_time;\n"; // share with all
+		s += "uniform float u_kick;\n"; // share with all
+		s += "uniform float u_snare;\n"; // share with all
+		s += "uniform float u_hihat;\n"; // share with all
 		s += "out vec4 outputColor;\n";
 		return s;
 	}
@@ -57,6 +60,11 @@ namespace Software2552 {
 		string vertex;
 
 		ofLogNotice("Shader::getShader") << val["name"];
+
+		localcall = val["localcall"].asBool();
+		if (localcall) {
+			return true;
+		}
 
 		if (val["name"] == "zigzag") {
 			fragment = zigzag(true);
@@ -127,6 +135,24 @@ namespace Software2552 {
 		if (index > -1 && items[index]->second) {
 			items[index]->second->begin();
 			// true for all our shaders (from https://thebookofshaders.com)
+			if (((ofApp*)ofGetAppPtr())->appconfig.beat.kick() > 0) {
+				items[index]->second->setUniform1f("u_kick", ((ofApp*)ofGetAppPtr())->appconfig.beat.kick());
+			}
+			else {
+				items[index]->second->setUniform1f("u_kick", 0);
+			}
+			if (((ofApp*)ofGetAppPtr())->appconfig.beat.snare() > 0) {
+				items[index]->second->setUniform1f("u_snare", ((ofApp*)ofGetAppPtr())->appconfig.beat.snare());
+			}
+			else {
+				items[index]->second->setUniform1f("u_snare", 0);
+			}
+			if (((ofApp*)ofGetAppPtr())->appconfig.beat.hihat() > 0) {
+				items[index]->second->setUniform1f("u_hihat", ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat());
+			}
+			else {
+				items[index]->second->setUniform1f("u_hihat", 0);
+			}
 			items[index]->second->setUniform1f("u_time", ofGetElapsedTimef());
 			items[index]->second->setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
 			//bugbug add kinect stuff, voice stuff go beyond mouse
@@ -134,16 +160,21 @@ namespace Software2552 {
 		}
 	}
 	void Shader::myDraw() {
-		start();
-		ofPushMatrix();
-		ofPushStyle();
-		ofFill();
-		// assume middle is location
-		ofSetColor(255);
-		ofDrawRectangle(-ofGetWidth() / 2, -ofGetHeight() / 2, ofGetWidth(), ofGetHeight());
-		ofPopStyle();
-		ofPopMatrix();
-		end();
+		if (localcall) {
+			drawMusic();// bugbug just hear while building out code
+		}
+		else {
+			start();
+			ofPushMatrix();
+			ofPushStyle();
+			ofFill();
+			// assume middle is location
+			ofSetColor(255);
+			ofDrawRectangle(-ofGetWidth() / 2, -ofGetHeight() / 2, ofGetWidth(), ofGetHeight());
+			ofPopStyle();
+			ofPopMatrix();
+			end();
+		}
 	}
 	//http://glslsandbox.com/e#32867.0
 	string groovy(bool fragment) {
@@ -165,9 +196,9 @@ namespace Software2552 {
 					r += vec2(-r.y, r.x)*0.3;
 					uv.xy += r;
 
-					i0 *= 1.93;
-					i1 *= 1.15;
-					i2 *= 1.7;
+					i0 *= 1.93+u_kick;
+					i1 *= 1.15+u_hihat;
+					i2 *= 1.7+u_snare;
 					i4 += 0.05 + 0.1*u_time*i1;
 				}
 				float r = sin(uv.x - u_time)*0.5 + 0.5;
@@ -195,7 +226,7 @@ namespace Software2552 {
 			void main(void)			{
 				vec2 uv = (gl_FragCoord.xy / u_resolution.xy)*4.0;
 
-				vec2 uv0 = uv;
+				vec2 uv0 = uv ;
 				float i0 = 1.2;
 				float i1 = 0.95;
 				float i2 = 1.5;
@@ -215,6 +246,7 @@ namespace Software2552 {
 				float b = sin(uv.y + u_time)*0.5 + 0.5;
 				float g = sin((sqrt(uv.x*uv.x + uv.y*uv.y) + u_time))*0.5 + 0.5;
 				vec3 c = vec3(r, g, b);
+				c += u_snare;
 				outputColor = vec4(c, 1.0);
 			}
 			);
@@ -463,7 +495,7 @@ namespace Software2552 {
 				float f2 = .60 * sin(u_time * 4786.14); \n
 				float d = (abs(length(uv) - f2) * 1.0); \n
 					
-				outputColor += vec4(9.3 / d, 0.62 / d, 0.22 / d, 1); \n
+				outputColor += vec4(9.3 / d + u_hihat, 0.62+u_snare / d, 0.22+u_kick / d, 1); \n
 
 				}
 			);

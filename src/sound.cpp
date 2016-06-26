@@ -93,6 +93,7 @@ namespace Software2552 {
 
 	//--------------------------------------------------------------
 	void SoundOut::draw(float *f, int size) {
+
 		if (drawMe) {
 			ofBackground(ofColor::black);
 			ofSetColor(ofColor::white);
@@ -100,5 +101,58 @@ namespace Software2552 {
 			soundDataOut.waveform.draw();
 			//bugbug change data by using parameters
 		}
+	}
+
+	void addMusic(const string& path) {
+		shared_ptr<ofSoundPlayer> s1 = std::make_shared<ofSoundPlayer>();
+		if (s1) { // get from json bugbug
+			s1->loadSound(path);//set a sound by default but json can add them
+			s1->setMultiPlay(true);
+			s1->setLoop(true);
+			s1->play();
+			((ofApp*)ofGetAppPtr())->appconfig.sounds.push_back(s1);
+		}
+	}
+
+	// helper
+	vector <shared_ptr<ofSoundPlayer>> &getSounds() {
+		return ((ofApp*)ofGetAppPtr())->appconfig.sounds;
+
+	}
+
+	// needs work, right now its hard coded too much bugbug
+	void drawMusic() {
+		float allBands = 0;
+		for (int i = 1; i < 32; i++) {
+			allBands += ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);
+		}
+		ofBackgroundGradient(ofColor::white, ofColor::gray);
+		if (allBands > 5.0f) { // filter off low noise
+			ofPushStyle();
+			ofPushMatrix();
+			ofTranslate(0, ofGetHeight() / 2);// default position, cameras may change location
+			ofFill();
+			int x = 0;
+			float kick = ((ofApp*)ofGetAppPtr())->appconfig.beat.kick();
+			float snare = ((ofApp*)ofGetAppPtr())->appconfig.beat.snare();
+			float hihat = ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat();
+			ofColor color(ofMap(snare, 0, 1, 50, 255), ofMap(hihat, 0, 1, 50, 255), ofMap(kick, 0, 1, 50, 255));
+			ofSetColor(color);
+			for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
+				float selectedBand = ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);
+				ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -selectedBand * 100);
+				x += ofGetWidth() / 32;
+				ofPushMatrix();
+				ofTranslate(ofGetWidth() / 2, 0);
+				float r = ofMap(selectedBand, 0, 1, 20, ofGetHeight() / 2);
+				if (r > 0) {
+					ofDrawCircle(0, 0, r);
+				}
+				ofPopMatrix();
+			}
+			ofPopMatrix();
+			ofPopStyle();
+		}
+
 	}
 }

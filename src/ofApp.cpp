@@ -69,6 +69,7 @@ void SystemConfiguration::setup() {
 			window->app->appconfig.seekArduino = seekArduino; // one per app
 			window->app->appconfig.seekSound = xmlsettings.getValue("Sound", false); // every window can have its own sound
 			window->app->appconfig.generateSound = xmlsettings.getValue("GenerateSound", false); // create cool computer noises bugbug drive via json
+			window->app->appconfig.drawMusic = xmlsettings.getValue("DrawMusic", false);
 			window->app->appconfig.machineName = machineName;
 			window->app->appconfig.windowCount = windowCount; // track as an fyi
 			window->app->appconfig.frameRate = xmlsettings.getValue("framerate", 30);
@@ -159,11 +160,16 @@ void ofApp::setup(){
 
 	ofSetWindowTitle("Story Teller");
 
+	ofSoundStreamSetup(0, 1, this, 44100, appconfig.beat.getBufferSize(), 4);
+
 	timeline.setup();//logErrorString
 	timeline.readScript("json3.json");
 	timeline.start();
 
 	return;
+}
+void ofApp::audioReceived(float* input, int bufferSize, int nChannels) {
+	appconfig.beat.audioReceived(input, bufferSize, nChannels);
 }
 void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 	if (appconfig.soundout) {
@@ -176,6 +182,7 @@ void ofApp::update(){
 	if (appconfig.soundout) {
 		appconfig.soundout->update();
 	}
+	appconfig.beat.update(ofGetElapsedTimeMillis());//bugbug can move beat to timeline maybe?
 	timeline.update();
 	return;
 }

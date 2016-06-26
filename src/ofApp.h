@@ -54,6 +54,7 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 #include "shaders.h"
 #include "networking.h"
 #include "sound.h"
+#include "ofxBeat.h"
 
 #define STRINGIFY(p) #p
 class ofApp;
@@ -83,6 +84,7 @@ public:
 	int getseekKinect() { return seekKinect; }
 	int getseekArduino() { return seekArduino; }
 	int getseekSound() { return seekSound; }
+	int getDrawMusic() { return drawMusic; }
 	int getSoundGenerator(){ return generateSound; }
 	string&getName() { return machineName; }
 	static void getName(string&name, shared_ptr<ofxOscMessage>);
@@ -96,7 +98,7 @@ public:
 	bool installed = false;
 	vector <shared_ptr<ofSoundPlayer>>sounds;
 	shared_ptr<Software2552::SoundOut> soundout = nullptr; // set, replace etc as needed
-
+	ofxBeat beat;
 private:
 	int windowNumber;
 	Location location;
@@ -107,6 +109,7 @@ private:
 	bool seekArduino = false;
 	bool seekSound = false;
 	bool generateSound = false;
+	bool drawMusic = false;
 	int frameRate = 30;
 	int windowCount = 1;
 	string machineName;
@@ -164,8 +167,9 @@ class ofApp : public ofBaseApp{
 		Software2552::Timeline timeline;
 
 		void audioOut(ofSoundBuffer &outBuffer);
-		AppConfiguration appconfig;
+		void audioReceived(float*, int, int);
 
+		AppConfiguration appconfig; // put all app instance here 
 
 private:
 };

@@ -47,39 +47,6 @@
     <ClCompile Include="src\shaders.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.cpp">
-      <Filter>addons\ofxAnimatable\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableFloat.cpp">
-      <Filter>addons\ofxAnimatable\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfColor.cpp">
-      <Filter>addons\ofxAnimatable\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.cpp">
-      <Filter>addons\ofxAnimatable\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxJson\src\ofxJSONElement.cpp">
-      <Filter>addons\ofxJson\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxJson\libs\jsoncpp\src\jsoncpp.cpp">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.cpp">
-      <Filter>addons\ofxParagraph\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp">
-      <Filter>addons\ofxSmartFont\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.cc">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.cc">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.cc">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp">
       <Filter>addons\ofxNetwork\src</Filter>
     </ClCompile>
@@ -134,6 +101,45 @@
     <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.cpp">
+      <Filter>addons\ofxAnimatable\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableFloat.cpp">
+      <Filter>addons\ofxAnimatable\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfColor.cpp">
+      <Filter>addons\ofxAnimatable\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.cpp">
+      <Filter>addons\ofxAnimatable\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxBeat\src\fft.cpp">
+      <Filter>addons\ofxBeat\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxBeat\src\ofxBeat.cpp">
+      <Filter>addons\ofxBeat\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxJson\src\ofxJSONElement.cpp">
+      <Filter>addons\ofxJson\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxJson\libs\jsoncpp\src\jsoncpp.cpp">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.cpp">
+      <Filter>addons\ofxParagraph\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.cpp">
+      <Filter>addons\ofxSmartFont\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.cc">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.cc">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.cc">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp">
       <Filter>addons\ofxXmlSettings\src</Filter>
     </ClCompile>
@@ -146,121 +152,112 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
       <Filter>addons\ofxXmlSettings\libs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.cpp">
-      <Filter>addons\ofxVectorGraphics\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.cpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons">
-      <UniqueIdentifier>{44236aad-6673-4333-871e-2acd26176387}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAnimatable">
-      <UniqueIdentifier>{e49ca89f-5c40-4812-a5f5-ff817983bd1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAnimatable\src">
-      <UniqueIdentifier>{d8f66409-ecff-407e-a26c-effb224eab39}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson">
-      <UniqueIdentifier>{4b0e0b7a-dd73-40e8-b9fd-c9736828df0a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\src">
-      <UniqueIdentifier>{7a43739f-2cc8-4dd5-b776-1424760725df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs">
-      <UniqueIdentifier>{bb7f2254-1693-45f5-accc-2405bd72a9ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp">
-      <UniqueIdentifier>{228cdbc6-6fbb-43d6-be39-dae026d40f82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\include">
-      <UniqueIdentifier>{19598888-a097-4b21-b652-d404dc1a682c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
-      <UniqueIdentifier>{e48cd002-56b6-4bc6-b80b-d4f1eae1cba3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\src">
-      <UniqueIdentifier>{872f9e78-32c0-49b5-b24a-92787808a1c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxParagraph">
-      <UniqueIdentifier>{073a914e-4acb-4614-bf4d-302f79e3bf96}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxParagraph\src">
-      <UniqueIdentifier>{8aed3b7f-b571-4596-9675-59ae4fb8ea3b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSmartFont">
-      <UniqueIdentifier>{175ca0b6-336f-48b8-bf50-956f3e972896}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSmartFont\src">
-      <UniqueIdentifier>{520a5a52-4775-4d35-9bea-fcd1dd7e2796}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSnappy">
-      <UniqueIdentifier>{a8125ec7-a7d1-4a66-9353-62f266cf34e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSnappy\libs">
-      <UniqueIdentifier>{82c13e95-2e68-4268-a6a4-ca23f20f8ebc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSnappy\libs\snappy">
-      <UniqueIdentifier>{2c601798-62a6-4c4b-b0f3-fceb94c9cbbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSnappy\libs\snappy\src">
-      <UniqueIdentifier>{48ae16da-8506-4201-8fdc-6beffd258575}</UniqueIdentifier>
+      <UniqueIdentifier>{ed757ae0-126e-46ff-964c-9dd10186982b}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxNetwork">
-      <UniqueIdentifier>{a310da03-3268-4ad7-be5e-b3a12c36c6e8}</UniqueIdentifier>
+      <UniqueIdentifier>{f877e97a-9e09-44fc-a54c-7ef79eb4fed5}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxNetwork\src">
-      <UniqueIdentifier>{9b19d2e6-2bbb-4b10-8dc0-097351551870}</UniqueIdentifier>
+      <UniqueIdentifier>{d82422e1-c717-4d84-8965-b0f823470d51}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc">
-      <UniqueIdentifier>{07925786-8d9c-409b-b32b-e18ebb01c0f4}</UniqueIdentifier>
+      <UniqueIdentifier>{6208d8d1-3739-4b63-9fdc-27432748e3c8}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\src">
-      <UniqueIdentifier>{1d3e7c88-4d15-497e-9f05-c1d4ef720f91}</UniqueIdentifier>
+      <UniqueIdentifier>{91ecfc2a-6da1-4d7d-a4d0-95807af28bd2}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs">
-      <UniqueIdentifier>{5306b49c-e016-4044-ad0e-245147623bd8}</UniqueIdentifier>
+      <UniqueIdentifier>{aa21f71b-e82d-491a-9971-6d4febfed600}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack">
-      <UniqueIdentifier>{dd53989b-0e80-445e-93f5-310950db0261}</UniqueIdentifier>
+      <UniqueIdentifier>{5758ff77-367d-494f-98ed-d11168008edb}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src">
-      <UniqueIdentifier>{558c253f-26f2-4cbf-8bf2-6276e80eebf9}</UniqueIdentifier>
+      <UniqueIdentifier>{ea2fcc65-0d5e-4a2c-a554-1459bad2520e}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip">
-      <UniqueIdentifier>{f43ca624-e155-4498-8e61-17a2f1b51111}</UniqueIdentifier>
+      <UniqueIdentifier>{2e2e32b2-521d-4558-bde7-41dd28d74438}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\posix">
-      <UniqueIdentifier>{698e0211-5412-46ee-b004-dacd7eed6381}</UniqueIdentifier>
+      <UniqueIdentifier>{5647e9ee-5edc-4135-8569-8e06f1dec090}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\win32">
-      <UniqueIdentifier>{1fbfb3e4-88b4-4d72-b3de-e4352e9793d8}</UniqueIdentifier>
+      <UniqueIdentifier>{9556b64c-abde-433b-8e84-e4324f9452bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
-      <UniqueIdentifier>{48a807fe-7264-42fd-bfbb-e158b73a21a1}</UniqueIdentifier>
+      <UniqueIdentifier>{f9aa0e3d-5b4e-4802-8ec8-42964205ac07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAnimatable">
+      <UniqueIdentifier>{69e3b7d4-e95f-4099-b5b7-aad41f71fe1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAnimatable\src">
+      <UniqueIdentifier>{cfc3ab48-1df2-4bbe-8380-d9acc5d7e232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxBeat">
+      <UniqueIdentifier>{dbd405ad-c12f-481d-b281-7e466333c1d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxBeat\src">
+      <UniqueIdentifier>{86513a44-fcd0-480b-9ba0-09b4476e266f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson">
+      <UniqueIdentifier>{2b125342-2412-403f-8c61-6f60978e9e2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\src">
+      <UniqueIdentifier>{21356d49-1a62-415c-8924-cf0bff3135f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs">
+      <UniqueIdentifier>{ab87fec7-c0b9-4bb8-b40c-ad27238f1953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp">
+      <UniqueIdentifier>{86cb168a-3271-487b-86a0-6c7b0242fdc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\include">
+      <UniqueIdentifier>{6a098c83-151b-40d6-9df6-7fc962354b0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
+      <UniqueIdentifier>{6b7b64dd-4257-4bfd-894c-4266cccdd9f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\src">
+      <UniqueIdentifier>{a14afc46-aa94-45fa-b87c-970ee525adf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxParagraph">
+      <UniqueIdentifier>{b7ab38a4-a59c-467a-87c3-6eb83f055c53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxParagraph\src">
+      <UniqueIdentifier>{ce2ec62c-1dde-4587-9566-27c4b227df48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSmartFont">
+      <UniqueIdentifier>{75dca210-6e15-4efe-a8a3-5be370500f60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSmartFont\src">
+      <UniqueIdentifier>{d49e43f8-bedc-430d-9995-edb2a1e7be7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSnappy">
+      <UniqueIdentifier>{a43e12fc-f48d-43ec-b1f8-d0f8a4f0835d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSnappy\libs">
+      <UniqueIdentifier>{a154510b-7669-425e-b2a9-1c0379231b21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSnappy\libs\snappy">
+      <UniqueIdentifier>{389820ee-7114-4f18-abf7-db8dc500f282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSnappy\libs\snappy\src">
+      <UniqueIdentifier>{fede970a-1069-4fcb-bc79-a785772bc25b}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings">
-      <UniqueIdentifier>{907baf70-d479-4be4-b713-4d86a1066b7a}</UniqueIdentifier>
+      <UniqueIdentifier>{a54084aa-06e9-47ce-8b43-d99a3d70d9a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings\src">
-      <UniqueIdentifier>{ec396bf0-69dc-4212-ba2c-4802685c236b}</UniqueIdentifier>
+      <UniqueIdentifier>{97bb0a85-2570-4898-8ac2-ad2515da6535}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings\libs">
-      <UniqueIdentifier>{d8fdb5be-7fa5-4617-8478-ba4da8760c19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics">
-      <UniqueIdentifier>{ddb832cd-7550-48e2-a77d-84defe2fe4ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics\src">
-      <UniqueIdentifier>{6e036eac-896a-4970-9f1d-bb1105aa4fa5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxVectorGraphics\libs">
-      <UniqueIdentifier>{deb8be00-6d57-46a0-9fbb-26dae1215c53}</UniqueIdentifier>
+      <UniqueIdentifier>{d1fddfc7-3fce-478c-956b-7f34577724b8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -299,51 +296,6 @@
     </ClInclude>
     <ClInclude Include="src\shaders.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.h">
-      <Filter>addons\ofxAnimatable\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableFloat.h">
-      <Filter>addons\ofxAnimatable\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfColor.h">
-      <Filter>addons\ofxAnimatable\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.h">
-      <Filter>addons\ofxAnimatable\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSON.h">
-      <Filter>addons\ofxJson\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSONElement.h">
-      <Filter>addons\ofxJson\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json-forwards.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.h">
-      <Filter>addons\ofxParagraph\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h">
-      <Filter>addons\ofxSmartFont\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-internal.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-public.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.h">
-      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h">
       <Filter>addons\ofxNetwork\src</Filter>
@@ -423,20 +375,62 @@
     <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.h">
+      <Filter>addons\ofxAnimatable\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableFloat.h">
+      <Filter>addons\ofxAnimatable\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfColor.h">
+      <Filter>addons\ofxAnimatable\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatableOfPoint.h">
+      <Filter>addons\ofxAnimatable\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxBeat\src\fft.h">
+      <Filter>addons\ofxBeat\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxBeat\src\ofxBeat.h">
+      <Filter>addons\ofxBeat\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSON.h">
+      <Filter>addons\ofxJson\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxJson\src\ofxJSONElement.h">
+      <Filter>addons\ofxJson\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json-forwards.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxJson\libs\jsoncpp\include\json\json.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxParagraph\src\ofxParagraph.h">
+      <Filter>addons\ofxParagraph\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSmartFont\src\ofxSmartFont.h">
+      <Filter>addons\ofxSmartFont\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-internal.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-sinksource.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-internal.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy-stubs-public.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.h">
+      <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h">
       <Filter>addons\ofxXmlSettings\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h">
       <Filter>addons\ofxXmlSettings\libs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\src\ofxVectorGraphics.h">
-      <Filter>addons\ofxVectorGraphics\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.hpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS_Types.hpp">
-      <Filter>addons\ofxVectorGraphics\libs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

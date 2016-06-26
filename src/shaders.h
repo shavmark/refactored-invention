@@ -24,6 +24,7 @@ namespace Software2552 {
 		void Shader::myUpdate() {update();}
 		static string codeHeader();
 	private:
+		
 		void start();
 		void end();
 		bool mySetup(const Json::Value &val, shared_ptr<ofShader> item);
