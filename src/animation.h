@@ -185,67 +185,10 @@ namespace Software2552 {
 	private:
 		int frameMax; // number of frames to show this item
 		int frameStart; // enable easy reset
-
 	};
 	// basic drawing info, bugbug maybe color set goes here too, not sure yet
 	class Stage;
 	class Reference;
-	// things are drawn using a sparse matrix, with rows having at least one column, this object handles rows that have more than one column
-	template<class T> class RowRoles {
-	public:
-		// return true if shader is loaded
-		bool setupRow(const Json::Value & data) {
-			for (Json::ArrayIndex j = 0; j < data["draw"].size(); ++j) {
-				shared_ptr<pair<FrameCounter, shared_ptr<T>>> drawer = make_shared<pair<FrameCounter, shared_ptr<T>>>();
-				if (!drawer) {
-					return false; // try to run in low memory as best as possible
-				}
-				drawer->second = make_shared<T>();
-				if (drawer->second && mySetup(data["draw"][j], drawer->second)) {
-					if (data["draw"][j]["seconds"].isInt()) {
-						drawer->first = FrameCounter(data["draw"][j]["seconds"].asInt() * ((ofApp*)ofGetAppPtr())->appconfig.getFramerate());
-					}
-					else {
-						drawer->first = FrameCounter();
-					}
-					items.push_back(drawer);
-				}
-			}
-			if (items.size() > 0) {
-				index = ofRandom(items.size() - 1);
-			}
-			else {
-				index = -1;
-			}
-			return true;
-
-		}
-		void update() {
-			if (index > -1) {
-				items[index]->first.decrementFrameCount();
-				if (items[index]->first.getFrameCountMaxHit()) {
-					// try the next one, or start over if requested  bugbug add a Random() also
-					if (index + 1 >= items.size()) {
-						index = ofRandom(items.size() - 1); // bugbug add more here like repeat, linear etc vs. just random
-						for (auto& item : items) {
-							item->first.reset();
-						}
-					}
-					else {
-						++index;
-					}
-				}
-			}
-		}
-
-		virtual void start() {};
-		virtual void end() {};
-	protected:
-		int index = -1; // none
-		vector<shared_ptr<pair<FrameCounter, shared_ptr<T>>>> items;
-		virtual bool mySetup(const Json::Value &val, shared_ptr<T> item) { return true; };
-	};
-
 
 	class ActorRole  {
 	public:
@@ -254,8 +197,12 @@ namespace Software2552 {
 		ActorRole(DataType idIn = UnknownID) { id = idIn; }
 		ActorRole(const string&path, DataType idIn = UnknownID) { setLocationPath(path);	id = idIn; }
 		shared_ptr<ActorRole> parent = nullptr;
+		Stage *stage = nullptr; // stage actor is on at a given point in time, ie they can be on multiple stages but if so this pointer needs to be maintained
 		ofNode *node = nullptr; // for 3d
+		
 		bool setup(const Json::Value &data);
+		void update();
+
 		// avoid name clashes and wrap the most used items, else access the contained object for more
 		void operator=(const ActorRole&rhs) {
 			font = rhs.font;
@@ -283,6 +230,7 @@ namespace Software2552 {
 		void setupForDrawing() { mySetup(); };
 		void updateForDrawing();
 
+
 		string &getLocationPath();
 		void setLocationPath(const string&s) { locationPath = s; }
 
@@ -292,6 +240,7 @@ namespace Software2552 {
 
 	protected:
 		FrameCounter frames; // number of frames to show this item, null means always show
+
 		static bool OKToRemove(shared_ptr<ActorRole> me);
 		drawtype getType() { return type; }
 		bool useFill() { return fill; }
@@ -311,14 +260,17 @@ namespace Software2552 {
 		string name; // any object can have a name, note, date, reference, duration
 		void setFixed(bool b = true) { fixedPosition = b; }
 		bool getFixed() { return fixedPosition; }
+
 	private:
-		virtual bool mysetup(const Json::Value &data) { return true; };
+		virtual bool mysetup(const Json::Value &data) { return true; }; // w data bugbug make one virtual setup at some point :)
+		void setupRepeatingItem(const Json::Value & data);
 		bool fixedPosition = false;
+		bool repeating = false; // object never deletes
 		DataType id;// optional
 		bool okToDraw(drawtype type);
 		drawtype type = draw2d;
 		// derived classes supply these if they need them to be called
-		virtual void mySetup() {};
+		virtual void mySetup() {}; // w/o data
 		virtual void myUpdate() {};
 		virtual void myDraw();
 		bool fill = false;

@@ -963,19 +963,17 @@ namespace Software2552 {
 		update();
 	}
 	void Image::myDraw() {
-		if (index > -1 && items[index]->second) {
-			if (items[index]->second->isAllocated()) {
-				ofImage image;
-				image.setFromPixels(*items[index]->second);
-				image.draw(0,0);
-			}
+		if (pixels.isAllocated()) {
+			ofImage image;
+			image.setFromPixels(pixels);
+			image.draw(0,0);
 		}
 	}
 	// setup each row
-	bool Image::mySetup(const Json::Value &val, shared_ptr<ofPixels> item) {
-		if (item && val["locationPath"].isString()) {
+	bool Image::mySetup(const Json::Value &val) {
+		if (val["locationPath"].isString()) {
 			string path = val["locationPath"].asString();
-			if (!ofLoadImage(*item, path)) {
+			if (!ofLoadImage(pixels, path)) {
 				ofLogError("Picture") << "setup Picture Player " << path;
 			}
 			else {
@@ -983,10 +981,10 @@ namespace Software2552 {
 				READINT(height, val);
 				READINT(width, val);
 				if (width == -1 || height == -1) {
-					item->resize(ofGetScreenWidth(), ofGetScreenHeight()); // if either is -1 set both
+					pixels.resize(ofGetScreenWidth(), ofGetScreenHeight()); // if either is -1 set both
 				}
 				else if (width != 0 && height != 0) {
-					item->resize(width, height); // but must be set to change size
+					pixels.resize(width, height); // but must be set to change size
 				}
 
 				return true;

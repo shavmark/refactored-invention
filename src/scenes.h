@@ -36,32 +36,12 @@ namespace Software2552 {
 		string &getKeyName() { return keyname; }
 		std::list<shared_ptr<ActorRole>>::iterator  find(DataType);
 
-		template<typename T> void CreateReadAndaddAnimatable(const Json::Value &data, shared_ptr<ActorRole> parent, bool inFront = false, bool fullsize=false) {
+		template<typename T> void CreateReadAndaddAnimatable(Stage*stage, const Json::Value &data, shared_ptr<ActorRole> parent, bool inFront = false, bool fullsize=false) {
 			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 				shared_ptr<T> item = std::make_shared<T>();
 				if (item) {
 					Json::Value::Members m = data[j].getMemberNames();//here for debug
 					if (item->setup(data[j])) {
-						if (fullsize) {
-							item->setFullSize();
-						}
-						//bugbug in drawing code parent position/color/font etc used unless child has its own
-						// so child moves w/ parent in 2d like node does in 3d
-						if (item->node && parent && parent->node) {
-							item->parent = parent;
-							item->node->setParent(*parent->node);//bugbug not sure what to do here but we need to tie things together somehow
-						}
-						addToAnimatable(item, inFront);
-					}
-				}
-			}
-		}
-		template<typename T> void CreateReadAndaddAnimatableThatRepeats(const Json::Value &data, shared_ptr<ActorRole> parent, bool inFront = false, bool fullsize = false) {
-			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
-				shared_ptr<T> item = std::make_shared<T>();
-				if (item) {
-					Json::Value::Members m = data[j].getMemberNames();//here for debug
-					if (item->setupRow(data[j]) && item->setup(data[j])) {
 						if (fullsize) {
 							item->setFullSize();
 						}
@@ -86,8 +66,8 @@ namespace Software2552 {
 		float findMaxWait();
 		void drawlights();
 		virtual shared_ptr<Background> CreateReadAndaddBackgroundItems(const Json::Value &data);
-		template<typename T> void CreateReadAndaddCamera(const Json::Value &data);
-		template<typename T> void CreateReadAndaddLight(const Json::Value &data);
+		template<typename T> void CreateReadAndaddCamera(Stage*stage, const Json::Value &data);
+		template<typename T> void CreateReadAndaddLight(Stage*stage, const Json::Value &data);
 		list<shared_ptr<ActorRole>>& getAnimatables() { return animatables; }
 
 		bool drawIn3dFixed = false; 

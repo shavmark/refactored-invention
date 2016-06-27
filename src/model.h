@@ -305,6 +305,8 @@ namespace Software2552 {
 		bool mysetup(const Json::Value &data);
 	};
 
+	
+
 	class Visual : public ActorRole {
 	public:
 		void myUpdate();
@@ -395,13 +397,14 @@ namespace Software2552 {
 	};
 
 	// images can rotate like a photo viewer
-	class Image : public Visual, public RowRoles<ofPixels>{
+	class Image : public Visual{
 	public:
 		void myUpdate();
 		virtual void myDraw();
 	protected:
 	private:
-		bool mySetup(const Json::Value &val, shared_ptr<ofPixels> item);
+		ofPixels pixels;
+		bool mySetup(const Json::Value &val);
 	};
 
 	class PixelsManager : public ActorRole {
@@ -416,7 +419,7 @@ namespace Software2552 {
 	};
 
 
-	class Background : public Visual, public RowRoles<ofImage>{
+	class Background : public Visual{
 	public:
 		enum TypeOfBackground { ColorFixed, ColorChanging, none };
 		enum TypeOfGradient {

@@ -120,8 +120,8 @@ namespace Software2552 {
 
 	}
 
-	// needs work, right now its hard coded too much bugbug
-	void drawMusic() {
+	// needs work, right now its hard coded too much bugbug needs to be data driven
+	void VisibleMusic::drawMusic() {
 		float allBands = 0;
 		for (int i = 1; i < 32; i++) {
 			allBands += ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);

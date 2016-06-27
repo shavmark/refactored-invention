@@ -216,6 +216,7 @@ namespace Software2552 {
 		locationAnimation = nullptr;
 		scaleAnimation = nullptr;
 		rotationAnimation = nullptr;
+		repeating = false;
 		Json::Value::Members m = data.getMemberNames();// just to help w/ debugging
 
 		if (data.size()) {
@@ -223,6 +224,8 @@ namespace Software2552 {
 			READSTRING(title, data);
 			READSTRING(notes, data);
 			READSTRING(locationPath, data);
+			READBOOL(repeating, data);
+			setupRepeatingItem(data);
 			READBOOL(fill, data);
 			READINT(drawOrder, data);
 			Point3D point0; // defaults to 0,0,0
@@ -268,6 +271,8 @@ namespace Software2552 {
 
 	void ActorRole::updateForDrawing() {
 
+		update();
+
 		if (colorHelper) {
 			colorHelper->update();
 		}
@@ -280,7 +285,6 @@ namespace Software2552 {
 		if (rotationAnimation) {
 			rotationAnimation->update();
 		}
-		
 		myUpdate(); // call derived classes
 	};
 	void Rotation::update() {
@@ -363,12 +367,18 @@ namespace Software2552 {
 	};
 	bool ActorRole::OKToRemove(shared_ptr<ActorRole> me) {
 		if (me) {
+			if (me->repeating) {
+				return false; // never delete
+			}
 			return me->frames.getFrameCountMaxHit() || objectLifeTimeManager::OKToRemove(me->locationAnimation);
 		}
 		return true; // ok to remove nullptr?
 	}
 
 	bool ActorRole::okToDraw(drawtype type) {
+		if (repeating) {
+			return true;//bugbug need a way to rotate through json
+		}
 		drawtype dt = getType();
 		if (type != getType() || frames.getFrameCountMaxHit()){
 			return false;
@@ -399,6 +409,25 @@ namespace Software2552 {
 			return false;
 		}
 	}
+
+	// actor that draws over and over
+	void ActorRole::setupRepeatingItem(const Json::Value & data) {
+		if (data["seconds"].isInt()) {
+			frames = FrameCounter(data["seconds"].asInt() * ((ofApp*)ofGetAppPtr())->appconfig.getFramerate());
+		}
+		else {
+			frames = FrameCounter();
+		}
+	}
+
+	void ActorRole::update() {
+		frames.decrementFrameCount();
+		if (frames.getFrameCountMaxHit()) {
+			//bugbug need to delete object or otherwise repeat need to design this out
+		}
+	}
+
+
 	// helpers
 	ofTrueTypeFont* FontHelper::get() {
 		if (font == nullptr) {

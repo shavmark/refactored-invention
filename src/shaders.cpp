@@ -54,17 +54,13 @@ namespace Software2552 {
 		return val;
 	}
 
-	bool Shader::mySetup(const Json::Value &val, shared_ptr<ofShader> shader) {
+	bool Shader::mysetup(const Json::Value &val) {
 
 		string fragment;
 		string vertex;
-
+		Json::Value::Members m = val.getMemberNames();//here for debug
+		string n = val["name"].asString();
 		ofLogNotice("Shader::getShader") << val["name"];
-
-		localcall = val["localcall"].asBool();
-		if (localcall) {
-			return true;
-		}
 
 		if (val["name"] == "zigzag") {
 			fragment = zigzag(true);
@@ -113,68 +109,49 @@ namespace Software2552 {
 			vertex = val["vertex"].asString(); // bugbug do we need to check size first?
 		}
 		if (vertex.size() > 0) {
-			shader->setupShaderFromSource(GL_VERTEX_SHADER, vertex);
+			shader.setupShaderFromSource(GL_VERTEX_SHADER, vertex);
 		}
 		if (fragment.size() > 0) {
-			shader->setupShaderFromSource(GL_FRAGMENT_SHADER, fragment);
+			shader.setupShaderFromSource(GL_FRAGMENT_SHADER, fragment);
 		}
 		if (vertex.size() > 0 || fragment.size() > 0) {
-			shader->bindDefaults();
-			shader->linkProgram();
+			shader.bindDefaults();
+			shader.linkProgram();
 		}
-		return shader->isLoaded();
+		return shader.isLoaded();
 
 
 	}
-	void Shader::end() {
-		if (index > -1 && items[index]->second) {
-			items[index]->second->end();
-		}
-	}
-	void Shader::start() {
-		if (index > -1 && items[index]->second) {
-			items[index]->second->begin();
-			// true for all our shaders (from https://thebookofshaders.com)
-			if (((ofApp*)ofGetAppPtr())->appconfig.beat.kick() > 0) {
-				items[index]->second->setUniform1f("u_kick", ((ofApp*)ofGetAppPtr())->appconfig.beat.kick());
-			}
-			else {
-				items[index]->second->setUniform1f("u_kick", 0);
-			}
-			if (((ofApp*)ofGetAppPtr())->appconfig.beat.snare() > 0) {
-				items[index]->second->setUniform1f("u_snare", ((ofApp*)ofGetAppPtr())->appconfig.beat.snare());
-			}
-			else {
-				items[index]->second->setUniform1f("u_snare", 0);
-			}
-			if (((ofApp*)ofGetAppPtr())->appconfig.beat.hihat() > 0) {
-				items[index]->second->setUniform1f("u_hihat", ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat());
-			}
-			else {
-				items[index]->second->setUniform1f("u_hihat", 0);
-			}
-			items[index]->second->setUniform1f("u_time", ofGetElapsedTimef());
-			items[index]->second->setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
-			//bugbug add kinect stuff, voice stuff go beyond mouse
-			items[index]->second->setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
-		}
-	}
-	void Shader::myDraw() {
-		if (localcall) {
-			drawMusic();// bugbug just hear while building out code
+	void Shader::startDrawing() {
+		shader.begin();
+		// true for all our shaders (from https://thebookofshaders.com)
+		if (((ofApp*)ofGetAppPtr())->appconfig.beat.kick() > 0) {
+			shader.setUniform1f("u_kick", ((ofApp*)ofGetAppPtr())->appconfig.beat.kick());
 		}
 		else {
-			start();
-			ofPushMatrix();
-			ofPushStyle();
-			ofFill();
-			// assume middle is location
-			ofSetColor(255);
-			ofDrawRectangle(-ofGetWidth() / 2, -ofGetHeight() / 2, ofGetWidth(), ofGetHeight());
-			ofPopStyle();
-			ofPopMatrix();
-			end();
+			shader.setUniform1f("u_kick", 0);
 		}
+		if (((ofApp*)ofGetAppPtr())->appconfig.beat.snare() > 0) {
+			shader.setUniform1f("u_snare", ((ofApp*)ofGetAppPtr())->appconfig.beat.snare());
+		}
+		else {
+			shader.setUniform1f("u_snare", 0);
+		}
+		if (((ofApp*)ofGetAppPtr())->appconfig.beat.hihat() > 0) {
+			shader.setUniform1f("u_hihat", ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat());
+		}
+		else {
+			shader.setUniform1f("u_hihat", 0);
+		}
+		shader.setUniform1f("u_time", ofGetElapsedTimef());
+		shader.setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
+		//bugbug add kinect stuff, voice stuff go beyond mouse
+		shader.setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
+	}
+	void Shader::myDraw() {
+		startDrawing();
+		ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+		shader.end();
 	}
 	//http://glslsandbox.com/e#32867.0
 	string groovy(bool fragment) {

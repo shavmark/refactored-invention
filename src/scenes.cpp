@@ -65,7 +65,7 @@ namespace Software2552 {
 		if (!data.empty()) {
 			shared_ptr<Background> b = std::make_shared<Background>();
 			if (b != nullptr) {
-				if (b->setupRow(data) && b->setup(data)) {
+				if (b->setup(data)) {
 					// only save if data was read in 
 					addToAnimatable(b, true);
 				}
@@ -81,10 +81,11 @@ namespace Software2552 {
 		return (first->getDrawOrder()  < second->getDrawOrder());
 	}
 	// samples https://sites.google.com/site/ofauckland/examples
-#define ADDANIMATION(name,type,parent)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(data[STRINGIFY(name)], parent)
-#define ADD_REPEATING_ANIMATION(name,type,parent)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatableThatRepeats<type>(data[STRINGIFY(name)], parent)
-#define ADDLIGHTS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(data[STRINGIFY(name)])
-#define ADDCAMERAS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(data[STRINGIFY(name)])
+
+	// these are hard code helpers just for use in reading in Stage data
+#define ADDANIMATION(name,type,parent)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(this, data[STRINGIFY(name)], parent)
+#define ADDLIGHTS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(this, data[STRINGIFY(name)])
+#define ADDCAMERAS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(this, data[STRINGIFY(name)])
 
 	void Stage::readCameras(const Json::Value &data) {
 		if (!data.empty()) {
@@ -150,7 +151,8 @@ namespace Software2552 {
 			if (deleteExisting(data)) {
 				getAnimatables().clear();
 			}
-			ADD_REPEATING_ANIMATION(shaders, Shader, parent);
+			ADDANIMATION(shaders, Shader, parent);
+			//ADDANIMATION(visibleMusic, VisibleMusic, parent);
 			//ADD_REPEATING_ANIMATION(images, Image, parent);
 			return;
 			ADDANIMATION(audio, Audio, parent);// sound phase 1a
@@ -381,7 +383,6 @@ namespace Software2552 {
 		myDraw2d();
 		for (auto& a : animatables) {
 			a->drawIt(ActorRole::draw2d);
-			a->frames.decrementFrameCount();
 		}
 
 		//ofBackground(ofColor::black);
@@ -401,7 +402,7 @@ namespace Software2552 {
 			a->drawIt(ActorRole::draw3dFixedCamera);
 		}
 	}
-	template<typename T>void Stage::CreateReadAndaddCamera(const Json::Value &data) {
+	template<typename T>void Stage::CreateReadAndaddCamera(Stage*stage, const Json::Value &data) {
 		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 			shared_ptr<T> camera = std::make_shared<T>();
 			if (camera) {
@@ -412,7 +413,7 @@ namespace Software2552 {
 			}
 		}
 	}
-	template<typename T>void Stage::CreateReadAndaddLight(const Json::Value &data) {
+	template<typename T>void Stage::CreateReadAndaddLight(Stage*stage, const Json::Value &data) {
 
 		for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 			shared_ptr<T> light = std::make_shared<T>();

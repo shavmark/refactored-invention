@@ -286,7 +286,7 @@ namespace Software2552 {
 	// keep as fast as possible
 	void Timeline::draw() {
 		if (((ofApp*)ofGetAppPtr())->appconfig.getDrawMusic()) {
-			drawMusic();
+			//bugbug move to data driven code drawMusic();
 		}
 		else if (stage) {
 			stage->draw();
