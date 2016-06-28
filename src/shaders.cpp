@@ -150,7 +150,7 @@ namespace Software2552 {
 	}
 	void Shader::myDraw() {
 		startDrawing();
-		ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+		ofDrawRectangle(-ofGetWidth() / 2, -ofGetHeight() / 2, ofGetWidth(), ofGetHeight());
 		shader.end();
 	}
 	//http://glslsandbox.com/e#32867.0
@@ -558,7 +558,7 @@ namespace Software2552 {
 				float y = random(st.x*0.001 + u_time);
 
 				// color = vec3(y);
-				float pct = plot(st, y);
+				float pct = plot(st, y)+u_kick;
 				color = (1.0 - pct)*color + pct*vec3(0.0, 1.0, 0.0);
 
 				outputColor = vec4(color, 1.0);
