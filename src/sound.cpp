@@ -124,34 +124,26 @@ namespace Software2552 {
 	void VisibleMusic::drawMusic() {
 		float allBands = 0;
 		for (int i = 1; i < 32; i++) {
-			allBands += ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);
+			allBands += ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i); //bugbug move this logic into global place and use wiht shaders too, all drawing really
 		}
-		ofBackgroundGradient(ofColor::white, ofColor::gray);
 		if (allBands > 5.0f) { // filter off low noise
-			ofPushStyle();
-			ofPushMatrix();
-			ofTranslate(0, ofGetHeight() / 2);// default position, cameras may change location
-			ofFill();
-			int x = 0;
-			float kick = ((ofApp*)ofGetAppPtr())->appconfig.beat.kick();
+			int x = -ofGetWidth()/2;
+			float kick = ((ofApp*)ofGetAppPtr())->appconfig.beat.kick();//bugbug make global attribute
 			float snare = ((ofApp*)ofGetAppPtr())->appconfig.beat.snare();
 			float hihat = ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat();
-			ofColor color(ofMap(snare, 0, 1, 50, 255), ofMap(hihat, 0, 1, 50, 255), ofMap(kick, 0, 1, 50, 255));
-			ofSetColor(color);
+			//ofColor color(ofMap(snare, 0, 1, 50, 220), ofMap(hihat, 0, 1, 50, 220), ofMap(kick, 0, 1, 50, 220));//bugbug map like this for shaders
 			for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
 				float selectedBand = ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);
-				ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -selectedBand * 100);
 				x += ofGetWidth() / 32;
-				ofPushMatrix();
-				ofTranslate(ofGetWidth() / 2, 0);
-				float r = ofMap(selectedBand, 0, 1, 20, ofGetHeight() / 2);
+				float r = ofMap(selectedBand, 0, 1, 20, ofGetHeight() / 4);
 				if (r > 0) {
+					ofColor color(ofMap(selectedBand, 0, 1, 50, 220), ofMap(snare, 0, 1, 50, 220), ofMap(selectedBand, 0, 1, 50, 220));//bugbug map like this for shaders
+					ofSetColor(color);
 					ofDrawCircle(0, 0, r);
 				}
-				ofPopMatrix();
+				ofSetColor(ofColor::orangeRed);
+				ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -selectedBand * 100); // graph bugbug make its own drawing object
 			}
-			ofPopMatrix();
-			ofPopStyle();
 		}
 
 	}

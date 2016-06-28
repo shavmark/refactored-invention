@@ -9,6 +9,7 @@ namespace Software2552 {
 	class VisibleMusic : public ActorRole {
 	public:
 		void mySetup() {};
+		void myDraw() { drawMusic(); };
 		void drawMusic(); // hard coded bugbug for now, needs to be like shaders with a number of ways to draw music
 	};
 

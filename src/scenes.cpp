@@ -152,7 +152,7 @@ namespace Software2552 {
 				getAnimatables().clear();
 			}
 			ADDANIMATION(shaders, Shader, parent);
-			//ADDANIMATION(visibleMusic, VisibleMusic, parent);
+			ADDANIMATION(visibleMusic, VisibleMusic, parent);
 			//ADD_REPEATING_ANIMATION(images, Image, parent);
 			return;
 			ADDANIMATION(audio, Audio, parent);// sound phase 1a
@@ -403,7 +403,7 @@ namespace Software2552 {
 		}
 		if (!countRemaining) {
 			for (auto& a : animatables) {
-				a->frames.reset();
+				//a->frames.reset();
 			}
 		}
 		//ofBackground(ofColor::black);

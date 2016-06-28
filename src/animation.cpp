@@ -421,7 +421,10 @@ namespace Software2552 {
 	}
 
 	void ActorRole::update() {
-		
+		frames.decrementFrameCount();
+		if (frames.getFrameCountMaxHit()) {
+			//bugbug need to delete object or otherwise repeat need to design this out
+		}
 	}
 
 

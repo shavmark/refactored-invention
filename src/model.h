@@ -428,6 +428,7 @@ namespace Software2552 {
 		};
 
 		void myDraw();
+		void mySetup() { setFixed(); };
 		void myUpdate();// make image a vector then rotate via animation
 		void setType(TypeOfBackground typeIn = ColorFixed) { type = typeIn; }
 		void setGradientMode(const TypeOfGradient& modeIn) { mode = modeIn; }
