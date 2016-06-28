@@ -380,11 +380,32 @@ namespace Software2552 {
 		}
 	}
 	void Stage::draw2d() {
-		myDraw2d();
-		for (auto& a : animatables) {
-			a->drawIt(ActorRole::draw2d);
-		}
 
+		myDraw2d();// allow easy extensions
+
+		// find first non timed out item and draw it
+		for (auto& a : animatables) {
+			if (a->frames.isInfinite()) {
+				a->drawIt(ActorRole::draw2d);
+			}
+			else if (!a->frames.getFrameCountMaxHit()) {
+				a->frames.decrementFrameCount(); // only update count if drawing as time is relative after all...
+				a->drawIt(ActorRole::draw2d);
+				break;
+			}
+		}
+		// reset list if exhausted, assume out dated items are deleted in other list management code
+		int countRemaining = 0;
+		for (auto& a : animatables) {
+			if (!a->frames.isInfinite() && !a->frames.getFrameCountMaxHit()) {
+				++countRemaining;
+			}
+		}
+		if (!countRemaining) {
+			for (auto& a : animatables) {
+				a->frames.reset();
+			}
+		}
 		//ofBackground(ofColor::black);
 		//bugbug option is to add vs replace:ofEnableBlendMode(OF_BLENDMODE_ADD);//bugbug can make these attributes somewhere
 		//ofEnableAlphaBlending();

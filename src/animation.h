@@ -163,6 +163,9 @@ namespace Software2552 {
 		void setFrameCount(int c) {
 			frameMax = c;
 		}
+		bool isInfinite() {
+			return frameStart == -1;
+		}
 		int decrementFrameCount() {
 			if (frameMax > 0) {
 				--frameMax; // never go -1 when counting
