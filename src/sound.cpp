@@ -119,6 +119,15 @@ namespace Software2552 {
 		return ((ofApp*)ofGetAppPtr())->appconfig.sounds;
 
 	}
+	void GraphMusic::myDraw() {
+		int x = -ofGetWidth() / 2;
+		for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
+			float selectedBand = ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);
+			x += ofGetWidth() / 32;
+			ofSetColor(ofColor::orangeRed);
+			ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -selectedBand * 100); // graph bugbug make its own drawing object
+		}
+	}
 	void spiral(float ratioNum, float ratioDen, float step) {
 		float ratio = ratioNum / ratioDen;
 		float R = 20;
@@ -133,6 +142,7 @@ namespace Software2552 {
 
 		ofPushMatrix();
 		ofNoFill();
+		ofRotate(step, 1, 0.5, 0);
 		ofSetPolyMode(OF_POLY_WINDING_ODD);
 		ofBeginShape();
 		for (float i = 0; i<angle; i += renderStep) {
@@ -141,20 +151,20 @@ namespace Software2552 {
 			ofVertex(x, y);
 		}
 		ofEndShape();
-
 		ofPopMatrix();
 	}
 	// needs work, right now its hard coded too much bugbug needs to be data driven
-	void VisibleMusic::drawMusic() {
+	void VisibleMusic::myDraw() {
 		float allBands = 0;
 		for (int i = 1; i < 32; i++) {
 			allBands += ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i); //bugbug move this logic into global place and use wiht shaders too, all drawing really
 		}
+		float kick = ((ofApp*)ofGetAppPtr())->appconfig.beat.kick();//bugbug make global attribute
+		float snare = ((ofApp*)ofGetAppPtr())->appconfig.beat.snare();
+		float hihat = ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat();
+
 		if (allBands > 5.0f) { // filter off low noise
 			int x = -ofGetWidth()/2;
-			float kick = ((ofApp*)ofGetAppPtr())->appconfig.beat.kick();//bugbug make global attribute
-			float snare = ((ofApp*)ofGetAppPtr())->appconfig.beat.snare();
-			float hihat = ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat();
 			for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
 				float selectedBand = ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);
 				x += ofGetWidth() / 32;
@@ -162,18 +172,14 @@ namespace Software2552 {
 				if (r > 0) {
 					ofColor color(ofMap(selectedBand, 0, 3, 50, 100), ofMap(selectedBand, 0, 3, 1, 100), ofMap(selectedBand, 0, 3, 100, 255));//bugbug map like this for shaders
 					ofSetColor(color);
-					ofDrawCircle(0, 0, r);
+					//ofDrawCircle(0, 0, r);
 				}
-				ofSetColor(ofColor::orangeRed);
-				ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -selectedBand * 100); // graph bugbug make its own drawing object
-			}
-			if (kick) {
-				ofSetColor(ofColor::antiqueWhite);
-				//spiral(250, 810, 80); // many shapes are drawn base on input, 25, 81, 80 make a nice one
 			}
 		}
 		else {
-			ofDrawBitmapString("Make some noise!", 0, 0);
+			///ofDrawBitmapString("Make some noise!", 0, 0);
 		}
+		ofSetColor(ofColor::antiqueWhite);
+		spiral(250, 810, 80+ ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(1)*3); // many shapes are drawn base on input, 25, 81, 80 make a nice one
 	}
 }

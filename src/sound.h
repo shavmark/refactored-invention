@@ -3,14 +3,17 @@
 namespace Software2552 {
 	
 	void addMusic(const string& path= "keep.mp3");
+	void graphsound();
 
 	vector <shared_ptr<ofSoundPlayer>> &getSounds();
 
 	class VisibleMusic : public ActorRole {
 	public:
-		void mySetup() {};
-		void myDraw() { drawMusic(); };
-		void drawMusic(); // hard coded bugbug for now, needs to be like shaders with a number of ways to draw music
+		void myDraw();
+	};
+	class GraphMusic : public ActorRole {
+	public:
+		void myDraw();
 	};
 
 	class SoundOut {

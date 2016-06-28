@@ -412,19 +412,18 @@ namespace Software2552 {
 
 	// actor that draws over and over
 	void ActorRole::setupRepeatingItem(const Json::Value & data) {
-		if (data["seconds"].isInt()) {
-			frames = FrameCounter(data["seconds"].asInt() * ((ofApp*)ofGetAppPtr())->appconfig.getFramerate());
+		if (data["frames"].isInt()) {
+			frames = FrameCounter(data["frames"].asInt());
 		}
 		else {
 			frames = FrameCounter();
 		}
+		if (data["repeating"].isBool()) {
+			repeating = data["repeating"].asBool();
+		}
 	}
 
 	void ActorRole::update() {
-		frames.decrementFrameCount();
-		if (frames.getFrameCountMaxHit()) {
-			//bugbug need to delete object or otherwise repeat need to design this out
-		}
 	}
 
 

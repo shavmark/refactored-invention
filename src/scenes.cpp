@@ -153,6 +153,7 @@ namespace Software2552 {
 			}
 			ADDANIMATION(shaders, Shader, parent);
 			ADDANIMATION(visibleMusic, VisibleMusic, parent);
+			ADDANIMATION(graphMusic, GraphMusic, parent);
 			//ADD_REPEATING_ANIMATION(images, Image, parent);
 			return;
 			ADDANIMATION(audio, Audio, parent);// sound phase 1a
@@ -379,31 +380,30 @@ namespace Software2552 {
 			ofDrawSphere(light->worker.getPosition(), 20.f);
 		}
 	}
+
 	void Stage::draw2d() {
 
 		myDraw2d();// allow easy extensions
 
 		// find first non timed out item and draw it
+		bool drawn = false;
 		for (auto& a : animatables) {
+			// draw all infinite, then only draw based on count where a count is set
+			// this allows the building of graphics
 			if (a->frames.isInfinite()) {
 				a->drawIt(ActorRole::draw2d);
 			}
 			else if (!a->frames.getFrameCountMaxHit()) {
-				a->frames.decrementFrameCount(); // only update count if drawing as time is relative after all...
+				int i = a->frames.decrementFrameCount(); // only update count if drawing as time is relative after all...
 				a->drawIt(ActorRole::draw2d);
-				break;
+				drawn = true;
+				break; // forces serialized drawing
 			}
 		}
 		// reset list if exhausted, assume out dated items are deleted in other list management code
-		int countRemaining = 0;
-		for (auto& a : animatables) {
-			if (!a->frames.isInfinite() && !a->frames.getFrameCountMaxHit()) {
-				++countRemaining;
-			}
-		}
-		if (!countRemaining) {
+		if (!drawn) {
 			for (auto& a : animatables) {
-				//a->frames.reset();
+				a->frames.reset();
 			}
 		}
 		//ofBackground(ofColor::black);
