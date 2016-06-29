@@ -328,7 +328,7 @@ namespace Software2552 {
 	void ActorRole::myDraw() {
 	};
 
-	void ActorRole::drawIt(drawtype type) {
+	bool ActorRole::drawIt(drawtype type) {
 		if (okToDraw(type)) {
 			if (useFill()) {
 				ofFill();
@@ -353,12 +353,18 @@ namespace Software2552 {
 					ofTranslate(-ofGetWidth()/2, - ofGetHeight()/2);// assume fixed uses screen as it sees fit
 
 				}
+				if (!frames.isInfinite()) {
+					frames.decrementFrameCount();
+				}
 				myDraw();
 				ofPopMatrix();
 			}
 			else {
 				// 3d does movement differently
 				ofPushMatrix();
+				if (!frames.isInfinite()) {
+					frames.decrementFrameCount();
+				}
 				myDraw();
 				ofPopMatrix();
 			}
@@ -371,7 +377,9 @@ namespace Software2552 {
 				drawSoundGraph();
 				ofPopMatrix();
 			}
+			return true;
 		}
+		return false;
 	};
 	bool ActorRole::OKToRemove(shared_ptr<ActorRole> me) {
 		if (me) {
@@ -384,12 +392,12 @@ namespace Software2552 {
 	}
 
 	bool ActorRole::okToDraw(drawtype type) {
-		if (repeating) {
-			return true;//bugbug need a way to rotate through json
-		}
 		drawtype dt = getType();
 		if (type != getType() || frames.getFrameCountMaxHit()){
 			return false;
+		}
+		if (repeating) {
+			return true;//bugbug need a way to rotate through json
 		}
 		// bugbug objectLifeTimeManager will handle these also
 		if (locationAnimation == nullptr) {

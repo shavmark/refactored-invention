@@ -398,9 +398,7 @@ namespace Software2552 {
 				a->drawIt(ActorRole::draw2d);
 			}
 			else if (!a->frames.getFrameCountMaxHit()) {
-				int i = a->frames.decrementFrameCount(); // only update count if drawing as time is relative after all...
-				a->drawIt(ActorRole::draw2d);
-				drawn = true;
+				drawn = a->drawIt(ActorRole::draw2d);
 				break; // forces serialized drawing
 			}
 		}
@@ -427,9 +425,7 @@ namespace Software2552 {
 				a->drawIt(ActorRole::draw3dMovingCamera);
 			}
 			else if (!a->frames.getFrameCountMaxHit()) {
-				int i = a->frames.decrementFrameCount(); // only update count if drawing as time is relative after all...
-				a->drawIt(ActorRole::draw3dMovingCamera);
-				drawn = true;
+				drawn = a->drawIt(ActorRole::draw3dMovingCamera);
 				break; // forces serialized drawing
 			}
 		}
@@ -450,9 +446,7 @@ namespace Software2552 {
 				a->drawIt(ActorRole::draw3dFixedCamera);
 			}
 			else if (!a->frames.getFrameCountMaxHit()) {
-				int i = a->frames.decrementFrameCount(); // only update count if drawing as time is relative after all...
-				a->drawIt(ActorRole::draw3dFixedCamera);
-				drawn = true;
+				drawn = a->drawIt(ActorRole::draw3dFixedCamera);
 				break; // forces serialized drawing
 			}
 		}

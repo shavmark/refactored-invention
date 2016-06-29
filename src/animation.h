@@ -249,7 +249,7 @@ namespace Software2552 {
 		bool useFill() { return fill; }
 		void rotate();
 		float scale();
-		void drawIt(drawtype type);
+		bool drawIt(drawtype type);
 		ofPoint defaultStart;
 
 		int drawOrder = 0; // sorted by value so any value is ok

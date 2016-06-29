@@ -651,6 +651,7 @@ namespace Software2552 {
 		if (get()) {
 			get()->setScale(scale());
 			ofPoint scale = get()->getScale();
+			ofPoint save = scale;
 			if (useWireframe()) {
 				//get()->setScale(scale.x + 0.01f, scale.y + 0.01f, scale.z + 0.01f);
 				get()->setScale(scale.x + BAND(0), scale.y + BAND(5), scale.z + BAND(15) * 3);
@@ -661,7 +662,7 @@ namespace Software2552 {
 				get()->setScale(scale);
 				get()->draw();
 			}
-			get()->setScale(scale);
+			get()->setScale(save);
 		}
 	}
 	// assumes push/pop handled by caller
