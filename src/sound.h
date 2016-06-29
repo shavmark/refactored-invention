@@ -12,29 +12,21 @@ namespace Software2552 {
 		Spiral():ActorRole(){ setFill(false); }
 		void myDraw();
 		bool mysetup(const Json::Value &data);
-		float numurator=250;
-		float denominator=810;
+
+		float numurator=25;
+		float denominator=81;
 		float step=80;
-	};
-
-	class VisibleSound : public ActorRole {
-	public:
-		bool mysetup(const Json::Value &data);
-		void myDraw();
-		void drawGraph();
-	protected:
 	private:
-		bool showGraph = false;
-		virtual void drawMusic() {}
+		float movement = 0;//bugbug move to baseclass
 	};
 
-	class VisibleMusic : public VisibleSound {
+	class VisibleMusic : public ActorRole {
 	public:
-		void drawMusic();
+		void myDraw();
 	};
-	class GraphMusic : public VisibleSound {
+	class GraphMusic : public ActorRole {
 	public:
-		void drawMusic() { drawGraph(); };
+		void myDraw() { drawSoundGraph(); };
 	};
 
 	class SoundOut {

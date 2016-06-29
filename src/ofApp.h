@@ -179,5 +179,6 @@ private:
 #define SNARE ((ofApp*)ofGetAppPtr())->beat.snare()
 #define HIHAT ((ofApp*)ofGetAppPtr())->beat.hihat()
 #define BEAT ((ofApp*)ofGetAppPtr())->beat
+#define MAG (((ofApp*)ofGetAppPtr())->beat.getMagnitude())
 
 

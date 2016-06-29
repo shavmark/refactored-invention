@@ -26,7 +26,16 @@ namespace Software2552 {
 		s += "uniform float u_time;\n"; // share with all
 		s += "uniform float u_kick;\n"; // share with all
 		s += "uniform float u_snare;\n"; // share with all
-		s += "uniform float u_hihat;\n"; // share with all
+		s += "uniform float u_hihat;\n"; // share with all 
+		s += "uniform float u_mag;\n"; // share with all 
+
+		s += "uniform float u_0;\n"; // share with all 
+		s += "uniform float u_5;\n"; // share with all 
+		s += "uniform float u_10;\n"; // share with all 
+		s += "uniform float u_15;\n"; // share with all 
+		s += "uniform float u_20;\n"; // share with all 
+		s += "uniform float u_30;\n"; // share with all 
+
 		s += "out vec4 outputColor;\n";
 		return s;
 	}
@@ -128,8 +137,16 @@ namespace Software2552 {
 		shader.setUniform1f("u_kick", KICK);
 		shader.setUniform1f("u_snare", SNARE);
 		shader.setUniform1f("u_hihat", HIHAT);
+		shader.setUniform1f("u_hihat", HIHAT);
+		shader.setUniform1f("u_mag", HIHAT);
 		shader.setUniform1f("u_time", ofGetElapsedTimef());
 		shader.setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
+		shader.setUniform1f("u_0", BAND(0));
+		shader.setUniform1f("u_5", BAND(5));
+		shader.setUniform1f("u_10", BAND(10));
+		shader.setUniform1f("u_15", BAND(15));
+		shader.setUniform1f("u_20", BAND(20));
+		shader.setUniform1f("u_30", BAND(30));
 		//bugbug add kinect stuff, voice stuff go beyond mouse
 		shader.setUniform2f("u_mouse", ((ofApp*)ofGetAppPtr())->mouseX, ((ofApp*)ofGetAppPtr())->mouseY);
 	}
@@ -154,18 +171,19 @@ namespace Software2552 {
 				float i4 = 0.0;
 				for (int s = 0; s < 7; s++)				{
 					vec2 r;
-					r = vec2(cos(uv.y*i0 - i4 + u_time / i1), sin(uv.x*i0 - i4 + u_time / i1)) / i2;
-					r += vec2(-r.y, r.x)*0.3;
+					r = vec2(cos(uv.y*i0 - i4 + u_time / i1), sin(uv.x*i0 - i4 + u_0 / i1)) / i2;
+					//r += vec2(-r.y, r.x)*0.3;
+					r += vec2(-r.y, r.x)*u_5;
 					uv.xy += r;
 
-					i0 *= 1.93+u_kick;
-					i1 *= 1.15+u_hihat;
-					i2 *= 1.7+u_snare;
+					i0 *= 1.93;
+					i1 *= 1.15;
+					i2 *= 1.7;
 					i4 += 0.05 + 0.1*u_time*i1;
 				}
-				float r = sin(uv.x - u_time)*0.5 + 0.5;
-				float b = sin(uv.y + u_time)*0.5 + 0.5;
-				float g = sin((sqrt(uv.x*uv.x + uv.y*uv.y) + u_time))*0.5 + 0.5;
+				float r = sin(uv.x - u_mag)*0.5 + 0.5;
+				float b = sin(uv.y + u_10)*0.5 + 0.5;
+				float g = sin((sqrt(uv.x*uv.x + uv.y*uv.y) + u_5))*0.5 + 0.5;
 				vec3 c = vec3(r, g, b);
 				outputColor = vec4(c, 1.0);
 
@@ -189,26 +207,25 @@ namespace Software2552 {
 				vec2 uv = (gl_FragCoord.xy / u_resolution.xy)*4.0;
 
 				vec2 uv0 = uv ;
-				float i0 = 1.2;
+				float i0 = 1.2+u_10;
 				float i1 = 0.95;
 				float i2 = 1.5;
 				vec2 i4 = vec2(0.0, 0.0);
 				for (int s = 0; s < 4; s++)				{
 					vec2 r;
-					r = vec2(cos(uv.y*i0 - i4.y + u_time / i1), sin(uv.x*i0 + i4.x + u_time / i1)) / i2;
+					r = vec2(cos(uv.y*i0 - i4.y + u_mag / i1), sin(uv.x*i0 + i4.x + u_mag / i1)) / i2;
 					r += vec2(-r.y, r.x)*0.2;
-					uv.xy += r;
+					uv.xy += r+u_15;
 
 					i0 *= 1.93;
 					i1 *= 1.25;
 					i2 *= 1.7;
 					i4 += r.xy*1.0 + 0.5*u_time*i1;
 				}
-				float r = sin(uv.x - u_time)*0.5 + 0.5;
-				float b = sin(uv.y + u_time)*0.5 + 0.5;
-				float g = sin((sqrt(uv.x*uv.x + uv.y*uv.y) + u_time))*0.5 + 0.5;
+				float r = sin(uv.x - u_5)*0.5 + 0.5;
+				float b = sin(uv.y + u_30)*0.5 + 0.5;
+				float g = sin((sqrt(uv.x*uv.x + uv.y*uv.y) + u_15))*0.5 + 0.5;
 				vec3 c = vec3(r, g, b);
-				c += u_snare;
 				outputColor = vec4(c, 1.0);
 			}
 			);
@@ -246,9 +263,10 @@ namespace Software2552 {
 			return frag + STRINGIFY(
 				void main(void) {
 				vec2 uv = (2.0 * gl_FragCoord.xy / u_resolution.xy - 1.0) * vec2(u_resolution.x / u_resolution.y, 1.0);
-
 				float a = 2.0*atan(uv.y / uv.x);
 				uv /= 02.5 + 0.02 * sin(15.0 * a - u_time * 1889999.0);
+
+				uv *= u_mag;
 
 				float f = 0.40 + 0.2 * sin(u_time * 0.14);
 				float d = (abs(length(uv) - f) * 180.0);
@@ -335,8 +353,8 @@ namespace Software2552 {
 			frag += STRINGIFY(
 				float map(vec3 p) {				\n
 					float freq = SEA_FREQ; \n
-					float amp = SEA_HEIGHT; \n
-					float choppy = SEA_CHOPPY; \n
+					float amp = SEA_HEIGHT+u_mag; \n
+					float choppy = SEA_CHOPPY+u_10; \n
 					vec2 uv = p.xz; uv.x *= 0.75; \n
 					float d; float h = 0.0; \n
 					for (int i = 0; i < ITER_GEOMETRY; i++) {
@@ -351,8 +369,8 @@ namespace Software2552 {
 			}\n
 				float map_detailed(vec3 p) {		\n
 								float freq = SEA_FREQ; \n
-								float amp = SEA_HEIGHT; \n
-								float choppy = SEA_CHOPPY; \n
+								float amp = SEA_HEIGHT + u_mag; \n
+								float choppy = SEA_CHOPPY + u_10; \n
 								vec2 uv = p.xz; uv.x *= 0.75; \n
 								float d;\n float h = 0.0; \n
 				for (int i = 0; i < ITER_FRAGMENT; i++) {\n
@@ -371,7 +389,7 @@ namespace Software2552 {
 				vec3 refracted = SEA_BASE + diffuse(n, l, 80.0) * SEA_WATER_COLOR * 0.12; \n
 				vec3 color = mix(refracted, reflected, fresnel); \n
 				float atten = max(1.0 - dot(dist, dist) * 0.001, 0.0); \n
-				color += SEA_WATER_COLOR * (p.y - SEA_HEIGHT) * 0.18 * atten; \n
+				color += SEA_WATER_COLOR * (p.y - SEA_HEIGHT + u_mag) * 0.18 * atten; \n
 				color += vec3(specular(n, l, eye, 60.0)); \n
 				return color; \n
 			}\n
@@ -434,7 +452,7 @@ namespace Software2552 {
 				pow(smoothstep(0.0, -0.05, dir.y), 0.3));
 
 			outputColor = vec4(pow(color, vec3(0.75)), 1.0);
-		}
+			}
 				);
 			return frag;
 		}
@@ -457,7 +475,7 @@ namespace Software2552 {
 				float f2 = .60 * sin(u_time * 4786.14); \n
 				float d = (abs(length(uv) - f2) * 1.0); \n
 					
-				outputColor += vec4(9.3 / d + u_hihat, 0.62+u_snare / d, 0.22+u_kick / d, 1); \n
+				outputColor += vec4(9.3 / d + u_hihat, 0.62*u_mag / d, 0.22+u_15 / d, 1); \n
 
 				}
 			);
@@ -483,17 +501,17 @@ namespace Software2552 {
 			void main() {
 				vec2 st = gl_FragCoord.xy / u_resolution.xy;
 
-				st *= 10.0; // Scale the coordinate system by 10
+				st *= 10.0*u_mag; // Scale the coordinate system by 10*u_mag
 				vec2 ipos = floor(st);  // get the integer coords
 				vec2 fpos = fract(st);  // get the fractional coords
 
 										// Assign a random value based on the integer coord
 				vec3 color = vec3(random(ipos));
-
+				color *= u_mag;
 				// Uncomment to see the subdivided grid
 				color = vec3(fpos,0.0);
-
 				outputColor = vec4(color, 1.0);
+
 			}
 			);
 		}
@@ -511,7 +529,7 @@ namespace Software2552 {
 				void main() {
 				float r = gl_FragCoord.x / u_resolution.x;
 				float g = gl_FragCoord.y / u_resolution.y;
-				outputColor = vec4(r, g, 1.0, 1.0);
+				outputColor = vec4(r+u_20, g+u_0, u_kick, u_mag);
 			}
 			);
 		}
@@ -528,7 +546,7 @@ namespace Software2552 {
 			frag += STRINGIFY(
 				float plot(vec2 _st, float _pct) {
 				return  smoothstep(_pct - 0.01, _pct, _st.y) -
-					smoothstep(_pct, _pct + 0.01, _st.y);
+					smoothstep(_pct, _pct + 0.01+ u_15, _st.y);
 			}
 
 			float random(in float _x) {
@@ -540,11 +558,11 @@ namespace Software2552 {
 				st.x *= u_resolution.x / u_resolution.y;
 				vec3 color = vec3(0.0);
 
-				float y = random(st.x*0.001 + u_time);
+				float y = random(st.x*0.001 + u_5);
 
 				// color = vec3(y);
-				float pct = plot(st, y)+u_kick;
-				color = (1.0 - pct)*color + pct*vec3(0.0, 1.0, 0.0);
+				float pct = plot(st, y);
+				color = (1.0 - pct)*color + pct*vec3(u_0, u_mag, u_30);
 
 				outputColor = vec4(color, 1.0);
 			}

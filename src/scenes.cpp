@@ -151,10 +151,13 @@ namespace Software2552 {
 			if (deleteExisting(data)) {
 				getAnimatables().clear();
 			}
+			ADDANIMATION(spiral, Spiral);
 			ADDANIMATION(shaders, Shader);
 			ADDANIMATION(visibleMusic, VisibleMusic);
 			ADDANIMATION(graphMusic, GraphMusic);
-			//ADDANIMATION(spheres, Sphere);
+			ADDANIMATION(spheres, Sphere);
+			ADDANIMATION(videos, Video);
+			ADDANIMATION(rainbows, Rainbow);
 			//ADD_REPEATING_ANIMATION(images, Image);
 			return;
 			

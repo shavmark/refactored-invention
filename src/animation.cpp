@@ -226,6 +226,7 @@ namespace Software2552 {
 			READSTRING(locationPath, data);
 			READBOOL(repeating, data);
 			setupRepeatingItem(data);
+			READBOOL(showSoundGraph, data);
 			READBOOL(fill, data);
 			READINT(drawOrder, data);
 			Point3D point0; // defaults to 0,0,0
@@ -362,6 +363,12 @@ namespace Software2552 {
 			}
 			if (disableEAP) {
 				ofDisableAlphaBlending(); 
+			}
+			if (showSoundGraph) {
+				ofPushMatrix();
+				ofNoFill();
+				drawSoundGraph();
+				ofPopMatrix();
 			}
 		}
 	};

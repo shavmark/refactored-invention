@@ -223,6 +223,7 @@ namespace Software2552 {
 		float getObjectLifetime();
 		void setRefreshRate(uint64_t);
 		float getWait();
+		void drawSoundGraph();
 		ofPoint getCurrentPosition();
 		void setActorPosition(ofPoint& p);
 		virtual float getTimeBeforeStart(float t);
@@ -267,6 +268,7 @@ namespace Software2552 {
 		virtual bool mysetup(const Json::Value &data) { return true; }; // w data bugbug make one virtual setup at some point :)
 		void setupRepeatingItem(const Json::Value & data);
 		bool fixedPosition = false;
+		bool showSoundGraph = false;
 		bool repeating = false; // object never deletes
 		DataType id;// optional
 		bool okToDraw(drawtype type);

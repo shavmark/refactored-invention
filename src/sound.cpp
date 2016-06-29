@@ -119,17 +119,8 @@ namespace Software2552 {
 		return ((ofApp*)ofGetAppPtr())->appconfig.sounds;
 
 	}
-	void VisibleSound::myDraw() { 
-		drawMusic(); 
-		if (showGraph) {
-			ofPushMatrix();
-			ofNoFill();
-			drawGraph();
-			ofPopMatrix();
-		}
-	}
 
-	void VisibleSound::drawGraph() {
+	void ActorRole::drawSoundGraph() {
 		int x = -ofGetWidth() / 2;
 		ofSetColor(ofColor::yellowGreen);
 		ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -BEAT.getMagnitude() * 100); // graph bugbug make its own drawing object
@@ -140,10 +131,6 @@ namespace Software2552 {
 			ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -selectedBand * 100); // graph bugbug make its own drawing object
 		}
 	}
-	bool VisibleSound::mysetup(const Json::Value &data) {
-		READBOOL(showGraph, data);
-		return true;
-	}
 	bool Spiral::mysetup(const Json::Value &data) {
 		READFLOAT(numurator, data);
 		READFLOAT(denominator, data);
@@ -152,6 +139,7 @@ namespace Software2552 {
 	}
 	// not tied to sound but related to sound so its in the sound.cpp file
 	void Spiral::myDraw() {
+		ofSetLineWidth(2);
 		float ratio = numurator / denominator;
 		float R = 20;
 		float r = R / ratio;
@@ -162,35 +150,48 @@ namespace Software2552 {
 			R = 325 * ratio / (1 - ratio / 2);
 			r = R / ratio;
 		}
-
-		ofSetPolyMode(OF_POLY_WINDING_ODD);
+		float band = BAND(5) * 100 + BAND(15) * 100 + BAND(20) * 100;
+		float up = BAND(30) * 200;
+		ofRotate(BAND(3));
+		ofSetColor(ofColor::azure);
+		if (KICK) {
+			ofSetColor(ofColor::blue);
+			up *= -3;// jump
+		}
+		if (SNARE) {
+			ofSetColor(ofColor::aqua);
+		}
+		if (HIHAT) {
+			ofSetColor(ofColor::purple);
+		}
+		if (movement > ofGetWidth()) {
+			movement = 0;
+		}
+		else {
+			movement += ofGetLastFrameTime() * ofGetWidth() / 20;
+		}
 		ofBeginShape();
 		for (float i = 0; i<angle; i += renderStep) {
-			float x = abs(R - r) / 2 * cos(i) + r / 2 * cos(-i*ratio);
-			float y = abs(R - r) / 2 * sin(i) + r / 2 * sin(-i*ratio);
+			float x = movement + -ofGetWidth() / 2 + band + abs(R - r) / 2 * cos(i) + r / 2 * cos(-i*ratio);
+			float y = up + abs(R - r) / 2 * sin(i) + r / 2 * sin(-i*ratio);
 			ofVertex(x, y);
 		}
 		ofEndShape();
 	}
 
 	// needs work, right now its hard coded too much bugbug needs to be data driven
-	void VisibleMusic::drawMusic() {
+	void VisibleMusic::myDraw() {
 		float mag = BEAT.getMagnitude();
-		if (BEAT.getMagnitude() > 5.0f) { // filter off low noise
-			int x = -ofGetWidth()/2;
-			for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
-				float selectedBand = BAND(i);
-				x += ofGetWidth() / 32;
-				float r = ofMap(selectedBand, 0, 3, 20, ofGetHeight() / 4);
-				if (r > 0) {
-					ofColor color(ofMap(selectedBand, 0, 3, 50, 100), ofMap(selectedBand, 0, 3, 1, 100), ofMap(selectedBand, 0, 3, 100, 255));//bugbug map like this for shaders
-					ofSetColor(color);
-					//ofDrawCircle(0, 0, r);
-				}
+		int x = -ofGetWidth()/2;
+		for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
+			float selectedBand = BAND(i);
+			x += ofGetWidth() / 32;
+			float r = ofMap(selectedBand, 0, 2, 20, ofGetHeight() / 3);
+			if (r > 0) {
+				ofColor color(ofMap(selectedBand, 0, 2, 50, 220), ofMap(selectedBand, 0, 2, 1, 210), ofMap(selectedBand, 0, 2, 100, 255));//bugbug map like this for shaders
+				ofSetColor(color);
+				ofDrawCircle(0, 0, r);
 			}
-		}
-		else {
-			///ofDrawBitmapString("Make some noise!", 0, 0);
 		}
 	}
 }
