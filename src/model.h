@@ -326,7 +326,7 @@ namespace Software2552 {
 		ofImage worker;
 		int sizex, sizey;
 		float degrees = 0;
-		float increment = 15;
+		float increment = 30;
 		bool mysetup(const Json::Value &data);
 	};
 

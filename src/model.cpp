@@ -502,6 +502,7 @@ namespace Software2552 {
 	}
 
 	bool Camera::setup(const Json::Value &data) {
+		worker.disableMouseInput();//bugbug note this is here
 		return mysetup(data);
 	}
 	bool MovingCamera::mysetup(const Json::Value &data) {
@@ -646,19 +647,21 @@ namespace Software2552 {
 	}
 	// private draw helper
 	void DrawingPrimitive3d::basicDraw() {
+
 		if (get()) {
+			get()->setScale(scale());
+			ofPoint scale = get()->getScale();
 			if (useWireframe()) {
-				ofPushMatrix();
-				get()->setScale(scale());
-				ofPoint scale = get()->getScale();
-				get()->setScale(scale.x + 0.01f, scale.y + 0.01f, scale.z + 0.01f);
+				//get()->setScale(scale.x + 0.01f, scale.y + 0.01f, scale.z + 0.01f);
+				get()->setScale(scale.x + BAND(0), scale.y + BAND(5), scale.z + BAND(15) * 3);
 				get()->drawWireframe();
-				get()->setScale(scale);
-				ofPopMatrix();
 			}
 			else {
+				scale.z = BAND(15);
+				get()->setScale(scale);
 				get()->draw();
 			}
+			get()->setScale(scale);
 		}
 	}
 	// assumes push/pop handled by caller
@@ -779,11 +782,13 @@ namespace Software2552 {
 				ofBackground(colorHelper->getBackground());
 			}
 			else if(mode == musicGradient) {
-				ofColor c1(ofMap(BAND(0), 0, 2, 20, 240), ofMap(BAND(5), 0, 2, 20, 240), ofMap(BAND(10), 0, 2, 20, 240));
-				c1.setBrightness(10);
-				ofColor c2(ofMap(BAND(0), 0, 2, 20, 240), ofMap(BAND(5), 0, 2, 20, 240), ofMap(BAND(10), 0, 2, 20, 240));
+				ofColor c1(ofMap(BAND(0), 0, 2, 50, 240), ofMap(BAND(5), 0, 2, 50, 200), ofMap(BAND(10), 0, 2, 50, 240));
+				c1.setBrightness(50);
+				c1.setSaturation(50);
+				ofColor c2 = c1;
 				c2.setBrightness(255);
-				ofBackgroundGradient(c1, c2, ofMode);
+				c2.setSaturation(255);
+				ofBackgroundGradient(c2, c1, OF_GRADIENT_CIRCULAR);
 			}
 			else if (mode != noGradient) {
 				ofBackgroundGradient(colorHelper->getLightest(), colorHelper->getDarkest(), ofMode);
@@ -805,8 +810,8 @@ namespace Software2552 {
 	}
 	void Rainbow::myUpdate() {
 		Visual::myUpdate();
-		width = ofGetWidth();
-		height = ofGetHeight(); 
+		width = ofGetWidth()/4;
+		height = ofGetHeight()/4; 
 
 		if (width != sizex && height != sizey) {
 			sizex = width;
@@ -829,15 +834,16 @@ namespace Software2552 {
 	}
 	void Rainbow::myDraw() {
 		ofSetColor(ofColor::white);
-		if (KICK) {
+		float f = MAG;
+		if (KICK && MAG > 0.3f) {
 			degrees += increment;
-			if (degrees > 90) {
+			if (abs(degrees) > 90) {
 				degrees = increment;
 				increment = -increment;
 			}
 			ofRotateY(degrees);
 		}
-		worker.draw(-ofGetWidth()/2, -ofGetHeight() / 2);
+		worker.draw(-ofGetWidth()/8, -ofGetHeight() / 8);
 	}
 	// colors and background change over time but not at the same time
 	void Background::myUpdate() {

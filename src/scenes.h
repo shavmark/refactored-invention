@@ -98,7 +98,6 @@ namespace Software2552 {
 		template<typename T> void removeExpiredItems(vector<shared_ptr<T>>&v) {
 			v.erase(std::remove_if(v.begin(), v.end(), objectLifeTimeManager::OKToRemove), v.end());
 		}
-
 		list<shared_ptr<ActorRole>> animatables; // use list as it could be large with lots of adds/deletes over time
 		vector<shared_ptr<FixedCamera>> cameras;  // expect list to be smaller and more fixed, also want index acess "camera 2"
 		vector<shared_ptr<Light>> lights;    // expect list to be smaller and more fixed

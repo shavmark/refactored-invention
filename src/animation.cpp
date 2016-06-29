@@ -358,8 +358,9 @@ namespace Software2552 {
 			}
 			else {
 				// 3d does movement differently
-				
+				ofPushMatrix();
 				myDraw();
+				ofPopMatrix();
 			}
 			if (disableEAP) {
 				ofDisableAlphaBlending(); 

@@ -151,11 +151,11 @@ namespace Software2552 {
 			if (deleteExisting(data)) {
 				getAnimatables().clear();
 			}
+			ADDANIMATION(spheres, Sphere);
 			ADDANIMATION(spiral, Spiral);
 			ADDANIMATION(shaders, Shader);
 			ADDANIMATION(visibleMusic, VisibleMusic);
 			ADDANIMATION(graphMusic, GraphMusic);
-			ADDANIMATION(spheres, Sphere);
 			ADDANIMATION(videos, Video);
 			ADDANIMATION(rainbows, Rainbow);
 			ADDANIMATION(planets, Planet);
@@ -388,9 +388,9 @@ namespace Software2552 {
 	void Stage::draw2d() {
 
 		myDraw2d();// allow easy extensions
+		bool drawn = false; // item was drawn 
 
 		// find first non timed out item and draw it
-		bool drawn = false;
 		for (auto& a : animatables) {
 			// draw all infinite, then only draw based on count where a count is set
 			// this allows the building of graphics
@@ -407,9 +407,12 @@ namespace Software2552 {
 		// reset list if exhausted, assume out dated items are deleted in other list management code
 		if (!drawn) {
 			for (auto& a : animatables) {
-				a->frames.reset();
+				if (a->getType() == ActorRole::draw2d) {
+					a->frames.reset();
+				}
 			}
 		}
+
 		//ofBackground(ofColor::black);
 		//bugbug option is to add vs replace:ofEnableBlendMode(OF_BLENDMODE_ADD);//bugbug can make these attributes somewhere
 		//ofEnableAlphaBlending();
@@ -417,14 +420,48 @@ namespace Software2552 {
 	// juse need to draw the SpaceScene, base class does the rest
 	void Stage::draw3dMoving() {
 		myDraw3dMoving();
+		bool drawn = false; // item was drawn 
+
 		for (auto& a : animatables) {
-			a->drawIt(ActorRole::draw3dMovingCamera);
+			if (a->frames.isInfinite()) {
+				a->drawIt(ActorRole::draw3dMovingCamera);
+			}
+			else if (!a->frames.getFrameCountMaxHit()) {
+				int i = a->frames.decrementFrameCount(); // only update count if drawing as time is relative after all...
+				a->drawIt(ActorRole::draw3dMovingCamera);
+				drawn = true;
+				break; // forces serialized drawing
+			}
+		}
+		if (!drawn) {
+			for (auto& a : animatables) {
+				if (a->getType() == ActorRole::draw3dMovingCamera) {
+					a->frames.reset();
+				}
+			}
 		}
 	}
 	void Stage::draw3dFixed() {
 		myDraw3dFixed();
+		bool drawn = false; // item was drawn 
+
 		for (auto& a : animatables) {
-			a->drawIt(ActorRole::draw3dFixedCamera);
+			if (a->frames.isInfinite()) {
+				a->drawIt(ActorRole::draw3dFixedCamera);
+			}
+			else if (!a->frames.getFrameCountMaxHit()) {
+				int i = a->frames.decrementFrameCount(); // only update count if drawing as time is relative after all...
+				a->drawIt(ActorRole::draw3dFixedCamera);
+				drawn = true;
+				break; // forces serialized drawing
+			}
+		}
+		if (!drawn) {
+			for (auto& a : animatables) {
+				if (a->getType() == ActorRole::draw3dFixedCamera) {
+					a->frames.reset();
+				}
+			}
 		}
 	}
 	template<typename T>void Stage::CreateReadAndaddCamera(Stage*stage, const Json::Value &data) {
