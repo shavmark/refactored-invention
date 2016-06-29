@@ -160,7 +160,7 @@ void ofApp::setup(){
 
 	ofSetWindowTitle("Story Teller");
 
-	ofSoundStreamSetup(0, 1, this, 44100, appconfig.beat.getBufferSize(), 4);
+	ofSoundStreamSetup(0, 1, this, 44100, beat.getBufferSize(), 4);
 
 	timeline.setup();//logErrorString
 	timeline.readScript("json3.json");
@@ -169,7 +169,7 @@ void ofApp::setup(){
 	return;
 }
 void ofApp::audioReceived(float* input, int bufferSize, int nChannels) {
-	appconfig.beat.audioReceived(input, bufferSize, nChannels);
+	beat.audioReceived(input, bufferSize, nChannels);
 }
 void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 	if (appconfig.soundout) {
@@ -182,7 +182,7 @@ void ofApp::update(){
 	if (appconfig.soundout) {
 		appconfig.soundout->update();
 	}
-	appconfig.beat.update(ofGetElapsedTimeMillis());//bugbug can move beat to timeline maybe?
+	beat.update(ofGetElapsedTimeMillis());//bugbug can move beat to timeline maybe?
 	timeline.update();
 	return;
 }

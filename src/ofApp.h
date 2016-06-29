@@ -98,7 +98,6 @@ public:
 	bool installed = false;
 	vector <shared_ptr<ofSoundPlayer>>sounds;
 	shared_ptr<Software2552::SoundOut> soundout = nullptr; // set, replace etc as needed
-	ofxBeat beat;
 private:
 	int windowNumber;
 	Location location;
@@ -170,8 +169,15 @@ class ofApp : public ofBaseApp{
 		void audioReceived(float*, int, int);
 
 		AppConfiguration appconfig; // put all app instance here 
-
+		ofxBeat beat; //bugbug not sure where to put this yet, need to support > 1 mic
+		float getBand(int i) { return beat.getBand(i); }
 private:
 };
+
+#define BAND(i) ((ofApp*)ofGetAppPtr())->getBand(i)
+#define KICK ((ofApp*)ofGetAppPtr())->beat.kick()
+#define SNARE ((ofApp*)ofGetAppPtr())->beat.snare()
+#define HIHAT ((ofApp*)ofGetAppPtr())->beat.hihat()
+#define BEAT ((ofApp*)ofGetAppPtr())->beat
 
 

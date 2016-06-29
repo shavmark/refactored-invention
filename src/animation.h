@@ -192,14 +192,13 @@ namespace Software2552 {
 	// basic drawing info, bugbug maybe color set goes here too, not sure yet
 	class Stage;
 	class Reference;
-
+	
 	class ActorRole  {
 	public:
 		friend class Stage;
 		enum drawtype {  draw2d, draw3dFixedCamera, draw3dMovingCamera };
 		ActorRole(DataType idIn = UnknownID) { id = idIn; }
 		ActorRole(const string&path, DataType idIn = UnknownID) { setLocationPath(path);	id = idIn; }
-		shared_ptr<ActorRole> parent = nullptr;
 		Stage *stage = nullptr; // stage actor is on at a given point in time, ie they can be on multiple stages but if so this pointer needs to be maintained
 		ofNode *node = nullptr; // for 3d
 		

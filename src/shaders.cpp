@@ -125,24 +125,9 @@ namespace Software2552 {
 	void Shader::startDrawing() {
 		shader.begin();
 		// true for all our shaders (from https://thebookofshaders.com)
-		if (((ofApp*)ofGetAppPtr())->appconfig.beat.kick() > 0) {
-			shader.setUniform1f("u_kick", ((ofApp*)ofGetAppPtr())->appconfig.beat.kick());
-		}
-		else {
-			shader.setUniform1f("u_kick", 0);
-		}
-		if (((ofApp*)ofGetAppPtr())->appconfig.beat.snare() > 0) {
-			shader.setUniform1f("u_snare", ((ofApp*)ofGetAppPtr())->appconfig.beat.snare());
-		}
-		else {
-			shader.setUniform1f("u_snare", 0);
-		}
-		if (((ofApp*)ofGetAppPtr())->appconfig.beat.hihat() > 0) {
-			shader.setUniform1f("u_hihat", ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat());
-		}
-		else {
-			shader.setUniform1f("u_hihat", 0);
-		}
+		shader.setUniform1f("u_kick", KICK);
+		shader.setUniform1f("u_snare", SNARE);
+		shader.setUniform1f("u_hihat", HIHAT);
 		shader.setUniform1f("u_time", ofGetElapsedTimef());
 		shader.setUniform2f("u_resolution", ofGetWidth(), ofGetHeight());
 		//bugbug add kinect stuff, voice stuff go beyond mouse

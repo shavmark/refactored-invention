@@ -83,7 +83,7 @@ namespace Software2552 {
 	// samples https://sites.google.com/site/ofauckland/examples
 
 	// these are hard code helpers just for use in reading in Stage data
-#define ADDANIMATION(name,type,parent)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(this, data[STRINGIFY(name)], parent)
+#define ADDANIMATION(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddAnimatable<type>(this, data[STRINGIFY(name)])
 #define ADDLIGHTS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddLight<type>(this, data[STRINGIFY(name)])
 #define ADDCAMERAS(name,type)	if (!data[STRINGIFY(name)].empty()) CreateReadAndaddCamera<type>(this, data[STRINGIFY(name)])
 
@@ -145,29 +145,31 @@ namespace Software2552 {
 	}
 
 	//recursive reader
-	void Stage::readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent) {
+	void Stage::readGraphics(const Json::Value &data) {
 		// read from input (web, osc etc and queue input, resort by priority post each read and remove timed out data
 		if (!data.empty()) {
 			if (deleteExisting(data)) {
 				getAnimatables().clear();
 			}
-			ADDANIMATION(shaders, Shader, parent);
-			ADDANIMATION(visibleMusic, VisibleMusic, parent);
-			ADDANIMATION(graphMusic, GraphMusic, parent);
-			//ADD_REPEATING_ANIMATION(images, Image, parent);
+			ADDANIMATION(shaders, Shader);
+			ADDANIMATION(visibleMusic, VisibleMusic);
+			ADDANIMATION(graphMusic, GraphMusic);
+			//ADDANIMATION(spheres, Sphere);
+			//ADD_REPEATING_ANIMATION(images, Image);
 			return;
-			ADDANIMATION(audio, Audio, parent);// sound phase 1a
-			ADDANIMATION(videos, Video, parent);
-			ADDANIMATION(rainbows, Rainbow, parent);
-			ADDANIMATION(circles, Ball, parent);
-			ADDANIMATION(cubes, Cube, parent);
-			ADDANIMATION(spheres, Sphere, parent);
-			ADDANIMATION(grabbers, CameraGrabber, parent);
-			ADDANIMATION(texts, Text, parent);
-			ADDANIMATION(paragraphs, Paragraph, parent);
-			ADDANIMATION(planets, Planet, parent);
-			ADDANIMATION(videoSpheres, VideoSphere, parent);
-			ADDANIMATION(solarSystems, SolarSystem, parent);//bugbug forgot how to rotate around clyde, does not run w/ others
+			
+			ADDANIMATION(spiral, Spiral);// sound phase 1a
+			ADDANIMATION(audio, Audio);// sound phase 1a
+			ADDANIMATION(videos, Video);
+			ADDANIMATION(rainbows, Rainbow);
+			ADDANIMATION(circles, Ball);
+			ADDANIMATION(cubes, Cube);
+			ADDANIMATION(grabbers, CameraGrabber);
+			ADDANIMATION(texts, Text);
+			ADDANIMATION(paragraphs, Paragraph);
+			ADDANIMATION(planets, Planet);
+			ADDANIMATION(videoSpheres, VideoSphere);
+			ADDANIMATION(solarSystems, SolarSystem);//bugbug forgot how to rotate around clyde, does not run w/ others
 			getAnimatables().sort(compareOrder);
 
 		}
@@ -177,7 +179,7 @@ namespace Software2552 {
 	bool Stage::updateData(shared_ptr<ofxJSON> data) {
 		if (data) {
 			Json::Value::Members m = data->getMemberNames();
-			readGraphics((*data)["graphics"], nullptr);
+			readGraphics((*data)["graphics"]);
 			
 			CreateReadAndaddBackgroundItems((*data)["background"]);
 			readLights((*data)["lights"]);

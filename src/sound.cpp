@@ -106,7 +106,7 @@ namespace Software2552 {
 	void addMusic(const string& path) {
 		shared_ptr<ofSoundPlayer> s1 = std::make_shared<ofSoundPlayer>();
 		if (s1) { // get from json bugbug
-			s1->loadSound(path);//set a sound by default but json can add them
+			s1->load(path);//set a sound by default but json can add them
 			s1->setMultiPlay(true);
 			s1->setLoop(true);
 			s1->play();
@@ -119,20 +119,43 @@ namespace Software2552 {
 		return ((ofApp*)ofGetAppPtr())->appconfig.sounds;
 
 	}
-	void GraphMusic::myDraw() {
+	void VisibleSound::myDraw() { 
+		drawMusic(); 
+		if (showGraph) {
+			ofPushMatrix();
+			ofNoFill();
+			drawGraph();
+			ofPopMatrix();
+		}
+	}
+
+	void VisibleSound::drawGraph() {
 		int x = -ofGetWidth() / 2;
+		ofSetColor(ofColor::yellowGreen);
+		ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -BEAT.getMagnitude() * 100); // graph bugbug make its own drawing object
 		for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
-			float selectedBand = ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);
+			float selectedBand = BAND(i);
 			x += ofGetWidth() / 32;
-			ofSetColor(ofColor::orangeRed);
+			ofSetColor(ofColor::white);
 			ofRect(x, ofGetHeight() / 2, ofGetWidth() / 32, -selectedBand * 100); // graph bugbug make its own drawing object
 		}
 	}
-	void spiral(float ratioNum, float ratioDen, float step) {
-		float ratio = ratioNum / ratioDen;
+	bool VisibleSound::mysetup(const Json::Value &data) {
+		READBOOL(showGraph, data);
+		return true;
+	}
+	bool Spiral::mysetup(const Json::Value &data) {
+		READFLOAT(numurator, data);
+		READFLOAT(denominator, data);
+		READFLOAT(step, data);
+		return true;
+	}
+	// not tied to sound but related to sound so its in the sound.cpp file
+	void Spiral::myDraw() {
+		float ratio = numurator / denominator;
 		float R = 20;
 		float r = R / ratio;
-		float angle = ratioDen*TWO_PI;
+		float angle = denominator*TWO_PI;
 		float renderStep = PI / step;
 
 		if (ratio < 1) {
@@ -140,9 +163,6 @@ namespace Software2552 {
 			r = R / ratio;
 		}
 
-		ofPushMatrix();
-		ofNoFill();
-		ofRotate(step, 1, 0.5, 0);
 		ofSetPolyMode(OF_POLY_WINDING_ODD);
 		ofBeginShape();
 		for (float i = 0; i<angle; i += renderStep) {
@@ -151,22 +171,15 @@ namespace Software2552 {
 			ofVertex(x, y);
 		}
 		ofEndShape();
-		ofPopMatrix();
 	}
-	// needs work, right now its hard coded too much bugbug needs to be data driven
-	void VisibleMusic::myDraw() {
-		float allBands = 0;
-		for (int i = 1; i < 32; i++) {
-			allBands += ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i); //bugbug move this logic into global place and use wiht shaders too, all drawing really
-		}
-		float kick = ((ofApp*)ofGetAppPtr())->appconfig.beat.kick();//bugbug make global attribute
-		float snare = ((ofApp*)ofGetAppPtr())->appconfig.beat.snare();
-		float hihat = ((ofApp*)ofGetAppPtr())->appconfig.beat.hihat();
 
-		if (allBands > 5.0f) { // filter off low noise
+	// needs work, right now its hard coded too much bugbug needs to be data driven
+	void VisibleMusic::drawMusic() {
+		float mag = BEAT.getMagnitude();
+		if (BEAT.getMagnitude() > 5.0f) { // filter off low noise
 			int x = -ofGetWidth()/2;
 			for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
-				float selectedBand = ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(i);
+				float selectedBand = BAND(i);
 				x += ofGetWidth() / 32;
 				float r = ofMap(selectedBand, 0, 3, 20, ofGetHeight() / 4);
 				if (r > 0) {
@@ -179,7 +192,5 @@ namespace Software2552 {
 		else {
 			///ofDrawBitmapString("Make some noise!", 0, 0);
 		}
-		ofSetColor(ofColor::antiqueWhite);
-		spiral(250, 810, 80+ ((ofApp*)ofGetAppPtr())->appconfig.beat.getBand(1)*3); // many shapes are drawn base on input, 25, 81, 80 make a nice one
 	}
 }

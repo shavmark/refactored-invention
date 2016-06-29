@@ -27,7 +27,7 @@ namespace Software2552 {
 		void update();
 		void draw();
 		bool updateData(shared_ptr<ofxJSON>);
-		void readGraphics(const Json::Value &data, shared_ptr<ActorRole> parent);
+		void readGraphics(const Json::Value &data);
 		void readLights(const Json::Value &data);
 		void readCameras(const Json::Value &data);
 		void clear(bool force=false);
@@ -36,7 +36,7 @@ namespace Software2552 {
 		string &getKeyName() { return keyname; }
 		std::list<shared_ptr<ActorRole>>::iterator  find(DataType);
 
-		template<typename T> void CreateReadAndaddAnimatable(Stage*stage, const Json::Value &data, shared_ptr<ActorRole> parent, bool inFront = false, bool fullsize=false) {
+		template<typename T> void CreateReadAndaddAnimatable(Stage*stage, const Json::Value &data, bool inFront = false, bool fullsize=false) {
 			for (Json::ArrayIndex j = 0; j < data.size(); ++j) {
 				shared_ptr<T> item = std::make_shared<T>();
 				if (item) {
@@ -44,12 +44,6 @@ namespace Software2552 {
 					if (item->setup(data[j])) {
 						if (fullsize) {
 							item->setFullSize();
-						}
-						//bugbug in drawing code parent position/color/font etc used unless child has its own
-						// so child moves w/ parent in 2d like node does in 3d
-						if (item->node && parent && parent->node) {
-							item->parent = parent;
-							item->node->setParent(*parent->node);//bugbug not sure what to do here but we need to tie things together somehow
 						}
 						addToAnimatable(item, inFront);
 					}

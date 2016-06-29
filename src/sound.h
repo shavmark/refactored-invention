@@ -7,13 +7,34 @@ namespace Software2552 {
 
 	vector <shared_ptr<ofSoundPlayer>> &getSounds();
 
-	class VisibleMusic : public ActorRole {
+	class Spiral : public ActorRole {
 	public:
+		Spiral():ActorRole(){ setFill(false); }
 		void myDraw();
+		bool mysetup(const Json::Value &data);
+		float numurator=250;
+		float denominator=810;
+		float step=80;
 	};
-	class GraphMusic : public ActorRole {
+
+	class VisibleSound : public ActorRole {
 	public:
+		bool mysetup(const Json::Value &data);
 		void myDraw();
+		void drawGraph();
+	protected:
+	private:
+		bool showGraph = false;
+		virtual void drawMusic() {}
+	};
+
+	class VisibleMusic : public VisibleSound {
+	public:
+		void drawMusic();
+	};
+	class GraphMusic : public VisibleSound {
+	public:
+		void drawMusic() { drawGraph(); };
 	};
 
 	class SoundOut {
