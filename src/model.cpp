@@ -738,6 +738,9 @@ namespace Software2552 {
 		else if (type == "flat") {
 			setGradientMode(flat);
 		}
+		else if (type == "musicGradient") {
+			setGradientMode(musicGradient);
+		}
 		else {
 			setGradientMode(noGradient);
 		}
@@ -775,6 +778,13 @@ namespace Software2552 {
 				// just a plane background
 				ofBackground(colorHelper->getBackground());
 			}
+			else if(mode == musicGradient) {
+				ofColor c1(ofMap(BAND(0), 0, 2, 20, 240), ofMap(BAND(5), 0, 2, 20, 240), ofMap(BAND(10), 0, 2, 20, 240));
+				c1.setBrightness(10);
+				ofColor c2(ofMap(BAND(0), 0, 2, 20, 240), ofMap(BAND(5), 0, 2, 20, 240), ofMap(BAND(10), 0, 2, 20, 240));
+				c2.setBrightness(255);
+				ofBackgroundGradient(c1, c2, ofMode);
+			}
 			else if (mode != noGradient) {
 				ofBackgroundGradient(colorHelper->getLightest(), colorHelper->getDarkest(), ofMode);
 			}
@@ -786,8 +796,8 @@ namespace Software2552 {
 		}
 	}
 	bool Rainbow::mysetup(const Json::Value &data) {
-		width = 500;
-		height = 500; // default
+		width = ofGetWidth();
+		height = ofGetHeight(); // default
 		Visual::mysetup(data);
 		sizex = 0;
 		sizey = 0;// save after first update
@@ -795,6 +805,9 @@ namespace Software2552 {
 	}
 	void Rainbow::myUpdate() {
 		Visual::myUpdate();
+		width = ofGetWidth();
+		height = ofGetHeight(); 
+
 		if (width != sizex && height != sizey) {
 			sizex = width;
 			sizey = height;
@@ -816,7 +829,15 @@ namespace Software2552 {
 	}
 	void Rainbow::myDraw() {
 		ofSetColor(ofColor::white);
-		worker.draw(0, 0);
+		if (KICK) {
+			degrees += increment;
+			if (degrees > 90) {
+				degrees = increment;
+				increment = -increment;
+			}
+			ofRotateY(degrees);
+		}
+		worker.draw(-ofGetWidth()/2, -ofGetHeight() / 2);
 	}
 	// colors and background change over time but not at the same time
 	void Background::myUpdate() {

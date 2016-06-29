@@ -325,6 +325,8 @@ namespace Software2552 {
 	private:
 		ofImage worker;
 		int sizex, sizey;
+		float degrees = 0;
+		float increment = 15;
 		bool mysetup(const Json::Value &data);
 	};
 
@@ -424,7 +426,7 @@ namespace Software2552 {
 		enum TypeOfBackground { ColorFixed, ColorChanging, none };
 		enum TypeOfGradient {
 			linear = ofGradientMode::OF_GRADIENT_LINEAR, circular = ofGradientMode::OF_GRADIENT_CIRCULAR,
-			bar = ofGradientMode::OF_GRADIENT_BAR, flat, noGradient
+			bar = ofGradientMode::OF_GRADIENT_BAR, flat, musicGradient, noGradient
 		};
 
 		void myDraw();

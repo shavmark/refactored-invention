@@ -158,19 +158,18 @@ namespace Software2552 {
 			ADDANIMATION(spheres, Sphere);
 			ADDANIMATION(videos, Video);
 			ADDANIMATION(rainbows, Rainbow);
+			ADDANIMATION(planets, Planet);
 			//ADD_REPEATING_ANIMATION(images, Image);
 			return;
 			
 			ADDANIMATION(spiral, Spiral);// sound phase 1a
 			ADDANIMATION(audio, Audio);// sound phase 1a
 			ADDANIMATION(videos, Video);
-			ADDANIMATION(rainbows, Rainbow);
 			ADDANIMATION(circles, Ball);
 			ADDANIMATION(cubes, Cube);
 			ADDANIMATION(grabbers, CameraGrabber);
 			ADDANIMATION(texts, Text);
 			ADDANIMATION(paragraphs, Paragraph);
-			ADDANIMATION(planets, Planet);
 			ADDANIMATION(videoSpheres, VideoSphere);
 			ADDANIMATION(solarSystems, SolarSystem);//bugbug forgot how to rotate around clyde, does not run w/ others
 			getAnimatables().sort(compareOrder);
