@@ -93,6 +93,8 @@ namespace Software2552 {
 		string keyname;
 
 	private:
+		bool drawn = false; // item was drawn 
+
 		bool deleteExisting(const Json::Value &data);
 		void removeExpiredItems(list<shared_ptr<ActorRole>>&v);
 		template<typename T> void removeExpiredItems(vector<shared_ptr<T>>&v) {

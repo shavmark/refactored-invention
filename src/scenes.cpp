@@ -193,6 +193,7 @@ namespace Software2552 {
 
 	void Stage::draw() {
 		preDraw();
+		drawn = false;
 		if (drawIn2d) {
 			ofPushStyle();
 			ofPushMatrix();
@@ -209,6 +210,12 @@ namespace Software2552 {
 			ofPopStyle();
 		}
 		postDraw();
+		if (!drawn) {
+			for (auto& a : animatables) {
+				a->frames.resetIFNeeded();
+			}
+		}
+
 	}
 	// pause them all
 	void Stage::pause() {
@@ -388,9 +395,8 @@ namespace Software2552 {
 	void Stage::draw2d() {
 
 		myDraw2d();// allow easy extensions
-		bool drawn = false; // item was drawn 
 
-		// find first non timed out item and draw it
+		// draw 2d items
 		for (auto& a : animatables) {
 			// draw all infinite, then only draw based on count where a count is set
 			// this allows the building of graphics
@@ -398,16 +404,10 @@ namespace Software2552 {
 				a->drawIt(ActorRole::draw2d);
 			}
 			else if (!a->frames.getFrameCountMaxHit()) {
-				drawn = a->drawIt(ActorRole::draw2d);
-				break; // forces serialized drawing
-			}
-		}
-		// reset list if exhausted, assume out dated items are deleted in other list management code
-		if (!drawn) {
-			for (auto& a : animatables) {
-				if (a->getType() == ActorRole::draw2d) {
-					a->frames.reset();
+				if (a->drawIt(ActorRole::draw2d)) {
+					drawn = true;
 				}
+				break; // forces serialized drawing
 			}
 		}
 
@@ -418,43 +418,31 @@ namespace Software2552 {
 	// juse need to draw the SpaceScene, base class does the rest
 	void Stage::draw3dMoving() {
 		myDraw3dMoving();
-		bool drawn = false; // item was drawn 
-
+		// draw moving items
 		for (auto& a : animatables) {
 			if (a->frames.isInfinite()) {
 				a->drawIt(ActorRole::draw3dMovingCamera);
 			}
 			else if (!a->frames.getFrameCountMaxHit()) {
-				drawn = a->drawIt(ActorRole::draw3dMovingCamera);
-				break; // forces serialized drawing
-			}
-		}
-		if (!drawn) {
-			for (auto& a : animatables) {
-				if (a->getType() == ActorRole::draw3dMovingCamera) {
-					a->frames.reset();
+				if (a->drawIt(ActorRole::draw3dMovingCamera)) {
+					drawn = true;
 				}
+				break; // forces serialized drawing
 			}
 		}
 	}
 	void Stage::draw3dFixed() {
 		myDraw3dFixed();
-		bool drawn = false; // item was drawn 
-
+		// draw fixed items
 		for (auto& a : animatables) {
 			if (a->frames.isInfinite()) {
 				a->drawIt(ActorRole::draw3dFixedCamera);
 			}
 			else if (!a->frames.getFrameCountMaxHit()) {
-				drawn = a->drawIt(ActorRole::draw3dFixedCamera);
-				break; // forces serialized drawing
-			}
-		}
-		if (!drawn) {
-			for (auto& a : animatables) {
-				if (a->getType() == ActorRole::draw3dFixedCamera) {
-					a->frames.reset();
+				if (a->drawIt(ActorRole::draw3dFixedCamera)) {
+					drawn = true;
 				}
+				break; // forces serialized drawing
 			}
 		}
 	}

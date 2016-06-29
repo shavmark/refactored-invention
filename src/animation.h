@@ -175,6 +175,11 @@ namespace Software2552 {
 		bool getFrameCountMaxHit() {
 			return frameMax == 0;
 		}
+		void resetIFNeeded() {
+			if (getFrameCountMaxHit()) {
+				reset();
+			}
+		}
 		void reset() {
 			frameMax = frameStart;
 		}

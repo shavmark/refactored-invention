@@ -156,6 +156,7 @@ namespace Software2552 {
 		ofSetColor(ofColor::azure);
 		if (KICK) {
 			ofSetColor(ofColor::blue);
+			r *= MAG*10;
 			up *= -3;// jump
 		}
 		if (SNARE) {
@@ -171,10 +172,34 @@ namespace Software2552 {
 			movement += ofGetLastFrameTime() * ofGetWidth() / 20;
 		}
 		ofBeginShape();
+		float x;
+		float y;
 		for (float i = 0; i<angle; i += renderStep) {
-			float x = movement + -ofGetWidth() / 2 + band + abs(R - r) / 2 * cos(i) + r / 2 * cos(-i*ratio);
-			float y = up + abs(R - r) / 2 * sin(i) + r / 2 * sin(-i*ratio);
+			x = movement + -ofGetWidth() / 2 + band + abs(R - r) / 2 * cos(i) + r / 2 * cos(-i*ratio);
+			y = up + abs(R - r) / 2 * sin(i) + r / 2 * sin(-i*ratio);
 			ofVertex(x, y);
+		}
+		ofEndShape();
+		ofBeginShape();
+		float x2 = x;
+		r *= BAND(4);
+		for (float i = 0; i<angle; i += renderStep) {
+			x = movement + -ofGetWidth() / 2 + band + abs(R - r) / 2 * cos(i) + r / 2 * cos(-i*ratio);
+			y = up + abs(R - r) / 2 * sin(i) + r / 2 * sin(-i*ratio);
+			y += ofRandom(40);
+			ofVertex(x2+x, y);
+		}
+		ofEndShape();
+
+		ofBeginShape();
+		x2 = ofGetWidth();
+		r *= BAND(12);
+		for (float i = 0; i<angle; i += renderStep) {
+			x = movement + -ofGetWidth() / 2 + band + abs(R - r) / 2 * cos(i) + r / 2 * cos(-i*ratio);
+			x += -ofRandom(40);
+			y = up + abs(R - r) / 2 * sin(i) + r / 2 * sin(-i*ratio);
+			y += -ofRandom(40);
+			ofVertex(x2 - x, y);
 		}
 		ofEndShape();
 	}
