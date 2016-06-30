@@ -162,6 +162,7 @@ namespace Software2552 {
 		}
 		void setFrameCount(int c) {
 			frameMax = c;
+			frameStart = c;
 		}
 		bool isInfinite() {
 			return frameStart == -1;
@@ -245,7 +246,7 @@ namespace Software2552 {
 		void setType(drawtype typeIn) { type = typeIn; }
 		shared_ptr<ofxSmartFont> getFontPointer() { return font.getPointer(); }
 		void setFill(bool b = true) { fill = b; }
-
+		void setFrameCount(int c) { frames.setFrameCount(c); }
 	protected:
 		FrameCounter frames; // number of frames to show this item, null means always show
 

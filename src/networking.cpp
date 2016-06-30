@@ -291,9 +291,11 @@ namespace Software2552 {
 			}
 			if (server.getNumClients() > 0) {
 				if (m->clientID > 0) {
+					ofLogVerbose("TCPServer::sendRawMsg") << "bytes " << m->numberOfBytesToSend;
 					server.sendRawMsg(m->clientID, (const char*)&m->packet, m->numberOfBytesToSend);
 				}
 				else {
+					ofLogVerbose("TCPServer::sendRawMsgToAll") << "bytes " << m->numberOfBytesToSend;
 					server.sendRawMsgToAll((const char*)&m->packet, m->numberOfBytesToSend);
 				}
 			}
@@ -327,11 +329,12 @@ namespace Software2552 {
 	//Receiving loop that must ensure a frame is received as a whole
 	// must know the size of item being sent
 	void TCPPixels::update() {
+		//bugbug getting too many pixels but we do not care
 		int length = width * 3;
 		int totalReceivedBytes = 0;
-		int size = width * height * 3;
+		int size = (width * height * 3)+sizeof(TCPPacket);
 		char* start;
-		char* receivePos = start = new char[size];
+		char* receivePos = start = new char[size*2];
 		if (start) {
 			shared_ptr<ofPixels> pixels = std::make_shared<ofPixels>();
 			if (pixels) {
@@ -342,12 +345,12 @@ namespace Software2552 {
 						break; // try again later
 					}
 					for (int i = 0; i < receivedBytes; ++i) {
-						(*pixels)[i + totalReceivedBytes] = receivePos[i];
+				//		(*pixels)[i + totalReceivedBytes] = receivePos[i];
 					}
 					totalReceivedBytes += receivedBytes;
 					receivePos += receivedBytes;
 				}
-				ofLogVerbose("TCPPixels::update") << "receiveRawBytes packet size " << size << " type Pixels";
+				ofLogNotice("TCPPixels::update") << "receiveRawBytes packet size " << size << " type Pixels total:" << totalReceivedBytes;
 				lock();
 				myUpdate(pixels);
 				// not used q.push_back(pixels);

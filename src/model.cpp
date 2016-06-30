@@ -320,14 +320,7 @@ namespace Software2552 {
 	}
 	void KinectItem::setup() {
 		setFixed(true);
-		// lots of data comes in, if we want to draw motion we need to keep up, at the same time
-		// we do not want to flash the screen if there is no data
-		int count = ((ofApp*)ofGetAppPtr())->appconfig.getFramerate() / 2;
-		if (((ofApp*)ofGetAppPtr())->appconfig.getPerformance() > 3) {
-			count /= 5;
-		}
-		frames.setFrameCount(count);//bugbug how to avoid flash?  1 frame or 1 second?
-		
+		frames.setFrameCount(ofGetFrameRate()/4);
 	}
 	// draw face separte from body
 	void Face::myDraw() {

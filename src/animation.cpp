@@ -386,6 +386,10 @@ namespace Software2552 {
 			if (me->repeating) {
 				return false; // never delete
 			}
+			bool b = me->frames.getFrameCountMaxHit() || objectLifeTimeManager::OKToRemove(me->locationAnimation);
+			if (b) {
+				int i = 0;
+			}
 			return me->frames.getFrameCountMaxHit() || objectLifeTimeManager::OKToRemove(me->locationAnimation);
 		}
 		return true; // ok to remove nullptr?

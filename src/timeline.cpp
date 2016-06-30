@@ -285,10 +285,7 @@ namespace Software2552 {
 
 	// keep as fast as possible
 	void Timeline::draw() {
-		if (((ofApp*)ofGetAppPtr())->appconfig.getDrawMusic()) {
-			//bugbug move to data driven code drawMusic();
-		}
-		else if (stage) {
+		if (stage) {
 			stage->draw();
 		}
 		//sound source https://www.freesound.org/search/?q=frequency&f=&s=score+desc&advanced=0&g=1

@@ -33,6 +33,7 @@ namespace Software2552 {
 		void clear(bool force=false);
 		void pause();
 		void resume();
+		int  maxAnimatables() { return 35; } // most that can be in a list at one time, old ones removed bugbug set this based on need, and make drawing faster
 		string &getKeyName() { return keyname; }
 		std::list<shared_ptr<ActorRole>>::iterator  find(DataType);
 

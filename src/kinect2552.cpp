@@ -291,16 +291,17 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 			return;
 		}
 		// IR optional, only sent if client asks for it, not shown locally
-		if (getKinect()->getIR() && (count % getKinect()->irThrottle)) {
-			updateImageIR(frame);
-		}
-		if (getKinect()->getBodyIndex() && (count % getKinect()->biThrottle)) {
-			updateImageBodyIndex(frame);
-		}
-		if (!getKinect()->getBody() && (count % getKinect()->bodyThrottle)) {
-			SafeRelease(frame);
-			return;
-		}
+		//bugbug out for now (make option in xml)
+		//bugbugf (getKinect()->getIR() && (count % getKinect()->irThrottle)) {
+		//bugbug	updateImageIR(frame);
+		//bugbug}
+		//bugbugif (getKinect()->getBodyIndex() && (count % getKinect()->biThrottle)) {
+		//bugbug	updateImageBodyIndex(frame);
+		//bugbug}
+		//bugbugif (!getKinect()->getBody() && (count % getKinect()->bodyThrottle)) {
+		//bugbug	SafeRelease(frame);
+		//bugbug	return;
+		//bugbug}
 
 		IBodyFrame* bodyframe = getBody(frame);
 		if (!bodyframe) {
@@ -480,6 +481,7 @@ IBodyFrame* getBody(IMultiSourceFrame* frame) {
 				if (p) {
 					p->bodyFromTCP(bytes, numBytes);
 					p->setup();
+					p->setFrameCount(ofGetFrameRate());
 					backStagePass->addToAnimatable(p);
 				}
 			}

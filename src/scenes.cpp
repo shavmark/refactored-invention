@@ -317,6 +317,12 @@ namespace Software2552 {
 	void Stage::addToAnimatable(shared_ptr<ActorRole>p, bool inFront) {
 		// only save working pointers
 		if (p != nullptr) {
+			if (animatables.size() > maxAnimatables()) {
+				// remove a few old ones bugbug see how this goes
+				for (int i = 0; i < maxAnimatables()-5; ++i) {
+					animatables.pop_back();
+				}
+			}
 			ActorRole::drawtype tp = p->getType();
 			if (p->getType() == ActorRole::draw3dFixedCamera) {
 				fixed3d(true); // do not set to false in case its already set
