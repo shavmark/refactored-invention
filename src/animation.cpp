@@ -350,8 +350,7 @@ namespace Software2552 {
 				}
 				else {
 					// should go to home, bugbug can I just go to 0,0 no matter where I am?
-					ofTranslate(-ofGetWidth()/2, - ofGetHeight()/2);// assume fixed uses screen as it sees fit
-
+					ofTranslate(-ofGetWidth() / 2, -ofGetHeight() / 2);// assume fixed uses screen as it sees fit
 				}
 				if (!frames.isInfinite()) {
 					frames.decrementFrameCount();

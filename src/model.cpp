@@ -320,7 +320,7 @@ namespace Software2552 {
 	}
 	void KinectItem::setup() {
 		setFixed(true);
-		frames.setFrameCount(ofGetFrameRate()/4);
+		frames.setFrameCount(7);
 	}
 	// draw face separte from body
 	void Face::myDraw() {
@@ -382,7 +382,7 @@ namespace Software2552 {
 		ofNoFill();
 		for (const auto&circle : points) {
 			ofSetColor(color); //bugbug clean changing up to fit in with rest of app
-			color.setHue(color.getHue() + 6.0f);
+			color.setHue(color.getHue() + 6.0f*MAG+5.0);
 			if (circle.x == circle.y && circle.x == 0) {
 				continue; // not valid data
 			}
@@ -776,7 +776,7 @@ namespace Software2552 {
 				ofBackground(colorHelper->getBackground());
 			}
 			else if(mode == musicGradient) {
-				ofColor c1(ofMap(BAND(0), 0, 2, 50, 240), ofMap(BAND(5), 0, 2, 50, 200), ofMap(BAND(10), 0, 2, 50, 240));
+				ofColor c1(ofMap(BAND(3), 0, 2, 50, 240), ofMap(BAND(5), 0, 2, 50, 200), ofMap(BAND(23), 0, 2, 50, 240));
 				c1.setBrightness(50);
 				c1.setSaturation(50);
 				ofColor c2 = c1;
