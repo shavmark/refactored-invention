@@ -171,9 +171,8 @@ namespace Software2552 {
 				float i4 = 0.0;
 				for (int s = 0; s < 7; s++)				{
 					vec2 r;
-					r = vec2(cos(uv.y*i0 - i4 + u_time / i1), sin(uv.x*i0 - i4 + u_0 / i1)) / i2;
-					//r += vec2(-r.y, r.x)*0.3;
-					r += vec2(-r.y, r.x)*u_5;
+					r = vec2(cos(uv.y*i0 - i4 + u_time / i1), sin(uv.x*i0 - i4/ i1)) / i2;
+					r += vec2(-r.y, r.x)*0.3;
 					uv.xy += r;
 
 					i0 *= 1.93;
@@ -181,8 +180,8 @@ namespace Software2552 {
 					i2 *= 1.7;
 					i4 += 0.05 + 0.1*u_time*i1;
 				}
-				float r = sin(uv.x - u_mag)*0.5 + 0.5;
-				float b = sin(uv.y + u_10)*0.5 + 0.5;
+				float r = sin(uv.x - u_time)*0.5 + 0.5;
+				float b = sin(uv.y + u_time)*0.5 + 0.5;
 				float g = sin((sqrt(uv.x*uv.x + uv.y*uv.y) + u_5))*0.5 + 0.5;
 				vec3 c = vec3(r, g, b);
 				outputColor = vec4(c, 1.0);
@@ -501,13 +500,13 @@ namespace Software2552 {
 			void main() {
 				vec2 st = gl_FragCoord.xy / u_resolution.xy;
 
-				st *= 10.0*u_mag; // Scale the coordinate system by 10*u_mag
+				st *= 10.0; // Scale the coordinate system by 10*u_mag
 				vec2 ipos = floor(st);  // get the integer coords
 				vec2 fpos = fract(st);  // get the fractional coords
 
 										// Assign a random value based on the integer coord
 				vec3 color = vec3(random(ipos));
-				color *= u_mag;
+				//color *= u_mag;
 				// Uncomment to see the subdivided grid
 				color = vec3(fpos,0.0);
 				outputColor = vec4(color, 1.0);

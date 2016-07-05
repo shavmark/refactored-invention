@@ -209,9 +209,9 @@ namespace Software2552 {
 		float mag = BEAT.getMagnitude();
 		int x = -ofGetWidth()/2;
 		for (int i = 0; i<32; i++) {      //Draw bandRad and bandVel by black color,      //and other by gray color 
-			float selectedBand = BAND(i);
+			float selectedBand = BAND(i)*5;
 			x += ofGetWidth() / 32;
-			float r = ofMap(selectedBand, 0, 2, 20, ofGetHeight() / 3);
+			float r = ofMap(selectedBand, 0, 2, 20, ofGetHeight() / 10);
 			if (r > 0) {
 				ofColor color(ofMap(selectedBand, 0, 2, 50, 220), ofMap(selectedBand, 0, 2, 1, 210), ofMap(selectedBand, 0, 2, 100, 255));//bugbug map like this for shaders
 				ofSetColor(color);

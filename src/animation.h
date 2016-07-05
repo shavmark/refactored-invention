@@ -167,6 +167,7 @@ namespace Software2552 {
 		bool isInfinite() {
 			return frameStart == -1;
 		}
+
 		int decrementFrameCount() {
 			if (frameMax > 0) {
 				--frameMax; // never go -1 when counting
@@ -221,6 +222,9 @@ namespace Software2552 {
 		}
 		ofTrueTypeFont* getFont() { return font.get(); }
 		bool isAnimating();
+		bool realtimeDrawing(){ return realtime; }
+		void setRealTime(bool b = true) { realtime = b; }
+			
 		void animateTo(const ofPoint& p);
 		void setFullSize();
 		bool refreshAnimation();
@@ -275,6 +279,7 @@ namespace Software2552 {
 		void setupRepeatingItem(const Json::Value & data);
 		bool fixedPosition = false;
 		bool showSoundGraph = false;
+		bool realtime = false; // draws in order of realtime but before other things are drawn, and is always drawn
 		bool repeating = false; // object never deletes
 		DataType id;// optional
 		bool okToDraw(drawtype type);

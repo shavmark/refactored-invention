@@ -320,7 +320,8 @@ namespace Software2552 {
 	}
 	void KinectItem::setup() {
 		setFixed(true);
-		frames.setFrameCount(7);
+		setRealTime();
+		frames.setFrameCount(ofGetFrameRate()/5); // keep around enough to avoid flicker
 	}
 	// draw face separte from body
 	void Face::myDraw() {
@@ -336,7 +337,7 @@ namespace Software2552 {
 			//ofRotateY(pitch);
 			//ofPushMatrix();
 			//ofTranslate(-rectangle.width / 2, -rectangle.height / 2);
-			ofDrawRectRounded(rectangle, 5);
+			ofDrawRectRounded(rectangle, 15);
 			//ofPopMatrix();
 			//ofRotateX(pitch);
 			//ofPushMatrix();
@@ -382,11 +383,12 @@ namespace Software2552 {
 		ofNoFill();
 		for (const auto&circle : points) {
 			ofSetColor(color); //bugbug clean changing up to fit in with rest of app
-			color.setHue(color.getHue() + 6.0f*MAG+5.0);
+			color.setHue(color.getHue() + 6.0f);
 			if (circle.x == circle.y && circle.x == 0) {
 				continue; // not valid data
 			}
-			ofDrawCircle(circle.x, circle.y, circle.z);
+			ofSetLineWidth(2);//bugbug make json attribute
+			ofDrawCircle(circle.x, circle.y, circle.z); // z is radius
 		}
 
 	}

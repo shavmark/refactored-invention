@@ -319,7 +319,7 @@ namespace Software2552 {
 		if (p != nullptr) {
 			if (animatables.size() > maxAnimatables()) {
 				// remove a few old ones bugbug see how this goes
-				for (int i = 0; i < maxAnimatables()-5; ++i) {
+				for (int i = 0; i < maxAnimatables()/20; ++i) {
 					animatables.pop_back();
 				}
 			}
@@ -402,18 +402,29 @@ namespace Software2552 {
 
 		myDraw2d();// allow easy extensions
 
-		// draw 2d items
+		// draw fast items, then draw based on count
+
 		for (auto& a : animatables) {
-			// draw all infinite, then only draw based on count where a count is set
-			// this allows the building of graphics
-			if (a->frames.isInfinite()) {
-				a->drawIt(ActorRole::draw2d);
+			if (!a->realtimeDrawing()) {
+			
+				// draw all infinite, then only draw based on count where a count is set
+				// this allows the building of graphics
+				if (a->frames.isInfinite()) {
+					a->drawIt(ActorRole::draw2d);
+				}
+				else if (!a->frames.getFrameCountMaxHit()) {
+					if (a->drawIt(ActorRole::draw2d)) {
+						drawn = true;
+					}
+					break; // forces serialized drawing
+				}
 			}
-			else if (!a->frames.getFrameCountMaxHit()) {
+		}
+		for (auto& a : animatables) {
+			if (a->realtimeDrawing() && !a->frames.getFrameCountMaxHit()) {
 				if (a->drawIt(ActorRole::draw2d)) {
 					drawn = true;
 				}
-				break; // forces serialized drawing
 			}
 		}
 
