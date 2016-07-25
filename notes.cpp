@@ -1,4 +1,5 @@
 // store notes here
+//http://www.instructables.com/id/Robot-Arm-Arduino-App/
 // good color http://www.color-hex.com/color-palette/1325
 //https://github.com/patriciogonzalezvivo/thebookofshaders
 // items to help make it more human https://dev.projectoxford.ai/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9652
