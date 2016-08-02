@@ -44,6 +44,11 @@ namespace Software2552 {
 			message = q.front();
 			q.pop_front();
 			unlock();
+			// from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
+			message.erase(std::find_if(message.rbegin(), message.rend(),
+				std::not1(std::ptr_fun<int, int>(std::isspace))).base(), message.end());
+			size_t len = strlen(message.c_str()); // ignore trailing 0s and white space, assume json is in the string
+			message.resize(len);
 			return true;
 		}
 		return false;
@@ -54,7 +59,7 @@ namespace Software2552 {
 		while (1) {
 			if (receive(message)) {
 				lock();
-				q.push_front(message); // save a copy
+				q.push_back(message); // save a copy at the end of the list FIFO
 				unlock();
 				yield();
 			}
@@ -68,7 +73,7 @@ namespace Software2552 {
 	}
 	void BroadcastUDPSend::update(const string&message) {
 		lock();
-		q.push_front(message); //bugbug do we want to add a priority? front & back? not sure
+		q.push_back(message); //bugbug do we want to add a priority? front & back? not sure
 		unlock();
 	}
 	int BroadcastUDPSend::send(const string&message) {
