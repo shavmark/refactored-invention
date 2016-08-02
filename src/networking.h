@@ -28,7 +28,9 @@ namespace Software2552 {
 		UDP, // generic UDP
 		TCPKinectIR,
 		TCPKinectBodyIndex,
-		TCPKinectBody
+		TCPKinectBody,
+		UDPSend = 11002,
+		UDPRECEIVE = 11000
 	};
 
 	bool compress(const char*buffer, size_t len, string&output);
@@ -60,28 +62,26 @@ namespace Software2552 {
 		TCPPacket packet;		// data that is sent
 	};
 
-	class BroadcastUDPReceive : public ofxUDPManager {
+	class BroadcastUDPReceive : public ofThread {
 	public:
-		void setup(int port = 11000) {
-			Create();
-			Bind(port);
-			SetNonBlocking(true);
-		}
-		int receive(string&message)		{
-			message.resize(1000);//bugbug what is a good size?
-			return Receive(&message[0], message.size());
-		}
+		void setup(int port = UDPRECEIVE);
+		bool update(string&message);
+		ofxUDPManager reader;
+	private:
+		int receive(string&message);
+		void threadedFunction();
+		deque<string> q; // message queue
 	};
-	class BroadcastUDPSend : public ofxUDPManager {
+
+	class BroadcastUDPSend : public ofThread {
 	public:
-		void setup(int port = 11002) {
-			Create();
-			Connect("127.0.0.1", port);//broadcast back to everyone
-			SetNonBlocking(true);
-		}
-		int send(const string&message) {
-			return Send(message.c_str(), message.length());
-		}
+		void setup(int port = UDPSend);
+		void update(const string&message);
+		ofxUDPManager sender;
+	private:
+		int send(const string&message);
+		void threadedFunction();
+		deque<string> q; // message queue
 	};
 
 	// deque allows push front and back and enumration so we do priorities and remove old data

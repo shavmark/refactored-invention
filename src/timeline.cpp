@@ -203,13 +203,12 @@ namespace Software2552 {
 
 		
 		string message;
-		if (recUDP.receive(message)) {
+		if (recUDP.update(message)) {
 			string address;
 			int port;
 			ofLogNotice("Timeline::update()") << message;
-			message = "a";
-			sendUDP.send(message);
-			recUDP.GetRemoteAddr(address, port);
+			sendUDP.update("a");
+			recUDP.reader.GetRemoteAddr(address, port);
 		}
 
 		ofSoundUpdate();

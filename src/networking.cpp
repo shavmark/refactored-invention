@@ -27,6 +27,66 @@ namespace Software2552 {
 		}
 		return true;
 	}
+	void BroadcastUDPReceive::setup(int port){
+		reader.Create();
+		reader.Bind(port);
+		reader.SetNonBlocking(true);
+		startThread();
+	}
+	int BroadcastUDPReceive::receive(string&message) {
+		message.resize(1000);//bugbug what is a good size?
+		return reader.Receive(&message[0], message.size());
+	}
+	// get a message from the qeueue
+	bool BroadcastUDPReceive::update(string&message) {
+		if (q.size() > 0) {
+			lock();
+			message = q.front();
+			q.pop_front();
+			unlock();
+			return true;
+		}
+		return false;
+	}
+	void BroadcastUDPReceive::threadedFunction() {
+		string message;
+
+		while (1) {
+			if (receive(message)) {
+				lock();
+				q.push_front(message); // save a copy
+				unlock();
+				yield();
+			}
+		}
+	}
+	void BroadcastUDPSend::setup(int port) {
+		sender.Create();
+		sender.Connect("192.168.1.255", port);//broadcast back to everyone
+		sender.SetNonBlocking(true);
+		startThread();
+	}
+	void BroadcastUDPSend::update(const string&message) {
+		lock();
+		q.push_front(message); //bugbug do we want to add a priority? front & back? not sure
+		unlock();
+	}
+	int BroadcastUDPSend::send(const string&message) {
+		return sender.Send(message.c_str(), message.length());
+	}
+
+	void BroadcastUDPSend::threadedFunction() {
+		while (1) {
+			lock();
+			if (q.size() > 0) {
+				send(q.front());
+				q.pop_front();
+			}
+			unlock();
+			yield();
+		}
+	}
+
 	string getRemoteIP(shared_ptr<ofxOscMessage>m) {
 		if (m) {
 			return m->getRemoteIp();
