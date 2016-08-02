@@ -207,7 +207,7 @@ namespace Software2552 {
 			string address;
 			int port;
 			ofLogNotice("Timeline::update()") << message;
-			sendUDP.update("a");
+			sendUDP.update(message);
 			recUDP.reader.GetRemoteAddr(address, port);
 		}
 
