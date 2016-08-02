@@ -27,18 +27,18 @@ namespace Software2552 {
 		}
 		return true;
 	}
-	void BroadcastUDPReceive::setup(int port){
+	void UDPReceive::setup(int port){
 		reader.Create();
 		reader.Bind(port);
 		reader.SetNonBlocking(true);
 		startThread();
 	}
-	int BroadcastUDPReceive::receive(string&message) {
+	int UDPReceive::receive(string&message) {
 		message.resize(1000);//bugbug what is a good size?
 		return reader.Receive(&message[0], message.size());
 	}
 	// get a message from the qeueue
-	bool BroadcastUDPReceive::update(string&message) {
+	bool UDPReceive::update(string&message) {
 		if (q.size() > 0) {
 			lock();
 			message = q.front();
@@ -53,7 +53,7 @@ namespace Software2552 {
 		}
 		return false;
 	}
-	void BroadcastUDPReceive::threadedFunction() {
+	void UDPReceive::threadedFunction() {
 		string message;
 
 		while (1) {
@@ -65,22 +65,22 @@ namespace Software2552 {
 			}
 		}
 	}
-	void BroadcastUDPSend::setup(int port) {
+	void UDPBroadcast::setup(int port) {
 		sender.Create();
 		sender.Connect("192.168.1.255", port);//broadcast back to everyone
 		sender.SetNonBlocking(true);
 		startThread();
 	}
-	void BroadcastUDPSend::update(const string&message) {
+	void UDPBroadcast::update(const string&message) {
 		lock();
 		q.push_back(message); //bugbug do we want to add a priority? front & back? not sure
 		unlock();
 	}
-	int BroadcastUDPSend::send(const string&message) {
+	int UDPBroadcast::send(const string&message) {
 		return sender.Send(message.c_str(), message.length());
 	}
 
-	void BroadcastUDPSend::threadedFunction() {
+	void UDPBroadcast::threadedFunction() {
 		while (1) {
 			lock();
 			if (q.size() > 0) {

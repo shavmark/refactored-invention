@@ -28,7 +28,7 @@ namespace Software2552 {
 		//ofSeedRandom(); // turn of to debug if needed
 
 		recUDP.setup();
-		sendUDP.setup();
+		broadcastUDP.setup();
 
 		// design to run in low mem on slow devices, many items can not be allocated and graphics should still display
 
@@ -206,9 +206,9 @@ namespace Software2552 {
 		if (recUDP.update(message)) {
 			string address;
 			int port;
-			ofLogNotice("Timeline::update()") << message;
-			sendUDP.update(message);
+			broadcastUDP.update(message);
 			recUDP.reader.GetRemoteAddr(address, port);
+			ofLogNotice("Timeline::update()") << message << "from " << address + ":" << port;
 		}
 
 		ofSoundUpdate();

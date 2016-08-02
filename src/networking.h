@@ -62,7 +62,7 @@ namespace Software2552 {
 		TCPPacket packet;		// data that is sent
 	};
 
-	class BroadcastUDPReceive : public ofThread {
+	class UDPReceive : public ofThread {
 	public:
 		void setup(int port = UDPRECEIVE);
 		bool update(string&message);
@@ -73,7 +73,7 @@ namespace Software2552 {
 		deque<string> q; // message queue
 	};
 
-	class BroadcastUDPSend : public ofThread {
+	class UDPBroadcast : public ofThread {
 	public:
 		void setup(int port = UDPSend);
 		void update(const string&message);
