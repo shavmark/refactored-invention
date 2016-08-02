@@ -184,6 +184,7 @@ void ofApp::update(){
 	}
 	beat.update(ofGetElapsedTimeMillis());//bugbug can move beat to timeline maybe?
 	timeline.update();
+	
 	return;
 }
 

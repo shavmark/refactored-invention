@@ -2,6 +2,7 @@
 namespace Software2552 {
 #define MAXSEND (1024*1024)
 
+	
 	// input buffer returned as reference
 	bool compress(const char*buffer, size_t len, string&output) {
 		output.clear();
@@ -62,7 +63,7 @@ namespace Software2552 {
 									//bugbug if these are used find a way to parameterize
 									//bugbug put all these items in json? or instead use them
 									// to ignore messages, delete old ones?
-			// even compress the small ones so more messages can use UDP
+			// even compress the small ones so more messages can use udp
 			string output;
 			string input = data.getRawString(false);
 			compress(input.c_str(), input.size(), output);

@@ -25,6 +25,7 @@ namespace Software2552 {
 	enum OurPorts : int {
 		OSC = 2552, 
 		TCP, // generic TCP
+		UDP, // generic UDP
 		TCPKinectIR,
 		TCPKinectBodyIndex,
 		TCPKinectBody
@@ -59,12 +60,36 @@ namespace Software2552 {
 		TCPPacket packet;		// data that is sent
 	};
 
+	class BroadcastUDPReceive : public ofxUDPManager {
+	public:
+		void setup(int port = 11000) {
+			Create();
+			Bind(port);
+			SetNonBlocking(true);
+		}
+		int receive(string&message)		{
+			message.resize(1000);//bugbug what is a good size?
+			return Receive(&message[0], message.size());
+		}
+	};
+	class BroadcastUDPSend : public ofxUDPManager {
+	public:
+		void setup(int port = 11002) {
+			Create();
+			Connect("127.0.0.1", port);//broadcast back to everyone
+			SetNonBlocking(true);
+		}
+		int send(const string&message) {
+			return Send(message.c_str(), message.length());
+		}
+	};
+
 	// deque allows push front and back and enumration so we do priorities and remove old data
 	typedef std::unordered_map<string, deque<shared_ptr<ofxOscMessage>>>MessageMap;
 
 	class WriteOsc : public ofThread {
 	public:
-		void setup(const string &hostname = "192.168.1.255", int port = OSC);
+		void setup(const string &hostname = "192.168.1.255", int port = OurPorts::OSC);
 
 		// add a message to be sent
 		void send(ofxJSON &data, const string&address);

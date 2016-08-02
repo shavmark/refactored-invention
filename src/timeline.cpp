@@ -27,6 +27,8 @@ namespace Software2552 {
 	void Timeline::setup() {
 		//ofSeedRandom(); // turn of to debug if needed
 
+		recUDP.setup();
+		sendUDP.setup();
 
 		// design to run in low mem on slow devices, many items can not be allocated and graphics should still display
 
@@ -198,6 +200,17 @@ namespace Software2552 {
 
 	// keep this super fast
 	void Timeline::update() { 
+
+		
+		string message;
+		if (recUDP.receive(message)) {
+			string address;
+			int port;
+			ofLogNotice("Timeline::update()") << message;
+			message = "a";
+			sendUDP.send(message);
+			recUDP.GetRemoteAddr(address, port);
+		}
 
 		ofSoundUpdate();
 		updateArduino();
