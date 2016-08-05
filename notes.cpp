@@ -1,4 +1,5 @@
 // store notes here
+//https://developers.google.com/tango/apis/c/c-motion-tracking	
 //http://www.instructables.com/id/Robot-Arm-Arduino-App/
 // good color http://www.color-hex.com/color-palette/1325
 //https://github.com/patriciogonzalezvivo/thebookofshaders
