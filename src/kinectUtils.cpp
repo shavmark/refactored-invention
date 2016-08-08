@@ -2,7 +2,7 @@
 // kinect only works on64 bit windows
 
 #include "ofApp.h"
-//C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\x64
+//C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\x64 
 
 namespace Software2552 {
 	// validate com stuff
