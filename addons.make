@@ -1,5 +1,8 @@
+ofxGui
 ofxNetwork
 ofxOsc
+ofxVectorGraphics
+ofxXmlSettings
 ofxAnimatable
 ofxBeat
 ofxJson

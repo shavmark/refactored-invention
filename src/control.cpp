@@ -1,6 +1,6 @@
 #include "ofApp.h"
 #ifdef _WIN64
-#include "inc\Kinect.h" // needed for enums
+#include "inc\Kinect.h" // needed for enums 
 #endif
 #include "scenes.h"
 
