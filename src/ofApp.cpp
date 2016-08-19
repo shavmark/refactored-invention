@@ -98,6 +98,7 @@ void SystemConfiguration::setup() {
 		xmlsettings.popTag();
 		xmlsettings.popTag();
 
+
 }
 
 void AppConfiguration::getName(string &name, shared_ptr<ofxOscMessage>p) {
@@ -166,6 +167,7 @@ void ofApp::setup(){
 	timeline.readScript("json3.json");
 	timeline.start();
 
+
 	return;
 }
 void ofApp::audioReceived(float* input, int bufferSize, int nChannels) {
@@ -179,6 +181,8 @@ void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 }
 //--------------------------------------------------------------
 void ofApp::update(){
+
+	
 	if (appconfig.soundout) {
 		appconfig.soundout->update();
 	}
@@ -190,6 +194,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	
 	timeline.draw();
 	return;
 
@@ -207,6 +212,8 @@ void ofApp::exit() {
 }
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button) {
+
+	
 }
 
 //--------------------------------------------------------------

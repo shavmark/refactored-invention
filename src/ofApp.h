@@ -45,7 +45,7 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 }
 #include "ofxOsc.h"
 #include "ofxNetwork.h"
-
+#include "ofxcv.h"
 #include "ofxJSON.h"
 #include "consts.h"
 #include "animation.h"
@@ -55,6 +55,7 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 #include "networking.h"
 #include "sound.h"
 #include "ofxBeat.h"
+
 
 #define STRINGIFY(p) #p
 class ofApp;
@@ -118,6 +119,7 @@ private:
 #include "control.h"
 
 
+
 // one instance of network items
 class OneGlobalInstance {
 public:
@@ -171,6 +173,11 @@ class ofApp : public ofBaseApp{
 		AppConfiguration appconfig; // put all app instance here 
 		ofxBeat beat; //bugbug not sure where to put this yet, need to support > 1 mic
 		float getBand(int i) { return beat.getBand(i); }
+
+
+		ofVideoGrabber movie;
+
+
 private:
 };
 

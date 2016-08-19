@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -52,7 +52,19 @@
     <TargetName>$(ProjectName)_debug64</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <IncludePath>..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxCv\libs\cld\include\cld;..\..\..\addons\ofxCV\src;..\..\..\addons\ofxOpenCv\libs\opencv\include\;..\..\..\addons\ofxSnappy\libs\snappy\src;..\..\..\addons\ofxSmartFont\src;..\..\..\addons\ofxAnimatable\src;..\..\..\addons\ofxJson\src;..\..\..\addons\ofxJson\libs\jsoncpp\include;$(IncludePath);C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\;$(KinectSDK20_DIR);..\..\..\addons\ofxParagraph\src</IncludePath>
+    <IncludePath>
+      ..\..\..\addons\ofxCv\libs\ofxCv\include;
+      ..\..\..\addons\ofxCv\libs\ofxCv\src;
+      ..\..\..\addons\ofxOpenCv\libs\opencv\include\;
+      ..\..\..\addons\ofxSnappy\libs\snappy\src;
+      ..\..\..\addons\ofxSmartFont\src;
+      ..\..\..\addons\ofxAnimatable\src;
+      ..\..\..\addons\ofxJson\src;
+      ..\..\..\addons\ofxJson\libs\jsoncpp\include;
+
+      $(IncludePath);
+      C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\;$(KinectSDK20_DIR)
+      ;..\..\..\addons\ofxParagraph\src</IncludePath>
     <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath);$(KinectSDK20_DIR)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);$(WindowsSDK_IncludePath);</ReferencePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
@@ -61,9 +73,7 @@
     <OutDir>bin\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxCv\libs\cld\include\cld;..\..\..\addons\ofxOpenCv\libs\opencv\include\;..\..\..\addons\ofxSnappy\libs\snappy\src;..\..\..\addons\ofxSmartFont\src;..\..\..\addons\ofxAnimatable\src;..\..\..\addons\ofxJson\src;..\..\..\addons\ofxJson\libs\jsoncpp\include;..\..\..\addons\ofxParagraph\src;$(IncludePath);C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\;$(KinectSDK20_DIR);
-    </IncludePath>
-    <LibraryPath>$(KINECTSDK20_DIR)lib\x64;$(LibraryPath);$(KinectSDK20_DIR)</LibraryPath>
+    <IncludePath>..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\;..\..\..\addons\ofxSnappy\libs\snappy\src;..\..\..\addons\ofxSmartFont\src;..\..\..\addons\ofxAnimatable\src;..\..\..\addons\ofxJson\src;..\..\..\addons\ofxJson\libs\jsoncpp\include;$(IncludePath);C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\;$(KinectSDK20_DIR);..\..\..\addons\ofxParagraph\src</IncludePath>
     <TargetName>$(ProjectName)64</TargetName>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
@@ -604,9 +614,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\data\json.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Text.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>

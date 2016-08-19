@@ -131,6 +131,18 @@
     <ClCompile Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS.cpp">
       <Filter>addons\ofxVectorGraphics\libs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp">
+      <Filter>addons\ofxXmlSettings\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp">
+      <Filter>addons\ofxXmlSettings\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp">
+      <Filter>addons\ofxXmlSettings\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
+      <Filter>addons\ofxXmlSettings\libs</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.cpp">
       <Filter>addons\ofxAnimatable\src</Filter>
     </ClCompile>
@@ -170,17 +182,44 @@
     <ClCompile Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.cc">
       <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp">
-      <Filter>addons\ofxXmlSettings\src</Filter>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\ETF.cpp">
+      <Filter>addons\ofxCv\libs\CLD\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp">
-      <Filter>addons\ofxXmlSettings\libs</Filter>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\fdog.cpp">
+      <Filter>addons\ofxCv\libs\CLD\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp">
-      <Filter>addons\ofxXmlSettings\libs</Filter>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Calibration.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
-      <Filter>addons\ofxXmlSettings\libs</Filter>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\ContourFinder.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Distance.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Flow.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Helpers.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Kalman.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\ObjectFinder.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\RunningBackground.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Tracker.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Utilities.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp">
+      <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp">
       <Filter>addons\ofxOpenCv\src</Filter>
@@ -209,205 +248,238 @@
       <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons">
-      <UniqueIdentifier>{ada48082-1286-425f-88e1-0f195a591e3a}</UniqueIdentifier>
+      <UniqueIdentifier>{50c81991-a922-4bda-9bd5-4ec1420e663d}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxGui">
-      <UniqueIdentifier>{f70c7c00-28eb-4aa1-bc0c-0fd700c2cca4}</UniqueIdentifier>
+      <UniqueIdentifier>{c148a3ca-ffdd-4410-accb-064c54b07898}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxGui\src">
-      <UniqueIdentifier>{148456f8-9daa-49de-b4e2-90c9ae6a5f8b}</UniqueIdentifier>
+      <UniqueIdentifier>{eddff1da-9279-4c95-99da-adfdfbcdf315}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxNetwork">
-      <UniqueIdentifier>{bd740204-9ccf-42d9-adb8-627b1ac41736}</UniqueIdentifier>
+      <UniqueIdentifier>{4c0d7f2f-9920-457b-9faf-deec1017ad27}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxNetwork\src">
-      <UniqueIdentifier>{33b06243-e738-45e7-a71e-40f5186d8e3b}</UniqueIdentifier>
+      <UniqueIdentifier>{9eae58a6-b3dc-4492-bde0-2b22401eb96b}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc">
-      <UniqueIdentifier>{5e147898-f7ea-4c44-9422-30c13bba62e6}</UniqueIdentifier>
+      <UniqueIdentifier>{4582ce1c-f385-4483-bd5e-429039c6901b}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\src">
-      <UniqueIdentifier>{6a271bb2-b919-49fa-9650-52a807205b1c}</UniqueIdentifier>
+      <UniqueIdentifier>{6799584d-618f-4bdc-984f-051e203ece12}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs">
-      <UniqueIdentifier>{1a0de665-2619-4325-af7d-1b0ea6eba71f}</UniqueIdentifier>
+      <UniqueIdentifier>{75a696c6-e8aa-43d1-a84c-a28d5e5f8637}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack">
-      <UniqueIdentifier>{50f641da-7259-4fc8-b161-78e2ecdef59a}</UniqueIdentifier>
+      <UniqueIdentifier>{31a602a6-73e1-43cc-979b-a12da6ead92c}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src">
-      <UniqueIdentifier>{6412d94f-a0e3-4f2b-9d8f-f6cbe03b45d8}</UniqueIdentifier>
+      <UniqueIdentifier>{8a555b47-1a03-43c1-9bb2-6f9a2a79f78a}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip">
-      <UniqueIdentifier>{22f353c6-58bf-45f8-a332-957c21de104e}</UniqueIdentifier>
+      <UniqueIdentifier>{1dad04d1-3577-4bd9-82a7-27450de86e93}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\posix">
-      <UniqueIdentifier>{7df75df4-7ec0-4f19-89e3-92858eb21c5f}</UniqueIdentifier>
+      <UniqueIdentifier>{e2f0d078-e4b0-4469-9f55-827cfc612621}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\win32">
-      <UniqueIdentifier>{02681364-240a-4cc5-9475-5648b0e7b251}</UniqueIdentifier>
+      <UniqueIdentifier>{878f50e1-8cc2-445c-9147-658d7ecd9b76}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
-      <UniqueIdentifier>{29a94cff-d979-4653-be1c-a9d7e67591e7}</UniqueIdentifier>
+      <UniqueIdentifier>{81964193-aa2c-4e92-84a7-3d83ba69abf1}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxVectorGraphics">
-      <UniqueIdentifier>{e32e0545-0ad6-48e9-ba85-79c1d069216e}</UniqueIdentifier>
+      <UniqueIdentifier>{cb96ce2b-437c-4eb9-9176-ad53c6483d54}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxVectorGraphics\src">
-      <UniqueIdentifier>{f0a0fe4b-30b3-42e2-bcda-0f16ab4b206a}</UniqueIdentifier>
+      <UniqueIdentifier>{88ae2cda-fc02-4bab-a405-a7cdb29d62a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxVectorGraphics\libs">
-      <UniqueIdentifier>{6f788c18-d2c4-4975-852a-b00f35dcb0ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAnimatable">
-      <UniqueIdentifier>{cb5ec4f6-b593-46a2-aa46-2e46f67a3e1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxAnimatable\src">
-      <UniqueIdentifier>{72d35e6d-b3b3-4ebd-90af-17a8e49adfbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxBeat">
-      <UniqueIdentifier>{1a973fb2-899b-4b32-a90d-c82756c85b97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxBeat\src">
-      <UniqueIdentifier>{844f4fab-4af3-4dae-b91a-b4ee7d8eb932}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson">
-      <UniqueIdentifier>{61a30a2e-f135-4870-b7cd-66e0f324e8ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\src">
-      <UniqueIdentifier>{523c3c30-2315-44c4-ae67-5419f4cf35a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs">
-      <UniqueIdentifier>{33c33c11-b348-473d-95ff-d4727b786ddd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp">
-      <UniqueIdentifier>{8c969503-d004-4812-9e93-aae51f070f47}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\include">
-      <UniqueIdentifier>{2782839e-2054-441f-94e1-d60422730797}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
-      <UniqueIdentifier>{3359deed-4074-4add-b439-a68bcd07c94b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\src">
-      <UniqueIdentifier>{fe6b9ea6-a24d-46a1-a86f-8cc660efdfff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxParagraph">
-      <UniqueIdentifier>{146f6216-ac02-45f9-83f3-52409d46f754}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxParagraph\src">
-      <UniqueIdentifier>{4104f5f2-2edb-415a-8842-a3ed815a1d1f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSmartFont">
-      <UniqueIdentifier>{3c9cc464-f030-49e7-96bc-5b4ce9cc5886}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSmartFont\src">
-      <UniqueIdentifier>{53d9feb5-85cc-46c7-bc23-826856832a42}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSnappy">
-      <UniqueIdentifier>{4e92d99f-2a5a-4bb1-a5ad-ae1ef8310c5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSnappy\libs">
-      <UniqueIdentifier>{0052dcb3-71f7-4053-9c14-36a55824178d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSnappy\libs\snappy">
-      <UniqueIdentifier>{cba9e176-7b54-4406-92e7-94b7b1a574b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxSnappy\libs\snappy\src">
-      <UniqueIdentifier>{763bcc79-eefb-4588-bdcd-ec8012bdb56b}</UniqueIdentifier>
+      <UniqueIdentifier>{46551ecb-7947-4158-8846-38a5fb96516e}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings">
-      <UniqueIdentifier>{c2db0f97-c4fb-4d76-b0de-935169096131}</UniqueIdentifier>
+      <UniqueIdentifier>{8dfb52fe-00f6-4ce8-8e00-00afe1416a2e}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings\src">
-      <UniqueIdentifier>{e2420c54-e28b-4a23-913e-5ab060a55eee}</UniqueIdentifier>
+      <UniqueIdentifier>{9d18295c-87e6-452f-a0e5-cba8f18a1441}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxXmlSettings\libs">
-      <UniqueIdentifier>{a73ce428-3a20-4468-980f-074ad90a87fe}</UniqueIdentifier>
+      <UniqueIdentifier>{2b52f427-d8ca-4a2c-b9fc-e9f469183722}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAnimatable">
+      <UniqueIdentifier>{7e65ed42-e121-4aa5-a78e-611b70e87d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAnimatable\src">
+      <UniqueIdentifier>{0a760840-7109-4cbe-b6c9-2fe9979e136f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxBeat">
+      <UniqueIdentifier>{d9507587-c4d2-440d-a194-3143f2760c3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxBeat\src">
+      <UniqueIdentifier>{d5905f21-e17b-438a-9d47-b5d175353a3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson">
+      <UniqueIdentifier>{0a035df4-6046-4275-8a00-3e2c72146d34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\src">
+      <UniqueIdentifier>{e4f808ab-cd51-42c2-af21-56ad07f9ee5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs">
+      <UniqueIdentifier>{9650f309-a097-4c81-8765-000f9a26b3f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp">
+      <UniqueIdentifier>{977d50af-134a-4c88-ade0-db7abd170a31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\include">
+      <UniqueIdentifier>{e52459dc-d89b-4756-b3d0-2a1beefea5be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
+      <UniqueIdentifier>{7989cc2e-0be0-44d4-9fdb-8229114ab66a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\src">
+      <UniqueIdentifier>{80dfab67-edb4-4776-af39-889f6f042c4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxParagraph">
+      <UniqueIdentifier>{a9687d89-07be-400c-9b68-6e40d406c89f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxParagraph\src">
+      <UniqueIdentifier>{5775d219-2cc3-4fee-851c-1fc85ab06d01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSmartFont">
+      <UniqueIdentifier>{7f7b42fe-7fef-4eb5-8816-6e1406c38edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSmartFont\src">
+      <UniqueIdentifier>{9e396591-6918-484c-ace3-4bfe35878f65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSnappy">
+      <UniqueIdentifier>{557eac87-3485-4120-b9b6-be9de3a072d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSnappy\libs">
+      <UniqueIdentifier>{3e4d53be-c51e-415b-b7da-b2a036403608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSnappy\libs\snappy">
+      <UniqueIdentifier>{39dd9e22-4de6-4e72-92dc-971b9436fcb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSnappy\libs\snappy\src">
+      <UniqueIdentifier>{255fa6f2-18c4-489a-a081-f493d95c5608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv">
+      <UniqueIdentifier>{8dfa36d0-f3e2-4f54-bddb-d035b2921350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\src">
+      <UniqueIdentifier>{23b8d259-408b-4c78-8091-684f728e7f75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs">
+      <UniqueIdentifier>{d1fcf11e-3b5e-45e2-84ec-e4b1ae8ec468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs\CLD">
+      <UniqueIdentifier>{b2a6f765-c9a3-43bd-8edc-b2bbf69711c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs\CLD\include">
+      <UniqueIdentifier>{3a20b7f8-737b-4391-9ef6-37cef51fb635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs\CLD\include\CLD">
+      <UniqueIdentifier>{f5de47fd-35cd-42c9-ab72-5cd0ede86554}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs\CLD\src">
+      <UniqueIdentifier>{58e6bef7-151b-4224-a44e-26690354c9a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs\ofxCv">
+      <UniqueIdentifier>{b82639fd-15ed-44d5-84a0-c5ee8a880c04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs\ofxCv\include">
+      <UniqueIdentifier>{3f2edf8b-7806-474b-8188-99be1eb4fd17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs\ofxCv\include\ofxCv">
+      <UniqueIdentifier>{8a52f1d0-4e67-41b8-9376-242a7f9df5f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxCv\libs\ofxCv\src">
+      <UniqueIdentifier>{5f0d17de-c1c6-404b-97ab-767b7afb8f8a}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv">
-      <UniqueIdentifier>{f076f70e-d53a-4499-a18a-289c39cf8496}</UniqueIdentifier>
+      <UniqueIdentifier>{eef16f4d-cdba-4819-bcf6-eae88092a7df}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\src">
-      <UniqueIdentifier>{a4bb667e-2563-417e-ae11-55665e7eaf18}</UniqueIdentifier>
+      <UniqueIdentifier>{600e0428-fc70-4b40-a837-dbbef73cc5f1}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs">
-      <UniqueIdentifier>{a0438a64-66ff-48cc-bd4f-1cc8fc42a829}</UniqueIdentifier>
+      <UniqueIdentifier>{ba21f4c0-c05b-4271-bcfc-00a9671b9910}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv">
-      <UniqueIdentifier>{8d9f7482-1cec-44d6-9746-ebee7983145a}</UniqueIdentifier>
+      <UniqueIdentifier>{3f240534-7925-4e1f-b590-ce26789fb765}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include">
-      <UniqueIdentifier>{0ebcdf00-2baa-49af-953d-026225c22978}</UniqueIdentifier>
+      <UniqueIdentifier>{c7186e70-c91c-4496-80e4-0c2a296faf42}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv">
-      <UniqueIdentifier>{fc36d5ea-107c-44a0-9764-b07e4b45f848}</UniqueIdentifier>
+      <UniqueIdentifier>{267e915a-9504-4aa9-ba19-d83ed352c228}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2">
-      <UniqueIdentifier>{d08972aa-709c-4720-94c0-d79423c06def}</UniqueIdentifier>
+      <UniqueIdentifier>{aa84c817-763c-4e82-9976-8f2c05d71d0d}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d">
-      <UniqueIdentifier>{a5394113-ac72-46d6-9105-02c66dbd1993}</UniqueIdentifier>
+      <UniqueIdentifier>{e753e0c1-b460-4484-8d2b-9ca56f54188f}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\contrib">
-      <UniqueIdentifier>{6a65a96f-e17d-482e-b985-5f8d1aaeec64}</UniqueIdentifier>
+      <UniqueIdentifier>{c26ea577-9829-4a4f-8743-6c02edbf20e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\core">
-      <UniqueIdentifier>{89c86c77-16a0-403b-8eeb-6c31aa3655d7}</UniqueIdentifier>
+      <UniqueIdentifier>{1729dabd-bed0-4a8d-97e9-e736a0b19a06}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\features2d">
-      <UniqueIdentifier>{c21bf6e9-30c6-4f17-b49a-a001f685aac3}</UniqueIdentifier>
+      <UniqueIdentifier>{54fcf228-e6ae-4507-9a5b-d3c6a2217e65}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\flann">
-      <UniqueIdentifier>{e28a6f11-2e9d-4545-bcf4-1a63c5a90a5e}</UniqueIdentifier>
+      <UniqueIdentifier>{a11c35d2-81a2-4353-b962-f38b65cbb212}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\gpu">
-      <UniqueIdentifier>{35fb1bc9-06e2-4ed5-bd6c-70207a595d2e}</UniqueIdentifier>
+      <UniqueIdentifier>{5cb9ecdf-e5cc-462b-9a92-8f1d2b58e5cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device">
-      <UniqueIdentifier>{1b6356d4-e24f-495a-9131-f4e0c7b9e75b}</UniqueIdentifier>
+      <UniqueIdentifier>{3c62e385-e5e4-4e6c-849f-a3f16cec5df5}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device\detail">
-      <UniqueIdentifier>{8bb6b170-9386-4c00-8e2f-d3f7dd6d8e18}</UniqueIdentifier>
+      <UniqueIdentifier>{ed5d5834-fd56-422d-81a2-2e32cd9c5205}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\highgui">
-      <UniqueIdentifier>{fac3c3e9-70e3-4159-bd8c-ccac8e743417}</UniqueIdentifier>
+      <UniqueIdentifier>{c77e88c1-3c2e-4e2e-8c46-c082f7966423}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc">
-      <UniqueIdentifier>{4f26f413-8642-4ee6-b66b-fa2922861f11}</UniqueIdentifier>
+      <UniqueIdentifier>{56d666a3-d7b2-4aa8-8b79-f630280cc6f8}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\legacy">
-      <UniqueIdentifier>{297b4fce-a169-458c-b68f-fc2a86eb3bf6}</UniqueIdentifier>
+      <UniqueIdentifier>{af5eb090-bfa4-444c-99a0-7e291c7f8e62}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\ml">
-      <UniqueIdentifier>{8c4f7904-6319-421c-a68d-077636eb5169}</UniqueIdentifier>
+      <UniqueIdentifier>{b662ba74-ca82-4883-8c29-bd6cb39666e4}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\nonfree">
-      <UniqueIdentifier>{d4d598bb-8b8b-4691-9673-38b351def287}</UniqueIdentifier>
+      <UniqueIdentifier>{ba2a9106-8d75-45a6-9805-545d3d70e043}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect">
-      <UniqueIdentifier>{3063ff07-2da1-48b5-99a0-3a70a03a9121}</UniqueIdentifier>
+      <UniqueIdentifier>{c76dc4f2-be61-4314-8d12-9f5a888666f8}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\photo">
-      <UniqueIdentifier>{c6463ad0-3bdc-412c-a876-0744ad63f98a}</UniqueIdentifier>
+      <UniqueIdentifier>{55767f73-f253-4cd3-bd3f-cf55dd4b2ecc}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\stitching">
-      <UniqueIdentifier>{3cd70315-e6a0-4aa9-9364-ce52d0a2fc3d}</UniqueIdentifier>
+      <UniqueIdentifier>{bd763fbb-4112-4e80-998f-c7ce2e633aea}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\stitching\detail">
-      <UniqueIdentifier>{e17341d1-dc75-4df9-b1f6-6f677beb398e}</UniqueIdentifier>
+      <UniqueIdentifier>{614a36cb-3583-4ed5-b6bc-3a6461a3cede}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\superres">
-      <UniqueIdentifier>{113f9ffe-8950-44f7-91d0-8c0bf6e503d8}</UniqueIdentifier>
+      <UniqueIdentifier>{43f076bb-db60-42cf-822a-969d638b983f}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\ts">
-      <UniqueIdentifier>{5b167ae9-0502-4507-b430-b28e445d6d1e}</UniqueIdentifier>
+      <UniqueIdentifier>{63e22ab7-fbe5-4a8b-acdb-44afaacbac1d}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\video">
-      <UniqueIdentifier>{17fd7c32-7b44-4d63-86e5-0e42aa088301}</UniqueIdentifier>
+      <UniqueIdentifier>{281d345a-ea38-48d5-a877-2b00438f054e}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOpenCv\libs\opencv\include\opencv2\videostab">
-      <UniqueIdentifier>{e85c4630-0743-469e-85d9-f2def28b715b}</UniqueIdentifier>
+      <UniqueIdentifier>{6498b3cd-e55d-4445-940d-2459977856a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -561,6 +633,12 @@
     <ClInclude Include="..\..\..\addons\ofxVectorGraphics\libs\CreEPS_Types.hpp">
       <Filter>addons\ofxVectorGraphics\libs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h">
+      <Filter>addons\ofxXmlSettings\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h">
+      <Filter>addons\ofxXmlSettings\libs</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxAnimatable\src\ofxAnimatable.h">
       <Filter>addons\ofxAnimatable\src</Filter>
     </ClInclude>
@@ -612,11 +690,53 @@
     <ClInclude Include="..\..\..\addons\ofxSnappy\libs\snappy\src\snappy.h">
       <Filter>addons\ofxSnappy\libs\snappy\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h">
-      <Filter>addons\ofxXmlSettings\src</Filter>
+    <ClInclude Include="..\..\..\addons\ofxCv\src\ofxCv.h">
+      <Filter>addons\ofxCv\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h">
-      <Filter>addons\ofxXmlSettings\libs</Filter>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\ETF.h">
+      <Filter>addons\ofxCv\libs\CLD\include\CLD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\fdog.h">
+      <Filter>addons\ofxCv\libs\CLD\include\CLD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\imatrix.h">
+      <Filter>addons\ofxCv\libs\CLD\include\CLD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\myvec.h">
+      <Filter>addons\ofxCv\libs\CLD\include\CLD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Calibration.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\ContourFinder.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Distance.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Flow.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Helpers.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Kalman.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\ObjectFinder.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\RunningBackground.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Tracker.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Utilities.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Wrappers.h">
+      <Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h">
       <Filter>addons\ofxOpenCv\src</Filter>
@@ -1131,5 +1251,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\data\json.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Text.txt" />
   </ItemGroup>
 </Project>
