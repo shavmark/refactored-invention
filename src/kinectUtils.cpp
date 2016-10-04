@@ -2,12 +2,7 @@
 // kinect only works on64 bit windows
 
 #include "ofApp.h"
-//C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\x64
-//bugbug fix path for release and debug, and remove any "mark" dependencies
-#pragma comment(lib, "C:\\Program Files\\Microsoft SDKs\\Kinect\\v2.0_1409\\Lib\\x64\\Kinect20.lib")
-#pragma comment(lib, "C:\\Program Files\\Microsoft SDKs\\Kinect\\v2.0_1409\\Lib\\x64\\Kinect20.face.lib")
-#pragma comment(lib, "C:\\Program Files\\Microsoft SDKs\\Kinect\\v2.0_1409\\Lib\\x64\\Kinect20.fusion.lib")
-
+//C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\x64 
 
 namespace Software2552 {
 	// validate com stuff
