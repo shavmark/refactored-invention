@@ -51,6 +51,12 @@ namespace Software2552 {
 		DataType typeOfPacket; // byte only
 		string data;
 	};
+
+	class Serial {
+	public:
+		void setup();
+		ofSerial data;
+	};
 	class TCPMessage {
 	public:
 		void setup(size_t bytesToSend, DataType type, TypeOfSend typeOfSend=Message, int clientID = -1);

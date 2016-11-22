@@ -65,6 +65,12 @@ namespace Software2552 {
 			}
 		}
 	}
+	void Serial::setup() {
+			data.setup(0, 38400);
+			//Parity : None
+			//Data Bits : 8
+			//Stop Bits : 1
+	}
 	void UDPBroadcast::setup(int port) {
 		sender.Create();
 		sender.Connect("192.168.1.255", port);//broadcast back to everyone

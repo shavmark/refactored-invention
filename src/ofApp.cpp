@@ -1,7 +1,6 @@
 #include "ofApp.h"
 #include "ofxXmlSettings.h"
 
-
 OneGlobalInstance globalinstance;
 
 void SystemConfiguration::setup() {
@@ -159,6 +158,15 @@ void ofApp::setup(){
 	ofLogVerbose("ofApp::setup") << "Logging to file now";
 	ofLogToConsole(); //set channel to console
 
+	//Baud: 38400
+	//Parity : None
+	//Data Bits : 8
+	//Stop Bits : 1
+	RobotMotionData rdata;
+	rdata.setup();
+	rdata.set(extValBytes, 0x28);
+	rdata.update();
+
 	ofSetWindowTitle("Story Teller");
 
 	ofSoundStreamSetup(0, 1, this, 44100, beat.getBufferSize(), 4);
@@ -181,7 +189,6 @@ void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 }
 //--------------------------------------------------------------
 void ofApp::update(){
-
 	
 	if (appconfig.soundout) {
 		appconfig.soundout->update();

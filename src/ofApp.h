@@ -45,8 +45,8 @@ template<typename T>void setIfGreater(T& f1, T f2) {
 }
 #include "ofxOsc.h"
 #include "ofxNetwork.h"
-#include "ofxcv.h"
 #include "ofxJSON.h"
+
 #include "consts.h"
 #include "animation.h"
 #include "color.h"
@@ -146,6 +146,22 @@ public:
 };
 extern OneGlobalInstance globalinstance;
 
+class SerialMessage{
+public:
+	SerialMessage() : fade(0){	}
+
+	SerialMessage(const std::string& _message,
+		const std::string& _exception,
+		int _fade) :
+		message(_message),
+		exception(_exception),
+		fade(_fade)	{	}
+
+	std::string message;
+	std::string exception;
+	int fade;
+};
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -169,14 +185,11 @@ class ofApp : public ofBaseApp{
 
 		void audioOut(ofSoundBuffer &outBuffer);
 		void audioReceived(float*, int, int);
-
+		
 		AppConfiguration appconfig; // put all app instance here 
 		ofxBeat beat; //bugbug not sure where to put this yet, need to support > 1 mic
 		float getBand(int i) { return beat.getBand(i); }
-
-
 		ofVideoGrabber movie;
-
 
 private:
 };

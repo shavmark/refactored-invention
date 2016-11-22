@@ -1,12 +1,9 @@
 ofxGui
 ofxNetwork
-ofxOpenCv
 ofxOsc
-ofxVectorGraphics
 ofxXmlSettings
 ofxAnimatable
 ofxBeat
-ofxCv
 ofxJson
 ofxParagraph
 ofxSmartFont
